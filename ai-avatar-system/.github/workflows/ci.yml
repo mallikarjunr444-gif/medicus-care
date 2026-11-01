@@ -1,0 +1,346 @@
+name: CI
+
+# Pull requests only. A merge to main re-runs the identical tree that was
+# just verified on the PR, and the Docker image build alone is ~15 minutes of
+# that. Verification happens before the merge, not after it.
+#
+# The trade: a semantic conflict between two PRs that each passed separately
+# would not be caught until the next PR runs. With serial merges that is a
+# narrow window; widen the trigger again if merges start landing in parallel.
+on:
+  pull_request:
+    branches: [main, develop]
+
+env:
+  PYTHON_VERSION: '3.10'
+  # next@16 requires Node >=20.9.0 — Node 18 fails the build outright.
+  NODE_VERSION: '22'
+
+jobs:
+  # ── Detect which folders changed ────────────────────────────────────────
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      infrastructure: ${{ steps.filter.outputs.infrastructure }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - '.github/workflows/ci.yml'
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/ci.yml'
+            infrastructure:
+              - 'infrastructure/**'
+              - '.github/workflows/ci.yml'
+
+  # ── Backend lint ────────────────────────────────────────────────────────
+  backend-lint:
+    name: Backend Lint
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - name: Install linters
+        # Pinned via requirements-dev.txt so a new ruff release cannot turn
+        # this job red on code nobody touched.
+        run: pip install -r requirements-dev.txt
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+  # ── Backend tests ───────────────────────────────────────────────────────
+  backend-test:
+    name: Backend Tests
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: avatar_test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://test_user:test_password@localhost:5432/avatar_test_db
+      REDIS_URL: redis://localhost:6379/0
+      CELERY_BROKER_URL: redis://localhost:6379/1
+      CELERY_RESULT_BACKEND: redis://localhost:6379/2
+      ENVIRONMENT: testing
+      DEBUG: 'false'
+      # Settings enforces >=32 chars — shorter values fail validation at
+      # import time and abort the entire test session.
+      SECRET_KEY: ci-only-secret-key-0123456789abcdef0123456789abcdef
+      JWT_SECRET_KEY: ci-only-jwt-secret-0123456789abcdef0123456789abcdef
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install system dependencies
+        run: sudo apt-get update -q && sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest tests/ -v --cov=app --cov-report=xml --cov-report=term-missing
+
+      # Was gated on a push to main, which no longer happens — that made it
+      # dead again, exactly as it was before the push trigger existed. Publish
+      # it from the PR run instead, which is now the only run there is.
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage.xml
+
+  # ── Frontend lint ───────────────────────────────────────────────────────
+  frontend-lint:
+    name: Frontend Lint
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        # `npm ci` installs exactly the tree in package-lock.json and fails if
+        # the lockfile and manifest disagree. `npm install` re-resolved on every
+        # run, so CI could pass against dependency versions no one had tested.
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+  # ── Frontend typecheck ──────────────────────────────────────────────────
+  frontend-typecheck:
+    name: Frontend Typecheck
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # `next build` does typecheck, but it also needs env vars and takes far
+      # longer. Running tsc on its own gives a fast, unambiguous type signal.
+      - name: Typecheck
+        run: npm run typecheck
+
+  # ── Frontend build ──────────────────────────────────────────────────────
+  frontend-build:
+    name: Frontend Build
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        # `npm ci` installs exactly the tree in package-lock.json and fails if
+        # the lockfile and manifest disagree. `npm install` re-resolved on every
+        # run, so CI could pass against dependency versions no one had tested.
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_WS_URL: ws://localhost:8000
+
+  # ── Docker build ────────────────────────────────────────────────────────
+  # Runs only after lint passes; skipped jobs are treated as success.
+  docker-build:
+    name: Docker Build
+    needs: [changes, backend-lint, backend-test, frontend-lint, frontend-typecheck]
+    if: |
+      always() &&
+      (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true') &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        if: needs.changes.outputs.backend == 'true'
+        run: docker build -t avatar-backend ./backend
+
+      - name: Build frontend image
+        if: needs.changes.outputs.frontend == 'true'
+        run: docker build -t avatar-frontend ./frontend
+
+  # ── Frontend dependency audit ───────────────────────────────────────────
+  frontend-audit:
+    name: Frontend Audit
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Counterpart to the backend's pip-audit. Fails on high/critical only —
+      # low/moderate advisories are reported but don't block a merge.
+      - name: npm audit
+        run: npm audit --audit-level=high
+
+  # ── Terraform validate ──────────────────────────────────────────────────
+  # infrastructure/ had no CI at all: the paths filter watched only backend and
+  # frontend, so the ECS work in #20 landed with every job skipped while the PR
+  # still reported clean. These checks need no AWS credentials and take
+  # seconds — `validate` alone would have caught the duplicate variable
+  # declarations and the unpinned module that made `terraform init` fail.
+  #
+  # It stops at validate deliberately: `plan` needs real credentials and reads
+  # live state, which is not something a pull request should do.
+  terraform-validate:
+    name: Terraform Validate
+    needs: changes
+    if: needs.changes.outputs.infrastructure == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infrastructure
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.9.8'
+
+      - name: Format check
+        run: terraform fmt -check -recursive -diff
+
+      # -backend=false: the S3 backend is commented out and would otherwise
+      # need credentials and a pre-existing bucket just to check syntax.
+      - name: Init
+        run: terraform init -backend=false -input=false
+
+      - name: Validate
+        run: terraform validate
+
+  # ── Security scan ───────────────────────────────────────────────────────
+  security-scan:
+    name: Backend Audit
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # Reports advisories without blocking the merge, and deliberately not
+      # via `|| true` — that swallowed the exit code so the step always looked
+      # green. continue-on-error keeps the failure visible in the checks list
+      # while letting the PR land.
+      #
+      # It cannot be made blocking yet, but the reason is now narrow: torch
+      # (23 advisories), transformers (45), diffusers (5) and accelerate (1)
+      # only have fixes in releases the MuseTalk lip-sync pipeline cannot run
+      # against — it needs the torch 2.2 / transformers 4.37 generation. A
+      # green audit is unreachable until that pipeline is ported.
+      #
+      # Every application dependency with a reachable fix has been upgraded:
+      # fastapi/starlette/pydantic, Pillow, boto3/aioboto3 (lifting the
+      # urllib3 cap), python-multipart, python-dotenv, python-socketio,
+      # requests, sentry-sdk, and PyJWT in place of python-jose (which pinned
+      # pyasn1 and ecdsa shut). Only click (capped by gTTS) and pytest
+      # (dev-only) remain outside the ML stack.
+      #
+      # Make this blocking once the ML stack can move, so new advisories in
+      # application dependencies fail the build.
+      - name: Run pip-audit
+        continue-on-error: true
+        run: |
+          pip install pip-audit
+          pip-audit -r backend/requirements.txt

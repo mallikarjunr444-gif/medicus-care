@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * HireAI design system.
+ *
+ * Fonts are loaded in app/layout.tsx via next/font so they are self-hosted and
+ * do not cause a flash of unstyled text — a @import here would block render.
+ */
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-gray-25 text-gray-900;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  /* Rule 2: Urbanist headlines. H1 is weight 400 — thin on purpose; the
+     system gets its authority from spacing and restraint, not from bold. */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-heading;
+  }
+  h1 { font-weight: 400; }
+  h2, h3 { font-weight: 500; }
+
+  ::selection {
+    background: theme('colors.primary.100');
+    color: theme('colors.primary.900');
+  }
+
+  /* One focus treatment everywhere, matching --shadow-ring. */
+  :focus-visible {
+    outline: none;
+    @apply ring-4 ring-primary-600/[.12] ring-offset-0;
+  }
+
+  /* The system is quiet; motion should never be the loud part. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* ── Rule 3: the eyebrow label. The most recognisable signature in the
+     system, so it gets a first-class class rather than being re-typed. */
+  .eyebrow {
+    @apply font-mono text-eyebrow uppercase text-gray-400;
+  }
+
+  /* Rule 6: the single italic accent, for a soft emphasis in headings. */
+  .accent-italic {
+    @apply font-accent italic font-normal;
+  }
+
+  /* ── Surfaces ──────────────────────────────────────────────────────────
+     Rule 4: no gradients. Depth comes from a hairline border and the
+     lightest shadow, never from a colour ramp. */
+  .card {
+    @apply rounded-xl border border-gray-200 bg-white shadow-xs;
+  }
+
+  /* The 2% black tint the system uses instead of a tinted background. */
+  .card-tint {
+    @apply rounded-xl border border-gray-200 shadow-xs;
+    background: rgba(0, 0, 0, .02);
+  }
+
+  .card-hover {
+    @apply transition-shadow duration-200 hover:shadow-sm;
+  }
+
+  /* Rule 4: hero panels are solid ink, not a gradient. */
+  .panel-hero {
+    @apply rounded-2xl bg-ink text-gray-25;
+  }
+
+  /* ── Controls — 8px radius per rule 5 ─────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5
+           text-sm font-medium transition-colors duration-150
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white shadow-xs hover:bg-primary-700;
+  }
+
+  .btn-secondary {
+    @apply btn border border-gray-300 bg-white text-gray-700 shadow-xs hover:bg-gray-50;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-gray-600 hover:bg-gray-100;
+  }
+
+  .btn-danger {
+    @apply btn bg-error-600 text-white shadow-xs hover:bg-error-700;
+  }
+
+  .btn-icon {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-md
+           border border-gray-300 bg-white text-gray-600 shadow-xs
+           transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .input {
+    @apply w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5
+           text-gray-900 placeholder:text-gray-400 shadow-xs
+           transition-shadow duration-150
+           focus:border-primary-300 focus:outline-none focus:ring-4 focus:ring-primary-50;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-gray-700;
+  }
+
+  /* ── Badges — fully rounded per rule 5, hairline via inset ring ───────── */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5
+           text-xs font-medium;
+  }
+  .badge-gray   { @apply badge bg-gray-100 text-gray-700    ring-1 ring-inset ring-gray-500/[.12]; }
+  .badge-green  { @apply badge bg-success-50 text-success-700 ring-1 ring-inset ring-success-600/[.12]; }
+  .badge-yellow { @apply badge bg-warning-50 text-warning-700 ring-1 ring-inset ring-warning-700/[.12]; }
+  .badge-red    { @apply badge bg-error-50 text-error-700     ring-1 ring-inset ring-error-700/[.12]; }
+  .badge-brand  { @apply badge bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-600/[.12]; }
+
+  .divider {
+    @apply h-px w-full bg-gray-200;
+  }
+
+  /* Scrollbars, kept in the monochrome register rather than left as the
+     browser default, which reads as unfinished against this much white. */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-gray-300;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+}

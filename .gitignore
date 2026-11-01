@@ -1,12 +1,9 @@
 # Dependencies
 node_modules/
-frontend/node_modules/
+**/node_modules/
 .venv/
 venv/
 env/
-
-# Legacy subfolder / local clone
-ai-avatar-system/
 .DS_Store
 
 # Environment
@@ -14,12 +11,14 @@ ai-avatar-system/
 .env.local
 .env.prod
 .env.*.local
+**/.env
+**/.env.local
 
 # Next.js
 .next/
-frontend/.next/
+**/.next/
 out/
-frontend/out/
+**/out/
 
 # Python
 __pycache__/

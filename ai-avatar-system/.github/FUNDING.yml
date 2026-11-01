@@ -1,0 +1,20 @@
+# Renders the "Sponsor" button on the repository page and in the sidebar.
+#
+# The listing at https://github.com/sponsors/PunithVT is live, so this entry
+# is active and needs no further change. Tiers and the listing description are
+# managed on the Sponsors dashboard, not from this file.
+#
+# Uncomment and fill in any of the other platforms you actually hold an
+# account on; leave the rest out rather than guessing handles, since a wrong
+# value renders a broken link on the repo page.
+
+github: [PunithVT]
+
+# ko_fi:            # Ko-fi username, e.g. punithvt
+# buy_me_a_coffee:  # Buy Me a Coffee username
+# patreon:          # Patreon username
+# open_collective:  # Open Collective slug
+# liberapay:        # Liberapay username
+# polar:            # Polar username
+# thanks_dev:       # thanks.dev username
+# custom: ['https://your-donation-page.example']

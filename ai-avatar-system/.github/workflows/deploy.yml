@@ -1,0 +1,87 @@
+name: Deploy
+
+# Manual-only, deliberately. infrastructure/ now creates the cluster, services
+# and listeners this targets, so it can work — but it pushes images and
+# restarts production, and that should be an explicit decision rather than a
+# side effect of a tag or a merge. release.yml already publishes the GHCR
+# images most people consume.
+#
+# Requires: `terraform apply` has run, and AWS_ACCESS_KEY_ID /
+# AWS_SECRET_ACCESS_KEY are set for the `production` environment.
+on:
+  workflow_dispatch:
+    inputs:
+      cluster:
+        description: "ECS cluster name (terraform output ecs_cluster_name)"
+        required: false
+        default: "avatar-cluster-production"
+      image_tag:
+        description: "Image tag to build and deploy"
+        required: false
+        default: "latest"
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push backend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          docker build -t $ECR_REGISTRY/avatar-backend:$IMAGE_TAG ./backend
+          docker build -t $ECR_REGISTRY/avatar-backend:latest ./backend
+          docker push $ECR_REGISTRY/avatar-backend:$IMAGE_TAG
+          docker push $ECR_REGISTRY/avatar-backend:latest
+
+      - name: Build and push frontend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          docker build -t $ECR_REGISTRY/avatar-frontend:$IMAGE_TAG ./frontend
+          docker build -t $ECR_REGISTRY/avatar-frontend:latest ./frontend
+          docker push $ECR_REGISTRY/avatar-frontend:$IMAGE_TAG
+          docker push $ECR_REGISTRY/avatar-frontend:latest
+
+      # The cluster is named "${project_name}-cluster-${environment}" by
+      # Terraform, so the previously hardcoded "avatar-cluster" never matched.
+      # Taken from an input, defaulting to the standard name, and the worker is
+      # rolled too — it runs the same image and would otherwise keep serving
+      # tasks from the old one.
+      - name: Deploy to ECS
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+        run: |
+          set -euo pipefail
+          for svc in avatar-backend avatar-frontend avatar-worker; do
+            echo "Rolling $svc..."
+            aws ecs update-service \
+              --cluster "$CLUSTER" \
+              --service "$svc" \
+              --force-new-deployment \
+              --no-cli-pager >/dev/null
+          done
+
+          echo "Waiting for services to stabilise (backend cold start loads ~9GB of weights)..."
+          aws ecs wait services-stable \
+            --cluster "$CLUSTER" \
+            --services avatar-backend avatar-frontend avatar-worker
