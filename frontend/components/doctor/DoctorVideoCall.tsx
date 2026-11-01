@@ -29,7 +29,7 @@ import {
   Activity,
   HeartPulse,
 } from 'lucide-react'
-import { DoctorCanvas3D } from './DoctorCanvas3D'
+import { DoctorPhotorealisticViewport } from './DoctorPhotorealisticViewport'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
 import { useDoctorSpeech } from './useDoctorSpeech'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
@@ -383,12 +383,14 @@ export function DoctorVideoCall({
             isChatVisible ? 'w-full md:w-[70%]' : 'w-full'
           }`}
         >
-          {/* Three.js 3D Doctor Canvas */}
-          <DoctorCanvas3D
+          {/* Photorealistic Human AI Doctor Video Viewport */}
+          <DoctorPhotorealisticViewport
             doctorId={doctorId}
             doctorState={doctorState}
             audioLevel={audioLevel}
             isMuted={isMuted}
+            subtitles={subtitles}
+            activeTriage={activeTriage}
             onStateChange={(st) => setDoctorState(st)}
             className="w-full h-full"
           />
