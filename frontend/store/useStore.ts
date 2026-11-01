@@ -43,18 +43,30 @@ interface AppState {
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
-      // Auth
-      token: null,
-      user: null,
+      // Auth (Direct access without login barrier)
+      token: 'medicare-direct-token',
+      user: {
+        id: 'patient-direct',
+        email: 'patient@medicare.app',
+        username: 'Patient',
+        full_name: 'Patient User',
+        is_guest: true,
+      },
       setAuth: (token, user) => set({ token, user }),
       clearAuth: () =>
         set({
-          token: null,
-          user: null,
+          token: 'medicare-direct-token',
+          user: {
+            id: 'patient-direct',
+            email: 'patient@medicare.app',
+            username: 'Patient',
+            full_name: 'Patient User',
+            is_guest: true,
+          },
           activeSessionId: null,
           selectedAvatarId: null,
         }),
-      isAuthenticated: () => get().token !== null,
+      isAuthenticated: () => true,
 
       // Theme
       handsFree: false,
