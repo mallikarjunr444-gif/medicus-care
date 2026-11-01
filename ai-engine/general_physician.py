@@ -81,7 +81,7 @@ class GeneralPhysicianEngine:
             recommended_actions=care_steps,
             formal_referral="Formal physical examination by a licensed General Physician is advised for clinical diagnosis and treatment planning.",
             disclaimer=(
-                "Medicus Care™ is an AI digital healthcare assistant. This summary is intended for educational and "
+                "MediCare is an AI digital healthcare assistant. This summary is intended for educational and "
                 "record-keeping purposes only. It is not an official medical prescription or definitive diagnosis."
             )
         )

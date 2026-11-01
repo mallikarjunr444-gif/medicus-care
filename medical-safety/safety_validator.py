@@ -71,7 +71,7 @@ class MedicalSafetyValidator:
     ]
 
     MANDATORY_DISCLAIMER = (
-        "Medicus Care is an AI healthcare digital assistant and not a licensed human physician. "
+        "MediCare is an AI healthcare digital assistant and not a licensed human physician. "
         "Information provided is for preliminary educational guidance and does not replace formal clinical diagnosis or prescription. "
         "In case of a medical emergency, call 112 immediately."
     )

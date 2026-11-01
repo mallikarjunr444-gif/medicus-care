@@ -1,4 +1,4 @@
-# Medicus Care — Your AI Healthcare Companion 🩺
+# MediCare — Your AI Healthcare Companion 🩺
 
 > **Parent Brand:** Medicus Labs™ (Founder & CEO: Mallikarjun R)  
 > **Primary Website:** [medicuslabs.app](https://medicuslabs.app)  
@@ -9,18 +9,18 @@
 
 ## 🌟 Executive Summary
 
-**Medicus Care™** is an advanced, multilingual, AI-powered healthcare consultation platform engineered with two independent clinical intelligence modules:
+**MediCare** is an advanced, multilingual, AI-powered healthcare consultation platform engineered with two independent clinical intelligence modules:
 
 1. **AI General Physician (Dr. Arjun, M.D.)**: Specializing in primary care symptom triage, duration/severity assessment, differential possibilities, home care hydration, and red-flag identification.
 2. **AI Psychologist / Mental Wellness Companion (Dr. Ananya, M.D.)**: Specializing in supportive stress management, guided 4-4-4 box breathing, sleep hygiene, emotional validation, and 24/7 crisis escalation.
 
-Unlike text-only healthcare chatbots or stylized cartoon avatars, Medicus Care features an **authentic photorealistic human AI doctor** participating in a live video consultation with natural eye contact, physiological blinking (every 2.8–4.5s), sinusoidal breathing (14 breaths/min), attentive listening posture, and audio-synchronized mouth visemes.
+Unlike text-only healthcare chatbots or stylized cartoon avatars, MediCare features an **authentic photorealistic human AI doctor** participating in a live video consultation with natural eye contact, physiological blinking (every 2.8–4.5s), sinusoidal breathing (14 breaths/min), attentive listening posture, and audio-synchronized mouth visemes.
 
 ---
 
 ## 👨‍⚕️ Photorealistic AI Doctor Identity
 
-![Dr. Arjun, M.D. - Medicus Care](frontend/public/doctor/Friendly%20Doctor%20in%20a%20Modern%20Consultation%20Office.png)
+![Dr. Arjun, M.D. - MediCare](frontend/public/doctor/Friendly%20Doctor%20in%20a%20Modern%20Consultation%20Office.png)
 
 * **Visual Identity**: Young professional male doctor with natural curly dark hair, realistic facial hair, transparent round spectacles, white medical coat, stethoscope, and professional striped dress shirt.
 * **Environment**: High-resolution modern medical consultation room with natural clinical lighting.
@@ -30,7 +30,7 @@ Unlike text-only healthcare chatbots or stylized cartoon avatars, Medicus Care f
 
 ## 🧠 Dual-Collection Unified RAG Knowledge Architecture
 
-Medicus Care separates patient-facing medical facts from mental health counseling dialogues using two isolated vector collections:
+MediCare separates patient-facing medical facts from mental health counseling dialogues using two isolated vector collections:
 
 1. **Medical Knowledge Collection**:
    * Sourced from **MedQuAD** (11,274 NIH & MedlinePlus clinical guides) across symptoms, disease etiologies, preventive care, first-aid, and laboratory diagnostic tests.
@@ -70,7 +70,7 @@ Deterministic 4-level clinical triage screener running inline on every patient t
 
 ---
 
-## 🖥️ Medicus Care Admin Knowledge Console
+## 🖥️ MediCare Admin Knowledge Console
 
 Administrators can navigate to `/` and select the **Admin Console** tab:
 * **Knowledge Explorer**: Browse, inspect, approve, or reject chunks across Medical and Mental Wellness collections.
@@ -119,7 +119,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## ⚖️ Clinical & Regulatory Notice
 
-Medicus Care is an artificial intelligence pre-screening and healthcare educational platform. It is not an autonomous licensed doctor. No clinical diagnosis, prescriptions, or regulated medical services are provided autonomously. Regulated medical services must remain under qualified human medical practitioners. In acute medical emergencies, dial **112** (India) immediately.
+MediCare is an artificial intelligence pre-screening and healthcare educational platform. It is not an autonomous licensed doctor. No clinical diagnosis, prescriptions, or regulated medical services are provided autonomously. Regulated medical services must remain under qualified human medical practitioners. In acute medical emergencies, dial **112** (India) immediately.
 
 ---
 

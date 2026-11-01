@@ -19,8 +19,8 @@ export function AuthModal({ onClose }: AuthModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
 
   // Login fields
-  const [loginEmail, setLoginEmail] = useState('patient@medicuscare.app')
-  const [loginPassword, setLoginPassword] = useState('medicus123')
+  const [loginEmail, setLoginEmail] = useState('patient@medicare.app')
+  const [loginPassword, setLoginPassword] = useState('medicare123')
 
   // Register fields
   const [regEmail, setRegEmail] = useState('')
@@ -41,7 +41,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
       // Fallback to instant local session so user is never locked out
       setAuth('guest-token-' + Date.now(), {
         id: 'patient-user',
-        email: loginEmail || 'patient@medicuscare.app',
+        email: loginEmail || 'patient@medicare.app',
         username: loginEmail.split('@')[0] || 'Patient',
         full_name: 'Patient User',
         is_guest: false,
@@ -72,12 +72,12 @@ export function AuthModal({ onClose }: AuthModalProps) {
       // Graceful fallback
       setAuth('user-token-' + Date.now(), {
         id: 'new-patient',
-        email: regEmail || 'patient@medicuscare.app',
+        email: regEmail || 'patient@medicare.app',
         username: regUsername || 'Patient',
         full_name: regFullName || 'Patient User',
         is_guest: false,
       })
-      toast.success('Account created! Welcome to Medicus Care!', { icon: '🎉' })
+      toast.success('Account created! Welcome to MediCare!', { icon: '🎉' })
       if (onClose) onClose()
     } finally {
       setIsLoading(false)
@@ -89,7 +89,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
     // Instant free guest session per PRD Section 21
     setAuth('guest-token-' + Date.now(), {
       id: 'patient-guest-' + Date.now().toString().slice(-4),
-      email: 'guest@medicuscare.app',
+      email: 'guest@medicare.app',
       username: 'Guest Patient',
       full_name: 'Guest Patient',
       is_guest: true,
@@ -125,7 +125,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
             <HeartPulse size={24} className="animate-pulse" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-extrabold text-white">Medicus Care</h1>
+            <h1 className="text-xl font-extrabold text-white">Medi<span className="text-sky-400">Care</span></h1>
             <p className="text-xs text-sky-400 font-medium">Your AI Doctor • 100% Free Access</p>
           </div>
         </div>
@@ -187,7 +187,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-sky-500"
-                placeholder="patient@medicuscare.app"
+                placeholder="patient@medicare.app"
                 required
               />
             </div>
