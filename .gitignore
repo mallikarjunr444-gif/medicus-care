@@ -58,6 +58,7 @@ gfpgan/weights/
 *.onnx
 *.safetensors
 models/
+medicus-ai-data/
 uploads/
 outputs/
 voice_profiles/
