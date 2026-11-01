@@ -259,7 +259,7 @@ export function AdminKnowledgeDashboard() {
             </div>
             <div>
               <h1 className="text-2xl font-extrabold text-white tracking-tight">
-                Medicus Care™ Knowledge & Safety Console
+                Medi<span className="text-sky-400">Care</span> Knowledge & Safety Console
               </h1>
               <p className="text-xs text-slate-400">
                 Independent RAG Intelligence, Clinician Document Approvals & Clinical Safety Auditing
