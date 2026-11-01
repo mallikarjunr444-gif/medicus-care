@@ -263,9 +263,11 @@ async def health_check(response: Response):
     try:
         from app.services.stt import stt_service
         from app.services.tts import tts_service
+        from app.services.gnani_service import gnani_service
 
-        services["stt"] = "loaded" if stt_service.model is not None else "lazy (not yet loaded)"
-        services["tts"] = "loaded" if tts_service.model is not None else "lazy (not yet loaded)"
+        services["stt"] = f"{stt_service.provider} ({'loaded' if stt_service.model is not None else 'ready'})"
+        services["tts"] = f"{tts_service.provider} ({'loaded' if tts_service.model is not None else 'ready'})"
+        services["gnani_voice"] = "active" if gnani_service.is_configured() else "not_configured"
     except Exception as e:
         services["stt"] = services["tts"] = f"error: {e}"
 

@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     # API Keys
     ANTHROPIC_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
+    GNANI_API_KEY: str = ""
+    GNANI_BASE_URL: str = "https://api.vachana.ai"
+    GNANI_TTS_MODEL: str = "timbre-v2.5"
+    GNANI_STT_MODEL: str = "prisma-v3.0"
+    GNANI_DEFAULT_VOICE: str = "Nalini"
 
     # Point the OpenAI-compatible client at a different server — Ollama
     # (http://localhost:11434/v1), vLLM, LM Studio, OpenRouter, etc.

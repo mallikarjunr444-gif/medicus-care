@@ -50,6 +50,8 @@ class STTService:
 
     async def initialize(self) -> None:
         """Eager warm-up. Optional — `transcribe` will load on first call too."""
+        if self.provider == "gnani":
+            return
         if self.model is not None or self.provider != "whisper":
             return
         if self._load_lock is None:
@@ -59,6 +61,21 @@ class STTService:
                 self.model = await asyncio.to_thread(self._build_model)
 
     async def transcribe(self, audio_data: Union[bytes, str], language: str = "en") -> str:
+        if self.provider == "gnani":
+            from app.services.gnani_service import gnani_service
+            try:
+                res = await gnani_service.transcribe(audio_data, language=language)
+                return res.get("transcript", "").strip()
+            except Exception as e:
+                logger.warning(f"Gnani STT failed ({e}), attempting Whisper fallback...")
+                try:
+                    if self.model is None:
+                        await self.initialize()
+                    return await asyncio.to_thread(self._transcribe_sync, audio_data, language)
+                except Exception as whisper_err:
+                    logger.error(f"Whisper fallback also failed: {whisper_err}")
+                    raise e
+
         if self.provider != "whisper":
             raise ValueError(f"Unsupported STT provider: {self.provider}")
         if self.model is None:

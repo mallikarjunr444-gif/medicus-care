@@ -109,6 +109,9 @@ class TTSService:
             if self.model is not None:  # re-check: another coroutine may have just finished
                 return
 
+            if self.provider in ("gnani", "edge-tts", "gtts"):
+                return
+
             if self.provider != "chatterbox":
                 raise ValueError(f"Unsupported TTS provider: {self.provider}")
 
@@ -144,10 +147,39 @@ class TTSService:
 
         Returns:
             SynthResult describing the WAV path and which engine was used.
-            `fallback=True` indicates the preferred Chatterbox path failed
-            and gTTS was used instead — voice cloning is lost in that case.
+            `fallback=True` indicates the preferred path failed.
         """
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+
+        if self.provider == "gnani":
+            from app.services.gnani_service import gnani_service
+            try:
+                await gnani_service.synthesize(text, output_path, language=language)
+                return SynthResult(
+                    output_path=output_path,
+                    engine="gnani",
+                    fallback=False,
+                    voice_cloned=False,
+                )
+            except Exception as e:
+                logger.warning(f"Gnani TTS failed ({e}), falling back to Edge TTS")
+                try:
+                    await self._edge_fallback(text, output_path, language)
+                    return SynthResult(
+                        output_path=output_path,
+                        engine="edge-tts",
+                        fallback=True,
+                        voice_cloned=False,
+                    )
+                except Exception as edge_err:
+                    logger.warning(f"Edge TTS fallback also failed ({edge_err}), using gTTS")
+                    await self._gtts_fallback(text, output_path, language)
+                    return SynthResult(
+                        output_path=output_path,
+                        engine="gtts",
+                        fallback=True,
+                        voice_cloned=False,
+                    )
 
         try:
             if self.model is None:
@@ -183,7 +215,21 @@ class TTSService:
                     f"falling back to a default neural voice. Error: {e}"
                 )
             else:
-                logger.warning(f"Chatterbox failed ({e}), trying Edge TTS fallback")
+                logger.warning(f"Chatterbox failed ({e}), trying Gnani/Edge TTS fallback")
+
+            # Try Gnani.ai first if configured (native Indian neural voice)
+            from app.services.gnani_service import gnani_service
+            if gnani_service.is_configured():
+                try:
+                    await gnani_service.synthesize(text, output_path, language=language)
+                    return SynthResult(
+                        output_path=output_path,
+                        engine="gnani",
+                        fallback=True,
+                        voice_cloned=False,
+                    )
+                except Exception as gnani_err:
+                    logger.warning(f"Gnani TTS fallback failed ({gnani_err}), trying Edge TTS")
 
             # Prefer Edge TTS (Microsoft neural voices — much better prosody
             # than gTTS, still free and CPU-only); gTTS is the last resort.
