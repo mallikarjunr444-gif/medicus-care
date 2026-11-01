@@ -141,10 +141,10 @@ export function DoctorVideoCall({
       role: 'doctor',
       text:
         language === 'kn'
-          ? `ನಮಸ್ಕಾರ! ನಾನು ${doctor.name}, ನಿಮ್ಮ ಮೆಡಿಕಸ್ ಕೇರ್ AI ವೈದ್ಯ. ಇಂದು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ? ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ.`
+          ? `ನಮಸ್ಕಾರ! ನಾನು ${doctor.name}, ನಿಮ್ಮ ಮೆಡಿಕೇರ್ (MediCare) AI ವೈದ್ಯ. ಇಂದು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ? ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ.`
           : language === 'hi'
-          ? `नमस्ते! मैं ${doctor.name}, आपका मेडिकस केयर AI डॉक्टर हूँ। आज मैं आपकी कैसे सहायता कर सकता हूँ?`
-          : `Hello! I'm ${doctor.name}, your Medicus Care AI Doctor. How are you feeling today? You can speak naturally or type your symptoms freely.`,
+          ? `नमस्ते! मैं ${doctor.name}, आपका मेडिकेयर (MediCare) AI डॉक्टर हूँ। आज मैं आपकी कैसे सहायता कर सकता हूँ?`
+          : `Hello! I'm ${doctor.name}, your MediCare AI Doctor. How are you feeling today? You can speak naturally or type your symptoms freely.`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ])
@@ -456,7 +456,7 @@ export function DoctorVideoCall({
       referralRecommendation:
         'Consultation with an attending General Physician or Specialist is strongly recommended to obtain a formal physical examination and prescription.',
       disclaimer:
-        'Medicus Care is an AI healthcare digital assistant and is not an autonomous licensed doctor. No clinical diagnosis, prescription, or psychotherapy is provided. Regulated healthcare services must remain under qualified human medical practitioners.',
+        'MediCare is an AI healthcare digital assistant and is not an autonomous licensed doctor. No clinical diagnosis, prescription, or psychotherapy is provided. Regulated healthcare services must remain under qualified human medical practitioners.',
     }
 
     setSummaryData(summary)
@@ -519,7 +519,7 @@ export function DoctorVideoCall({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm tracking-tight text-white">Medicus Care</span>
+              <span className="font-bold text-sm tracking-tight text-white">Medi<span className="text-sky-400">Care</span></span>
               <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/60 font-semibold">
                 Your AI Doctor
               </span>

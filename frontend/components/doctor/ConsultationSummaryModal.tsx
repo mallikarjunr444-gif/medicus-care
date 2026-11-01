@@ -35,7 +35,7 @@ export function ConsultationSummaryModal({
   }
 
   const handleDownload = () => {
-    const textContent = `MEDICUS CARE - CLINICAL CONSULTATION SUMMARY
+    const textContent = `MEDICARE - CLINICAL CONSULTATION SUMMARY
 =====================================================
 Date: ${summary.consultationDate}
 Consulting AI Assistant: ${summary.doctorName}
@@ -69,7 +69,7 @@ ${summary.disclaimer}
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `MedicusCare_Summary_${summary.id.slice(0, 8)}.txt`
+    a.download = `MediCare_Summary_${summary.id.slice(0, 8)}.txt`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -88,7 +88,7 @@ ${summary.disclaimer}
                 Clinical Consultation Summary
               </h2>
               <p className="text-xs text-slate-400">
-                Medicus Care • Record ID: #{summary.id.slice(0, 8)}
+                MediCare • Record ID: #{summary.id.slice(0, 8)}
               </p>
             </div>
           </div>
