@@ -1,104 +1,113 @@
-# Medicus Care — Your AI Doctor 🩺
+# Medicus Care — Your AI Healthcare Companion 🩺
 
-> **Parent Company:** Medicus Labs™  
-> **Primary Platform:** Responsive Web Application  
-> **Production Domain:** [care.medicuslabs.app](https://care.medicuslabs.app)  
+> **Parent Brand:** Medicus Labs™ (Founder & CEO: Mallikarjun R)  
+> **Primary Website:** [medicuslabs.app](https://medicuslabs.app)  
+> **Production Subdomain:** [care.medicuslabs.app](https://care.medicuslabs.app)  
 > **Repository:** [github.com/mallikarjunr444-gif/medicus-care](https://github.com/mallikarjunr444-gif/medicus-care)  
 
 ---
 
 ## 🌟 Executive Summary
 
-**Medicus Care** is an AI-powered digital healthcare platform delivering interactive, real-time healthcare assistance through realistic **3D virtual human AI doctors**.
+**Medicus Care™** is an advanced, multilingual, AI-powered healthcare consultation platform engineered with two independent clinical intelligence modules:
 
-Unlike conventional text-only healthcare chatbots, Medicus Care provides a telemedicine video-consultation experience where patients interact with virtual doctors through natural voice, facial expressions, eye contact, and medical document uploads.
+1. **AI General Physician (Dr. Arjun, M.D.)**: Specializing in primary care symptom triage, duration/severity assessment, differential possibilities, home care hydration, and red-flag identification.
+2. **AI Psychologist / Mental Wellness Companion (Dr. Ananya, M.D.)**: Specializing in supportive stress management, guided 4-4-4 box breathing, sleep hygiene, emotional validation, and 24/7 crisis escalation.
 
----
-
-## 👨‍⚕️ 3D Virtual Doctor Identities
-
-| Doctor | Identity | Specialty | Appearance & Environment |
-|---|---|---|---|
-| **Dr. Arjun, M.D.** | Male AI Avatar | AI General Physician | White medical lab coat, clinical stethoscope, cyan scrubs, consultation suite |
-| **Dr. Ananya, M.D.** | Female AI Avatar | General Physician & Wellness Consultant | White medical lab coat, clinical stethoscope, royal blue scrubs, consultation suite |
-
-### 3D Avatar Capabilities (Phase 2):
-* **Realtime WebGL 3D Rendering**: Built on Three.js with realistic skin shaders, warm clinical lighting, and half-body telemedicine framing.
-* **Articulated Blendshapes & Visemes**: Mouth opening (`mouthOpen`, `jawOpen`) and vowel visemes (`viseme_aa`, `viseme_E`, `viseme_O`, `viseme_I`, `viseme_U`) dynamically modulated by speech audio.
-* **Physiological Eye Blinking**: Randomized natural blinks every 2.8–4.5 seconds with micro-saccadic gaze tracking.
-* **Breathing Cycle**: Natural sinusoidal chest and shoulder rise/fall at 14 breaths/min.
-* **Dynamic Interaction States**:
-  * `idle`: Relaxed breathing, periodic natural blinks, subtle eye drift.
-  * `listening`: Attentive forward head tilt, direct eye contact on patient, affirmative micro-nods.
-  * `thinking`: Upward-side glance, head tilt, brow furrow, clinical processing indicator.
-  * `speaking`: Conversational head motion, empathetic brow movement, syllable-synchronized lip motion.
-  * `interrupted`: Immediate speech freeze, head recoil, transitions swiftly back to listening.
-  * `explaining`: Warm reassuring nods, friendly smile.
+Unlike text-only healthcare chatbots or stylized cartoon avatars, Medicus Care features an **authentic photorealistic human AI doctor** participating in a live video consultation with natural eye contact, physiological blinking (every 2.8–4.5s), sinusoidal breathing (14 breaths/min), attentive listening posture, and audio-synchronized mouth visemes.
 
 ---
 
-## 🚀 Key Modules & Features
+## 👨‍⚕️ Photorealistic AI Doctor Identity
 
-### 1. Telemedicine 70/30 Video Consultation
-* **70% Main Video Area**: Three.js 3D Doctor Canvas with patient webcam preview (Picture-in-Picture with camera on/off controls) and live audio subtitle bar.
-* **30% Right Clinical Sidebar**: Live conversation transcript, quick health inquiries, and report analyzer.
+![Dr. Arjun, M.D. - Medicus Care](frontend/public/doctor/Friendly%20Doctor%20in%20a%20Modern%20Consultation%20Office.png)
 
-### 2. Multilingual Healthcare
-* Full voice and text support in:
-  * **English**
-  * **Kannada (ಕನ್ನಡ)**
-  * **Hindi (हिन्दी)**
-
-### 3. Medical Safety & Escalation Engine
-Deterministic 4-level triage classifier:
-* **Level 1**: General healthcare information and preventive education.
-* **Level 2**: Medical assessment recommended for persistent symptoms.
-* **Level 3**: Urgent medical review recommended.
-* **Level 4 (Emergency)**: Suspected life-threatening symptoms trigger an immediate red alert with one-tap dialing for Indian Emergency Services (**112** / **108**).
-
-### 4. Medical Report Intelligence
-* Supports PDF, JPG, PNG uploads of diagnostic laboratory tests.
-* Parameter extraction for:
-  * Complete Blood Count (CBC)
-  * Fasting Blood Sugar & HbA1c
-  * Thyroid Profile (TSH, T3, T4)
-  * Lipid Profile & Metabolic Panels
-* Flags high/low results and presents preliminary physician explanations.
-
-### 5. Structured Consultation Summary
-* Compliant with PRD Section 20: generates structured clinical notes separating patient-reported symptoms from AI interpretations.
-* Export and print support with mandatory clinical disclaimer.
+* **Visual Identity**: Young professional male doctor with natural curly dark hair, realistic facial hair, transparent round spectacles, white medical coat, stethoscope, and professional striped dress shirt.
+* **Environment**: High-resolution modern medical consultation room with natural clinical lighting.
+* **Telemedicine Dynamics**: Attentive listening micro-expressions while the patient speaks, thoughtful processing gaze during inference, conversational head tilts, and audio-synchronized lip motion.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 🧠 Dual-Collection Unified RAG Knowledge Architecture
 
-| Layer | Technologies |
-|---|---|
-| **Frontend** | Next.js 16 (App Router), React 18, TypeScript, Tailwind CSS |
-| **3D Rendering** | Three.js WebGL, GLTFLoader, Blendshapes & Morph Targets |
-| **Realtime Audio/Video** | WebRTC, LiveKit, Web Audio API Analyzer |
-| **Speech Engine** | Whisper / IndicConformer STT, Indic-Parler-TTS, Web Speech API |
-| **Backend** | Python FastAPI, Pydantic, SQLAlchemy |
-| **Database & Cache** | PostgreSQL, pgvector, Redis, Celery |
-| **AI Models** | Qwen, MedGemma |
+Medicus Care separates patient-facing medical facts from mental health counseling dialogues using two isolated vector collections:
+
+1. **Medical Knowledge Collection**:
+   * Sourced from **MedQuAD** (11,274 NIH & MedlinePlus clinical guides) across symptoms, disease etiologies, preventive care, first-aid, and laboratory diagnostic tests.
+   * Cross-referenced with **Google MedGemma** clinical prompt architectures.
+   * Strictly isolates entrance exam datasets (**MedMCQA**) to offline benchmarking only.
+2. **Mental Wellness Knowledge Collection**:
+   * Sourced from **ESConv** (1,300 emotional support dialogues), **Cogni-OpenModel** (8,500 counseling turns), **CACTUS** (CBT prompt protocols), and **Psy-Insight**.
+   * Structured for empathetic validation, OARS motivational interviewing, and rational thought challenging without claiming licensed psychotherapy.
 
 ---
 
-## 📦 Getting Started
+## 🛡️ Medical Safety & Crisis Escalation Engine
 
-### Prerequisites
-* **Node.js** >= 20.9.0
-* **Python** >= 3.10
-* **Docker & Docker Compose** (optional for containerized deployment)
+Deterministic 4-level clinical triage screener running inline on every patient turn:
 
-### 1. Clone the Repository
+* **Level 1 (General Guidance)**: Preventive health education, hydration, rest.
+* **Level 2 (Assessment Advised)**: Non-urgent evaluation advised for persistent symptoms (>48 hours).
+* **Level 3 (Urgent Review)**: Priority outpatient clinical evaluation recommended.
+* **Level 4 (Emergency Red Alert)**: Severe chest pain, respiratory distress, stroke signs (FAST), unconsciousness, or suicidal crisis immediately halts normal conversation, triggers a red alert banner, and connects to emergency hotlines:
+  * **National Emergency Hotline (India)**: Dial **112** / **108**.
+  * **National Mental Health Helpline (KIRAN)**: Dial **1800-599-0019** (24/7 Toll-Free).
+  * **Tele-MANAS**: Dial **14416** or **1800-891-4416**.
+
+### Clinical Boundary Enforcement:
+* **No Autonomous Prescriptions**: Pattern filters strictly block Schedule H/X drug recommendations and dosages.
+* **No Definitive Diagnoses**: Diagnoses are phrased as differential educational possibilities.
+* **Permanent AI Disclosure**: Prominent badges and clinical disclaimers confirm AI assistant status.
+
+---
+
+## 🗣️ Multilingual Voice & Speech Pipeline
+
+* **Supported Languages**: English, Kannada (ಕನ್ನಡ), and Hindi (हिन्दी).
+* **Speech-to-Text (STT)**: `faster-whisper` (`large-v3-turbo`) with CTranslate2 for ultra-fast medical transcription, with `AI4Bharat IndicConformer` for vernacular Indian dialects.
+* **Text-to-Speech (TTS)**: Flow-matching `AI4Bharat IndicF5` and Edge-TTS for warm, reassuring regional pronunciation with zero per-minute SaaS fees.
+* **Voice Activity Detection (VAD)**: Real-time neural speech boundary detection using local ONNX `silero-vad` (5-10ms latency) supporting instant barge-in interruption.
+
+---
+
+## 🖥️ Medicus Care Admin Knowledge Console
+
+Administrators can navigate to `/` and select the **Admin Console** tab:
+* **Knowledge Explorer**: Browse, inspect, approve, or reject chunks across Medical and Mental Wellness collections.
+* **Document Ingestion**: Upload PDF, DOCX, TXT, CSV, or JSON reference documents staged as *Pending Review* until clinician sign-off.
+* **Repository & License Tracker**: Audit all 15 open-source repositories under `medicus-ai-data/`.
+* **Safety Evaluation Suite**: Run automated safety probes against CRADLE-Dialogue, Between Help & Harm, and NOPE Evals with live pass-rate metrics.
+
+---
+
+## 📚 Master Deliverables & Reports
+
+All formal documentation deliverables are maintained in [`documentation/`](documentation/):
+
+1. [`dataset_inventory.csv`](documentation/dataset_inventory.csv) — Complete audit of all 15 repositories, licenses, and file counts.
+2. [`dataset_summary.json`](documentation/dataset_summary.json) — Machine-readable summary of datasets and domain splits.
+3. [`licence_report.md`](documentation/licence_report.md) — Legal IP and open-source license governance report.
+4. [`data_quality_report.md`](documentation/data_quality_report.md) — Extraction, parsing, and deduplication quality metrics.
+5. [`model_comparison.md`](documentation/model_comparison.md) — Evaluation of MedGemma, Qwen 2.5, Cogni-OpenModel, and Llama 3.1.
+6. [`voice_quality_report.md`](documentation/voice_quality_report.md) — Empirical audio quality evaluation across English, Kannada, and Hindi.
+7. [`clinical_safety_report.md`](documentation/clinical_safety_report.md) — Red-teaming and safety benchmark evaluation results.
+8. [`architecture.md`](documentation/architecture.md) — System architecture diagram and WebRTC data flow.
+9. [`deployment_guide.md`](documentation/deployment_guide.md) — Production AWS EC2 GPU deployment and local Mac Apple Silicon guide.
+10. [`documentation/README.md`](documentation/README.md) — Documentation index and master reference guide.
+
+---
+
+## 🚀 Quick Start (Local Apple Silicon Mac)
+
+### 1. Backend Setup
 ```bash
-git clone https://github.com/mallikarjunr444-gif/medicus-care.git
-cd medicus-care
+cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
 ```
 
-### 2. Frontend Development Server
+### 2. Frontend Setup
 ```bash
 cd frontend
 npm install
@@ -106,25 +115,11 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 3. Backend Setup
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
-
-### 4. Full Docker Compose Deployment
-```bash
-docker compose up -d --build
-```
-
 ---
 
-## ⚖️ Regulatory & Medical Safety Notice
+## ⚖️ Clinical & Regulatory Notice
 
-Medicus Care is an AI-powered healthcare assistant designed to provide general health education and preliminary symptom guidance. **It is not an autonomous licensed doctor.** No clinical diagnosis, prescriptions, or regulated medical services are provided autonomously. Regulated medical services must remain under qualified human medical professionals. In medical emergencies, dial **112** (India) immediately.
+Medicus Care is an artificial intelligence pre-screening and healthcare educational platform. It is not an autonomous licensed doctor. No clinical diagnosis, prescriptions, or regulated medical services are provided autonomously. Regulated medical services must remain under qualified human medical practitioners. In acute medical emergencies, dial **112** (India) immediately.
 
 ---
 

@@ -759,6 +759,43 @@ class ConnectionManager:
                 data.get("system_prompt"), data.get("memory_summary")
             )
 
+            # ── 1. Deterministic Clinical Safety & Emergency Evaluation ─────
+            from app.services.safety_service import medical_safety_validator
+            safety_eval = medical_safety_validator.evaluate_patient_query(text)
+            if safety_eval.is_emergency:
+                emergency_reply = (
+                    safety_eval.emergency_message
+                    or "EMERGENCY ALERT: Potential critical symptoms detected. Please call 112 (India) or visit the nearest emergency room immediately."
+                )
+                await self._persist_message(session_id, "user", text)
+                await self.send_message(
+                    session_id,
+                    {
+                        "type": "message",
+                        "content": emergency_reply,
+                        "role": "assistant",
+                        "triage": 4,
+                        "is_emergency": True,
+                    },
+                )
+                await self._persist_message(session_id, "assistant", emergency_reply)
+                return
+
+            # ── 2. Dual-Collection Unified RAG Retrieval ───────────────────
+            from app.services.rag_service import rag_service
+            avatar_id = str(data.get("avatar_id") or "").lower()
+            is_wellness = "ananya" in avatar_id or any(
+                w in text.lower() for w in ["stress", "anxiety", "sleep", "mindful", "cbt", "lonely", "depress"]
+            )
+            rag_col = "mental_wellness" if is_wellness else "medical"
+            rag_matches = rag_service.search(text, collection=rag_col, top_k=2)
+
+            if rag_matches:
+                rag_block = "\n\nVerified Reference Knowledge:\n"
+                for m in rag_matches:
+                    rag_block += f"• [{m.title}]: {m.content}\n  ({m.attribution_text})\n"
+                system_prompt = (system_prompt or "") + rag_block
+
             # Persist the user turn before kicking off generation so it's
             # durable even if the model fails partway through.
             await self._persist_message(session_id, "user", text)
@@ -789,6 +826,8 @@ class ConnectionManager:
 
             response_text = results[0] if isinstance(results[0], str) else ""
             if response_text:
+                # Validate and sanitize response against illegal prescriptions or diagnostic claims
+                _, response_text = medical_safety_validator.validate_ai_response(response_text)
                 messages.append({"role": "assistant", "content": response_text})
                 data["messages"] = messages
                 latency = (datetime.now(timezone.utc) - started_at).total_seconds()

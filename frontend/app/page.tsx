@@ -34,6 +34,7 @@ import {
   CheckCircle2,
   ArrowRight,
   ShieldAlert,
+  Database,
 } from 'lucide-react'
 
 // Heavy components load on demand
@@ -60,6 +61,11 @@ const HistoryPanel = dynamic(
 const SettingsPanel = dynamic(
   () => import('@/components/SettingsPanel').then((m) => m.SettingsPanel),
   { ssr: false, loading: () => <PanelLoader label="Loading settings…" /> }
+)
+
+const AdminKnowledgeDashboard = dynamic(
+  () => import('@/components/admin/AdminKnowledgeDashboard').then((m) => m.AdminKnowledgeDashboard),
+  { ssr: false, loading: () => <PanelLoader label="Loading Knowledge & Safety Console…" /> }
 )
 
 function PanelLoader({ label }: { label: string }) {
@@ -123,7 +129,7 @@ const STATS = [
   { value: 'Level 1-4', label: 'Clinical Safety Engine' },
 ]
 
-type View = 'home' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings'
+type View = 'home' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings' | 'admin'
 
 export default function Home() {
   const { isAuthenticated, user, setAuth, clearAuth } = useStore()
@@ -190,6 +196,7 @@ export default function Home() {
     { id: 'voice', icon: Mic2, label: 'Voice' },
     { id: 'history', icon: History, label: 'History' },
     { id: 'settings', icon: Settings, label: 'Settings' },
+    { id: 'admin', icon: Database, label: 'Admin Console', badge: 'RAG' },
   ]
 
   return (
@@ -507,6 +514,13 @@ export default function Home() {
         {view === 'settings' && (
           <div className="max-w-4xl mx-auto px-6 py-10 animate-fade-in w-full">
             <SettingsPanel />
+          </div>
+        )}
+
+        {/* ── ADMIN KNOWLEDGE & SAFETY CONSOLE VIEW ── */}
+        {view === 'admin' && (
+          <div className="w-full flex-1 animate-fade-in">
+            <AdminKnowledgeDashboard />
           </div>
         )}
       </main>

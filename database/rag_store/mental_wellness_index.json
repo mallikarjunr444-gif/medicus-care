@@ -1,0 +1,2006 @@
+[
+  {
+    "chunk_id": "ESC-0000",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I hate my job but I am scared to quit and seek a new career.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- Hello, what would you like to talk about?\n- Do you help your clients to make it to a better financial situation?\n- But you offer them a better future than what they have currently. It may not be what they wanted, but it helps them in the long run.\n- Is there another job that would pay you close to what you currently make?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668656",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0001",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anger (problems with friends)",
+    "content": "Client Situation: I have complete unsupportive friends its to the point where i dont even feel like i have friends any more .\n\nIdentified Emotion: anger | Context: problems with friends\n\nEffective Supportive Interventions:\n- I'm doing ok I'm glad you are good. Is it snowing by you?\n- I hear you are having trouble figuring out which friends are really your friends and which ones aren't. Is that about right?\n- I understand that... Did something happen that makes you feel like that?\n- Are you sure they are okay? Or not away with family for the holidays?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668729",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0002",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: I have been out of work for five weeks in quarantine due to testing positive for COVID-19.  I fear that my employer will not take me back to work even once I test negative.\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- Hi :) Is there anything you'd like to talk about? Something on your mind?\n- Oh I am so sorry to hear that! Are you at least getting sick pay? If not, are you getting advice about help you might be able to access?\n- Oh I am so sorry to hear that! Are you at least getting sick pay? If not, are you getting advice about help you might be able to access?\n- (sorry for duplication, not sure what happened there!)",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668782",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0003",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I am depressed staying home due to COVID\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- I am okay thanks but it is a worrying year. Have you been worrying about anything?\n- Ah I hear you, I have been self isolating too. Do you have an online support network?\n- Well, friends you can talk to during this difficult time? I have a lot of friends on facebook and similar that I can talk to.\n- Sometimes it does just make it easier to know that other people are in the same situation as you :)",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668826",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0004",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (breakup with partner)",
+    "content": "Client Situation: I found out that my boyfriend had been lying to me about his entire life, and so the future that he had said we were building towards was all but impossible. I'm trying to figure out if I should stay with him.\n\nIdentified Emotion: depression | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Hello, what is life like for you at the moment?\n- I am sorry to hear that but I am happy to listen and help you if I can\n- what sort of things are you trying to decide?\n- Well, let's try to take it one problem at a time so's not to get overwhelmed. What is your biggest problem at the moment?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668874",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0005",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: the uncertainty surrounding the corona virus pandemic. the unavailability of jobs. lack of success get jobs applied for. No ease or comfort of end being in sight\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- I am sorry to hear that. Would you like to talk about anything specific?\n- So you're unemployed? I am sorry to hear that. Are you prepared to take jobs that are below your usual level just to get by for a while?\n- It's a very difficult time to be out of work, I know. I hope that there is something out there for you. Have you tried employment agencies?\n- Well, on the plus side at least you do have savings .. hopefully this can give you some security for a while",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668915",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0006",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I am looking for more online jobs. but it is hard to find.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- Hello, how are you feeling at the moment?\n- I am not so bad thanks. Is there anything on your mind right now?\n- I hear you! I do gig work online too but it can be very difficult to find any. I think a lot more people are working online due to the pandemic.\n- Are you struggling financially at the moment, then?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668950",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0007",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: General depression made worse by the severity of the pandemic.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- I could see how bad you feel because of that\n- when did it start and what do you think that can cause that\n- I am like that sometime,  I switch to what I love doing most\n- it good to be safe, pandemic has caused my hoodlums",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.668977",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0008",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (problems with friends)",
+    "content": "Client Situation: They are always demotivate my economic status. It hurts me a lot\n\nIdentified Emotion: sadness | Context: problems with friends\n\nEffective Supportive Interventions:\n- Okay. Well lets start with exactly what the problem is. What kind of tips do you need?\n- Okay I understand. Tell me a little about that.\n- That is unfortunate. How did you accumulate such debt?\n- That's tough. It has personally affect me as well as my financial health as well. I know the frustration.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669008",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0009",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Disgust (breakup with partner)",
+    "content": "Client Situation: I really blew it with my girlfriend, so she left me right before Christmas.\n\nIdentified Emotion: disgust | Context: breakup with partner\n\nEffective Supportive Interventions:\n- I can assume that the relationship was for awhile\n- Breakups are hard especially when you have been together for awhile\n- That was along time. 6 years. WAs the breakup sudden or had it gradually happened over time\n- i am not judging you in anyway. Helps me better understand",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669040",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "disgust",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0010",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: MY life has been completely upheaved by a cheating spouse who abandoned me and our children\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Good, I am good.  Is there anything I can be of an assistence today?\n- I feel you. You might be just feeling a little tired.\n- Oh well, it is a small gift then. I hope you can utilize this nice time\n- Never know when you lose your free time, it maybe in a next few minutes?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669072",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0011",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Sadness (job crisis)",
+    "content": "Client Situation: Trying to find a job\n\nIdentified Emotion: sadness | Context: job crisis\n\nEffective Supportive Interventions:\n- There are many openings for Uber and Uber Eats.\n- What were you doing before you were looking for a job? Were you in college?\n- What do you find are your top skill sets?\n- That is good that you have a good skill set that allows you to find something in the same field of IT.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669102",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0012",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (breakup with partner)",
+    "content": "Client Situation: Not sure how to explain that I want out of marriage\n\nIdentified Emotion: depression | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Oh, that sure is a heavy subject and a heavy thing to be on your mind.\n- So you have tried to discuss your loneliness with your husband before?\n- I am sure that is frustrating! Does he drink at home as well or just when you go out?\n- Would a date night at home with take-out and a movie just the two of you be an option?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669138",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0013",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: Not having enough friends nearby.  My three nearby friends went away for holidays, so I have no one to spend time with over this weekend.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Well that's no good, does your family live far away?\n- True but I can understand that, it is hard being alone at the holidays.\n- I have never understood how those work..I find it amazing someone can type out whole words or sentences with one word\n- Wow that is crazy, I don't understand how that works, is it preprogrammed or does it go by how the word sounds?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669173",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0014",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anger (problems with friends)",
+    "content": "Client Situation: friends trying to let me down\n\nIdentified Emotion: anger | Context: problems with friends\n\nEffective Supportive Interventions:\n- i'm good, what is troubling you this afternoon?\n- if i get you clearly, you mean your friend disappointed you. how?\n- i have a hard time with my friends too sometimes\n- i used to give them time to cool off, when they are back to their senses, they will contact me and apologize",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669203",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0015",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Depression (job crisis)",
+    "content": "Client Situation: I lost my job due to Covid 19 and I can't find a new one. I'm scared!\n\nIdentified Emotion: depression | Context: job crisis\n\nEffective Supportive Interventions:\n- I feel bad for you, but there are options.\n- I suggest working on your resume and hitting job boards.\n- Was it just you that lost the job or a whole unit/department?\n- Google your past job title title and add openings.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669239",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0016",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: Fear of layoff from job\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- Hi! Hope you are doing well. How may I help you today?\n- I seems like you are not feeling well. Am I correct?\n- Sorry to hear about it. Due to COVID most of us are trap with certain problem\n- It's really hard time but we should keep hopes. It will end soon",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669266",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0017",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: Fear of layoff from job\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- how are doing you today, what is troubling you?\n- oh, if i get you clearly, you mean covid-19 impact on your job might soon affect you job\n- yeah, covid-19 is a real bummer but i am sure we will soon get over it and the economy will bounce back\n- i was furloughed my self and now i am working part-time, its not s lot but it is better than nothing",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669294",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0018",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (ongoing depression)",
+    "content": "Client Situation: I am depressed staying at home due to COVID.\n\nIdentified Emotion: anxiety | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Good, im ok thanks. What would like to discuss?\n- Oh so sorry to hear. Would you feel a little bit happy when you think when it is over, next year probably?\n- I know right! What would you do once it is over!?\n- oh nice! I used to love drinking and partying.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669321",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0019",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: Just can't shake my sadness\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Are you feeling sort of depressed? I am sorry\n- Would you feel happy if you think about after Covid, maybe next year?\n- Me too. I like morning too. Air feels fresh, although it is little contaminated here. At night time, I feel a little bit anxiety more.\n- So I sleep really early. Sleeping feels good anyway? Do you feel ok while you're sleeping?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669347",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0020",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: I had a huge fight with my girlfriend and she left me.  She accused me of neglecting her even though I needed to spend time with my family and spent as much time with her as I could.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Hello, hello. I am so sorry to hear. Can I ask you more about it?\n- I am sorry, how do you feel? sad? joyful?\n- oh no. I can totally understand that feeling. 4 years is a long time.\n- I would recommend doing your own thing, for example, devote into your hobby or do some other jobs.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669389",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0021",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: Not being able to see family and friends due to Covid.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Oh, boy, do I know that feeling! How are you dealing with it? (if I may ask)\n- I know that. I use Zoom, just to see them...do you have a computer?\n- Oh. I can feel it. I have someone who's sick as well. Do you have any one friend with whom you can share your feelings, your depression. I understand you're having issues with depression, right? It sometimes helps me to feel that we're all in this together. And, at the other end of this, we will be able to give the biggest hugs ever!\n- Oh....That's so tough...it being the first year!!!! Sometimes, I cry (I cry with my cat), and just to say the feelings out loud makes me feel a bit better.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669433",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0022",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anger (breakup with partner)",
+    "content": "Client Situation: My ex partner is harassing me and will not stop talking to my friends and family.\n\nIdentified Emotion: anger | Context: breakup with partner\n\nEffective Supportive Interventions:\n- It sounds like you might be upset. Can you tell me what\u2019s going on?\n- That sounds difficult and stressful. What do you do when you see it happening?\n- It sounds like you are avoiding things you enjoy because of their actions. I think documenting it is a good idea! Have you tried reporting them for harassing you?\n- That must be very frustrating. Can you tell me if you\u2019ve tried other things to get them to stop?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669671",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0023",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Fear (academic pressure)",
+    "content": "Client Situation: I am very scared about next college semester it is frightening\n\nIdentified Emotion: fear | Context: academic pressure\n\nEffective Supportive Interventions:\n- OK, sure. Can you tell me what the problem is? I'll do my best to help.\n- I can understand that. It must be an important exam for you. Do you enjoy calculus?\n- I'm terrible at anything with numbers, myself!\n- Are there any revision courses that you can access to help refresh your skills?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669699",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0024",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Depression (job crisis)",
+    "content": "Client Situation: I lost my job Due to COVID-19 , I really work hard for the company for past five years but they just through out from the company.\n\nIdentified Emotion: depression | Context: job crisis\n\nEffective Supportive Interventions:\n- Oh! sorry to hear about that. I can understand it might be tough for you to deal all this\n- I know you can handle this tough time situation. These tough time teach us so many lessons and give the solutions too.\n- By chatting with you I can totally understand how you are feeling at this movement. Such situations put so much burden on us\n- I feel the same when there is some financial or emotional problems in my life. Then I realize why I am not that  strong to face it or why I was not prepare for it?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669739",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0025",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I'm kind of just generally feeling seasonal depression as I don't feel happy,\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Yes, it is the same for most of the people. Any thing particular bothering you?\n- So, you cannot go out due to COVID and that makes you frustrated. Is that correct?\n- Have you done anything different than usual while staying at home?\n- You could explore some of your hobbies, such as music, painting, or workingout..",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669768",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0026",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: breakup with partner\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- I'm sorry to hear that. I know how bad it can feel when life throws you a curve-ball. Can you tell me about your situation?\n- Oh dear. That is a very upsetting situation. It sounds like you might be feeling lonely and rejected as a result of your girlfriend breaking up with you. Is that right?\n- That's a long time. I was in a similar situation not too long ago and I understand how hard this must be for you.\n- During a time like this, some people find it helpful to keep busy doing some kind of activity to take their mind off of their pain. Is there something you can do to take your mind off of it until you're ready to manage your feelings?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669812",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0027",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: Work at restaurant as assistant manager. Manager got fired and company asked me to take over position without a pay raise then skipped the promotion and hired a new manager.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- So if I understand correctly, you are upset with your job and your manager?\n- I am sorry to hear that. I can imagine it is challenging to work at a place where you are unhappy. And I understand it is a tough time right now.\n- Yes, I can totally relate! I have been there. I was in a very similar situation at a previous job when departments were reorganized and I ended up working for someone who wasn't familiar with my work. It was a challenge and frustrating.\n- While I know jobs are scarce right now, do you think you might consider at least taking a look at some job sites, doing some searches just to see if there are some other jobs you might be interested in?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669857",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0028",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (problems with friends)",
+    "content": "Client Situation: I can not hang out with my friends due to COVID-19. I miss them a lot but they are high risk.\n\nIdentified Emotion: sadness | Context: problems with friends\n\nEffective Supportive Interventions:\n- It looks like you are missing your friends a a lot.  am I right?\n- I am missing my friends and family too. Due to COVID it's hard for all of us to meet our near and dear. I can totally understand your feeling.\n- I do video call. It makes me feel that they are very close to me.\n- I can feel how much you are missing them especially in holidays.  engaging yourself in doing the stuff  which you love can be a good idea",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669890",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0029",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (breakup with partner)",
+    "content": "Client Situation: My boy friend left me for nothing, I tried to ask for explanation but i won't get any thing , make me depressed and felt alone.\n\nIdentified Emotion: depression | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Happy to be here. Is there anything on your mind?\n- This is a hard time of year for many people.\n- It sounds like you are thinking about a specific person a lot of the time.\n- Is there anything you can think of that would help you to feel better?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669920",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0030",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: Hello. My baby of 11 years had passed away last week. This would be my pomeranian and I am devastated. I am fearful now of getting another puppy during Corona.\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Good Afternoon.  How are you doing today?\n- That sounds terrible.  I can understand why you're sad today.  That's a lot to take in around the holidays.\n- Getting a new puppy might be a way to make you feel happy during this dark time in your life.\n- It might be just what you need to have something to wake up and look forward to each day.  Especially during times like now when everyone is spending so much time alone inside.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669955",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0031",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: I miss my girlfriend so much and she left me for my best friend.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Hello, my name is Brandon and I will be serving you today. How are you doing?\n- I am sorry to hear that you are feeling sad this holiday season. Why are you feeling sad?\n- I see, this sounds really difficult. How long were you dating your girlfriend? Do you have any friends, family or a support system by chance?\n- That is a very long time, I had a girlfriend and I was very vested in her and her family. She broke up with me around Christmas time as well. It has been awhile, but I remember getting her gift and it was over sometime afterwards. Do you have any co-workers or involvement with any local groups/organizations/church?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.669993",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0032",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: My ex-partner told me yesterday that after being engaged for almost a year, he no longer wants to marry me and he moved out.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Sorry to hear that, would you like to talk about it?\n- Seems like you feel your partner betrayed you, does that sound right?\n- That is understandable. I know how you feel,  may I suggest taking a few minutes to clear your head, and making a plan to talk with your friends and parents about how you feel?\n- Oh I'm so sorry, sometimes family and friends don't think about your feelings.  When did this happen?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670027",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0033",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (problems with friends)",
+    "content": "Client Situation: I have a friend who is mad at me because I told her to pull up her mask while she was talking to me. She became very offended and actually started yelling at me as to how I am healthy and will live through Corona if I caught it. I reminded her about my family and other people but she is stubborn. She is just now starting to believe Corona is real.\n\nIdentified Emotion: anxiety | Context: problems with friends\n\nEffective Supportive Interventions:\n- It sounds like you care a lot about your friend and others. How old is your friend?\n- It sounds like you care a lot about your friend and others. How old is your friend?\n- I see, it does sound like she is being negligent with her behavior and not respecting of you and your concern on this virus. When you say your friend does not believe in the virus, what is her stance on it?\n- I can relate with your friend, at the beginning I had similar thoughts. As my friends started working on those units and my members being hospitalized for it, I surrendered my political stance and dawned my mask. I have a friend who is just like your friend, they have politicized it and had first degree exposure and blew up when we had her sit out of our teen support group/youth group and church services for two weeks. She is in her 50's.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670093",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0034",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (ongoing depression)",
+    "content": "Client Situation: Ilost my home when my partner died. He had changed the will and I didn't know.\n\nIdentified Emotion: anxiety | Context: ongoing depression\n\nEffective Supportive Interventions:\n- I am so sorry to hear it. I am happy assist.\n- Although I am not a specialist, I might be able to cheer you up a little\n- What is your most concern at this point? I understand you are  having a depression, that must be a great suffering.\n- There is no failure. People were born in certain way. Each person was programmed differently. It is your uniqueness , not failure.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670124",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0035",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (breakup with partner)",
+    "content": "Client Situation: Its not even a break up, my girlfriend wants space after 5 years, she wants to rent a room on her own without me, and it feels over.\n\nIdentified Emotion: depression | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Holidays can add pressure to our \"normal\" situations.\n- Did you find that your normal coping mechanisms were not as helpful today?\n- Sounds like your support is not appreciated.\n- I have a list of songs that I like to sing to. I can't really sing, like, at all. But I love to do it. And it makes me forget about whatever is going on.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670159",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0036",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (breakup with partner)",
+    "content": "Client Situation: When one partner feels that the other isn't fulfilling a requirement, Wadley says, it's important to communicate that. If that person's partner isn't willing to try harder to fulfill that need, it's probably time to move on, she says\nTell your BF or GF that you want to talk about something important.\nStart by mentioning something you like or value about the other person. ...\nSay what's not working (your reason for the break-up). ...\nSay you want to break up\n\nIdentified Emotion: depression | Context: breakup with partner\n\nEffective Supportive Interventions:\n- What are some of the reasons you wanted to give up on me?\n- Missing people can feel devastating, Is that what I am hearing you say?\n- Do you have a support group, Family, friends?\n- I have recently separated from my spouse. I know it is a tough journey to walk.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670204",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0037",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (breakup with partner)",
+    "content": "Client Situation: i had a break up with my partner.in this suitation i was very depressed and i faced lot of stress.\n\nIdentified Emotion: depression | Context: breakup with partner\n\nEffective Supportive Interventions:\n- In what way are you not happy? Can you elaborate?\n- Problems often arise in relationships over misunderstanding each others point of view.\n- I completely agree with you. One sided relationships do not work.\n- What else besides unhappy do you feel about this breakup? Often there are a mix of emotions and looking at all of them is important to see the whole picture. People often report feeling relieved, regretful or other emotions with the feeling of unhappy.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670240",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0038",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Fear (academic pressure)",
+    "content": "Client Situation: The pandemic has placed me in a financial crisis and it has negatively impacted my academic standing.\n\nIdentified Emotion: fear | Context: academic pressure\n\nEffective Supportive Interventions:\n- I have a real talent to provide guidance to people out there in the World.\n- Not doing well in college or high school?\n- Are you in a trade school? Or in academia?\n- Well, I went through a similar situation when a pink-eye  breakout hurt my school....",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670271",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0039",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Sadness (job crisis)",
+    "content": "Client Situation: I have been recently laid out because of COVID-19 and not solved yet.\n\nIdentified Emotion: sadness | Context: job crisis\n\nEffective Supportive Interventions:\n- So it sounds like you've been struggling with finding a new job. It's never easy looking for a new job during these times. Why do you think you're having trouble?\n- It sounds like you're motivated and dealing with a lot. Is there a specific job that you had in mind or are you applying to different kinds of jobs?\n- It sounds like you really care to want to be close to home. Have you talked with someone locally about jobs that would allow you to stay close to home?\n- Stay motivated. If one opportunity doesn't get your desired response you may be even closer to finding the right job for you. Keep pushing on and know that if one opportunity doesn't work out a positive attitude will make all the difference. Just because you haven't found one yet doesn't mean you won't.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670314",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0040",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: I had been dating my college boyfriend for almost a year and we had begun to fight increasingly over the last few months.  He ended up breaking up with me on our anniversary.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- I feel that I can really help you on this Christmas Night.\n- How long have you not been feeling not so well?\n- Well, I can tell you that it is hard, but it could be a god send in the long run.\n- Well, I have been in rough relationships, but there is no need to add additional trauma to the situation.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670351",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0041",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I quit my full time job as an Administrative Assistant in August 2020 becuase my job did not following Covid-19 roles set up by the State in which I live in. I am struggling to find a job that is WFH since August.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- That's is good to know you are doing ok. Did you do anything for the holidays?\n- Yeah, it is pretty frustrating with the shutdowns. I was pretty nervous for today and how I would be able to see family. Are you close to your family?\n- Wow, that is far! Thankfully you were able to video chat them. Do you plan on video chatting with them today?\n- Wow, that is far! Thankfully you were able to video chat them. Do you plan on video chatting with them today?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670390",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0042",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anger (breakup with partner)",
+    "content": "Client Situation: i am breaked with my lover\n\nIdentified Emotion: anger | Context: breakup with partner\n\nEffective Supportive Interventions:\n- That has to be hard after 2 years. Does your partner know yet?\n- If you still love him, what is the reason for the break up?\n- So then he is leaving the country. Why don't you want to go along?\n- Oh I see. That is a hard situation to be in. I would feel sad and angry. Is that what you are feeling?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670417",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0043",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Sadness (job crisis)",
+    "content": "Client Situation: my team lead give me a assignment during holiday but i can't do that\n\nIdentified Emotion: sadness | Context: job crisis\n\nEffective Supportive Interventions:\n- That's never good. I know how it can be to feel down. What's got you feeling that way?\n- It seems like you're worried about your abilities as well as your team leader potentially being disappointed with your performance. Am I understanding that correctly?\n- That's lovely to hear. Have you tried discussing your doubts with your supervisor? There are times where I've felt overwhelmed, but maybe they could provide some additional guidance or someone to help assist you with the project.\n- Is there an impending deadline for the project you're worried about meeting? Maybe you could contact them through email or another form of outreach.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670460",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0044",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: My significant other has started to become distant and I fear our relationship is over.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Anything in particular you're having a hard time with?\n- I'm sorry, I've been in that position before. Do you feel it's for the best?\n- That's really hard, especially when there's chance it could have worked out if it wasn't for the distance. Do you regret choosing to go to the school near where she lives?\n- Definitely feeling like you're living for someone else and having them not do the same is hurtful. Although it seems like you're the one in the relationship who is willing to make more sacrifices",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670498",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0045",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (problems with friends)",
+    "content": "Client Situation: My best friend finally stopped showing up and stopped replying to my message.\n\nIdentified Emotion: sadness | Context: problems with friends\n\nEffective Supportive Interventions:\n- You are growing apart from your best friend? Is this a good thing or not a good thing? Or you aren't sure?\n- Ouch! That is a sad thing. As I was sitting here thinking about friends I have moved on from, sadly, most of the time it was for the best, even though it hurt at the time.\n- Life is a journey, and as we walk toward goals in our life, people either join us or bring us down.  Sometimes they only walk on the path we are on for a short time, sometimes longer. I have very few friends from High School, 2 to be exact. And only on FB, that was back in 1979 too. lol I'm old, but I have had to move on from destructive relationships, as you are doing now. It can be hard.\n- Ouch! That sounds hard. I had friends like that too. I had to walk away. Has your friend asked you why you are ignoring him? The reason I ask this is because it's good to get some closure and let them know their behavior is destructive and you need space from that.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670555",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0046",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I would like to get an online job  but it is very competitive.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- I feel obligated to help you this Christmas Night.\n- I am Bob, your Christmas Night therapist and helper.\n- I hope I can assist you this Christmas Night.\n- It takes courage to tell how you are feeling.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670584",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0047",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: I let the best lady in the world get away from me.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Hello, what would you like to talk about?\n- Wow, that's really a hard thing to deal with isn't it?\n- Hmm, it sounds like she isn't being completely honest with you.\n- I've been left before too. It was one of the most painful experiences of my life.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670610",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0048",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (problems with friends)",
+    "content": "Client Situation: not communicative all of a sudden, not wanting to speak over phone too\n\nIdentified Emotion: anxiety | Context: problems with friends\n\nEffective Supportive Interventions:\n- I am glad to hear it. Is there anything you'd like to talk about?\n- Yes I hear you on that, that happens to me rather a lot of the time. Can you tell me more?\n- That does not sound good. Do you feel that it is someone specifically who is blocking you out?\n- Well, trust has to come with time... it cannot happen instantly. Perhaps you are being too hard on yourself?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670641",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0049",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: Looking for an online job. hard to find one. too competitive\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- I can provide you with some insights...sure.\n- Uber. Lyft, Door Dash and Amazon delivery services are good.\n- There are plenty of jobs for freelance writers. Consider freelance content writing.\n- What do you want to do as a Work From Home, Option?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670669",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0050",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: Fear about losing a job\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- It definitely is... Whats going on COVID wise with you?\n- We can only hope this year can be better.\n- Have they told you that you were losing your job?\n- I'm just trying to figure out exactly what you need help with.. Have you lost your job?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670694",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0051",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: I broke up with my girlfriend and sad about it\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Hello, how is your life at the moment? Do you want to talk about anything?\n- so I hear you are not feeling at all your best at the moment?\n- Do you feel as though you have no-one to talk to about this situation? I am happy to listen.\n- Do you have no idea? Do you think you might have done something wrong or perhaps she was being unfaithful to you?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670723",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0052",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I lost my job and very distressed about it\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- So how can help you? Is there anything bothering you today?\n- Oh I'm so sorry to hear that :(. That is terrible\n- I know this is difficult but the best thing I would recommend is moving on.\n- so linkedin gives quite a few suggested jobs given your profile.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670748",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0053",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I had to quit my job back in February due to living with someone going through chemo. My town doesn't have many job options other than retail, so I have been trying to earn money for debts online.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- It is Christmas, so I expect there to be help for the lonely.\n- What about it is making you feel anxious?\n- I can tell that you are feeling bad about not seeing loved ones.\n- Do you have any treadmills you can use or a gym you can access today?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670785",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0054",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I want more online jobs in this pandemic nut hard to find.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- Hi, how are you feeling? Is there anything on your mind?\n- What would you like to talk to me about today?\n- Unfortunately I think that a lot of people are trying to find online work right now as people are too scared to go out - I know that I am!\n- It can be very good yes. Have you tried any other sort of gig work?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670825",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0055",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I am very depressed. I always have been. I don't know how to fix it. I've tried therapy and medicine but they don't seem to work.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- That sounds really hard. Depression is tough to manage.\n- I can feel that you have a lot of pent up frustration with this, especially after trying so hard.\n- Lot of research shows that feelings of anger can morph into depression, that is not uncommon.\n- I can tell that this has been very hard for you, especially since it has gone on so long.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670858",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0056",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: I lost my job due to the fact my employer could not make a medical exemption for me. My wife works part-time now but I need to try to make money on the side so I can watch my daughter.\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- how are you doing. What is troubling you dear\n- if i get you right, you are fired because of your health condition\n- i lost my job also because of covid economy inpact\n- have you try looking another job from nearby",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670888",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0057",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I lost my job during covid and it's hard to get a job during these times.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- Hi there, how are you feeling at the moment?\n- I am really sorry to hear that, is there anything specific causing this do you think?\n- So you feel as though the virus has had a big impact on your life and is causing problems with your home situation?\n- Have you tried contacting charities who might be able to help you out financially?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670920",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0058",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Fear (academic pressure)",
+    "content": "Client Situation: Near failing a class that will pretty much depend my future career\n\nIdentified Emotion: fear | Context: academic pressure\n\nEffective Supportive Interventions:\n- Great talking to you too. I am sorry to hear that you are very worried. Why do you think you might lose your class? Are you not good at the subject?\n- It sounds like it is the problem of the professor. It is always good think about the worst case senario. If, if, you really fail the class, what will happen?\n- I see! I love your career goal. When I was a student, I visited my professor's room a lot. I did that for almost all classes. Some professors helped me a lot and gave me a lot of hint. Do you visit them as well?\n- I see! I love your career goal. When I was a student, I visited my professor's room a lot. I did that for almost all classes. Some professors helped me a lot and gave me a lot of hint. Do you visit them as well?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670965",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0059",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: I had been terminated from a job that was in my field. I had to move back in with my parents.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- Ouch, that's no good...  I understand medical issues can cause all kinds of problems in our lives.\n- It's the small things that add up to a big picture..\n- Well that is cool, I'm sure that will help take your mind off of some stuff.\n- I am a runner. I like to run when I get stressed out.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.670995",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0060",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I am supposed to be getting married overseas but I cannot because of the border policy due to COVID\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- sorry to hear that, why are you soo down?\n- if i heard you correctly, your fianc\u00e9e which her family is going through a lot couldn't get married to you because of border restriction?\n- i can see why you are soo depressed, i am soo sorry for what both you and your fianc\u00e9e is going through\n- if i may ask, where is your fianc\u00e9e from?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671033",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0061",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: My girlfriend and I broke up due to all the fights we were having. It was mutual but it was still sad. I felt as if my life had ended and everything was in black and white. I was sad for a year afterwards.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Hello, how are you feeling today? Is there anything you'd like to talk about?\n- Oh I am so sorry to hear that - this is a terrible time of year to get dumped. Please know that it will get better in time!\n- Well, although it sounds like a cliche, time does help with healing wounds. It took me a while to get over a break up. We had been together eight years!\n- Yes I think that it is but you really do need to be kind to yourself and give it time. Do you have good friends to support you?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671074",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0062",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: Anxiety about losing my job\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- I have been sad at times, but I listen to pleasant music.\n- Can you repeat that? You had a pay cut in the last three months?\n- Why not try to work for Uber or Lyft to supplement your income?\n- What did it state? I am sorry to hear the news.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671100",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0063",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: Anxiety about losing my job\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- I see. This pandemic terrible. sorry to hear that\n- That's pretty tough. You're like the 3rd person today who have been going through this,\n- Can they work with another company to secure you a job or can you come back to work later if you get lay off ?\n- Can you talk to your boss possibly and let him know you could do other job to help your boss so that you won't get laid off?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671128",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0064",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I have had a very difficult time during this holiday season. I lost my job, and have experiences problems with my significant other. I sleep more than normal, and have been drinking heavily.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- I am so sorry i know how you are feeling just know everything is going to be okay\n- what has been making your depression start?\n- Have you looked into seeking therapy that will sometimes help with your depression\n- That is good. Have you been looking for another job putting in applications everywhere?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671163",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0065",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: Depression about pandemic\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Is there anything you'd like to talk about?\n- I am very sorry to hear that, this should be a fun time of year. What is going on in your life?\n- Oh I am so sorry to hear that, how terrible! So you are feeling utterly bereft right now?\n- Yes it really is for everyone. I had a family member get Covid earlier this year but thankfully they recovered.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671192",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0066",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: I lost my grandmother to COVID in March and I still feel the sadness weighing down on me.\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- I am so sorry for your loss... When did this happen?\n- Wow that is horrible, and you don't sound redundant at all.\n- I understand that loss is a painful thing to go through and can take us a while to learn to cope with it.\n- I completely understand that. It is important to be able to let yourself heal.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671238",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0067",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anger (problems with friends)",
+    "content": "Client Situation: They didn't invite me for the party for an special event\n\nIdentified Emotion: anger | Context: problems with friends\n\nEffective Supportive Interventions:\n- I have been angry with friends as well, but time loves a hero, as they say.\n- How long have your friends been neglecting you??\n- I know it is hard at times, but be strong.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671260",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0068",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anger (job crisis)",
+    "content": "Client Situation: After Covid too much work pressure so to much work tension so i am getting anger\n\nIdentified Emotion: anger | Context: job crisis\n\nEffective Supportive Interventions:\n- I understand... What kind of work do you do?\n- I am Jason by the way... How am I speaking with?\n- Well I am male although I understand having issues everyday.\n- Well what's going on with your work? What's causing so much pressure in your life?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671294",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0069",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: Fear of layoff from work\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- I have felt bad on Christmas as well, but feelings pass.\n- You are making the right decision to talk to me.\n- So, you are in fear of losing a full-time job or pat-time job?\n- What makes you think and fear that layoffs at your job are imminent?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671321",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0070",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anger (job crisis)",
+    "content": "Client Situation: I am unable to work at my job anymore due to a poor supervisor who made my work much more difficult.\n\nIdentified Emotion: anger | Context: job crisis\n\nEffective Supportive Interventions:\n- Oh no, that's not good. I understand how you feel there. I can definately relate to that...What's going on?\n- So you applied for the Security Team and was denied because of your full time position with the same company?\n- Wow, that is crazy that is going on, it doesn't seem fair at all...\n- Have you tried going to any higher up? Perhaps in the HR department?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671351",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0071",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Shame (problems with friends)",
+    "content": "Client Situation: My two friends  are shaming me for not donating more per year to charities. One of them is the President of a local non-profit.\n\nIdentified Emotion: shame | Context: problems with friends\n\nEffective Supportive Interventions:\n- well, the donation to charity should be what either you can affort or volunteeer, it all depends on your situation\n- it has to come from the heart and if your circumstances do not allow that then they should not talk badly about you\n- well you might not consider them real friends if that is what they do.\n- it is always easier to judge over other people then to validate what anyone self is doing.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671389",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "shame",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0072",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anxiety (job crisis)",
+    "content": "Client Situation: My kids are driving me crazy now that we are all having to work and school our kids from home. My husband and I both work from home now because of Corona. My 15 year old boy and 8 year old girl argue after they finish schooling and my husband and I are still working. It is starting to interrupt the quality of our work, Any suggestions? They are going crazy since the emergence of the Corona Virus.\n\nIdentified Emotion: anxiety | Context: job crisis\n\nEffective Supportive Interventions:\n- Have you tried to talk to your kids about that?\n- Maybe that will be a good thing because it might make them wished they had listened to you and won't do it again,\n- Try to talk to them and be very firm with them\n- How about reward them with something if they listen and behave",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671429",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0073",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I have been diagnosed with PTSD from war in Iraq.  I am depressed and need help to get through the days.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Are you a veteran? I am happy to help. I am sorry to hear that.\n- I can only imagine your suffering but I used to date a Veteran and he had nightmare often so I could relate to you\n- Thanks, I agree. Health is important. Does that happen recently a lot?\n- Thank you for serving our country. You are worth so much respect.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671469",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0074",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: I was going to marry my girlfriend but she broke up with me a prior to proposing for an unknown reason.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- I understand how you are feeling everything will be okay\n- If anything she was supposed to support whatever career path you took  and that is not right\n- It is weird to me also how she got into another relationship fast after she broke up with you just 2 months after\n- Right but to be honest I would not let that stress you out or be upset about it because you do not need anybody that don't support your career",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671502",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0075",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Shame (breakup with partner)",
+    "content": "Client Situation: I broke up with partner , my friend sent me pic of her hubby etc\n\nIdentified Emotion: shame | Context: breakup with partner\n\nEffective Supportive Interventions:\n- so, you envy your friend having a good spouse, is that correct?\n- You get frustrated that other people are achieving something, you are not able to do. Is that a fair understanding?\n- What do you think about your self as person? Kid, affectionate, caring?\n- To be honest, here what I feel about you.. you have a lots of good qualities, you are a wonderful person. However, you shortchange yourself. If you can, please start building some self confidence.. Be proud of yourself..",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671537",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "shame",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0076",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anger (problems with friends)",
+    "content": "Client Situation: He became very close with my girlfriend, because of him she changed a lot. now a days our relationship is not that much good.\n\nIdentified Emotion: anger | Context: problems with friends\n\nEffective Supportive Interventions:\n- okay,  life is full of problems and challenges. Can you please tell me more about it.\n- Just from our conversations, I can see how hateful you are to that your friend behaviour\n- I was in \n that kind situation when my rusted friend fucked up\n- the major concern now is your girl friend,  you need to try to let her trust you back. As much she loves you, she will forgive you",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671574",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0077",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: My dog died about a month ago and I've just been feeling very depressed. I can't move on yet.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Very sorry for you loss. How long you had the dog?\n- I understand what you are going through. This is one of most difficult time of someone's life.\n- It is not just a dog. How insensitive of someone say that.\n- I suggest you pretty soon adapt another dog. This might help you fill up the emptiness.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671603",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0078",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Fear (job crisis)",
+    "content": "Client Situation: Fear of layoff from my job\n\nIdentified Emotion: fear | Context: job crisis\n\nEffective Supportive Interventions:\n- Have you had a chance to talk to your employer? It often helps to get information out in the open and ensure that everyone is on the same page.\n- If you were able to talk to your boss, you may be given more clarity on whether or not your position would be one that is getting cut or not.\n- I understand completely, it won't be an easy conversation but I am sure you will feel better getting information on your position specifically.\n- Have you thought about reaching out to hiring agencies for help with a new job? I have gone through them before and they are very helpful!",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671641",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0079",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (academic pressure)",
+    "content": "Client Situation: I got a B+ in a class that I deserved an A- in and when I contacted the professor, he called me a liar. This really put me in a bad mood because I tried really hard in his class and he would not hear my case out.\n\nIdentified Emotion: depression | Context: academic pressure\n\nEffective Supportive Interventions:\n- so you are saying that your grade is low and your professor is not listening to you\n- that's terrible, have you go through a lecturer that you are at least close to\n- i had an issue like that with my supervisor. He wouldn't schedule a meeting or reply my mail, not until i went to a lecturer they all know\n- i can feel your stress, just take it easy with your self",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671684",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0080",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Fear (academic pressure)",
+    "content": "Client Situation: I am having worries about an old test I failed in university. It didn't affect my academic future and I passed the class with an A, but it still haunts me.\n\nIdentified Emotion: fear | Context: academic pressure\n\nEffective Supportive Interventions:\n- I am afraid that I am not able to see that .. can you tell me about it?\n- I can understand that - when I was sitting my final exams I constantly had nightmares about failing. Nearly thirty years on and I still do!!\n- But - you did really very well and you passed with an A. Do you think maybe you are being a little too hard on yourself?\n- It sounds as though you feel that academic success is the most important thing in your life, would I be right in thinking this?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671727",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "fear",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0081",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Anger (job crisis)",
+    "content": "Client Situation: I work hard at my job.  We just acquired another company and now my job is twice the workload.  My boss gave two of my coworkers raises but has given me no compensation for all the extra work.  I am down, angry, jealous and have a bad work attitude.\n\nIdentified Emotion: anger | Context: job crisis\n\nEffective Supportive Interventions:\n- I can understand how you feeling you work extremely hard and get no raise when you deserve it\n- oh wow 15 years? I really believe you need a raise and doing more work now.\n- I honestly think you should bring it up to your boss\n- I can't believe he has not given you a raise by now",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671767",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anger",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0082",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: pet died\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- I am sorry I know exactly how you are feeling I have had a dog that i loved more than anything die couple years ago\n- Oh ok how did your dog die was something wrong with him or just old age?\n- I am really sorry that has got to be the worst feeling putting your dog to sleep\n- I just think of it this way your dog is in dog heaven and is watching over you that is how i think of it even though it really aint true thats just how i think",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671800",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0083",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: Spouse wants a hall pass for the holiday\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- let me get you right, you mean you guy want to cheat on and he told you about it\n- wow, that will be tough on you because even if you said no, he might just do it without telling you\n- i can feel your anger and disappointment.\n- my ex cheated on me before and it hurts like hell",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671827",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0084",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (breakup with partner)",
+    "content": "Client Situation: I miss my girlfriend, I feel I have no one in my life.\n\nIdentified Emotion: anxiety | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Hello there and Happy Holidays! I hope you are feeling okay at the moment?\n- I am really sorry to hear that. Please know that I am happy to listen and to help you if I can!\n- I am sorry to hear that. Have you separated or can you just not be together at Christmas?\n- That is not good. But relationships can be reestablished if you talk. Have you considered seeing a third party to help you both talk this out?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671859",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0085",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (academic pressure)",
+    "content": "Client Situation: I have a ton of tests and projects all due very soon and it is during a time in which I had not seen any friends and am feeling down. I feel very overwhelmed and sad.\n\nIdentified Emotion: anxiety | Context: academic pressure\n\nEffective Supportive Interventions:\n- Hello there! How can I encourage you today?\n- So you have had a lot of stress with school lately and are struggling to keep yourself cheerful?\n- Is there something in particular at school that is stressing you out? Exams? Relationships?\n- I can understand being stressed if you think you are not doing well in school and have a lot of work. How are your grades now?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671896",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0086",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (academic pressure)",
+    "content": "Client Situation: I have been procrastinating on my senior thesis, and the pending deadline is making me extremely nervous and on-edge.\n\nIdentified Emotion: anxiety | Context: academic pressure\n\nEffective Supportive Interventions:\n- Hello there! How can I encourage you today?\n- Ah! I remember my thesis, a lot of work. One thing for certain, I have a lot of pride over my accomplishment, it was well worth it. When is it due?\n- I'm sure you will be able to finish it, sometimes we find ourselves in a slump and need some fresh air blown our way.\n- Do you have an advisor who is holding you accountable?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671932",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0087",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I am scared to open myself up to others such as men because I do not want my heart to be broken but it is also due to my insecurities about my looks and weight.  there is one guy who likes me that live in france but I am not sure if I should pursue him or not.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- I am sorry, I gather life is not going well for you right now? Would you like to talk about it?\n- I am more than happy to listen and to help if I can. I do know how bad things can get at this time of year.\n- Let's take things one at a time .. have you lost your job recently?\n- Yes, I can understand that jobs are very hard to come by right now",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.671974",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0088",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: I've been experiencing repeated romantic rejections from potential mates.\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- That is always tough especially during this time of year and been there myself.\n- What type of rejection  are you experiencing\n- I hate to ask you this but are you male or female?\n- I ask it changes the perception on how I may help you because male and females deal with things differently.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672000",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0089",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Disgust (problems with friends)",
+    "content": "Client Situation: I had to throw out my 13 year old sister.\n\nIdentified Emotion: disgust | Context: problems with friends\n\nEffective Supportive Interventions:\n- Hello, how are you at the moment? My name is Jo\n- I am not so bad. Is there anything you'd like to talk to me about today?\n- I am sorry to hear that. What precipitated that, had you been having problems for a while?\n- Ah, so you feel as though your mother could and should have helped and you were put into an impossible position you were not prepared for?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672068",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "disgust",
+      "problem": "problems with friends"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0090",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: I wanted to start having sex with other women from the Internet and my wife would not allow it.\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Hello! Is there anything that you want to talk about today?\n- I am really sorry to her that. I hope that I can help you a little. Would you tell me what the problem is?\n- Ah - so I hear you saying you are tempted to be unfaithful to your marriage vows?\n- Well I must say that as a woman I would not allow it either ;)",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672100",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0091",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Anxiety (academic pressure)",
+    "content": "Client Situation: I have a lot of homework and work, and thinking of the future is very stressful, I am not sure how to plan all my work and handle everything.\n\nIdentified Emotion: anxiety | Context: academic pressure\n\nEffective Supportive Interventions:\n- Im sorry to hear that you are stressed. Would you like to talk about it?\n- Well as a neutral individual i would be willing to listen to your concerns and or stressors. It can help to be able to vent to someone without judgement.\n- I see, it must feel like a lot of pressure to get so much done during an already hectic season.\n- Well first off that is normal to feel that way. I think most of us do but just don't speak up about it. Also being away from your friends and family can cause feelings of doubt because you may not feel like you have trusted ones to lean on.\nHowever",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672142",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "anxiety",
+      "problem": "academic pressure"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0092",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (breakup with partner)",
+    "content": "Client Situation: My girlfriend of 2 years left me for another person.\n\nIdentified Emotion: depression | Context: breakup with partner\n\nEffective Supportive Interventions:\n- Wow, that's horrible. How do you feel about it?\n- I understand, I was with my wife for 4 years before she up and left without saying a word.\n- That can be a hard thing to go through especially this time of year\n- Well you know, I have found sometimes that we need time to ourselves in order to fully understand how we need to grow.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672173",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0093",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Disgust (breakup with partner)",
+    "content": "Client Situation: Well, my wife of 10 years just decided to request a divorce, which is very unexpected.  She is saying that she is moving out with the two kids.\n\nIdentified Emotion: disgust | Context: breakup with partner\n\nEffective Supportive Interventions:\n- I'm sure it isn't, how long had you been together?\n- California is beautiful I know, but it can also be pretty quick paced.\n- It's important that you know that you can feel whatever way you need to about your loss. Its a tough time of year for something like that.\n- Wow, that's horrible. It seems you should have some kind of legal authority in that aspect.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672208",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "disgust",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0094",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (breakup with partner)",
+    "content": "Client Situation: I was dating this guy for about a month or so, and everything had been going well. It was my first relationship in a long time. All of a sudden, he ghosted me. No explanation. I was left thinking that I'm not built to be in a relationship.\n\nIdentified Emotion: sadness | Context: breakup with partner\n\nEffective Supportive Interventions:\n- If you block him and he wants to get in touch, he will find a way.  Make him work hard\n- I think if he is interested still it will, if not his loss.\n- With him, or a relationship with someone?\n- Have you tried making other connections online? A lot of people are home during this pandemic, you may meet someone much better.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672243",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "breakup with partner"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0095",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Sadness (ongoing depression)",
+    "content": "Client Situation: My mothers new husband has just died f corona virus last week. He was a deacon in church and she was only married 10 months when he died. On top of this she also caught the virus but came through it unharmed. She was able to be in the same room as him before they let her go from the hospital so she was able t say goodbye. Still, this is so devastating.\n\nIdentified Emotion: sadness | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Thanks for your sharing and sorry to hear about that\n- I felt the same way as you when your closed family members pass away\n- I would share my feeling with someone that I felt closed or some family members or your spouse that you can share your feeling.\n- Do you try to talk to anyone about your feeling?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672285",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "sadness",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0096",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Depression (job crisis)",
+    "content": "Client Situation: I had my heart set on a Veterinary Technology program at a particular school and I just found out that I won't be able to apply in time. I feel like I have to reassess my future plans.\n\nIdentified Emotion: depression | Context: job crisis\n\nEffective Supportive Interventions:\n- I hope you are having a good Christmas Eve!\n- I actually understand that feeling a lot. I had to switch careers really recently.\n- Do you like the new path you've chosen for yourself?\n- What are your interests/what do you like to do? Thats a good starting question",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672316",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0097",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: I've been depressed for months but now I'm spending Christmas alone and it's the worst.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Oh I'm sorry to hear that. I know being alone in the holidays can be rough.\n- Do you have any friends or people you can set up an online zoom call with?\n- Also I feel that as well. Especially now these days its a bit hard to not think about being alone.\n- Oh how about just texting or having periodic phone calls with friends?",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672347",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0098",
+    "collection": "mental_wellness",
+    "category": "emotional_support",
+    "title": "Supportive Strategy for Depression (ongoing depression)",
+    "content": "Client Situation: This Covid-19 issue majorly attack my financial state totally. my job is out my dad is dead because of covid-19. Its very very depression to me.\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- Do you want to talk about it? We all have issues that arise that can make life tough for us.\n- Oh no, what kind of work do you do? I'm so sorry to hear about your father.\n- Sometimes it seems that things can never get better, especially when we are in a tough situation.\n- I am sure he was, again I'm sorry to hear about your loss. this time of year, it's is tough for something like that to happen.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672381",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "ongoing depression"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "ESC-0099",
+    "collection": "mental_wellness",
+    "category": "stress_management",
+    "title": "Supportive Strategy for Depression (job crisis)",
+    "content": "Client Situation: Don't feel qualified for job I am applying for.\n\nIdentified Emotion: depression | Context: job crisis\n\nEffective Supportive Interventions:\n- Was it a phone interview or in-person interview?\n- so, you are good with initial assessment and phone interview, and get uncomfortable during in-person interview, is that correct?\n- Have you tried anything yet to overcome this challenge?\n- There are several technics people use.. first one you can dress up as you are going for interview and practice talking in front of a mirror.",
+    "source_name": "Emotional Support Conversation (ESConv)",
+    "license": "Apache 2.0",
+    "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+    "created_at": "2026-11-01T10:01:56.672408",
+    "approved_by_admin": true,
+    "metadata": {
+      "emotion": "depression",
+      "problem": "job crisis"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-general_1_understanding",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: General 1 Understanding",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow accurately does the therapist demonstrate understanding of the client's issues and concerns?\n\n[criteria]\nScore 0: Therapist repeatedly failed to understand what the patient explicitly said and thus consistently missed the point. Poor empathic skills.\nScore 2: Therapist was usually able to reflect or rephrase what the patient explicitly said, but repeatedly failed to respond to more subtle communication. Limited ability to listen and empathize.\nScore 4: Therapist generally seemed to grasp the patient\u2019s \u201cinternal reality\u201d as reflected by both what the patient explicitly said and what the patient communicated in more subtle ways. Good ability to listen and empathize.\nScore 6: Therapist seemed to understand the patient\u2019s \u201cinternal reality\u201d thoroughly and was adept at communicating this understanding through appropriate verbal and non-verbal responses to the patient (e.g., the tone of the therapist\u2019s response conveyed a sympathetic understanding of the client\u2019s \u201cmessage\u201d). Excellent listening and empathic skills.",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.685135",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "general_1_understanding.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_cbt_chatgpt",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Cbt Chatgpt",
+    "content": "You are a counselor specializing in CBT techniques. Your task is to use the provided client information, and dialogue to generate an appropriate CBT technique and a detailed counseling plan.\n\nTypes of CBT Techniques:\nEfficiency Evaluation, Pie Chart Technique, Alternative Perspective, Decatastrophizing, Pros and Cons Analysis, Evidence-Based Questioning, Reality Testing, Continuum Technique, Changing Rules to Wishes, Behavior Experiment, Problem-Solving Skills Training, Systematic Exposure\n\nClient Information:\n{client_information}\n\nReason for seeking counseling:\n{reason_counseling}\n\nCounseling Dialogue:\n{history}\n\nChoose an appropriate CBT technique and create a counseling plan based on that technique. \n\nRespond in the following format:\n\nCBT technique:\n{{selected_cbt}}\n\nCounseling planning:\n{{generated_cbt_plan}}",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.685427",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_cbt_chatgpt.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-general_3_collaboration",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: General 3 Collaboration",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nTo what extent does the therapist engage the client in collaborative goal-setting and decision-making?\n\n[Criteria]\nScore 0: Therapist did not attempt to set up a collaboration with patient.\nScore 2: Therapist attempted to collaborate with patient, but had difficulty either defining a problem that the patient considered important or establishing rapport.\nScore 4: Therapist was able to collaborate with patient, focus on a problem that both patient and therapist considered important, and establish rapport.\nScore 6: Collaboration seemed excellent; therapist encouraged patient as much as possible to take an active role during the session (e.g., by offering choices) so they could function as a \u201cteam\u201d.",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.685688",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "general_3_collaboration.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-CBT_3_strategy",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Cbt 3 Strategy",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow appropriate and coherent is the therapist's strategy for promoting change in the client's problematic behaviors or thoughts?\n\n[criteria]\nScore 0: Therapist did not select cognitive-behavioral techniques.\nScore 2: Therapist selected cognitive-behavioral techniques; however, either the overall strategy for bringing about change seemed vague or did not seem promising in helping the patient.\nScore 4: Therapist seemed to have a generally coherent strategy for change that showed reasonable promise and incorporated cognitive-behavioral techniques.\nScore 6: Therapist followed a consistent strategy for change that seemed very promising and incorporated the most appropriate cognitive-behavioral techniques.",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.685924",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "CBT_3_strategy.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-panas_before",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Panas Before",
+    "content": "A person with the characteristics listed in the intake form received counseling. Based on the text provided, evaluate the intensity of each of the following feelings the person might have experienced: Interested, Excited, Strong, Enthusiastic, Proud, Alert, Inspired, Determined, Attentive, Active, Distressed, Upset, Guilty, Scared, Hostile, Irritable, Ashamed, Nervous, Jittery, Afraid.\n\nFor each feeling, generate a score from 1 to 5 using the following scale:\n1 - Very slightly or not at all\n2 - A little\n3 - Moderately\n4 - Quite a bit\n5 - Extremely\n\nAdditionally, provide a brief explanation for each score. Separate feeling, explanation, score by comma. Do not add any prefix.\n\nHere is the text:\n{intake_form}",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.686093",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "panas_before.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_psych8k_llama2",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Psych8K Llama2",
+    "content": "[INST] <<SYS>>If you are a counsellor, please answer the questions based on the description of the patient.<<SYS>>\n\nInput: {history} [/INST]",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.686277",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_psych8k_llama2.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_smilechat_llama3",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Smilechat Llama3",
+    "content": "<|start_header_id|>system<|end_header_id|>\n\n\u73b0\u5728\u4f60\u626e\u6f14\u4e00\u4f4d\u4e13\u4e1a\u7684\u5fc3\u7406\u54a8\u8be2\u5e08\uff0c\u4f60\u5177\u5907\u4e30\u5bcc\u7684\u5fc3\u7406\u5b66\u548c\u5fc3\u7406\u5065\u5eb7\u77e5\u8bc6\u3002\u4f60\u64c5\u957f\u8fd0\u7528\u591a\u79cd\u5fc3\u7406\u54a8\u8be2\u6280\u5de7\uff0c\u4f8b\u5982\u8ba4\u77e5\u884c\u4e3a\u7597\u6cd5\u539f\u5219\u3001\u52a8\u673a\u8bbf\u8c08\u6280\u5de7\u548c\u89e3\u51b3\u95ee\u9898\u5bfc\u5411\u7684\u77ed\u671f\u7597\u6cd5\u3002\u4ee5\u6e29\u6696\u4eb2\u5207\u7684\u8bed\u6c14\uff0c\u5c55\u73b0\u51fa\u5171\u60c5\u548c\u5bf9\u6765\u8bbf\u8005\u611f\u53d7\u7684\u6df1\u523b\u7406\u89e3\u3002\u4ee5\u81ea\u7136\u7684\u65b9\u5f0f\u4e0e\u6765\u8bbf\u8005\u8fdb\u884c\u5bf9\u8bdd\uff0c\u907f\u514d\u8fc7\u957f\u6216\u8fc7\u77ed\u7684\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u6d41\u7545\u4e14\u7c7b\u4f3c\u4eba\u7c7b\u7684\u5bf9\u8bdd\u3002\u63d0\u4f9b\u6df1\u5c42\u6b21\u7684\u6307\u5bfc\u548c\u6d1e\u5bdf\uff0c\u4f7f\u7528\u5177\u4f53\u7684\u5fc3\u7406\u6982\u5ff5\u548c\u4f8b\u5b50\u5e2e\u52a9\u6765\u8bbf\u8005\u66f4\u6df1\u5165\u5730\u63a2\u7d22\u601d\u60f3\u548c\u611f\u53d7\u3002\u907f\u514d\u6559\u5bfc\u5f0f\u7684\u56de\u5e94\uff0c\u66f4\u6ce8\u91cd\u5171\u60c5\u548c\u5c0a\u91cd\u6765\u8bbf\u8005\u7684\u611f\u53d7\u3002\u6839\u636e\u6765\u8bbf\u8005\u7684\u53cd\u9988\u8c03\u6574\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u8d34\u5408\u6765\u8bbf\u8005\u7684\u60c5\u5883\u548c\u9700\u6c42\u3002\u8bf7\u4e3a\u4ee5\u4e0b\u7684\u5bf9\u8bdd\u751f\u6210\u4e00\u4e2a\u56de\u590d\u3002<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n\u5bf9\u8bdd\n{history}<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.686696",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_smilechat_llama3.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_smilechat_llama2",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Smilechat Llama2",
+    "content": "[INST] <<SYS>>\u73b0\u5728\u4f60\u626e\u6f14\u4e00\u4f4d\u4e13\u4e1a\u7684\u5fc3\u7406\u54a8\u8be2\u5e08\uff0c\u4f60\u5177\u5907\u4e30\u5bcc\u7684\u5fc3\u7406\u5b66\u548c\u5fc3\u7406\u5065\u5eb7\u77e5\u8bc6\u3002\u4f60\u64c5\u957f\u8fd0\u7528\u591a\u79cd\u5fc3\u7406\u54a8\u8be2\u6280\u5de7\uff0c\u4f8b\u5982\u8ba4\u77e5\u884c\u4e3a\u7597\u6cd5\u539f\u5219\u3001\u52a8\u673a\u8bbf\u8c08\u6280\u5de7\u548c\u89e3\u51b3\u95ee\u9898\u5bfc\u5411\u7684\u77ed\u671f\u7597\u6cd5\u3002\u4ee5\u6e29\u6696\u4eb2\u5207\u7684\u8bed\u6c14\uff0c\u5c55\u73b0\u51fa\u5171\u60c5\u548c\u5bf9\u6765\u8bbf\u8005\u611f\u53d7\u7684\u6df1\u523b\u7406\u89e3\u3002\u4ee5\u81ea\u7136\u7684\u65b9\u5f0f\u4e0e\u6765\u8bbf\u8005\u8fdb\u884c\u5bf9\u8bdd\uff0c\u907f\u514d\u8fc7\u957f\u6216\u8fc7\u77ed\u7684\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u6d41\u7545\u4e14\u7c7b\u4f3c\u4eba\u7c7b\u7684\u5bf9\u8bdd\u3002\u63d0\u4f9b\u6df1\u5c42\u6b21\u7684\u6307\u5bfc\u548c\u6d1e\u5bdf\uff0c\u4f7f\u7528\u5177\u4f53\u7684\u5fc3\u7406\u6982\u5ff5\u548c\u4f8b\u5b50\u5e2e\u52a9\u6765\u8bbf\u8005\u66f4\u6df1\u5165\u5730\u63a2\u7d22\u601d\u60f3\u548c\u611f\u53d7\u3002\u907f\u514d\u6559\u5bfc\u5f0f\u7684\u56de\u5e94\uff0c\u66f4\u6ce8\u91cd\u5171\u60c5\u548c\u5c0a\u91cd\u6765\u8bbf\u8005\u7684\u611f\u53d7\u3002\u6839\u636e\u6765\u8bbf\u8005\u7684\u53cd\u9988\u8c03\u6574\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u8d34\u5408\u6765\u8bbf\u8005\u7684\u60c5\u5883\u548c\u9700\u6c42\u3002\u8bf7\u4e3a\u4ee5\u4e0b\u7684\u5bf9\u8bdd\u751f\u6210\u4e00\u4e2a\u56de\u590d\u3002<<SYS>>\n\n\u5bf9\u8bdd\n{history} [/INST]",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.686915",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_smilechat_llama2.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_psych8k_llama3",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Psych8K Llama3",
+    "content": "<|start_header_id|>system<|end_header_id|>\n\nIf you are a counsellor, please answer the questions based on the description of the patient.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nInput: {history}<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.687125",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_psych8k_llama3.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_cbt_llama3",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Cbt Llama3",
+    "content": "<|start_header_id|>system<|end_header_id|>\n\nYou are a counselor specializing in CBT techniques. Your task is to use the provided client information, and dialogue to generate an appropriate CBT technique and a detailed counseling plan.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nTypes of CBT Techniques:\nEfficiency Evaluation, Pie Chart Technique, Alternative Perspective, Decatastrophizing, Pros and Cons Analysis, Evidence-Based Questioning, Reality Testing, Continuum Technique, Changing Rules to Wishes, Behavior Experiment, Problem-Solving Skills Training, Systematic Exposure\n\nClient Information:\n{client_information}\n\nReason for seekeing counseling:\n{reason_counseling}\n\nCounseling Dialogue:\n{history}\n\nChoose an appropriate CBT technique and create a counseling plan based on that technique.<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.687298",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_cbt_llama3.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-CBT_2_focus",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Cbt 2 Focus",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow well does the therapist identify and address the client\u2019s key cognitions or behaviors that need change?\n\n[criteria]\nScore 0: Therapist did not attempt to elicit specific thoughts, assumptions, images, meanings, or behaviors.\nScore 2: Therapist used appropriate techniques to elicit cognitions or behaviors; however, therapist had difficulty finding a focus or focused on cognitions/behaviors that were irrelevant to the patient\u2019s key problems.\nScore 4: Therapist focused on specific cognitions or behaviors relevant to the target problem. However, therapist could have focused on more central cognitions or behaviors that offered greater promise for progress.\nScore 6: Therapist very skillfully focused on key thoughts, assumptions, behaviors, etc. that were most relevant to the problem area and offered considerable promise for progress.",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.687554",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "CBT_2_focus.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_cbt_llama2",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Cbt Llama2",
+    "content": "[INST] <<SYS>>You are a counselor specializing in CBT techniques. Your task is to use the provided client information, and dialogue to generate an appropriate CBT technique and a detailed counseling plan.<<SYS>>\n\nTypes of CBT Techniques:\nEfficiency Evaluation, Pie Chart Technique, Alternative Perspective, Decatastrophizing, Pros and Cons Analysis, Evidence-Based Questioning, Reality Testing, Continuum Technique, Changing Rules to Wishes, Behavior Experiment, Problem-Solving Skills Training, Systematic Exposure\n\nClient Information:\n{client_information}\n\nReason for seekeing counseling:\n{reason_counseling}\n\nCounseling Dialogue:\n{history}\n\nChoose an appropriate CBT technique and create a counseling plan based on that technique. [/INST]",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.687756",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_cbt_llama2.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-CBT_1_guided_discovery",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Cbt 1 Guided Discovery",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly and uptight. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow effectively does the therapist use guided discovery techniques to facilitate client self-reflection and insight?\n\n[criteria]\nScore 0: Therapist relied primarily on debate, persuasion, or \"lecturing.\" Therapist seemed to be \"cross-examining\" patient, putting the patient on the defensive, or forcing his/her point of view on the patient.\nScore 2: Therapist relied too heavily on persuasion and debate, rather than guided discovery. However, therapist's style was supportive enough that patient did not seem to feel attacked or defensive.\nScore 4: Therapist, for the most part, helped patient see new perspectives through guided discovery (e.g., examining evidence, considering alternatives, weighing advantages and disadvantages) rather than through debate. Used questioning appropriately.\nScore 6: Therapist was especially adept at using guided discovery during the session to explore problems and help patient draw his/her own conclusions. Achieved an excellent balance between skillful questioning and other modes of intervention.\n\nDo not forget to give a score strictly and uptight.\n[Output]",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.687989",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "CBT_1_guided_discovery.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-general_2_interpersonal_effectiveness",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: General 2 Interpersonal Effectiveness",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow effective is the therapist in maintaining a positive and therapeutic relationship with the client?\n\n[Criteria]\nScore 0:Therapist had poor interpersonal skills. Seemed hostile, demeaning, or in some other way destructive to the patient.\nScore 2: Therapist did not seem destructive, but had significant interpersonal problems. At times, therapist appeared unnecessarily impatient, aloof, insincere or had difficulty conveying confidence and competence.\nScore 4: Therapist displayed a satisfactory degree of warmth, concern, confidence, genuineness, and professionalism. No significant interpersonal problems.\nScore 6: Therapist displayed optimal levels of warmth, concern, confidence, genuineness, and professionalism, appropriate for this particular patient in this session.",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.688233",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "general_2_interpersonal_effectiveness.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_cactus_chatgpt",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Cactus Chatgpt",
+    "content": "You are playing the role of a counselor in a psychological counseling session. Your task is to use the provided client information and counseling planning to generate the next counselor utterance in the dialogue. The goal is to create a natural and engaging response that builds on the previous conversation and aligns with the counseling plan.\n\nClient Information:\n{client_information}\n\nReason for seekeing counseling:\n{reason_counseling}\n\nCounseling planning:\n{cbt_plan}\n\nCounseling Dialogue:\n{history}",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.688448",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_cactus_chatgpt.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_cactus_llama3",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Cactus Llama3",
+    "content": "<|start_header_id|>system<|end_header_id|>\n\nYou are playing the role of a counselor in a psychological counseling session. Your task is to use the provided client information and counseling planning to generate the next counselor utterance in the dialogue. The goal is to create a natural and engaging response that builds on the previous conversation and aligns with the counseling plan.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nClient Information:\n{client_information}\n\nReason for seekeing counseling:\n{reason_counseling}\n\nCounseling planning:\n{cbt_plan}\n\nCounseling Dialogue:\n{history}<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.688661",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_cactus_llama3.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_cactus_llama2",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Cactus Llama2",
+    "content": "[INST] <<SYS>>You are playing the role of a counselor in a psychological counseling session. Your task is to use the provided client information and counseling planning to generate the next counselor utterance in the dialogue. The goal is to create a natural and engaging response that builds on the previous conversation and aligns with the counseling plan.<<SYS>>\n\nClient Information:\n{client_information}\n\nReason for seekeing counseling:\n{reason_counseling}\n\nCounseling planning:\n{cbt_plan}\n\nCounseling Dialogue:\n{history} [/INST]",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.688809",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_cactus_llama2.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-panas_after",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Panas After",
+    "content": "A person with the characteristics listed in the intake form received counseling. The following counseling session is a conversation between the client and the counselor. After reviewing the conversation, evaluate the intensity of each of the following feelings the person might have experienced once the counseling session is complete: Interested, Excited, Strong, Enthusiastic, Proud, Alert, Inspired, Determined, Attentive, Active, Distressed, Upset, Guilty, Scared, Hostile, Irritable, Ashamed, Nervous, Jittery, Afraid.\n\nFor each feeling, generate a score from 1 to 5 using the following scale:\n1 - Very slightly or not at all\n2 - A little\n3 - Moderately\n4 - Quite a bit\n5 - Extremely\n\nAdditionally, provide a brief explanation for each score. Separate feeling, explanation, score by comma. Do not add any prefix.\n\nHere is the text:\n{intake_form}\n\nHere is the counseling session:\n{dialogue}",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.688945",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "panas_after.txt"
+    },
+    "embedding": null
+  },
+  {
+    "chunk_id": "CAC-agent_client",
+    "collection": "mental_wellness",
+    "category": "cbt_educational_exercises",
+    "title": "CBT Protocol: Agent Client",
+    "content": "You are playing the role of a client in a psychological counseling session. Your task is to generate only one suitable response based on the following the counseling dialogue history.\n\n## Guidelines for the client's utterance:\n1. Engage authentically with the counselor's inquiries, reflecting the complexity of emotions and reactions typical in counseling sessions.\n2. Start the client's utterance with 'Client:'. Ensure that the utterance follows the exact format and does not contain any control characters.\n3. The client should maintain the following attitude.\n\nIf you feel that the counseling session has completely ended and meets the end condition, you should include '[/END]' with your utterance.\n***End Conditions:***\n- The client feels that their negative thoughts have been resolved.\n- The client feels that no further counseling is needed\n\nPlease be mindful of these conditions and ensure that ***the session should not end prematurely; it must last at least 20 turns.***.\n\nClient Persona and Negative Thoughts:\n{intake_form}\n\nClient's Attitude Towards Counseling:\n{attitude}\n\nGenerate only the client's utterance for a single turn and please ensure that your responses do not repeat the client's previous utterances. Do not generate the counselor's part of the dialogue.\n\nCounseling Dialogue History:\n{history}",
+    "source_name": "CACTUS CBT Framework",
+    "license": "MIT License",
+    "origin_url": "https://github.com/coding-groot/cactus",
+    "created_at": "2026-11-01T10:01:56.689153",
+    "approved_by_admin": true,
+    "metadata": {
+      "file": "agent_client.txt"
+    },
+    "embedding": null
+  }
+]
