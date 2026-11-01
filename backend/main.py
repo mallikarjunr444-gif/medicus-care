@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy import select, text
 
-from app.api.v1 import admin, avatars, conversations, messages, sessions, users, voices
+from app.api.v1 import admin, avatars, conversations, doctor_actions, messages, sessions, users, voices
 from app.config import settings
 from app.database import AsyncSessionLocal, Base, engine
 from app.logging_config import configure_logging
@@ -150,6 +150,7 @@ app.include_router(conversations.router, prefix="/api/v1/conversations", tags=["
 app.include_router(messages.router, prefix="/api/v1/messages", tags=["messages"])
 app.include_router(voices.router, prefix="/api/v1/voices", tags=["voices"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(doctor_actions.router, prefix="/api/v1/doctor", tags=["doctor_actions"])
 
 
 @app.exception_handler(Exception)
