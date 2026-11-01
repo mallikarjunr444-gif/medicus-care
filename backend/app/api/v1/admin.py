@@ -276,3 +276,84 @@ async def run_safety_evaluations(req: SafetyEvalRequest):
         "status": "PASSED" if pass_rate >= 95.0 else "WARNING",
         "detailed_results": results
     }
+
+
+class VoiceSynthesisTestRequest(BaseModel):
+    text: str = "Welcome to Medicus Care. I am your AI doctor assistant."
+    voice: Optional[str] = "Nalini"
+    language: str = "en"
+
+
+@router.get("/voice/status")
+async def get_voice_engine_status():
+    """Get active voice status and supported Indian languages/voices."""
+    from app.services.gnani_service import GNANI_VOICES, LANGUAGE_VOICE_MAP, gnani_service
+    from app.config import settings
+
+    is_configured = gnani_service.is_configured()
+    masked_key = (
+        (gnani_service.api_key[:8] + "..." + gnani_service.api_key[-6:])
+        if is_configured
+        else None
+    )
+
+    return {
+        "engine": "Gnani.ai Vachana Voice AI",
+        "status": "operational" if is_configured else "not_configured",
+        "api_key_masked": masked_key,
+        "tts_provider": settings.TTS_PROVIDER,
+        "stt_provider": settings.STT_PROVIDER,
+        "tts_model": settings.GNANI_TTS_MODEL,
+        "stt_model": settings.GNANI_STT_MODEL,
+        "default_voice": settings.GNANI_DEFAULT_VOICE,
+        "language_voice_map": LANGUAGE_VOICE_MAP,
+        "total_supported_voices": len(GNANI_VOICES),
+        "supported_voices_sample": sorted(list(GNANI_VOICES))[:15],
+    }
+
+
+@router.post("/voice/test-tts")
+async def test_voice_synthesis(req: VoiceSynthesisTestRequest):
+    """Test synthesis with Gnani.ai voice engine and measure latency."""
+    import tempfile
+    import time
+    from app.services.gnani_service import gnani_service
+
+    if not gnani_service.is_configured():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Gnani Voice API is not configured (missing GNANI_API_KEY in .env)",
+        )
+
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+        tmp_path = tmp.name
+
+    start_time = time.time()
+    try:
+        await gnani_service.synthesize(
+            text=req.text,
+            output_path=tmp_path,
+            voice=req.voice,
+            language=req.language,
+        )
+        latency = round((time.time() - start_time) * 1000, 1)
+        file_size = Path(tmp_path).stat().st_size
+        return {
+            "success": True,
+            "engine": "Gnani.ai Timbre",
+            "voice": req.voice,
+            "language": req.language,
+            "text": req.text,
+            "latency_ms": latency,
+            "audio_size_bytes": file_size,
+            "sample_rate": 24000,
+            "status": "Voice synthesized successfully",
+        }
+    except Exception as e:
+        logger.error(f"Voice synthesis test failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Voice synthesis failed: {str(e)}",
+        )
+    finally:
+        Path(tmp_path).unlink(missing_ok=True)
