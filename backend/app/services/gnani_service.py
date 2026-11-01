@@ -117,6 +117,7 @@ class GnaniVoiceService:
         headers = {
             "Content-Type": "application/json",
             "X-API-Key-ID": self.api_key,
+            "User-Agent": "MedicusCare-Voice/1.0",
         }
 
         logger.info(
@@ -223,6 +224,7 @@ class GnaniVoiceService:
                 "Content-Type": content_type,
                 "Content-Length": str(len(req_bytes)),
                 "X-API-Key-ID": self.api_key,
+                "User-Agent": "MedicusCare-Voice/1.0",
             }
 
             req = urllib.request.Request(url, data=req_bytes, headers=headers, method="POST")
