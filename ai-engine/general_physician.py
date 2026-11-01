@@ -3,7 +3,7 @@ Medicus Care™ — AI General Physician Module
 Handles symptom intake, duration, severity scoring, red flag detection, and clinical summary generation.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from datetime import datetime
 from pydantic import BaseModel
 
