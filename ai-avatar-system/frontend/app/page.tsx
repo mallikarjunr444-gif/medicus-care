@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 import { AvatarUpload } from '@/components/AvatarUpload'
 import { AvatarList } from '@/components/AvatarList'
 import { ConnectionStatus } from '@/components/ui/ConnectionStatus'
-import { AuthModal } from '@/components/AuthModal'
 import { api } from '@/lib/api'
 import { toast } from 'react-hot-toast'
 import { useStore } from '@/store/useStore'
@@ -35,6 +34,8 @@ import {
   ArrowRight,
   ShieldAlert,
   Database,
+  ExternalLink,
+  ArrowUpRight,
 } from 'lucide-react'
 
 // Heavy components load on demand
@@ -77,7 +78,7 @@ function PanelLoader({ label }: { label: string }) {
   )
 }
 
-const MEDICUS_FEATURES = [
+const MEDICARE_FEATURES = [
   {
     icon: Stethoscope,
     title: 'Photorealistic 3D Human Doctors',
@@ -138,15 +139,14 @@ export default function Home() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [resumeSessionId, setResumeSessionId] = useState<string | null>(null)
   const [view, setView] = useState<View>('home')
-  const [showAuthModal, setShowAuthModal] = useState(false)
 
-  // Auto-initialize free anonymous guest patient session per PRD Section 21
+  // Auto-initialize direct patient session (no login barrier)
   useEffect(() => {
     if (!isAuthenticated()) {
-      setAuth('patient-free-token-' + Date.now(), {
-        id: 'patient-guest',
-        email: 'patient@medicuscare.app',
-        username: 'Guest Patient',
+      setAuth('patient-direct-token', {
+        id: 'patient-direct',
+        email: 'patient@medicare.app',
+        username: 'Patient User',
         full_name: 'Patient User',
         is_guest: true,
       })
@@ -201,9 +201,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* ── Optional Auth Modal ── */}
-      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
-
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800">
         <div className="h-full mx-auto max-w-7xl px-6 flex items-center justify-between">
@@ -216,14 +213,21 @@ export default function Home() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base tracking-tight text-white">
-                  Medicus Care
+                <span className="font-extrabold text-base tracking-tight text-white flex items-center">
+                  Medi<span className="text-sky-400">Care</span>
                 </span>
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800/60 font-semibold">
-                  Medicus Labs™
-                </span>
+                <a
+                  href="https://medicuslabs.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800/60 font-semibold hover:border-sky-500 transition-colors flex items-center gap-1"
+                  title="Visit Medicus Labs Main Platform"
+                >
+                  <span>Medicus Labs™</span>
+                  <ExternalLink size={10} />
+                </a>
               </div>
-              <span className="text-[11px] text-slate-400 block leading-tight">Your AI Doctor</span>
+              <span className="text-[11px] text-slate-400 block leading-tight">Your AI Doctor • Sub-Platform</span>
             </div>
           </div>
 
@@ -253,15 +257,20 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <ConnectionStatus />
             <div className="flex items-center gap-2">
-              <span className="text-xs text-sky-400 hidden sm:block font-mono bg-sky-950/60 border border-sky-800/60 px-2 py-0.5 rounded-md">
-                {user?.is_guest ? 'Free Patient Access' : user?.username || 'Patient'}
+              <span className="text-xs text-emerald-400 hidden sm:flex items-center gap-1.5 font-mono bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-1 rounded-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Direct Access Active
               </span>
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="text-xs text-slate-400 hover:text-white transition-colors px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800"
+              <a
+                href="https://medicuslabs.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-md shadow-sky-500/20 transition-all hover:scale-[1.02]"
+                title="Go to Medicus Labs Main Platform"
               >
-                Account
-              </button>
+                <span>Medicus Labs Main</span>
+                <ExternalLink size={13} />
+              </a>
             </div>
           </div>
         </div>
@@ -300,7 +309,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-950/80 border border-sky-800/60 mb-6 animate-slide-up shadow-lg">
                 <Sparkles size={14} className="text-sky-400" />
                 <span className="text-xs text-sky-300 font-semibold uppercase tracking-wider font-mono">
-                  Medicus Care 1.0 • AI Digital Healthcare Platform
+                  MediCare 1.0 • AI Digital Healthcare Platform
                 </span>
               </div>
 
@@ -410,13 +419,13 @@ export default function Home() {
                   Comprehensive Digital Healthcare Architecture
                 </h2>
                 <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
-                  Built to the Medicus Care Product Requirements Specification, combining 3D WebGL
+                  Built to the MediCare Product Requirements Specification, combining 3D WebGL
                   avatars, medical safety triage, and clinical intelligence.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {MEDICUS_FEATURES.map(({ icon: Icon, title, description, color, glow }) => (
+                {MEDICARE_FEATURES.map(({ icon: Icon, title, description, color, glow }) => (
                   <div
                     key={title}
                     className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-all duration-300"
@@ -433,15 +442,35 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Mandatory Regulatory Disclaimer */}
-            <footer className="mt-auto border-t border-slate-900 bg-slate-950 p-6 text-center text-xs text-slate-500">
+            {/* Mandatory Regulatory Disclaimer & Main Site Connection */}
+            <footer className="mt-auto border-t border-slate-900 bg-slate-950 p-6 text-center text-xs text-slate-500 space-y-2">
               <p className="max-w-3xl mx-auto leading-relaxed">
-                <span className="font-semibold text-slate-400">Medicus Care Notice:</span> Medicus
-                Care is an AI-powered healthcare assistant designed for preliminary information and
-                guidance, not an autonomous licensed doctor. Clinical diagnosis, prescriptions, and
-                regulated services must remain under qualified medical professionals. In medical
-                emergencies, dial 112 immediately.
+                <span className="font-semibold text-slate-400">MediCare Notice:</span> MediCare
+                is a specialized healthcare sub-platform of{' '}
+                <a
+                  href="https://medicuslabs.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sky-400 hover:underline font-semibold"
+                >
+                  Medicus Labs™
+                </a>{' '}
+                designed for preliminary triage and health education. It is not an autonomous licensed doctor. Clinical diagnosis, prescriptions, and
+                regulated services must remain under qualified medical professionals. In medical emergencies, dial 112 immediately.
               </p>
+              <div className="flex items-center justify-center gap-4 text-slate-400 text-xs pt-1">
+                <a
+                  href="https://medicuslabs.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-sky-400 transition-colors flex items-center gap-1"
+                >
+                  <span>Medicus Labs Main Platform (medicuslabs.app)</span>
+                  <ExternalLink size={12} />
+                </a>
+                <span>•</span>
+                <span>Sub-Application Direct Access (No Login Required)</span>
+              </div>
             </footer>
           </div>
         )}
@@ -452,7 +481,7 @@ export default function Home() {
             <div className="mb-8">
               <h1 className="text-3xl font-extrabold text-white mb-2">Avatar Studio</h1>
               <p className="text-slate-400 text-sm">
-                Custom avatar models and GLB configurations for Medicus Care.
+                Custom avatar models and GLB configurations for MediCare.
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
