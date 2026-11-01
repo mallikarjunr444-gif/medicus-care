@@ -1,5 +1,5 @@
 """
-Gnani.ai (Vachana) Voice AI integration for Medicus Care.
+Gnani.ai (Vachana) Voice AI integration for MediCare.
 
 Provides ultra-low latency, native Indic Speech-to-Text (Prisma v3.0)
 and natural Text-to-Speech (Timbre v2.5 / v3.0) across 12+ Indian languages
@@ -117,7 +117,7 @@ class GnaniVoiceService:
         headers = {
             "Content-Type": "application/json",
             "X-API-Key-ID": self.api_key,
-            "User-Agent": "MedicusCare-Voice/1.0",
+            "User-Agent": "MediCare-Voice/1.0",
         }
 
         logger.info(
@@ -224,7 +224,7 @@ class GnaniVoiceService:
                 "Content-Type": content_type,
                 "Content-Length": str(len(req_bytes)),
                 "X-API-Key-ID": self.api_key,
-                "User-Agent": "MedicusCare-Voice/1.0",
+                "User-Agent": "MediCare-Voice/1.0",
             }
 
             req = urllib.request.Request(url, data=req_bytes, headers=headers, method="POST")

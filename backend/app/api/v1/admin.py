@@ -1,5 +1,5 @@
 """
-Medicus Care™ — Admin Knowledge & Safety Evaluation API
+MediCare — Admin Knowledge & Safety Evaluation API
 Secure administrative endpoints for dataset inspection, document ingestion, approval workflows, and safety evaluations.
 """
 
@@ -32,7 +32,7 @@ async def get_admin_dashboard_stats():
     """Retrieve top-level statistics for the Admin Knowledge Dashboard."""
     rag_stats = rag_service.get_stats()
     return {
-        "platform": "Medicus Care™",
+        "platform": "MediCare",
         "parent_brand": "Medicus Labs™",
         "timestamp": datetime.utcnow().isoformat(),
         "knowledge_base": {
@@ -279,7 +279,7 @@ async def run_safety_evaluations(req: SafetyEvalRequest):
 
 
 class VoiceSynthesisTestRequest(BaseModel):
-    text: str = "Welcome to Medicus Care. I am your AI doctor assistant."
+    text: str = "Welcome to MediCare. I am your AI doctor assistant."
     voice: Optional[str] = "Nalini"
     language: str = "en"
 
