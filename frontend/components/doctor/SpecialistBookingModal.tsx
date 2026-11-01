@@ -150,7 +150,7 @@ export function SpecialistBookingModal({
           specialist_id: selectedSpecialist.id,
           preferred_date: preferredDate,
           preferred_time_slot: preferredSlot,
-          reason: 'Specialist medical evaluation recommended during Medicus Care consultation.',
+          reason: 'Specialist medical evaluation recommended during MediCare consultation.',
           patient_confirmed: true,
         }),
       })
@@ -287,7 +287,7 @@ export function SpecialistBookingModal({
               className="mt-0.5 rounded border-slate-700 text-sky-600 focus:ring-sky-500"
             />
             <label htmlFor="confirm-appointment" className="text-[11px] text-slate-300 leading-snug cursor-pointer">
-              I authorize Medicus Care to prepare this specialist consultation request with{' '}
+              I authorize MediCare to prepare this specialist consultation request with{' '}
               <span className="font-semibold text-white">{selectedSpecialist.name}</span> at{' '}
               <span className="text-sky-300">{selectedSpecialist.hospital}</span>. I understand this appointment request is confirmed directly with the clinic facility.
             </label>
