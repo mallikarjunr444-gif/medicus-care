@@ -487,7 +487,7 @@ export function DoctorVideoCall({
       <ReportUploadDrawer
         isOpen={isReportDrawerOpen}
         onClose={() => setIsReportDrawerOpen(false)}
-        onReportUploaded={(rep) => {
+        onReportAnalyzed={(rep: MedicalReportItem) => {
           setReports((prev) => [...prev, rep])
           setChatHistory((prev) => [
             ...prev,
