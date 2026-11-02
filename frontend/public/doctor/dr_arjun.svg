@@ -1,0 +1,255 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <!-- Hospital Consultation Office Background -->
+    <linearGradient id="bgWall" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#141E30" />
+      <stop offset="40%" stop-color="#1B2838" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Warm Clinical Overhead Light -->
+    <radialGradient id="clinicLight" cx="50%" cy="25%" r="65%">
+      <stop offset="0%" stop-color="#E2E8F0" stop-opacity="0.18" />
+      <stop offset="60%" stop-color="#38BDF8" stop-opacity="0.04" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.6" />
+    </radialGradient>
+
+    <!-- Dr. Arjun Realistic Skin Tone Gradients -->
+    <radialGradient id="arjunSkin" cx="48%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#E2AB85" />
+      <stop offset="35%" stop-color="#D49971" />
+      <stop offset="70%" stop-color="#BF825B" />
+      <stop offset="100%" stop-color="#9C623E" />
+    </radialGradient>
+
+    <linearGradient id="arjunShadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#804C28" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#4A2612" stop-opacity="0.85" />
+    </linearGradient>
+
+    <!-- Realistic Eye Gradient -->
+    <radialGradient id="irisArjun" cx="45%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#6B3A19" />
+      <stop offset="60%" stop-color="#3B1E0B" />
+      <stop offset="100%" stop-color="#1A0D05" />
+    </radialGradient>
+
+    <!-- Realistic Hair Gradient -->
+    <linearGradient id="arjunHair" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#2D2825" />
+      <stop offset="30%" stop-color="#1A1614" />
+      <stop offset="85%" stop-color="#0D0B0A" />
+      <stop offset="100%" stop-color="#050404" />
+    </linearGradient>
+
+    <!-- Crisp White Doctor Lab Coat -->
+    <linearGradient id="doctorCoat" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#F1F5F9" />
+      <stop offset="85%" stop-color="#E2E8F0" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+
+    <linearGradient id="lapelShadow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#94A3B8" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#CBD5E1" stop-opacity="0.05" />
+    </linearGradient>
+
+    <!-- Navy Clinical Scrubs -->
+    <linearGradient id="arjunScrub" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0E7490" />
+      <stop offset="100%" stop-color="#155E75" />
+    </linearGradient>
+
+    <!-- Chrome Stethoscope Metal -->
+    <linearGradient id="chromeMetal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="35%" stop-color="#E2E8F0" />
+      <stop offset="65%" stop-color="#94A3B8" />
+      <stop offset="100%" stop-color="#475467" />
+    </linearGradient>
+
+    <!-- Stethoscope Navy Tubing -->
+    <linearGradient id="stethTubing" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0369A1" />
+      <stop offset="50%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#075985" />
+    </linearGradient>
+
+    <!-- Soft Depth Blur -->
+    <filter id="bokehBlur" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="8" />
+    </filter>
+  </defs>
+
+  <!-- 1. Hospital Consultation Room Background -->
+  <rect width="1200" height="800" fill="url(#bgWall)" />
+
+  <!-- Background Clinic Shelving & Framed Medical Diplomas (Bokeh blurred) -->
+  <g filter="url(#bokehBlur)" opacity="0.38">
+    <!-- Medical Diploma 1 -->
+    <rect x="140" y="80" width="180" height="130" rx="4" fill="#1E293B" stroke="#475569" stroke-width="4" />
+    <rect x="155" y="95" width="150" height="100" fill="#F8FAFC" opacity="0.85" />
+    <circle cx="230" cy="145" r="14" fill="#B45309" opacity="0.8" />
+    <!-- Medical Diploma 2 -->
+    <rect x="880" y="90" width="190" height="140" rx="4" fill="#1E293B" stroke="#475569" stroke-width="4" />
+    <rect x="895" y="105" width="160" height="110" fill="#F8FAFC" opacity="0.85" />
+    <circle cx="975" cy="160" r="14" fill="#0284C7" opacity="0.8" />
+    <!-- Bookshelf with Clinical Manuals -->
+    <rect x="940" y="320" width="220" height="240" fill="#0F172A" />
+    <rect x="950" y="340" width="22" height="160" rx="2" fill="#0369A1" />
+    <rect x="975" y="330" width="26" height="170" rx="2" fill="#B91C1C" />
+    <rect x="1005" y="345" width="20" height="155" rx="2" fill="#047857" />
+    <rect x="1030" y="335" width="28" height="165" rx="2" fill="#4338CA" />
+    <!-- Medical Monitor Glow -->
+    <rect x="80" y="360" width="190" height="140" rx="8" fill="#0284C7" opacity="0.25" />
+  </g>
+
+  <!-- Overhead Telemedicine Soft Ambient Lighting -->
+  <rect width="1200" height="800" fill="url(#clinicLight)" />
+
+  <!-- 2. Doctor Torso & Medical Lab Coat -->
+  <g id="doctorTorso">
+    <!-- Shoulders & Coat Body -->
+    <path d="M 240 800 C 270 560, 360 480, 500 465 L 700 465 C 840 480, 930 560, 960 800 Z" fill="url(#doctorCoat)" />
+
+    <!-- Inner Scrub V-Neck -->
+    <path d="M 520 465 L 600 595 L 680 465 Z" fill="url(#arjunScrub)" />
+
+    <!-- White Shirt Collar under Scrub -->
+    <path d="M 545 465 L 600 520 L 580 465 Z" fill="#FFFFFF" />
+    <path d="M 655 465 L 600 520 L 620 465 Z" fill="#F1F5F9" />
+
+    <!-- Lab Coat Left Lapel -->
+    <path d="M 440 480 L 540 760 L 500 800 L 370 570 Z" fill="#FFFFFF" filter="drop-shadow(3px 4px 6px rgba(0,0,0,0.25))" />
+    <path d="M 450 480 L 530 760 L 540 760 Z" fill="url(#lapelShadow)" />
+
+    <!-- Lab Coat Right Lapel -->
+    <path d="M 760 480 L 660 760 L 700 800 L 830 570 Z" fill="#F8FAFC" filter="drop-shadow(-3px 4px 6px rgba(0,0,0,0.25))" />
+
+    <!-- Hospital ID Badge on Doctor's Left Chest -->
+    <rect x="375" y="580" width="85" height="115" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2" filter="drop-shadow(2px 3px 5px rgba(0,0,0,0.3))" />
+    <rect x="375" y="580" width="85" height="26" rx="6" fill="#0284C7" />
+    <text x="417" y="597" font-family="-apple-system, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">MEDICARE</text>
+    <circle cx="417" cy="625" r="16" fill="#E2E8F0" />
+    <text x="417" y="654" font-family="-apple-system, sans-serif" font-size="9" font-weight="bold" fill="#0F172A" text-anchor="middle">Dr. Arjun, M.D.</text>
+    <text x="417" y="666" font-family="-apple-system, sans-serif" font-size="7.5" fill="#64748B" text-anchor="middle">General Physician</text>
+    <rect x="390" y="675" width="55" height="12" rx="2" fill="#E0F2FE" />
+    <text x="417" y="684" font-family="monospace" font-size="7" font-weight="bold" fill="#0369A1" text-anchor="middle">KA-MC-4821</text>
+    <!-- Badge Clip -->
+    <rect x="410" y="570" width="14" height="14" rx="2" fill="url(#chromeMetal)" />
+
+    <!-- Realistic Medical Stethoscope -->
+    <!-- Stethoscope Left Tubing -->
+    <path d="M 470 470 Q 420 540 460 690 Q 480 770 540 760" fill="none" stroke="url(#stethTubing)" stroke-width="15" stroke-linecap="round" />
+    <!-- Stethoscope Right Tubing -->
+    <path d="M 730 470 Q 780 540 740 690 Q 720 770 660 760" fill="none" stroke="url(#stethTubing)" stroke-width="15" stroke-linecap="round" />
+    <!-- Chest Piece / Diaphragm -->
+    <circle cx="660" cy="760" r="32" fill="url(#chromeMetal)" filter="drop-shadow(2px 4px 6px rgba(0,0,0,0.35))" />
+    <circle cx="660" cy="760" r="26" fill="#F8FAFC" stroke="#94A3B8" stroke-width="3" />
+    <circle cx="660" cy="760" r="8" fill="url(#chromeMetal)" />
+  </g>
+
+  <!-- 3. Realistic Neck & Musculature -->
+  <g id="doctorNeck">
+    <path d="M 515 370 L 515 485 Q 600 520 685 485 L 685 370 Z" fill="url(#arjunSkin)" />
+    <!-- Sternocleidomastoid & Throat Depth Shadow -->
+    <path d="M 550 400 Q 600 480 600 500 Q 600 480 650 400 Z" fill="url(#arjunShadow)" opacity="0.3" />
+    <path d="M 520 440 Q 600 470 680 440 L 685 480 Q 600 515 515 480 Z" fill="url(#arjunShadow)" opacity="0.45" />
+  </g>
+
+  <!-- 4. Dr. Arjun Anatomical Head & Facial Structure -->
+  <g id="doctorHead">
+    <!-- Jaw and Cranium Base -->
+    <path d="M 445 220 C 445 90, 755 90, 755 220 C 755 350, 680 435, 600 435 C 520 435, 445 350, 445 220 Z" fill="url(#arjunSkin)" filter="drop-shadow(0px 8px 16px rgba(0,0,0,0.3))" />
+
+    <!-- Cheeks & Chin Shading -->
+    <path d="M 470 260 Q 600 430 730 260 C 720 380 670 425 600 425 C 530 425 480 380 470 260 Z" fill="url(#arjunShadow)" opacity="0.25" />
+
+    <!-- Subsurface Cheekbone Highlights -->
+    <ellipse cx="510" cy="270" rx="35" ry="20" fill="#FFC9A8" opacity="0.18" />
+    <ellipse cx="690" cy="270" rx="35" ry="20" fill="#FFC9A8" opacity="0.18" />
+
+    <!-- Physician Ears -->
+    <!-- Left Ear -->
+    <path d="M 450 220 C 425 220, 420 280, 452 295 Z" fill="#C88B64" />
+    <path d="M 446 235 C 435 240, 435 270, 448 275 Z" fill="#804C28" opacity="0.6" />
+    <!-- Right Ear -->
+    <path d="M 750 220 C 775 220, 780 280, 748 295 Z" fill="#C88B64" />
+    <path d="M 754 235 C 765 240, 765 270, 752 275 Z" fill="#804C28" opacity="0.6" />
+
+    <!-- Professional Tapered Haircut -->
+    <path d="M 438 200 C 430 110, 490 35, 600 35 C 710 35, 770 110, 762 200 C 755 130, 715 80, 600 80 C 485 80, 445 130, 438 200 Z" fill="url(#arjunHair)" />
+    <!-- Hair Volume Top & Texture Lines -->
+    <path d="M 450 160 C 470 70, 540 40, 600 40 C 660 40, 730 70, 750 160 C 730 85, 675 60, 600 60 C 525 60, 470 85, 450 160 Z" fill="#1C1816" />
+    <path d="M 485 100 Q 600 50 715 100 Q 600 70 485 100 Z" fill="#38312C" opacity="0.5" />
+    <!-- Subtle Sideburns -->
+    <path d="M 445 200 L 449 260 L 458 245 L 452 195 Z" fill="#1A1614" />
+    <path d="M 755 200 L 751 260 L 742 245 L 748 195 Z" fill="#1A1614" />
+
+    <!-- Masculine Eyebrows -->
+    <!-- Left Eyebrow -->
+    <path d="M 495 200 Q 545 185 575 202 Q 540 193 495 200 Z" fill="#1A1614" />
+    <!-- Right Eyebrow -->
+    <path d="M 705 200 Q 655 185 625 202 Q 660 193 705 200 Z" fill="#1A1614" />
+
+    <!-- 5. Realistic Human Eyes (High-Fidelity Telemedicine Gaze) -->
+    <!-- Left Eye -->
+    <g id="leftEye">
+      <ellipse cx="535" cy="225" rx="24" ry="14" fill="#F8FAFC" />
+      <!-- Sclera Shadows -->
+      <path d="M 511 225 Q 535 215 559 225 Q 535 218 511 225 Z" fill="#64748B" opacity="0.25" />
+      <!-- Iris -->
+      <circle cx="536" cy="225" r="10.5" fill="url(#irisArjun)" />
+      <!-- Pupil -->
+      <circle cx="536" cy="225" r="4.2" fill="#000000" />
+      <!-- Realistic Corneal Light Glint / Reflection -->
+      <circle cx="539" cy="222" r="2.2" fill="#FFFFFF" />
+      <circle cx="533" cy="227" r="1.1" fill="#FFFFFF" opacity="0.75" />
+      <!-- Eyelashes & Eyelid Crease -->
+      <path d="M 508 224 Q 535 211 562 224" fill="none" stroke="#2D1A10" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 512 216 Q 535 207 558 216" fill="none" stroke="#7A4526" stroke-width="1.2" opacity="0.5" />
+    </g>
+
+    <!-- Right Eye -->
+    <g id="rightEye">
+      <ellipse cx="665" cy="225" rx="24" ry="14" fill="#F8FAFC" />
+      <path d="M 641 225 Q 665 215 689 225 Q 665 218 641 225 Z" fill="#64748B" opacity="0.25" />
+      <circle cx="664" cy="225" r="10.5" fill="url(#irisArjun)" />
+      <circle cx="664" cy="225" r="4.2" fill="#000000" />
+      <circle cx="667" cy="222" r="2.2" fill="#FFFFFF" />
+      <circle cx="661" cy="227" r="1.1" fill="#FFFFFF" opacity="0.75" />
+      <path d="M 638 224 Q 665 211 692 224" fill="none" stroke="#2D1A10" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 642 216 Q 665 207 688 216" fill="none" stroke="#7A4526" stroke-width="1.2" opacity="0.5" />
+    </g>
+
+    <!-- Natural Doctor Nose -->
+    <path d="M 596 200 L 594 285 Q 582 292 578 300 Q 600 307 622 300 Q 618 292 606 285 L 604 200 Z" fill="url(#arjunSkin)" />
+    <!-- Nose Bridge Shadow & Tip Highlight -->
+    <path d="M 592 210 L 590 285 Q 576 295 582 302 Q 590 295 593 285 Z" fill="url(#arjunShadow)" opacity="0.28" />
+    <ellipse cx="600" cy="296" rx="8" ry="4.5" fill="#FFC9A8" opacity="0.3" />
+    <!-- Nostrils -->
+    <ellipse cx="586" cy="301" rx="4.5" ry="2.2" fill="#3E1A08" opacity="0.75" />
+    <ellipse cx="614" cy="301" rx="4.5" ry="2.2" fill="#3E1A08" opacity="0.75" />
+
+    <!-- Philtrum -->
+    <path d="M 596 307 L 595 325 M 604 307 L 605 325" stroke="#9C623E" stroke-width="1.5" opacity="0.4" />
+
+    <!-- 6. Expressive Doctor Mouth & Lips -->
+    <g id="doctorMouth">
+      <!-- Upper Lip -->
+      <path d="M 565 338 Q 585 330 600 334 Q 615 330 635 338 Q 615 344 600 342 Q 585 344 565 338 Z" fill="#9C5242" />
+      <!-- Oral Line with subtle warm smile -->
+      <path d="M 563 338 Q 600 345 637 338" fill="none" stroke="#4A1E16" stroke-width="2.5" stroke-linecap="round" />
+      <!-- Lower Lip -->
+      <path d="M 566 339 Q 600 360 634 339 Q 600 354 566 339 Z" fill="#B36553" />
+      <!-- Lip Highlight -->
+      <ellipse cx="600" cy="348" rx="14" ry="3" fill="#ECA293" opacity="0.4" />
+      <!-- Chin Dimple / Shadow -->
+      <path d="M 588 375 Q 600 380 612 375" fill="none" stroke="#804C28" stroke-width="2" opacity="0.35" />
+    </g>
+
+    <!-- Clean Stubble & Five o'clock shadow on jaw (physician realism) -->
+    <path d="M 470 290 C 470 380, 530 425, 600 425 C 670 425, 730 380, 730 290 C 720 370, 670 410, 600 410 C 530 410, 480 370, 470 290 Z" fill="#2D211A" opacity="0.12" />
+  </g>
+</svg>

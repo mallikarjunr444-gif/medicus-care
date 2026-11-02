@@ -37,6 +37,7 @@ import {
   CheckCircle2,
   Share2,
   Download,
+  AlertOctagon,
 } from 'lucide-react'
 import { DoctorPhotorealisticViewport } from './DoctorPhotorealisticViewport'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
@@ -44,6 +45,7 @@ import { useDoctorSpeech } from './useDoctorSpeech'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
 import { SpecialistBookingModal, VERIFIED_SPECIALISTS_LOCAL, type Specialist } from './SpecialistBookingModal'
+import { useConnectionManager } from '@/lib/useConnectionManager'
 import type {
   DoctorId,
   DoctorState,
@@ -63,6 +65,7 @@ interface ActionCardData {
 interface ChatEntry {
   id: string
   role: 'patient' | 'doctor'
+  speakerName: string
   text: string
   time: string
   triage?: TriageLevel
@@ -79,13 +82,12 @@ export function DoctorVideoCall({
   initialDoctorId = 'dr_arjun',
   onEndConsultation,
 }: DoctorVideoCallProps) {
-  // State
+  // Doctor & Session State
   const [doctorId, setDoctorId] = useState<DoctorId>(initialDoctorId)
   const [doctorState, setDoctorState] = useState<DoctorState>('idle')
   const [language, setLanguage] = useState<ConsultationLanguage>('en')
   const [isCameraOn, setIsCameraOn] = useState(true)
   const [isMicOn, setIsMicOn] = useState(false)
-  const [isChatVisible, setIsChatVisible] = useState(true)
   const [consultationSeconds, setConsultationSeconds] = useState(0)
   const [inputText, setInputText] = useState('')
   const [activeTriage, setActiveTriage] = useState<TriageLevel>(1)
@@ -98,9 +100,16 @@ export function DoctorVideoCall({
   // Speech Recognition state
   const [isListeningSpeech, setIsListeningSpeech] = useState(false)
   const recognitionRef = useRef<any>(null)
-
   const chatScrollRef = useRef<HTMLDivElement>(null)
-  const doctor = DOCTORS[doctorId]
+
+  const doctor = DOCTORS[doctorId] || DOCTORS.dr_arjun
+
+  // Centralized Connection Management Hook
+  const { statusLabel, overallStatus } = useConnectionManager({
+    isCameraOn,
+    isMicListening: isListeningSpeech,
+    isDigitalHumanReady: true,
+  })
 
   // Consultation Timer
   useEffect(() => {
@@ -118,7 +127,7 @@ export function DoctorVideoCall({
     return `${m}:${s}`
   }
 
-  // Doctor Speech Hook
+  // Doctor Speech Hook (Natural voice synthesis & lip-sync amplitude tracking)
   const {
     isSpeaking,
     audioLevel,
@@ -134,17 +143,18 @@ export function DoctorVideoCall({
     onStateChange: (state) => setDoctorState(state),
   })
 
-  // Chat conversation
+  // Chat conversation history (Only ONE message added per interaction turn)
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
     {
       id: 'msg-init',
       role: 'doctor',
+      speakerName: doctor.name,
       text:
         language === 'kn'
           ? `ನಮಸ್ಕಾರ! ನಾನು ${doctor.name}, ನಿಮ್ಮ ಮೆಡಿಕೇರ್ (MediCare) AI ವೈದ್ಯ. ಇಂದು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ? ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ.`
           : language === 'hi'
           ? `नमस्ते! मैं ${doctor.name}, आपका मेडिकेयर (MediCare) AI डॉक्टर हूँ। आज मैं आपकी कैसे सहायता कर सकता हूँ?`
-          : `Hello! I'm ${doctor.name}, your MediCare AI Doctor. How are you feeling today? You can speak naturally or type your symptoms freely.`,
+          : `Hello! I'm ${doctor.name}, your MediCare AI Physician. How are you feeling today? You can speak naturally or type your symptoms.`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ])
@@ -158,8 +168,12 @@ export function DoctorVideoCall({
 
   // Speech Recognition Initialization
   useEffect(() => {
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (
+      typeof window !== 'undefined' &&
+      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
+    ) {
+      const SpeechRecognition =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
       const recognition = new SpeechRecognition()
       recognition.continuous = false
       recognition.interimResults = false
@@ -198,10 +212,13 @@ export function DoctorVideoCall({
       setDoctorState('idle')
     } else {
       if (recognitionRef.current) {
-        recognitionRef.current.lang = language === 'kn' ? 'kn-IN' : language === 'hi' ? 'hi-IN' : 'en-IN'
+        recognitionRef.current.lang =
+          language === 'kn' ? 'kn-IN' : language === 'hi' ? 'hi-IN' : 'en-IN'
         recognitionRef.current.start()
       } else {
-        toast('Speech recognition not supported in this browser. Please type your message.', { icon: '🎙️' })
+        toast('Speech recognition not supported in this browser. Please type your message.', {
+          icon: '🎙️',
+        })
       }
     }
   }
@@ -221,19 +238,28 @@ export function DoctorVideoCall({
       const msg = (customText || inputText).trim()
       if (!msg) return
 
+      // Interrupt ongoing speech if patient speaks
+      if (isSpeaking) {
+        interrupt()
+      }
+
       // Check auto language detection
       const detectedLang = detectInputLanguage(msg)
       let activeLang = language
       if (detectedLang && detectedLang !== language) {
         activeLang = detectedLang
         setLanguage(detectedLang)
-        toast.success(`Language auto-detected: ${detectedLang === 'kn' ? 'ಕನ್ನಡ (Kannada)' : 'हिन्दी (Hindi)'}`, { icon: '🌐' })
+        toast.success(
+          `Language auto-detected: ${detectedLang === 'kn' ? 'ಕನ್ನಡ (Kannada)' : 'हिन्दी (Hindi)'}`,
+          { icon: '🌐' }
+        )
       }
 
       const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       const newPatientEntry: ChatEntry = {
         id: `patient-${Date.now()}`,
         role: 'patient',
+        speakerName: 'You (Patient)',
         text: msg,
         time: timeStr,
       }
@@ -248,7 +274,7 @@ export function DoctorVideoCall({
       let warning = ''
       let actionCard: ActionCardData | undefined = undefined
 
-      // 1. Emergency Detection (PRD Section 17 & Localized to Chikkamagaluru, Karnataka, India)
+      // 1. Emergency Detection (Localized to Chikkamagaluru, Karnataka, India)
       if (
         lower.includes('chest pain') ||
         lower.includes('heart attack') ||
@@ -266,9 +292,8 @@ export function DoctorVideoCall({
             ? 'ತುರ್ತು ಎಚ್ಚರಿಕೆ: ಇದು ಗಂಭೀರವಾದ ತುರ್ತು ಲಕ್ಷಣವಾಗಿರಬಹುದು. ದಯವಿಟ್ಟು ತಕ್ಷಣವೇ 112 ಅಥವಾ 108 (ಆರೋಗ್ಯ ಕವಚ) ತುರ್ತು ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಿ ಅಥವಾ ಚಿಕ್ಕಮಗಳೂರು ಜಿಲ್ಲಾಸ್ಪತ್ರೆಗೆ ತಕ್ಷಣ ಭೇಟಿ ನೀಡಿ.'
             : activeLang === 'hi'
             ? 'आपातकालीन चेतावनी: यह एक गंभीर लक्षण हो सकता है। कृपया तुरंत 112 या 108 पर कॉल करें या नजदीकी आपातकालीन केंद्र जाएं।'
-            : 'EMERGENCY ALERT: These symptoms require immediate medical intervention. Please call emergency services (112 in India, 108 Ambulance) or visit District Hospital Chikkamagaluru immediately. Do not drive yourself.';
+            : 'EMERGENCY ALERT: These symptoms require immediate medical intervention. Please call emergency services (112 in India, 108 Ambulance) or visit District Hospital Chikkamagaluru immediately. Do not drive yourself.'
       }
-
       // 2. Controlled Agent Tool Action: Specialist Search & Doctor Referral (Chikkamagaluru / Karnataka)
       else if (
         lower.includes('find doctor') ||
@@ -289,7 +314,6 @@ export function DoctorVideoCall({
           payload: { specialists: VERIFIED_SPECIALISTS_LOCAL.slice(0, 3) },
         }
       }
-
       // 3. Controlled Agent Tool Action: Appointment Booking Intent
       else if (
         lower.includes('book appointment') ||
@@ -304,7 +328,6 @@ export function DoctorVideoCall({
             : 'Certainly! I am opening the appointment scheduling window. Please choose your preferred specialist and confirm the consultation slot.'
         setIsSpecialistModalOpen(true)
       }
-
       // 4. Controlled Agent Tool Action: Medical Report Analysis
       else if (
         lower.includes('report') ||
@@ -321,7 +344,6 @@ export function DoctorVideoCall({
             : 'I can assist in interpreting your laboratory values. Please upload your test PDF or image in the report drawer to inspect reference intervals.'
         setIsReportDrawerOpen(true)
       }
-
       // 5. Mental Wellness & Breathing Guidance Mode (Dr. Ananya / Anxiety)
       else if (
         lower.includes('stress') ||
@@ -341,33 +363,37 @@ export function DoctorVideoCall({
           payload: { cycles: 4, inhale: 4, hold: 4, exhale: 4 },
         }
       }
-
       // 6. Common Symptoms: Fever, Cough, Headache
-      else if (lower.includes('fever') || lower.includes('temperature') || lower.includes('shivering')) {
+      else if (
+        lower.includes('fever') ||
+        lower.includes('temperature') ||
+        lower.includes('shivering')
+      ) {
         triage = 2
         doctorResponse =
           activeLang === 'kn'
             ? 'ಜ್ವರವು ಸಾಮಾನ್ಯವಾಗಿ ಸೋಂಕಿನ ವಿರುದ್ಧ ದೇಹದ ನೈಸರ್ಗಿಕ ರಕ್ಷಣಾತ್ಮಕ ಪ್ರತಿಕ್ರಿಯೆಯಾಗಿದೆ. ಇದು ಎಷ್ಟು ದಿನಗಳಿಂದ ಇದೆ? ದಯವಿಟ್ಟು ಸಾಕಷ್ಟು ನೀರು ಮತ್ತು ಎಳನೀರು ಕುಡಿಯಿರಿ ಮತ್ತು ವಿಶ್ರಾಂತಿ ಪಡೆಯಿರಿ.'
-            : 'Fever is commonly an immune response to a viral or bacterial infection. How many days have you noticed this temperature? Stay well hydrated with fluids, get plenty of rest, and monitor for warning signs like chest heaviness or persistent vomiting.';
+            : 'Fever is commonly an immune response to a viral or bacterial infection. How many days have you noticed this temperature? Stay well hydrated with fluids, get plenty of rest, and monitor for warning signs like chest heaviness or persistent vomiting.'
       } else if (lower.includes('headache') || lower.includes('migraine')) {
         triage = 2
         doctorResponse =
-          'Headaches often stem from tension, dehydration, eye strain, or sleep deprivation. Are you experiencing any visual disturbances, nausea, or neck stiffness? Please drink 500ml of water and rest in a dim, quiet room.';
+          'Headaches often stem from tension, dehydration, eye strain, or sleep deprivation. Are you experiencing any visual disturbances, nausea, or neck stiffness? Please drink 500ml of water and rest in a dim, quiet room.'
       } else {
         // General clinical intake interview follow-up
         doctorResponse =
           activeLang === 'kn'
             ? `ನಾನು ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಗಮನಿಸಿದ್ದೇನೆ. ಈ ಸಮಸ್ಯೆ ಎಷ್ಟು ದಿನಗಳಿಂದ ಇದೆ ಮತ್ತು ನೀವು ಪ್ರಸ್ತುತ ಯಾವುದೇ ನಿಯಮಿತ ಔಷಧಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದೀರಾ?`
-            : `I understand. Could you let me know how long you've noticed these symptoms, and whether they worsen at specific times of the day? This helps me provide more relevant general health education.`;
+            : `I understand. Could you let me know how long you've noticed these symptoms, and whether they worsen at specific times of the day? This helps me provide more relevant general health education.`
       }
 
       setActiveTriage(triage)
 
-      // Simulate doctor answering after clinical processing
+      // Add doctor response to transcript and speak with real-time lip-sync
       setTimeout(() => {
         const doctorEntry: ChatEntry = {
           id: `doc-${Date.now()}`,
           role: 'doctor',
+          speakerName: doctor.name,
           text: doctorResponse,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           triage,
@@ -376,36 +402,47 @@ export function DoctorVideoCall({
         }
         setChatHistory((prev) => [...prev, doctorEntry])
         speak(doctorResponse)
-      }, 700)
+      }, 600)
     },
-    [inputText, language, speak]
+    [inputText, language, speak, isSpeaking, interrupt, doctor.name]
   )
 
-  // Switch doctor identity (General Physician vs Mental Wellness Companion)
-  const handleToggleDoctor = () => {
-    const nextDoc: DoctorId = doctorId === 'dr_arjun' ? 'dr_ananya' : 'dr_arjun'
+  // Switch doctor identity (Dr. Arjun vs Dr. Ananya)
+  const handleToggleDoctor = (targetDoctorId?: DoctorId) => {
+    const nextDoc: DoctorId = targetDoctorId || (doctorId === 'dr_arjun' ? 'dr_ananya' : 'dr_arjun')
+    if (nextDoc === doctorId) return
+
+    // Stop current speech before switching
+    interrupt()
+
     setDoctorId(nextDoc)
     const nextDocObj = DOCTORS[nextDoc]
     const welcomeMsg =
       nextDoc === 'dr_ananya'
-        ? `Switched to ${nextDocObj.name}, your AI Mental Wellness & Counseling Companion. I am here to listen empathetically, assist with everyday stress, and guide calming breathing exercises. How are you feeling emotionally today?`
-        : `Switched to ${nextDocObj.name}, your AI General Physician. How can I assist with your physical health, symptoms, or medical report interpretation today?`
-    
+        ? `Switched to ${nextDocObj.name}, your AI Mental Wellness & Lab Diagnostics Consultant. I am here to listen empathetically, assist with lab results, and guide calming breathing exercises. How are you feeling today?`
+        : `Switched to ${nextDocObj.name}, your AI General Physician. How can I assist with your physical symptoms, health review, or clinical triage today?`
+
     setChatHistory((prev) => [
       ...prev,
       {
         id: `switch-${Date.now()}`,
         role: 'doctor',
+        speakerName: nextDocObj.name,
         text: welcomeMsg,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ])
     speak(welcomeMsg)
-    toast.success(`Mode Switched: ${nextDoc === 'dr_ananya' ? 'Mental Wellness Companion' : 'AI General Physician'}`)
+    toast.success(
+      `Consultation switched to ${nextDocObj.formalTitle} (${nextDoc === 'dr_ananya' ? 'Wellness & Labs' : 'General Physician'})`,
+      { icon: '👨‍⚕️' }
+    )
   }
 
   // End consultation and generate structured clinical notes
   const handleEndCall = () => {
+    interrupt()
+
     const patientSymptoms = chatHistory
       .filter((m) => m.role === 'patient')
       .map((m) => m.text.slice(0, 80))
@@ -464,7 +501,7 @@ export function DoctorVideoCall({
   }
 
   return (
-    <div className="relative w-full h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className="relative w-full h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
       {/* ── Specialist Booking Modal ── */}
       <SpecialistBookingModal
         isOpen={isSpecialistModalOpen}
@@ -475,11 +512,14 @@ export function DoctorVideoCall({
             {
               id: `apt-${Date.now()}`,
               role: 'doctor',
+              speakerName: doctor.name,
               text: `Appointment request confirmed with ${details.doctor_name} at ${details.hospital} on ${details.date} (${details.time_slot}). Booking ID: ${details.booking_id}.`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ])
-          speak(`Your appointment request with ${details.doctor_name} has been prepared. Please arrive 15 minutes prior to your consultation slot.`)
+          speak(
+            `Your appointment request with ${details.doctor_name} has been prepared. Please arrive 15 minutes prior to your consultation slot.`
+          )
         }}
       />
 
@@ -494,11 +534,16 @@ export function DoctorVideoCall({
             {
               id: `rep-${Date.now()}`,
               role: 'doctor',
-              text: `I've analyzed your report (${rep.fileName}). Parameter breakdown: ${rep.tests.map((t) => `${t.name}: ${t.value} ${t.unit} (${t.status})`).join(', ')}. Clinical Note: ${rep.aiInterpretation}`,
+              speakerName: doctor.name,
+              text: `I've analyzed your report (${rep.fileName}). Parameter breakdown: ${rep.tests
+                .map((t) => `${t.name}: ${t.value} ${t.unit} (${t.status})`)
+                .join(', ')}. Clinical Note: ${rep.aiInterpretation}`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ])
-          speak(`I have examined your diagnostic report for ${rep.fileName}. I noticed the parameters provided and summarized the normal reference ranges. Please discuss these with your attending doctor.`)
+          speak(
+            `I have examined your diagnostic report for ${rep.fileName}. I analyzed the clinical parameters and summarized the reference ranges. Please discuss these with your attending physician.`
+          )
         }}
       />
 
@@ -506,49 +551,56 @@ export function DoctorVideoCall({
       {summaryData && (
         <ConsultationSummaryModal
           isOpen={isSummaryModalOpen}
-          onClose={() => setIsSummaryModalOpen(false)}
+          onClose={() => {
+            setIsSummaryModalOpen(false)
+            onEndConsultation?.()
+          }}
           summary={summaryData}
         />
       )}
 
-      {/* ── Top Consultation Header ── */}
-      <header className="h-14 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-5 flex items-center justify-between z-30 flex-shrink-0">
+      {/* ── TOP NAVIGATION BAR ── */}
+      <header className="h-14 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl px-5 flex items-center justify-between z-30 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
-            {doctorId === 'dr_ananya' ? <Brain size={18} className="text-purple-400 animate-pulse" /> : <HeartPulse size={18} className="text-sky-400 animate-pulse" />}
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
+            <HeartPulse size={19} className="animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm tracking-tight text-white">Medi<span className="text-sky-400">Care</span></span>
+              <span className="font-extrabold text-sm tracking-tight text-white">
+                Medi<span className="text-sky-400">Care</span>
+              </span>
               <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/60 font-semibold">
                 Your AI Doctor
               </span>
-              <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${doctorId === 'dr_ananya' ? 'bg-purple-950/80 text-purple-300 border-purple-800' : 'bg-sky-950/80 text-sky-300 border-sky-800'}`}>
-                {doctorId === 'dr_ananya' ? 'Mental Wellness' : 'General Physician'}
+              <span
+                className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+                  doctorId === 'dr_ananya'
+                    ? 'bg-purple-950/80 text-purple-300 border-purple-800'
+                    : 'bg-sky-950/80 text-sky-300 border-sky-800'
+                }`}
+              >
+                {doctorId === 'dr_ananya' ? 'Wellness & Diagnostics' : 'General Physician'}
               </span>
             </div>
-            <span className="text-xs text-slate-400 font-medium">
-              Consulting with <span className="text-sky-300 font-semibold">{doctor.name}</span> • <span className="text-slate-400">Chikkamagaluru, KA</span>
+            <span className="text-xs text-slate-400">
+              Consulting with <span className="text-sky-300 font-semibold">{doctor.name}</span> •{' '}
+              <span className="text-slate-400">Chikkamagaluru, KA</span>
             </span>
           </div>
         </div>
 
-        {/* Status Center */}
-        <div className="flex items-center gap-3">
-          {/* Live Call Duration */}
+        {/* Central Consultation Telemetry */}
+        <div className="hidden sm:flex items-center gap-3">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300">
             <Clock size={13} className="text-sky-400" />
             <span>{formatTimer(consultationSeconds)}</span>
           </div>
 
-          {/* Mode Switcher Button */}
-          <button
-            onClick={handleToggleDoctor}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300 transition-colors shadow-sm"
-          >
-            <RotateCcw size={12} className="text-sky-400" />
-            <span>Switch to {doctorId === 'dr_arjun' ? 'Dr. Ananya (Wellness)' : 'Dr. Arjun (Physician)'}</span>
-          </button>
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-emerald-400 font-medium">{statusLabel}</span>
+          </div>
         </div>
 
         {/* Right Controls */}
@@ -582,62 +634,49 @@ export function DoctorVideoCall({
         </div>
       </header>
 
-      {/* ── Main Area: 70% Video Area / 30% Chat Panel ── */}
-      <div className="relative flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* ── 70% Photorealistic Doctor Video Viewport ── */}
-        <div
-          className={`relative h-full transition-all duration-300 ${
-            isChatVisible ? 'w-full md:w-[70%]' : 'w-full'
-          }`}
-        >
-          {/* Photorealistic Human AI Doctor Video Viewport */}
-          <DoctorPhotorealisticViewport
-            doctorId={doctorId}
-            doctorState={doctorState}
-            audioLevel={audioLevel}
-            isMuted={isMuted}
-            subtitles={subtitles}
-            activeTriage={activeTriage}
-            onStateChange={(st) => setDoctorState(st)}
-            className="w-full h-full"
-          />
-
-          {/* Top-Right Floating Patient Webcam (PiP) */}
-          <div className="absolute top-4 right-4 z-20">
-            <PatientWebcamPiP
-              isCameraOn={isCameraOn}
-              isMicOn={isMicOn}
-              onToggleCamera={() => setIsCameraOn((prev) => !prev)}
-              onToggleMic={() => setIsMicOn((prev) => !prev)}
+      {/* ── MAIN CONSULTATION LAYOUT: 65% VIDEO / 35% SIDEBAR ── */}
+      <div className="relative flex-1 flex flex-col lg:flex-row overflow-hidden">
+        {/* ── 65% MAIN CONSULTATION AREA: Photorealistic Digital Human Doctor ── */}
+        <section className="relative w-full lg:w-[65%] h-[60vh] lg:h-full flex flex-col bg-slate-950 overflow-hidden">
+          {/* Photorealistic Digital Human Video Viewport */}
+          <div className="relative w-full flex-1 overflow-hidden">
+            <DoctorPhotorealisticViewport
+              doctorId={doctorId}
+              doctorState={doctorState}
+              audioLevel={audioLevel}
+              isMuted={isMuted}
+              subtitles={subtitles}
+              activeTriage={activeTriage}
+              onStateChange={(st) => setDoctorState(st)}
+              onReconnect={() => setDoctorState('idle')}
+              className="w-full h-full"
             />
-          </div>
 
-          {/* Real-time Subtitles / Live Transcript Bar (Bottom of Video Area) */}
-          {subtitles && (
-            <div className="absolute bottom-16 left-6 right-6 z-20 flex justify-center pointer-events-none">
-              <div className="max-w-2xl px-4 py-2.5 rounded-xl bg-black/80 backdrop-blur-md border border-white/15 text-white text-center text-xs md:text-sm font-medium leading-relaxed shadow-2xl animate-fade-in">
-                <span className="text-sky-400 font-semibold mr-1.5">{doctor.name}:</span>
-                <span>{subtitles}</span>
-              </div>
+            {/* Floating Patient Camera Window (PiP) */}
+            <div className="absolute top-4 right-4 z-20">
+              <PatientWebcamPiP
+                isCameraOn={isCameraOn}
+                isMicOn={isMicOn}
+                onToggleCamera={() => setIsCameraOn((prev) => !prev)}
+                onToggleMic={() => setIsMicOn((prev) => !prev)}
+              />
             </div>
-          )}
 
-          {/* Emergency Hotline Trigger (if Triage Level 4) */}
-          {activeTriage === 4 && (
-            <div className="absolute top-20 left-4 right-4 z-30 max-w-lg mx-auto p-4 rounded-2xl bg-red-600/95 border border-red-400 text-white shadow-2xl backdrop-blur-md animate-bounce">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <ShieldAlert size={24} className="text-white flex-shrink-0" />
-                  <div>
-                    <span className="text-xs font-black uppercase tracking-wider block">
-                      Emergency Warning Signs Detected
-                    </span>
-                    <span className="text-xs text-red-100">
-                      Call 112 (National Emergency) or 108 (Arogya Kavacha Karnataka) immediately.
-                    </span>
+            {/* Emergency Hotline Banner (Triggered on Triage Level 4) */}
+            {activeTriage === 4 && (
+              <div className="absolute top-20 left-4 right-4 z-30 max-w-lg mx-auto p-4 rounded-2xl bg-red-600/95 border border-red-400 text-white shadow-2xl backdrop-blur-md animate-bounce">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <ShieldAlert size={26} className="text-white flex-shrink-0" />
+                    <div>
+                      <span className="text-xs font-black uppercase tracking-wider block">
+                        Emergency Warning Signs Detected
+                      </span>
+                      <span className="text-xs text-red-100">
+                        Call 112 (National Emergency) or 108 (Arogya Kavacha Karnataka) immediately.
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
                   <a
                     href="tel:112"
                     className="px-3.5 py-1.5 rounded-xl bg-white text-red-700 font-extrabold text-xs flex items-center gap-1 shadow-md hover:bg-red-50"
@@ -647,290 +686,258 @@ export function DoctorVideoCall({
                   </a>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* ── 30% Right-Side Telemedicine Chat & Clinical Panel ── */}
-        {isChatVisible && (
-          <aside className="w-full md:w-[30%] h-full border-l border-slate-800 bg-slate-900/95 flex flex-col z-20 flex-shrink-0 shadow-2xl backdrop-blur-md">
-            {/* Sidebar Header */}
-            <div className="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
-              <div className="flex items-center gap-2">
-                <MessageSquare size={16} className="text-sky-400" />
-                <span className="font-semibold text-xs text-white">Consultation Transcript</span>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setIsSpecialistModalOpen(true)}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs font-medium border border-slate-700 transition-colors"
-                  title="Search Specialists"
-                >
-                  <Stethoscope size={12} />
-                  <span>Specialists</span>
-                </button>
-                <button
-                  onClick={() => setIsReportDrawerOpen(true)}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs font-medium border border-slate-700 transition-colors"
-                  title="Upload Laboratory Report"
-                >
-                  <Upload size={12} />
-                  <span>Report</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Conversation Messages */}
-            <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
-              {chatHistory.map((item) => (
-                <div
-                  key={item.id}
-                  className={`flex flex-col ${
-                    item.role === 'patient' ? 'items-end' : 'items-start'
-                  } animate-slide-up`}
-                >
-                  <div className="flex items-center gap-1.5 mb-1 text-[10px] text-slate-500">
-                    <span className="font-medium text-slate-400">
-                      {item.role === 'patient' ? 'You' : doctor.name}
-                    </span>
-                    <span>•</span>
-                    <span>{item.time}</span>
-                  </div>
-
-                  <div
-                    className={`max-w-[92%] p-3.5 rounded-2xl text-xs leading-relaxed ${
-                      item.role === 'patient'
-                        ? 'bg-sky-600 text-white rounded-br-xs shadow-md'
-                        : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-bl-xs shadow-md'
-                    }`}
-                  >
-                    {item.text}
-
-                    {/* Interactive Specialist Cards */}
-                    {item.actionCard?.type === 'specialist_recommendation' && (
-                      <div className="mt-3 space-y-2 pt-2 border-t border-slate-700">
-                        <span className="text-[10px] font-mono uppercase text-sky-400 font-bold block">
-                          Verified Karnataka Healthcare Specialists:
-                        </span>
-                        {item.actionCard.payload.specialists.map((doc: Specialist) => (
-                          <div
-                            key={doc.id}
-                            className="p-2.5 rounded-xl bg-slate-900 border border-slate-700/80 flex flex-col gap-1 text-[11px]"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-bold text-white">{doc.name}</span>
-                              <button
-                                onClick={() => setIsSpecialistModalOpen(true)}
-                                className="px-2 py-0.5 rounded-md bg-sky-600 hover:bg-sky-500 text-white font-semibold text-[10px]"
-                              >
-                                Book Visit
-                              </button>
-                            </div>
-                            <span className="text-slate-400">{doc.specialty} • {doc.hospital}</span>
-                            <span className="text-slate-500 font-mono text-[10px]">{doc.location}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Interactive 4-4-4 Box Breathing Card */}
-                    {item.actionCard?.type === 'breathing_exercise' && (
-                      <div className="mt-3 p-3 rounded-xl bg-purple-950/60 border border-purple-800/80 text-purple-200 text-center">
-                        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-purple-300 mb-2">
-                          <Wind size={15} />
-                          <span>4-4-4 Box Breathing Guide</span>
-                        </div>
-                        <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-purple-300">
-                          <span className="px-2 py-1 rounded-md bg-purple-900/80">Inhale (4s)</span>
-                          <span>→</span>
-                          <span className="px-2 py-1 rounded-md bg-purple-900/80">Hold (4s)</span>
-                          <span>→</span>
-                          <span className="px-2 py-1 rounded-md bg-purple-900/80">Exhale (4s)</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {doctorState === 'thinking' && (
-                <div className="flex items-center gap-2 text-slate-400 text-xs p-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-bounce" />
-                  <div
-                    className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-bounce"
-                    style={{ animationDelay: '0.15s' }}
-                  />
-                  <div
-                    className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-bounce"
-                    style={{ animationDelay: '0.3s' }}
-                  />
-                  <span className="text-[11px] font-mono text-slate-500 ml-1">
-                    {doctor.name} is evaluating clinical knowledge...
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Quick Symptom Chips */}
-            <div className="p-2.5 border-t border-slate-800/80 bg-slate-950/40">
-              <span className="block text-[10px] text-slate-500 uppercase font-mono mb-1.5">
-                Quick Clinical Inquiries:
+          {/* ── BOTTOM CONSULTATION CONTROLS (Zero dead black space) ── */}
+          <div className="h-16 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between z-20 flex-shrink-0">
+            {/* Left: Triage Status Indicator */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  activeTriage === 4
+                    ? 'bg-red-500 animate-ping'
+                    : activeTriage === 3
+                    ? 'bg-amber-400 animate-pulse'
+                    : 'bg-emerald-400'
+                }`}
+              />
+              <span className="text-xs text-slate-300 font-mono hidden sm:inline">
+                Triage Level {activeTriage} • Clinical Screening Active
               </span>
-              <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                {[
-                  { label: '🌡️ Fever & Chills', query: 'I have had a mild fever and body aches for two days.' },
-                  { label: '🩺 Find Doctor', query: 'Can you recommend a specialist doctor in Chikkamagaluru?' },
-                  { label: '📑 Check Report', query: 'Can you help interpret my Complete Blood Count report?' },
-                  { label: '🧘 Anxiety & Stress', query: 'I feel stressed and having trouble sleeping.' },
-                ].map((topic, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleSendMessage(topic.query)}
-                    className="px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-sky-900/60 text-slate-300 hover:text-sky-200 text-[10px] font-medium border border-slate-700 whitespace-nowrap transition-colors"
-                  >
-                    {topic.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
-            {/* Chat Input & Mic Speech Trigger */}
-            <div className="p-3 border-t border-slate-800 bg-slate-950">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  handleSendMessage()
-                }}
-                className="flex items-center gap-2"
+            {/* Center: Essential Telemedicine Actions */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Mic Speech Button */}
+              <button
+                onClick={toggleMicListening}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-md ${
+                  isListeningSpeech
+                    ? 'bg-emerald-600 text-white animate-pulse ring-2 ring-emerald-400'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                }`}
+                title="Speak to doctor (Speech-to-Text)"
               >
-                {/* Microphone Speech Recognition Button */}
-                <button
-                  type="button"
-                  onClick={toggleMicListening}
-                  className={`p-2.5 rounded-xl transition-all ${
-                    isListeningSpeech
-                      ? 'bg-red-600 text-white animate-pulse shadow-lg'
-                      : 'bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-700'
-                  }`}
-                  title={isListeningSpeech ? 'Listening... Click to stop' : 'Click to speak naturally'}
-                >
-                  <Mic size={16} />
-                </button>
+                {isListeningSpeech ? <Mic size={15} /> : <MicOff size={15} />}
+                <span className="hidden md:inline">
+                  {isListeningSpeech ? 'Listening…' : 'Speak'}
+                </span>
+              </button>
 
-                <input
-                  type="text"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  placeholder={isListeningSpeech ? 'Listening to speech...' : `Speak or message ${doctor.name}...`}
-                  className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                />
+              {/* Camera Toggle */}
+              <button
+                onClick={() => setIsCameraOn(!isCameraOn)}
+                className={`p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                  isCameraOn
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                    : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                }`}
+                title="Toggle Patient Camera"
+              >
+                {isCameraOn ? <Video size={15} /> : <VideoOff size={15} />}
+                <span className="hidden md:inline">{isCameraOn ? 'Cam On' : 'Cam Off'}</span>
+              </button>
 
-                <button
-                  type="submit"
-                  disabled={!inputText.trim()}
-                  className="p-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-colors"
-                >
-                  <Send size={15} />
-                </button>
-              </form>
+              {/* Speaker Mute */}
+              <button
+                onClick={toggleMute}
+                className={`p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                  isMuted
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                }`}
+                title={isMuted ? 'Unmute Doctor' : 'Mute Doctor'}
+              >
+                {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                <span className="hidden md:inline">{isMuted ? 'Muted' : 'Audio'}</span>
+              </button>
+
+              {/* Patient Interrupt Button */}
+              <button
+                onClick={interrupt}
+                className="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/50 text-purple-200 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+                title="Interrupt doctor politely"
+              >
+                <Hand size={14} className="text-purple-300" />
+                <span>Interrupt</span>
+              </button>
             </div>
-          </aside>
-        )}
+
+            {/* Right: End Call & Summary Button */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleEndCall}
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all hover:scale-105"
+              >
+                <PhoneOff size={14} />
+                <span>End Call &amp; Summary</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 35% RIGHT SIDEBAR: Consultation Transcript, Quick Tools & Specialist Switcher ── */}
+        <aside className="w-full lg:w-[35%] h-[40vh] lg:h-full border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/95 flex flex-col z-20 flex-shrink-0 shadow-2xl backdrop-blur-xl">
+          {/* Sidebar Header with Doctor Switcher */}
+          <div className="p-3.5 border-b border-slate-800/80 bg-slate-950/70 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <MessageSquare size={16} className="text-sky-400" />
+              <span className="font-bold text-xs text-white">Consultation Transcript</span>
+            </div>
+
+            {/* Doctor Switcher Buttons */}
+            <div className="flex items-center gap-1 bg-slate-900 p-0.5 rounded-xl border border-slate-800">
+              <button
+                onClick={() => handleToggleDoctor('dr_arjun')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                  doctorId === 'dr_arjun'
+                    ? 'bg-sky-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Dr. Arjun
+              </button>
+              <button
+                onClick={() => handleToggleDoctor('dr_ananya')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                  doctorId === 'dr_ananya'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Dr. Ananya
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Clinical Inquiries Carousel */}
+          <div className="px-3.5 py-2.5 border-b border-slate-800 bg-slate-900/60 flex items-center gap-1.5 overflow-x-auto scrollbar-thin">
+            {[
+              { label: '🌡️ Fever & Chills', query: 'I have a high fever and shivering since yesterday.' },
+              { label: '🫁 Cough & Chest', query: 'I have a persistent dry cough and chest congestion.' },
+              { label: '📋 Upload Lab Report', query: 'I would like to analyze my CBC and blood test report.' },
+              { label: '🧘 4-4-4 Breathing', query: 'I feel anxious and overwhelmed, guide me through breathing exercises.' },
+              { label: '🏥 Chikkamagaluru Specialist', query: 'Find specialist doctors in Chikkamagaluru district.' },
+            ].map((shortcut, i) => (
+              <button
+                key={i}
+                onClick={() => handleSendMessage(shortcut.query)}
+                className="whitespace-nowrap px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-[11px] text-slate-300 hover:text-white transition-colors flex-shrink-0"
+              >
+                {shortcut.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Transcript Messages List */}
+          <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+            {chatHistory.map((item) => (
+              <div
+                key={item.id}
+                className={`flex flex-col ${
+                  item.role === 'patient' ? 'items-end' : 'items-start'
+                } animate-fade-in`}
+              >
+                <div className="flex items-center gap-1.5 mb-1 text-[10px] text-slate-500">
+                  <span className="font-semibold text-slate-400">{item.speakerName}</span>
+                  <span>•</span>
+                  <span>{item.time}</span>
+                </div>
+
+                <div
+                  className={`max-w-[90%] p-3.5 rounded-2xl text-xs leading-relaxed ${
+                    item.role === 'patient'
+                      ? 'bg-sky-600 text-white rounded-br-xs shadow-md'
+                      : 'glass-card text-slate-200 border border-slate-700/70 rounded-bl-xs shadow-md'
+                  }`}
+                >
+                  <p>{item.text}</p>
+
+                  {/* Specialist Referral Card */}
+                  {item.actionCard?.type === 'specialist_recommendation' && (
+                    <div className="mt-3 space-y-2 pt-2.5 border-t border-slate-700">
+                      <span className="text-[10px] font-mono uppercase text-sky-400 font-bold block">
+                        Verified Karnataka Healthcare Specialists:
+                      </span>
+                      {item.actionCard.payload.specialists.map((spec: Specialist) => (
+                        <div
+                          key={spec.id}
+                          className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col gap-1 text-[11px]"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-white">{spec.name}</span>
+                            <button
+                              onClick={() => setIsSpecialistModalOpen(true)}
+                              className="px-2 py-0.5 rounded-md bg-sky-600 hover:bg-sky-500 text-white font-semibold text-[10px]"
+                            >
+                              Book Visit
+                            </button>
+                          </div>
+                          <span className="text-slate-400">
+                            {spec.specialty} • {spec.hospital}
+                          </span>
+                          <span className="text-slate-500 font-mono text-[10px]">
+                            {spec.location}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 4-4-4 Box Breathing Interactive Card */}
+                  {item.actionCard?.type === 'breathing_exercise' && (
+                    <div className="mt-3 p-3.5 rounded-xl bg-purple-950/60 border border-purple-800 text-purple-200 text-center">
+                      <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-purple-300 mb-2">
+                        <Wind size={15} className="animate-spin" />
+                        <span>Box Breathing Pacer (Inhale 4s • Hold 4s • Exhale 4s)</span>
+                      </div>
+                      <p className="text-[11px] text-purple-300 mb-2">
+                        Breathe along with Dr. Ananya to regulate heart rate variability.
+                      </p>
+                      <div className="w-full bg-purple-900/60 h-2 rounded-full overflow-hidden">
+                        <div className="bg-purple-400 h-full w-2/3 animate-pulse" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Transcript Text Input Area */}
+          <div className="p-3 border-t border-slate-800 bg-slate-950/80">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleSendMessage()
+              }}
+              className="flex items-center gap-2"
+            >
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder={`Ask ${doctor.name} symptoms or health questions…`}
+                className="flex-1 bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={!inputText.trim()}
+                className="p-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+                title="Send message"
+              >
+                <Send size={15} />
+              </button>
+            </form>
+
+            <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-2 px-1">
+              <span>District Hospital Chikkamagaluru Network</span>
+              <span>Emergency: Dial 112 / 108</span>
+            </div>
+          </div>
+        </aside>
       </div>
-
-      {/* ── Bottom Call Control Bar ── */}
-      <footer className="h-16 border-t border-slate-800 bg-slate-950 px-6 flex items-center justify-between z-30 flex-shrink-0">
-        {/* Left: Doctor Profile Pill */}
-        <div className="hidden sm:flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xs text-sky-400">
-            {doctor.name.replace('Dr. ', '')[0]}
-          </div>
-          <div>
-            <span className="block text-xs font-semibold text-white">{doctor.formalTitle}</span>
-            <span className="text-[10px] text-slate-400">{doctor.specialty}</span>
-          </div>
-        </div>
-
-        {/* Center: Main Call Action Buttons */}
-        <div className="flex items-center gap-2 sm:gap-3 mx-auto">
-          {/* Microphone Speech Toggle */}
-          <button
-            onClick={toggleMicListening}
-            className={`p-3 rounded-2xl transition-all shadow-md ${
-              isListeningSpeech
-                ? 'bg-red-600 hover:bg-red-500 text-white animate-pulse'
-                : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
-            }`}
-            title={isListeningSpeech ? 'Stop speech listening' : 'Start speaking to doctor'}
-          >
-            {isListeningSpeech ? <MicOff size={18} /> : <Mic size={18} />}
-          </button>
-
-          {/* Camera */}
-          <button
-            onClick={() => setIsCameraOn((prev) => !prev)}
-            className={`p-3 rounded-2xl transition-all shadow-md ${
-              isCameraOn
-                ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
-                : 'bg-red-600 hover:bg-red-500 text-white'
-            }`}
-            title={isCameraOn ? 'Turn off camera' : 'Turn on camera'}
-          >
-            {isCameraOn ? <Video size={18} /> : <VideoOff size={18} />}
-          </button>
-
-          {/* Doctor Speaker Volume */}
-          <button
-            onClick={toggleMute}
-            className={`p-3 rounded-2xl transition-all shadow-md ${
-              !isMuted
-                ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
-                : 'bg-amber-600 hover:bg-amber-500 text-white'
-            }`}
-            title={isMuted ? 'Unmute Doctor Audio' : 'Mute Doctor Audio'}
-          >
-            {!isMuted ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          </button>
-
-          {/* Patient Interrupt Button */}
-          <button
-            onClick={interrupt}
-            className="flex items-center gap-1.5 px-3.5 py-3 rounded-2xl bg-slate-800 hover:bg-amber-600/80 text-amber-300 hover:text-white border border-slate-700 text-xs font-semibold transition-all shadow-md"
-            title="Interrupt doctor speech and return to listening"
-          >
-            <Hand size={16} />
-            <span className="hidden md:inline">Interrupt</span>
-          </button>
-
-          {/* Schedule Specialist Doctor */}
-          <button
-            onClick={() => setIsSpecialistModalOpen(true)}
-            className="p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 transition-all shadow-md"
-            title="Search Specialist Doctors in Karnataka"
-          >
-            <Stethoscope size={18} />
-          </button>
-
-          {/* Upload Medical Report */}
-          <button
-            onClick={() => setIsReportDrawerOpen(true)}
-            className="p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 transition-all shadow-md"
-            title="Upload Medical Report"
-          >
-            <Upload size={18} />
-          </button>
-
-          {/* End Call / Summary */}
-          <button
-            onClick={handleEndCall}
-            className="px-4 py-3 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg transition-colors ml-2"
-          >
-            <PhoneOff size={16} />
-            <span>End & Summary</span>
-          </button>
-        </div>
-      </footer>
     </div>
   )
 }

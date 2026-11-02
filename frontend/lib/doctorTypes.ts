@@ -6,6 +6,7 @@ export type DoctorState =
   | 'thinking'
   | 'speaking'
   | 'interrupted'
+  | 'disconnected'
   | 'explaining'
   | 'waiting'
   | 'reconnecting'

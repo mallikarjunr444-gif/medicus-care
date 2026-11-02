@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <!-- Hospital Clinic Consultation Office Background -->
+    <linearGradient id="ananyaBgWall" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E1B4B" />
+      <stop offset="40%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Warm Soft Clinic Glow -->
+    <radialGradient id="ananyaClinicLight" cx="50%" cy="25%" r="65%">
+      <stop offset="0%" stop-color="#FDF4FF" stop-opacity="0.20" />
+      <stop offset="60%" stop-color="#818CF8" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.65" />
+    </radialGradient>
+
+    <!-- Dr. Ananya Realistic Skin Tone Gradients -->
+    <radialGradient id="ananyaSkin" cx="48%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#F1C2A5" />
+      <stop offset="35%" stop-color="#E2AE8F" />
+      <stop offset="70%" stop-color="#CD9776" />
+      <stop offset="100%" stop-color="#B07957" />
+    </radialGradient>
+
+    <linearGradient id="ananyaShadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8A5132" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#552B17" stop-opacity="0.80" />
+    </linearGradient>
+
+    <!-- Warm Empathetic Iris Gradient -->
+    <radialGradient id="irisAnanya" cx="45%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#733A19" />
+      <stop offset="60%" stop-color="#42200C" />
+      <stop offset="100%" stop-color="#1F0E05" />
+    </radialGradient>
+
+    <!-- Hair Gradient -->
+    <linearGradient id="ananyaHair" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#2D2320" />
+      <stop offset="30%" stop-color="#1A1311" />
+      <stop offset="85%" stop-color="#0D0908" />
+      <stop offset="100%" stop-color="#050303" />
+    </linearGradient>
+
+    <!-- Crisp White Doctor Lab Coat -->
+    <linearGradient id="ananyaCoat" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#F8FAFC" />
+      <stop offset="85%" stop-color="#E2E8F0" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+
+    <!-- Cobalt/Violet Clinical Top -->
+    <linearGradient id="ananyaScrub" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+
+    <!-- Violet Stethoscope Tubing -->
+    <linearGradient id="ananyaStethTubing" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6D28D9" />
+      <stop offset="50%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#5B21B6" />
+    </linearGradient>
+
+    <!-- Chrome Stethoscope Metal -->
+    <linearGradient id="ananyaChrome" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="35%" stop-color="#E2E8F0" />
+      <stop offset="65%" stop-color="#94A3B8" />
+      <stop offset="100%" stop-color="#475467" />
+    </linearGradient>
+
+    <filter id="ananyaBokeh" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="9" />
+    </filter>
+  </defs>
+
+  <!-- 1. Hospital Consultation Room Background -->
+  <rect width="1200" height="800" fill="url(#ananyaBgWall)" />
+
+  <!-- Background Clinic Shelving & Framed Diplomas (Bokeh blurred) -->
+  <g filter="url(#ananyaBokeh)" opacity="0.35">
+    <rect x="120" y="70" width="180" height="130" rx="4" fill="#1E293B" stroke="#475569" stroke-width="4" />
+    <rect x="135" y="85" width="150" height="100" fill="#F8FAFC" opacity="0.85" />
+    <circle cx="210" cy="135" r="14" fill="#7C3AED" opacity="0.8" />
+
+    <rect x="900" y="80" width="180" height="130" rx="4" fill="#1E293B" stroke="#475569" stroke-width="4" />
+    <rect x="915" y="95" width="150" height="100" fill="#F8FAFC" opacity="0.85" />
+    <circle cx="990" cy="145" r="14" fill="#0284C7" opacity="0.8" />
+
+    <!-- Healthy Green Clinic Plant -->
+    <circle cx="170" cy="460" r="45" fill="#047857" opacity="0.6" />
+    <circle cx="150" cy="410" r="35" fill="#059669" opacity="0.6" />
+    <circle cx="200" cy="420" r="40" fill="#10B981" opacity="0.6" />
+    <rect x="150" y="470" width="40" height="60" fill="#B45309" opacity="0.7" />
+
+    <!-- Medical Library Bookshelf -->
+    <rect x="930" y="320" width="220" height="240" fill="#0F172A" />
+    <rect x="940" y="340" width="24" height="160" rx="2" fill="#7C3AED" />
+    <rect x="968" y="330" width="22" height="170" rx="2" fill="#0284C7" />
+    <rect x="994" y="345" width="26" height="155" rx="2" fill="#B45309" />
+  </g>
+
+  <!-- Telemedicine Soft Clinical Ambient Light -->
+  <rect width="1200" height="800" fill="url(#ananyaClinicLight)" />
+
+  <!-- 2. Dr. Ananya Torso & Doctor Lab Coat -->
+  <g id="ananyaTorso">
+    <path d="M 260 800 C 290 560, 370 480, 505 465 L 695 465 C 830 480, 910 560, 940 800 Z" fill="url(#ananyaCoat)" />
+
+    <!-- Inner V-Neck Silk Blouse/Top -->
+    <path d="M 525 465 L 600 590 L 675 465 Z" fill="url(#ananyaScrub)" />
+
+    <!-- Left Coat Lapel -->
+    <path d="M 445 475 L 535 750 L 495 800 L 380 560 Z" fill="#FFFFFF" filter="drop-shadow(3px 4px 6px rgba(0,0,0,0.22))" />
+
+    <!-- Right Coat Lapel -->
+    <path d="M 755 475 L 665 750 L 705 800 L 820 560 Z" fill="#F8FAFC" filter="drop-shadow(-3px 4px 6px rgba(0,0,0,0.22))" />
+
+    <!-- ID Badge on Doctor's Left Chest -->
+    <rect x="385" y="575" width="85" height="115" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2" filter="drop-shadow(2px 3px 5px rgba(0,0,0,0.3))" />
+    <rect x="385" y="575" width="85" height="26" rx="6" fill="#7C3AED" />
+    <text x="427" y="592" font-family="-apple-system, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">MEDICARE</text>
+    <circle cx="427" cy="620" r="16" fill="#EDE9FE" />
+    <text x="427" y="649" font-family="-apple-system, sans-serif" font-size="9" font-weight="bold" fill="#0F172A" text-anchor="middle">Dr. Ananya, M.D.</text>
+    <text x="427" y="661" font-family="-apple-system, sans-serif" font-size="7" fill="#64748B" text-anchor="middle">Wellness &amp; Diagnostics</text>
+    <rect x="400" y="670" width="55" height="12" rx="2" fill="#F3E8FF" />
+    <text x="427" y="679" font-family="monospace" font-size="7" font-weight="bold" fill="#6D28D9" text-anchor="middle">KA-MC-7319</text>
+    <rect x="420" y="565" width="14" height="14" rx="2" fill="url(#ananyaChrome)" />
+
+    <!-- Violet/Silver Stethoscope -->
+    <path d="M 475 470 Q 430 540 465 690 Q 485 770 545 760" fill="none" stroke="url(#ananyaStethTubing)" stroke-width="14" stroke-linecap="round" />
+    <path d="M 725 470 Q 770 540 735 690 Q 715 770 655 760" fill="none" stroke="url(#ananyaStethTubing)" stroke-width="14" stroke-linecap="round" />
+    <circle cx="655" cy="760" r="30" fill="url(#ananyaChrome)" filter="drop-shadow(2px 4px 6px rgba(0,0,0,0.35))" />
+    <circle cx="655" cy="760" r="24" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2.5" />
+    <circle cx="655" cy="760" r="8" fill="url(#ananyaChrome)" />
+  </g>
+
+  <!-- 3. Elegant Neck -->
+  <g id="ananyaNeck">
+    <path d="M 530 365 L 530 480 Q 600 515 670 480 L 670 365 Z" fill="url(#ananyaSkin)" />
+    <!-- Clavicle / Neck Depth Shading -->
+    <path d="M 555 410 Q 600 480 600 495 Q 600 480 645 410 Z" fill="url(#ananyaShadow)" opacity="0.25" />
+    <path d="M 535 440 Q 600 470 665 440 L 670 475 Q 600 510 530 475 Z" fill="url(#ananyaShadow)" opacity="0.4" />
+  </g>
+
+  <!-- 4. Dr. Ananya Facial Architecture -->
+  <g id="ananyaHead">
+    <!-- Jawline and Oval Cranium -->
+    <path d="M 460 215 C 460 95, 740 95, 740 215 C 740 340, 670 425, 600 425 C 530 425, 460 340, 460 215 Z" fill="url(#ananyaSkin)" filter="drop-shadow(0px 8px 16px rgba(0,0,0,0.28))" />
+
+    <!-- Soft Cheekbone Glow & Depth Contour -->
+    <path d="M 480 250 Q 600 420 720 250 C 710 370 665 415 600 415 C 535 415 490 370 480 250 Z" fill="url(#ananyaShadow)" opacity="0.22" />
+    <ellipse cx="520" cy="265" rx="32" ry="18" fill="#FFCBB2" opacity="0.25" />
+    <ellipse cx="680" cy="265" rx="32" ry="18" fill="#FFCBB2" opacity="0.25" />
+
+    <!-- Delicate Physician Ears & Pearls -->
+    <path d="M 465 220 C 442 220, 438 275, 466 290 Z" fill="#D49978" />
+    <circle cx="463" cy="285" r="3.5" fill="#FFFFFF" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.4))" />
+    <path d="M 735 220 C 758 220, 762 275, 734 290 Z" fill="#D49978" />
+    <circle cx="737" cy="285" r="3.5" fill="#FFFFFF" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.4))" />
+
+    <!-- Elegant Physician Updo Hair -->
+    <!-- Hair Base Shell -->
+    <path d="M 452 195 C 445 105, 500 40, 600 40 C 700 40, 755 105, 748 195 C 742 125, 700 80, 600 80 C 500 80, 458 125, 452 195 Z" fill="url(#ananyaHair)" />
+    <!-- Hair Volume Top & Side Waves -->
+    <path d="M 460 160 C 480 75, 540 45, 600 45 C 660 45, 720 75, 740 160 C 722 88, 670 65, 600 65 C 530 65, 478 88, 460 160 Z" fill="#1C1412" />
+    <path d="M 490 95 Q 600 55 710 95 Q 600 75 490 95 Z" fill="#3D2D28" opacity="0.4" />
+    <!-- Doctor Bun behind crown -->
+    <ellipse cx="600" cy="48" rx="70" ry="25" fill="#160F0E" />
+
+    <!-- Refined Eyebrows -->
+    <path d="M 502 198 Q 545 180 575 197 Q 542 188 502 198 Z" fill="#1A1311" />
+    <path d="M 698 198 Q 655 180 625 197 Q 658 188 698 198 Z" fill="#1A1311" />
+
+    <!-- 5. Expressive, Empathetic Eyes -->
+    <!-- Left Eye -->
+    <g id="ananyaLeftEye">
+      <ellipse cx="538" cy="222" rx="23" ry="13.5" fill="#F8FAFC" />
+      <path d="M 515 222 Q 538 212 561 222 Q 538 215 515 222 Z" fill="#64748B" opacity="0.22" />
+      <circle cx="539" cy="222" r="10" fill="url(#irisAnanya)" />
+      <circle cx="539" cy="222" r="4" fill="#000000" />
+      <circle cx="542" cy="219" r="2.2" fill="#FFFFFF" />
+      <circle cx="536" cy="224" r="1.1" fill="#FFFFFF" opacity="0.75" />
+      <path d="M 512 221 Q 538 208 564 221" fill="none" stroke="#25130A" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 516 213 Q 538 204 560 213" fill="none" stroke="#6D371A" stroke-width="1.1" opacity="0.5" />
+    </g>
+
+    <!-- Right Eye -->
+    <g id="ananyaRightEye">
+      <ellipse cx="662" cy="222" rx="23" ry="13.5" fill="#F8FAFC" />
+      <path d="M 639 222 Q 662 212 685 222 Q 662 215 639 222 Z" fill="#64748B" opacity="0.22" />
+      <circle cx="661" cy="222" r="10" fill="url(#irisAnanya)" />
+      <circle cx="661" cy="222" r="4" fill="#000000" />
+      <circle cx="664" cy="219" r="2.2" fill="#FFFFFF" />
+      <circle cx="658" cy="224" r="1.1" fill="#FFFFFF" opacity="0.75" />
+      <path d="M 636 221 Q 662 208 688 221" fill="none" stroke="#25130A" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 640 213 Q 662 204 684 213" fill="none" stroke="#6D371A" stroke-width="1.1" opacity="0.5" />
+    </g>
+
+    <!-- Refined Nose -->
+    <path d="M 597 198 L 595 280 Q 584 287 580 295 Q 600 302 620 295 Q 616 287 605 280 L 603 198 Z" fill="url(#ananyaSkin)" />
+    <path d="M 594 206 L 592 280 Q 579 289 584 296 Q 592 290 595 280 Z" fill="url(#ananyaShadow)" opacity="0.24" />
+    <ellipse cx="600" cy="292" rx="7.5" ry="4" fill="#FFCBB2" opacity="0.32" />
+    <ellipse cx="587" cy="296" rx="4" ry="2" fill="#42190A" opacity="0.7" />
+    <ellipse cx="613" cy="296" rx="4" ry="2" fill="#42190A" opacity="0.7" />
+
+    <!-- Philtrum -->
+    <path d="M 597 302 L 596 320 M 603 302 L 604 320" stroke="#B07957" stroke-width="1.3" opacity="0.35" />
+
+    <!-- 6. Warm, Empathetic Reassuring Lips -->
+    <g id="ananyaMouth">
+      <!-- Upper Lip -->
+      <path d="M 568 333 Q 586 324 600 328 Q 614 324 632 333 Q 614 338 600 336 Q 586 338 568 333 Z" fill="#B25547" />
+      <!-- Smile Oral Line -->
+      <path d="M 566 333 Q 600 341 634 333" fill="none" stroke="#5C1D13" stroke-width="2.2" stroke-linecap="round" />
+      <!-- Lower Lip -->
+      <path d="M 569 334 Q 600 354 631 334 Q 600 348 569 334 Z" fill="#CA6B5B" />
+      <ellipse cx="600" cy="343" rx="13" ry="3" fill="#F8B1A4" opacity="0.45" />
+    </g>
+
+    <!-- Soft Chin Contour -->
+    <path d="M 589 368 Q 600 373 611 368" fill="none" stroke="#8A5132" stroke-width="1.8" opacity="0.3" />
+  </g>
+</svg>
