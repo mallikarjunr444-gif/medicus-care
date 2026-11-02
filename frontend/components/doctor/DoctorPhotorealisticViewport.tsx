@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useEffect, useState, useMemo } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import {
   Video,
   Volume2,
@@ -61,14 +61,13 @@ export function DoctorPhotorealisticViewport({
     const triggerBlink = () => {
       isBlinking = true
       const blinkStartTime = performance.now()
-      const blinkDuration = 130 // ms
+      const blinkDuration = 125 // ms
 
       const updateBlink = (now: number) => {
         const elapsed = now - blinkStartTime
         const progress = elapsed / blinkDuration
 
         if (progress < 1.0) {
-          // Sinusoidal blink curve (0 -> 1 -> 0)
           const value = Math.sin(progress * Math.PI)
           setBlinkProgress(value)
           blinkAnimFrame = requestAnimationFrame(updateBlink)
@@ -201,21 +200,24 @@ export function DoctorPhotorealisticViewport({
     }
   }, [videoSrc])
 
-  // Doctor portrait asset path
-  const doctorAssetSrc = doctorId === 'dr_ananya' ? '/doctor/dr_ananya.svg' : '/doctor/dr_arjun.svg'
+  // High-Resolution Photographic Doctor Portrait Asset
+  const primaryPhotoSrc =
+    doctorId === 'dr_ananya' ? '/doctor/dr_ananya.jpg' : '/doctor/dr_arjun.jpg'
+  const fallbackVectorSrc =
+    doctorId === 'dr_ananya' ? '/doctor/dr_ananya.svg' : '/doctor/dr_arjun.svg'
 
   return (
     <div
       className={`relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden select-none ${className}`}
     >
       {/* ── Realistic Hospital Consultation Lighting Ambient Gradient ── */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-950/20 to-slate-950/80 pointer-events-none z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-950/10 to-slate-950/70 pointer-events-none z-10" />
 
       {/* ── Main Photorealistic Digital Human Display ── */}
       <div
         className="relative w-full h-full flex items-center justify-center transition-transform duration-150 ease-out"
         style={{
-          transform: `scale(${breathingScale}) translate3d(${headPose.yaw * 3}px, ${headPose.pitch * 2.5}px, 0) rotate(${headPose.roll * 0.4}deg)`,
+          transform: `scale(${breathingScale}) translate3d(${headPose.yaw * 3.2}px, ${headPose.pitch * 2.8}px, 0) rotate(${headPose.roll * 0.4}deg)`,
         }}
       >
         {videoSrc ? (
@@ -227,11 +229,17 @@ export function DoctorPhotorealisticViewport({
           />
         ) : (
           <div className="relative w-full h-full flex items-center justify-center">
-            {/* Ultra-High-Resolution Photorealistic Doctor Base Portrait */}
+            {/* Ultra-High-Resolution Photographic Doctor Base Portrait */}
             <img
-              src={doctorAssetSrc}
+              src={primaryPhotoSrc}
               alt={`${doctor.formalTitle} - MediCare AI Physician`}
-              className="w-full h-full object-cover sm:object-contain object-center filter contrast-[1.03] brightness-[1.01]"
+              className="w-full h-full object-cover sm:object-contain object-center filter contrast-[1.02] brightness-[1.01]"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement
+                if (target.src !== fallbackVectorSrc) {
+                  target.src = fallbackVectorSrc
+                }
+              }}
               draggable={false}
             />
 
@@ -242,10 +250,10 @@ export function DoctorPhotorealisticViewport({
                 style={{
                   clipPath:
                     doctorId === 'dr_ananya'
-                      ? 'polygon(42% 24%, 58% 24%, 58% 32%, 42% 32%)'
-                      : 'polygon(41% 25%, 59% 25%, 59% 33%, 41% 33%)',
+                      ? 'polygon(42% 28%, 58% 28%, 58% 36%, 42% 36%)'
+                      : 'polygon(41% 33%, 59% 33%, 59% 41%, 41% 41%)',
                   backgroundColor:
-                    doctorId === 'dr_ananya' ? 'rgba(176, 121, 87, 0.95)' : 'rgba(156, 98, 62, 0.95)',
+                    doctorId === 'dr_ananya' ? 'rgba(168, 114, 82, 0.96)' : 'rgba(145, 92, 58, 0.96)',
                   opacity: blinkProgress,
                 }}
               />
@@ -256,15 +264,15 @@ export function DoctorPhotorealisticViewport({
               <div
                 className="absolute pointer-events-none rounded-full transition-all duration-75"
                 style={{
-                  top: doctorId === 'dr_ananya' ? '42.8%' : '43.2%',
+                  top: doctorId === 'dr_ananya' ? '54.5%' : '63.2%',
                   left: '50.0%',
-                  width: `${24 * visemeShape.stretch + visemeShape.open * 8}px`,
+                  width: `${26 * visemeShape.stretch + visemeShape.open * 8}px`,
                   height: `${6 + visemeShape.open * 16}px`,
                   transform: 'translate(-50%, -50%)',
                   background:
                     'radial-gradient(ellipse at center, #260D08 40%, #5C1E14 75%, transparent 100%)',
-                  boxShadow: '0 0 4px rgba(38, 13, 8, 0.65)',
-                  opacity: Math.min(0.9, 0.35 + visemeShape.open * 0.65),
+                  boxShadow: '0 0 5px rgba(38, 13, 8, 0.65)',
+                  opacity: Math.min(0.92, 0.38 + visemeShape.open * 0.62),
                 }}
               />
             )}

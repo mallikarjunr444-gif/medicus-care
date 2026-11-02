@@ -45,7 +45,13 @@ import { useDoctorSpeech } from './useDoctorSpeech'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
 import { SpecialistBookingModal, VERIFIED_SPECIALISTS_LOCAL, type Specialist } from './SpecialistBookingModal'
+import { LanguageSelectionModal, SUPPORTED_LANGUAGES } from './LanguageSelectionModal'
 import { useConnectionManager } from '@/lib/useConnectionManager'
+import {
+  analyzePatientInput,
+  createInitialSessionMemory,
+  type ClinicalSessionMemory,
+} from '@/lib/medicalConsultationEngine'
 import type {
   DoctorId,
   DoctorState,
@@ -85,7 +91,8 @@ export function DoctorVideoCall({
   // Doctor & Session State
   const [doctorId, setDoctorId] = useState<DoctorId>(initialDoctorId)
   const [doctorState, setDoctorState] = useState<DoctorState>('idle')
-  const [language, setLanguage] = useState<ConsultationLanguage>('en')
+  const [language, setLanguage] = useState<ConsultationLanguage>('kn') // Default to regional Kannada or selected
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(true)
   const [isCameraOn, setIsCameraOn] = useState(true)
   const [isMicOn, setIsMicOn] = useState(false)
   const [consultationSeconds, setConsultationSeconds] = useState(0)
@@ -96,6 +103,11 @@ export function DoctorVideoCall({
   const [isSpecialistModalOpen, setIsSpecialistModalOpen] = useState(false)
   const [summaryData, setSummaryData] = useState<ConsultationSummaryData | null>(null)
   const [reports, setReports] = useState<MedicalReportItem[]>([])
+
+  // Conversational Session Memory (Prevents repetitive questions & tracks symptoms across turns)
+  const sessionMemoryRef = useRef<ClinicalSessionMemory>(
+    createInitialSessionMemory('kn', initialDoctorId)
+  )
 
   // Speech Recognition state
   const [isListeningSpeech, setIsListeningSpeech] = useState(false)
@@ -110,22 +122,6 @@ export function DoctorVideoCall({
     isMicListening: isListeningSpeech,
     isDigitalHumanReady: true,
   })
-
-  // Consultation Timer
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setConsultationSeconds((prev) => prev + 1)
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatTimer = (secs: number) => {
-    const m = Math.floor(secs / 60)
-      .toString()
-      .padStart(2, '0')
-    const s = (secs % 60).toString().padStart(2, '0')
-    return `${m}:${s}`
-  }
 
   // Doctor Speech Hook (Natural voice synthesis & lip-sync amplitude tracking)
   const {
@@ -144,20 +140,7 @@ export function DoctorVideoCall({
   })
 
   // Chat conversation history (Only ONE message added per interaction turn)
-  const [chatHistory, setChatHistory] = useState<ChatEntry[]>([
-    {
-      id: 'msg-init',
-      role: 'doctor',
-      speakerName: doctor.name,
-      text:
-        language === 'kn'
-          ? `ನಮಸ್ಕಾರ! ನಾನು ${doctor.name}, ನಿಮ್ಮ ಮೆಡಿಕೇರ್ (MediCare) AI ವೈದ್ಯ. ಇಂದು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ? ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ.`
-          : language === 'hi'
-          ? `नमस्ते! मैं ${doctor.name}, आपका मेडिकेयर (MediCare) AI डॉक्टर हूँ। आज मैं आपकी कैसे सहायता कर सकता हूँ?`
-          : `Hello! I'm ${doctor.name}, your MediCare AI Physician. How are you feeling today? You can speak naturally or type your symptoms.`,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    },
-  ])
+  const [chatHistory, setChatHistory] = useState<ChatEntry[]>([])
 
   // Auto-scroll chat
   useEffect(() => {
@@ -166,7 +149,26 @@ export function DoctorVideoCall({
     }
   }, [chatHistory])
 
-  // Speech Recognition Initialization
+  // Consultation Timer
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (!isLanguageModalOpen) {
+      timer = setInterval(() => {
+        setConsultationSeconds((prev) => prev + 1)
+      }, 1000)
+    }
+    return () => clearInterval(timer)
+  }, [isLanguageModalOpen])
+
+  const formatTimer = (secs: number) => {
+    const m = Math.floor(secs / 60)
+      .toString()
+      .padStart(2, '0')
+    const s = (secs % 60).toString().padStart(2, '0')
+    return `${m}:${s}`
+  }
+
+  // Speech Recognition Initialization with precise regional BCP-47 mapping
   useEffect(() => {
     if (
       typeof window !== 'undefined' &&
@@ -177,7 +179,19 @@ export function DoctorVideoCall({
       const recognition = new SpeechRecognition()
       recognition.continuous = false
       recognition.interimResults = false
-      recognition.lang = language === 'kn' ? 'kn-IN' : language === 'hi' ? 'hi-IN' : 'en-IN'
+
+      const bcp47Map: Record<ConsultationLanguage, string> = {
+        kn: 'kn-IN',
+        hi: 'hi-IN',
+        en: 'en-IN',
+        te: 'te-IN',
+        ta: 'ta-IN',
+        ml: 'ml-IN',
+        mr: 'mr-IN',
+        bn: 'bn-IN',
+        gu: 'gu-IN',
+      }
+      recognition.lang = bcp47Map[language] || 'kn-IN'
 
       recognition.onstart = () => {
         setIsListeningSpeech(true)
@@ -212,8 +226,18 @@ export function DoctorVideoCall({
       setDoctorState('idle')
     } else {
       if (recognitionRef.current) {
-        recognitionRef.current.lang =
-          language === 'kn' ? 'kn-IN' : language === 'hi' ? 'hi-IN' : 'en-IN'
+        const bcp47Map: Record<ConsultationLanguage, string> = {
+          kn: 'kn-IN',
+          hi: 'hi-IN',
+          en: 'en-IN',
+          te: 'te-IN',
+          ta: 'ta-IN',
+          ml: 'ml-IN',
+          mr: 'mr-IN',
+          bn: 'bn-IN',
+          gu: 'gu-IN',
+        }
+        recognitionRef.current.lang = bcp47Map[language] || 'kn-IN'
         recognitionRef.current.start()
       } else {
         toast('Speech recognition not supported in this browser. Please type your message.', {
@@ -223,36 +247,15 @@ export function DoctorVideoCall({
     }
   }
 
-  // Automatic Language Detection (Unicode script heuristics)
-  const detectInputLanguage = (text: string): ConsultationLanguage | null => {
-    const kannadaCount = (text.match(/[\u0C80-\u0CFF]/g) || []).length
-    const hindiCount = (text.match(/[\u0900-\u097F]/g) || []).length
-    if (kannadaCount > 3) return 'kn'
-    if (hindiCount > 3) return 'hi'
-    return null
-  }
-
-  // Handle patient asking symptoms or typing message
+  // Handle patient asking symptoms or speaking naturally
   const handleSendMessage = useCallback(
     async (customText?: string) => {
       const msg = (customText || inputText).trim()
       if (!msg) return
 
-      // Interrupt ongoing speech if patient speaks
+      // Interrupt ongoing doctor speech if patient starts speaking
       if (isSpeaking) {
         interrupt()
-      }
-
-      // Check auto language detection
-      const detectedLang = detectInputLanguage(msg)
-      let activeLang = language
-      if (detectedLang && detectedLang !== language) {
-        activeLang = detectedLang
-        setLanguage(detectedLang)
-        toast.success(
-          `Language auto-detected: ${detectedLang === 'kn' ? 'ಕನ್ನಡ (Kannada)' : 'हिन्दी (Hindi)'}`,
-          { icon: '🌐' }
-        )
       }
 
       const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -268,159 +271,160 @@ export function DoctorVideoCall({
       setInputText('')
       setDoctorState('thinking')
 
-      const lower = msg.toLowerCase()
-      let doctorResponse = ''
-      let triage: TriageLevel = 1
-      let warning = ''
-      let actionCard: ActionCardData | undefined = undefined
+      // Process through Context-Aware Medical Consultation Engine with Conversational Memory
+      const result = analyzePatientInput(msg, sessionMemoryRef.current)
+      sessionMemoryRef.current = result.updatedMemory
+      setActiveTriage(result.triage)
 
-      // 1. Emergency Detection (Localized to Chikkamagaluru, Karnataka, India)
-      if (
-        lower.includes('chest pain') ||
-        lower.includes('heart attack') ||
-        lower.includes('cannot breathe') ||
-        lower.includes('stroke') ||
-        lower.includes('unconscious') ||
-        lower.includes('severe bleeding') ||
-        lower.includes('suicid') ||
-        lower.includes('kill myself')
-      ) {
-        triage = 4
-        warning = 'Potential Emergency Signs Detected: Immediate medical evaluation needed.'
-        doctorResponse =
-          activeLang === 'kn'
-            ? 'ತುರ್ತು ಎಚ್ಚರಿಕೆ: ಇದು ಗಂಭೀರವಾದ ತುರ್ತು ಲಕ್ಷಣವಾಗಿರಬಹುದು. ದಯವಿಟ್ಟು ತಕ್ಷಣವೇ 112 ಅಥವಾ 108 (ಆರೋಗ್ಯ ಕವಚ) ತುರ್ತು ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಿ ಅಥವಾ ಚಿಕ್ಕಮಗಳೂರು ಜಿಲ್ಲಾಸ್ಪತ್ರೆಗೆ ತಕ್ಷಣ ಭೇಟಿ ನೀಡಿ.'
-            : activeLang === 'hi'
-            ? 'आपातकालीन चेतावनी: यह एक गंभीर लक्षण हो सकता है। कृपया तुरंत 112 या 108 पर कॉल करें या नजदीकी आपातकालीन केंद्र जाएं।'
-            : 'EMERGENCY ALERT: These symptoms require immediate medical intervention. Please call emergency services (112 in India, 108 Ambulance) or visit District Hospital Chikkamagaluru immediately. Do not drive yourself.'
-      }
-      // 2. Controlled Agent Tool Action: Specialist Search & Doctor Referral (Chikkamagaluru / Karnataka)
-      else if (
-        lower.includes('find doctor') ||
-        lower.includes('specialist') ||
-        lower.includes('referral') ||
-        lower.includes('cardiologist') ||
-        lower.includes('hospital in chikkamagaluru') ||
-        lower.includes('pulmonologist') ||
-        lower.includes('psychiatrist')
-      ) {
-        triage = 2
-        doctorResponse =
-          activeLang === 'kn'
-            ? 'ಖಂಡಿತ, ಚಿಕ್ಕಮಗಳೂರು ಮತ್ತು ಕರ್ನಾಟಕದ ಪರಿಶೀಲಿಸಿದ ತಜ್ಞ ವೈದ್ಯರ ಪಟ್ಟಿ ಇಲ್ಲಿದೆ. ನೀವು ನೇರವಾಗಿ ಭೇಟಿ ಅಥವಾ ಟೆಲಿಮೆಡಿಸಿನ್ ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ವಿನಂತಿಸಬಹುದು.'
-            : 'I have retrieved verified specialist doctors in Chikkamagaluru and the regional Karnataka healthcare network for your evaluation. You can review their hospital and request an appointment below.'
-        actionCard = {
-          type: 'specialist_recommendation',
-          payload: { specialists: VERIFIED_SPECIALISTS_LOCAL.slice(0, 3) },
-        }
-      }
-      // 3. Controlled Agent Tool Action: Appointment Booking Intent
-      else if (
-        lower.includes('book appointment') ||
-        lower.includes('schedule visit') ||
-        lower.includes('book visit') ||
-        lower.includes('appointment')
-      ) {
-        triage = 1
-        doctorResponse =
-          activeLang === 'kn'
-            ? 'ಖಂಡಿತ! ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ವಿನಂತಿಯನ್ನು ಸಿದ್ಧಪಡಿಸಲು ನಾನು ವಿಂಡೋ ತೆರೆಯುತ್ತಿದ್ದೇನೆ. ದಯವಿಟ್ಟು ದಿನಾಂಕ ಮತ್ತು ಸಮಯವನ್ನು ದೃಢೀಕರಿಸಿ.'
-            : 'Certainly! I am opening the appointment scheduling window. Please choose your preferred specialist and confirm the consultation slot.'
-        setIsSpecialistModalOpen(true)
-      }
-      // 4. Controlled Agent Tool Action: Medical Report Analysis
-      else if (
-        lower.includes('report') ||
-        lower.includes('blood test') ||
-        lower.includes('cbc') ||
-        lower.includes('hba1c') ||
-        lower.includes('sugar') ||
-        lower.includes('thyroid')
-      ) {
-        triage = 2
-        doctorResponse =
-          activeLang === 'kn'
-            ? 'ಖಂಡಿತ! ನಿಮ್ಮ ರಕ್ತ ತಪಾಸಣೆ ಅಥವಾ ಪ್ರಯೋಗಾಲಯದ ವರದಿಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ನಾನು ಸಾಮಾನ್ಯ ಶ್ರೇಣಿಗಳನ್ನು ವಿವರಿಸುತ್ತೇನೆ.'
-            : 'I can assist in interpreting your laboratory values. Please upload your test PDF or image in the report drawer to inspect reference intervals.'
-        setIsReportDrawerOpen(true)
-      }
-      // 5. Mental Wellness & Breathing Guidance Mode (Dr. Ananya / Anxiety)
-      else if (
-        lower.includes('stress') ||
-        lower.includes('anxiety') ||
-        lower.includes('sleep') ||
-        lower.includes('breathe') ||
-        lower.includes('panic') ||
-        lower.includes('overwhelmed')
-      ) {
-        triage = 1
-        doctorResponse =
-          activeLang === 'kn'
-            ? 'ನಿಮ್ಮ ಆತಂಕವನ್ನು ನಾನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಲ್ಲೆ. ಬನ್ನಿ, ಒಟ್ಟಿಗೆ 4-4-4 ಬಾಕ್ಸ್ ಉಸಿರಾಟದ ವ್ಯಾಯಾಮ ಮಾಡೋಣ. 4 ಸೆಕೆಂಡುಗಳ ಕಾಲ ದೀರ್ಘವಾಗಿ ಉಸಿರನ್ನು ಒಳಗೆ ತೆಗೆದುಕೊಳ್ಳಿ, 4 ಸೆಕೆಂಡ್ ನಿಲ್ಲಿಸಿ, ನಂತರ ನಿಧಾನವಾಗಿ ಹೊರಬಿಡಿ.'
-            : "I hear you, and it is completely understandable to feel overwhelmed. Let's do a gentle 4-4-4 Box Breathing exercise together to reset your nervous system. Follow the visual breathing pacing card below."
-        actionCard = {
-          type: 'breathing_exercise',
-          payload: { cycles: 4, inhale: 4, hold: 4, exhale: 4 },
-        }
-      }
-      // 6. Common Symptoms: Fever, Cough, Headache
-      else if (
-        lower.includes('fever') ||
-        lower.includes('temperature') ||
-        lower.includes('shivering')
-      ) {
-        triage = 2
-        doctorResponse =
-          activeLang === 'kn'
-            ? 'ಜ್ವರವು ಸಾಮಾನ್ಯವಾಗಿ ಸೋಂಕಿನ ವಿರುದ್ಧ ದೇಹದ ನೈಸರ್ಗಿಕ ರಕ್ಷಣಾತ್ಮಕ ಪ್ರತಿಕ್ರಿಯೆಯಾಗಿದೆ. ಇದು ಎಷ್ಟು ದಿನಗಳಿಂದ ಇದೆ? ದಯವಿಟ್ಟು ಸಾಕಷ್ಟು ನೀರು ಮತ್ತು ಎಳನೀರು ಕುಡಿಯಿರಿ ಮತ್ತು ವಿಶ್ರಾಂತಿ ಪಡೆಯಿರಿ.'
-            : 'Fever is commonly an immune response to a viral or bacterial infection. How many days have you noticed this temperature? Stay well hydrated with fluids, get plenty of rest, and monitor for warning signs like chest heaviness or persistent vomiting.'
-      } else if (lower.includes('headache') || lower.includes('migraine')) {
-        triage = 2
-        doctorResponse =
-          'Headaches often stem from tension, dehydration, eye strain, or sleep deprivation. Are you experiencing any visual disturbances, nausea, or neck stiffness? Please drink 500ml of water and rest in a dim, quiet room.'
-      } else {
-        // General clinical intake interview follow-up
-        doctorResponse =
-          activeLang === 'kn'
-            ? `ನಾನು ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಗಮನಿಸಿದ್ದೇನೆ. ಈ ಸಮಸ್ಯೆ ಎಷ್ಟು ದಿನಗಳಿಂದ ಇದೆ ಮತ್ತು ನೀವು ಪ್ರಸ್ತುತ ಯಾವುದೇ ನಿಯಮಿತ ಔಷಧಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದೀರಾ?`
-            : `I understand. Could you let me know how long you've noticed these symptoms, and whether they worsen at specific times of the day? This helps me provide more relevant general health education.`
-      }
-
-      setActiveTriage(triage)
-
-      // Add doctor response to transcript and speak with real-time lip-sync
+      // Add single doctor response to transcript and speak in selected language
       setTimeout(() => {
         const doctorEntry: ChatEntry = {
           id: `doc-${Date.now()}`,
           role: 'doctor',
           speakerName: doctor.name,
-          text: doctorResponse,
+          text: result.response,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          triage,
-          warningSign: warning || undefined,
-          actionCard,
+          triage: result.triage,
+          warningSign: result.warningSign,
+          actionCard: result.actionCard as ActionCardData | undefined,
         }
         setChatHistory((prev) => [...prev, doctorEntry])
-        speak(doctorResponse)
-      }, 600)
+        speak(result.response)
+      }, 550)
     },
-    [inputText, language, speak, isSpeaking, interrupt, doctor.name]
+    [inputText, isSpeaking, interrupt, doctor.name, speak]
   )
+
+  // Language Selection Confirmation Handler (First Step Gate)
+  const handleLanguageConfirm = (selectedLang: ConsultationLanguage) => {
+    setLanguage(selectedLang)
+    setIsLanguageModalOpen(false)
+
+    // Initialize session memory with selected language
+    sessionMemoryRef.current = createInitialSessionMemory(selectedLang, doctorId)
+
+    // Find native greeting for selected language
+    const langConfig =
+      SUPPORTED_LANGUAGES.find((l) => l.code === selectedLang) || SUPPORTED_LANGUAGES[0]
+    const greetingText = langConfig.sampleGreeting[doctorId]
+
+    // Set initial greeting in transcript
+    const initialEntry: ChatEntry = {
+      id: `init-${Date.now()}`,
+      role: 'doctor',
+      speakerName: doctor.name,
+      text: greetingText,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    }
+    setChatHistory([initialEntry])
+
+    // Doctor speaks native greeting immediately
+    speak(greetingText)
+    toast.success(`Consultation language set: ${langConfig.label} (${langConfig.nativeName})`, {
+      icon: '🌐',
+    })
+  }
+
+  // Switch Language during ongoing consultation (Preserves conversation history & symptoms!)
+  const handleSwitchLanguage = (newLang: ConsultationLanguage) => {
+    if (newLang === language) return
+
+    interrupt()
+    setLanguage(newLang)
+
+    // Update session memory language while preserving symptoms & context
+    sessionMemoryRef.current = {
+      ...sessionMemoryRef.current,
+      language: newLang,
+    }
+
+    const langConfig =
+      SUPPORTED_LANGUAGES.find((l) => l.code === newLang) || SUPPORTED_LANGUAGES[0]
+
+    const switchNotificationMap: Record<ConsultationLanguage, string> = {
+      kn: `ಭಾಷೆಯನ್ನು ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ. ನಾನು ನಿಮ್ಮ ಹಿಂದಿನ ಆರೋಗ್ಯ ಮಾಹಿತಿಯನ್ನು ಗಮನದಲ್ಲಿಟ್ಟುಕೊಂಡು ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದುವರಿಸುತ್ತೇನೆ.`,
+      hi: `भाषा को हिन्दी में बदल दिया गया है। मैं आपकी पिछली स्वास्थ्य जानकारी को ध्यान में रखते हुए बातचीत जारी रखूँगा।`,
+      en: `Language switched to English. I have retained your previous symptoms and will continue our consultation in English.`,
+      te: `భాష తెలుగుకు మార్చబడింది. మీ మునుపటి ఆరోగ్య వివరాలను దృష్టిలో ఉంచుకుని సంభాషణ కొనసాగిస్తాను.`,
+      ta: `மொழி தமிழுக்கு மாற்றப்பட்டது. உங்கள் முந்தைய உடல்நல விவரங்களை நினைவில் வைத்து உரையாடலைத் தொடர்கிறேன்.`,
+      ml: `ഭാഷ മലയാളത്തിലേക്ക് മാറ്റി. നിങ്ങളുടെ മുൻ വിവരങ്ങൾ നിലനിർത്തിക്കൊണ്ട് ഞങ്ങൾ തുടരും.`,
+      mr: `भाषा मराठीमध्ये बदलली आहे. मी आपल्या मागील माहितीसह संभाषण सुरू ठेवेन.`,
+      bn: `ভাষা বাংলায় পরিবর্তন করা হয়েছে। আমি পূর্ববর্তী তথ্যের ভিত্তিতে আলোচনা চালিয়ে যাব।`,
+      gu: `ભાષા ગુજરાતીમાં બદલાઈ ગઈ છે. હું તમારી અગાઉની વિગતો સાથે ચર્ચા ચાલુ રાખીશ.`,
+    }
+
+    const notice = switchNotificationMap[newLang] || switchNotificationMap.en
+
+    setChatHistory((prev) => [
+      ...prev,
+      {
+        id: `lang-switch-${Date.now()}`,
+        role: 'doctor',
+        speakerName: doctor.name,
+        text: notice,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ])
+    speak(notice)
+    toast.success(`Switched language to ${langConfig.nativeName}`, { icon: '🌐' })
+  }
 
   // Switch doctor identity (Dr. Arjun vs Dr. Ananya)
   const handleToggleDoctor = (targetDoctorId?: DoctorId) => {
     const nextDoc: DoctorId = targetDoctorId || (doctorId === 'dr_arjun' ? 'dr_ananya' : 'dr_arjun')
     if (nextDoc === doctorId) return
 
-    // Stop current speech before switching
     interrupt()
-
     setDoctorId(nextDoc)
+
+    // Update session memory doctorId while preserving symptoms
+    sessionMemoryRef.current = {
+      ...sessionMemoryRef.current,
+      doctorId: nextDoc,
+    }
+
     const nextDocObj = DOCTORS[nextDoc]
-    const welcomeMsg =
-      nextDoc === 'dr_ananya'
-        ? `Switched to ${nextDocObj.name}, your AI Mental Wellness & Lab Diagnostics Consultant. I am here to listen empathetically, assist with lab results, and guide calming breathing exercises. How are you feeling today?`
-        : `Switched to ${nextDocObj.name}, your AI General Physician. How can I assist with your physical symptoms, health review, or clinical triage today?`
+    const welcomeMessages: Record<ConsultationLanguage, Record<DoctorId, string>> = {
+      kn: {
+        dr_ananya: `ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಅನನ್ಯಾ, ನಿಮ್ಮ ಮಾನಸಿಕ ಕ್ಷೇಮ ಮತ್ತು ಲ್ಯಾಬ್ ತಪಾಸಣೆ ಸಮಾಲೋಚಕಿ. ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳ ವಿವರಗಳನ್ನು ನಾನು ಪಡೆದಿದ್ದೇನೆ. ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?`,
+        dr_arjun: `ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಅರ್ಜುನ್, ನಿಮ್ಮ ಸಾಮಾನ್ಯ ವೈದ್ಯ. ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳ ವಿವರಗಳನ್ನು ನಾನು ಪರಿಶೀಲಿಸಿದ್ದೇನೆ. ಮುಂದಿನ ಆರೋಗ್ಯ ತಪಾಸಣೆ ಮಾಡೋಣ.`,
+      },
+      hi: {
+        dr_ananya: `नमस्ते! मैं डॉ. अनन्या हूँ, आपकी वेलनेस और लैब डायग्नोस्टिक सलाहकार। मैं आपकी पिछली जानकारी से अवगत हूँ। मैं कैसे सहायता करूँ?`,
+        dr_arjun: `नमस्ते! मैं डॉ. अर्जुन हूँ, आपका सामान्य चिकित्सक। मैंने आपके लक्षणों को नोट कर लिया है। चलिए आगे की बात करते हैं।`,
+      },
+      en: {
+        dr_ananya: `Hello! I'm Dr. Ananya, your Wellness & Diagnostic Lab Consultant. I have reviewed your previous symptoms. How can I guide you further?`,
+        dr_arjun: `Hello! I'm Dr. Arjun, your General Physician. I have your reported symptom history in mind. Let us continue your medical evaluation.`,
+      },
+      te: {
+        dr_ananya: `నమస్కారం! నేను డాక్టర్ అనన్య. మీ వివరాలను గమనించాను. నేను మీకు ఎలా సహాయపడగలను?`,
+        dr_arjun: `నమస్కారం! నేను డాక్టర్ అర్జున్. మీ లక్షణాలను సమీక్షించాను. ముందుకు వెళ్దాం.`,
+      },
+      ta: {
+        dr_ananya: `வணக்கம்! நான் டாக்டர் அனன்யா. உங்கள் முந்தைய தகவல்களை பார்த்தேன். நான் எவ்வாறு உதவ முடியும்?`,
+        dr_arjun: `வணக்கம்! நான் டாக்டர் அர்ஜுன். உங்கள் அறிகுறிகளை கவனித்தேன். மருத்துவ பரிசோதனையை தொடர்வோம்.`,
+      },
+      ml: {
+        dr_ananya: `നമസ്കാരം! ഞാൻ ഡോ. അനന്യ. നിങ്ങളുടെ മുൻ വിവരങ്ങൾ ഞാൻ മനസ്സിലാക്കി. ഞാൻ എങ്ങനെ സഹായിക്കണം?`,
+        dr_arjun: `നമസ്കാരം! ഞാൻ ഡോ. അർജുൻ. നിങ്ങളുടെ ലക്ഷണങ്ങൾ ഞാൻ പരിശോധിച്ചു. നമുക്ക് തുടരാം.`,
+      },
+      mr: {
+        dr_ananya: `नमस्कार! मी डॉ. अनन्या. मी आपली माहिती पाहिली आहे. मी कशी मदत करू?`,
+        dr_arjun: `नमस्कार! मी डॉ. अर्जुन. मी आपले लक्षणे तपासली आहेत. आपण चर्चा पुढे सुरू ठेवूया.`,
+      },
+      bn: {
+        dr_ananya: `নমস্কার! আমি ডঃ অনন্যা। আপনার পূর্ববর্তী তথ্য পেয়েছি। আমি কীভাবে সাহায্য করতে পারি?`,
+        dr_arjun: `নমস্কার! আমি ডঃ অর্জুন। আপনার লক্ষণগুলি দেখেছি। চলুন কথা এগিয়ে নিয়ে যাই।`,
+      },
+      gu: {
+        dr_ananya: `નમસ્તે! હું ડૉ. અનન્યા છું. મેં તમારી વિગતો નોંધી છે. હું તમને કેવી રીતે મદદ કરું?`,
+        dr_arjun: `નમસ્તે! હું ડૉ. અર્જુન છું. મેં તમારા લક્ષણો તપાસ્યા છે. ચાલો આગળ વાત કરીએ.`,
+      },
+    }
+
+    const greeting =
+      welcomeMessages[language]?.[nextDoc] || welcomeMessages.en[nextDoc]
 
     setChatHistory((prev) => [
       ...prev,
@@ -428,13 +432,13 @@ export function DoctorVideoCall({
         id: `switch-${Date.now()}`,
         role: 'doctor',
         speakerName: nextDocObj.name,
-        text: welcomeMsg,
+        text: greeting,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ])
-    speak(welcomeMsg)
+    speak(greeting)
     toast.success(
-      `Consultation switched to ${nextDocObj.formalTitle} (${nextDoc === 'dr_ananya' ? 'Wellness & Labs' : 'General Physician'})`,
+      `Consultation transferred to ${nextDocObj.formalTitle} (${nextDoc === 'dr_ananya' ? 'Wellness & Labs' : 'General Physician'})`,
       { icon: '👨‍⚕️' }
     )
   }
@@ -457,43 +461,47 @@ export function DoctorVideoCall({
       doctorId,
       doctorName: doctor.formalTitle,
       language,
-      languageLabel: doctor.languages.find((l) => l.code === language)?.label || 'English',
+      languageLabel:
+        SUPPORTED_LANGUAGES.find((l) => l.code === language)?.label || 'English',
       durationFormatted: formatTimer(consultationSeconds),
       patientReportedSymptoms:
-        patientSymptoms.length > 0 ? patientSymptoms : ['General preventive health inquiry'],
-      symptomDuration: 'Patient reported symptoms evaluated within session',
-      relevantHistory: 'Regional Chikkamagaluru & Karnataka intake profile',
+        sessionMemoryRef.current.chiefComplaints.length > 0
+          ? sessionMemoryRef.current.chiefComplaints
+          : patientSymptoms.length > 0
+          ? patientSymptoms
+          : ['General preventive health inquiry'],
+      symptomDuration: sessionMemoryRef.current.duration || 'Reported during intake',
+      relevantHistory: 'Chikkamagaluru & Karnataka regional healthcare network',
       informationDiscussed: [
-        'Preliminary symptom differentiation and common etiologies',
-        'Home care hydration and rest guidance',
-        'Warning symptoms requiring in-person assessment',
-        'Verified medical specialist recommendations in Chikkamagaluru district',
+        'Chief complaint symptom progression and characterization',
+        'Clinical triage risk evaluation and associated symptoms check',
+        'Guidance on hydration, rest, and home monitoring',
+        'Referral guidelines for District Hospital Chikkamagaluru outpatient department',
       ],
       triageLevel: activeTriage,
       triageTitle:
         activeTriage === 4
-          ? 'Emergency Attention Required (Dial 112)'
+          ? 'Emergency Attention Required (Dial 112 / 108)'
           : activeTriage === 3
-          ? 'Urgent Professional Review Recommended'
+          ? 'Urgent Outpatient Clinical Review Advised'
           : activeTriage === 2
-          ? 'Medical Assessment Recommended'
-          : 'General Healthcare Guidance',
+          ? 'Non-Urgent Medical Assessment Recommended'
+          : 'General Healthcare Education & Wellness',
       warningSignsIdentified:
-        activeTriage >= 2
-          ? [
-              'High or spiking fever unresponsive to rest',
-              'Difficulty breathing, chest heaviness, or severe dehydration',
-            ]
+        sessionMemoryRef.current.associatedSymptoms.length > 0
+          ? sessionMemoryRef.current.associatedSymptoms
+          : activeTriage >= 2
+          ? ['Persistent symptoms requiring physician auscultation and review']
           : [],
       recommendedNextSteps: [
         'Schedule an evaluation with a certified registered physician at District Hospital Chikkamagaluru or local clinic.',
-        'Monitor temperature twice daily and maintain adequate fluid intake.',
-        'If emergency warning signs occur, call 112 / 108 immediately.',
+        'Monitor SpO2 saturation, temperature, and breathing cadence twice daily.',
+        'If emergency red flags occur (chest pain, acute breathing difficulty), call 112 / 108 immediately.',
       ],
       referralRecommendation:
-        'Consultation with an attending General Physician or Specialist is strongly recommended to obtain a formal physical examination and prescription.',
+        'Consultation with an attending physician is strongly recommended for a physical examination and formal prescription.',
       disclaimer:
-        'MediCare is an AI healthcare digital assistant and is not an autonomous licensed doctor. No clinical diagnosis, prescription, or psychotherapy is provided. Regulated healthcare services must remain under qualified human medical practitioners.',
+        'MediCare is an AI virtual medical assistant and is not an autonomous licensed doctor. No clinical diagnosis, prescription, or regulated medical service is provided. In emergencies, call 112 immediately.',
     }
 
     setSummaryData(summary)
@@ -502,6 +510,15 @@ export function DoctorVideoCall({
 
   return (
     <div className="relative w-full h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
+      {/* ── 1. PRE-CONSULTATION LANGUAGE SELECTION GATE MODAL ── */}
+      <LanguageSelectionModal
+        isOpen={isLanguageModalOpen}
+        doctorId={doctorId}
+        selectedLanguage={language}
+        onSelectLanguage={(l) => setLanguage(l)}
+        onConfirm={() => handleLanguageConfirm(language)}
+      />
+
       {/* ── Specialist Booking Modal ── */}
       <SpecialistBookingModal
         isOpen={isSpecialistModalOpen}
@@ -603,30 +620,28 @@ export function DoctorVideoCall({
           </div>
         </div>
 
-        {/* Right Controls */}
+        {/* Right Controls: Language Selector Dropdown & End Call */}
         <div className="flex items-center gap-2">
-          {/* Language Switcher */}
-          <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs">
-            <Globe size={13} className="text-slate-400 ml-1.5 mr-0.5" />
-            {doctor.languages.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => setLanguage(l.code)}
-                className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors ${
-                  language === l.code
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                {l.nativeName}
-              </button>
-            ))}
+          {/* Active Language Pill & Switcher */}
+          <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-xl p-1 text-xs">
+            <Globe size={13} className="text-sky-400 ml-1.5 mr-0.5" />
+            <select
+              value={language}
+              onChange={(e) => handleSwitchLanguage(e.target.value as ConsultationLanguage)}
+              className="bg-transparent text-white font-medium text-xs focus:outline-none cursor-pointer pr-1"
+            >
+              {SUPPORTED_LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code} className="bg-slate-900 text-white">
+                  {l.nativeName} ({l.label})
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* End Call Button */}
           <button
             onClick={handleEndCall}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition-colors shadow-md ml-2"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition-colors shadow-md ml-1"
           >
             <PhoneOff size={14} />
             <span className="hidden sm:inline">End Call</span>
@@ -717,7 +732,7 @@ export function DoctorVideoCall({
                     ? 'bg-emerald-600 text-white animate-pulse ring-2 ring-emerald-400'
                     : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
                 }`}
-                title="Speak to doctor (Speech-to-Text)"
+                title="Speak to doctor (Speech-to-Text in selected language)"
               >
                 {isListeningSpeech ? <Mic size={15} /> : <MicOff size={15} />}
                 <span className="hidden md:inline">
@@ -814,11 +829,41 @@ export function DoctorVideoCall({
           {/* Quick Clinical Inquiries Carousel */}
           <div className="px-3.5 py-2.5 border-b border-slate-800 bg-slate-900/60 flex items-center gap-1.5 overflow-x-auto scrollbar-thin">
             {[
-              { label: '🌡️ Fever & Chills', query: 'I have a high fever and shivering since yesterday.' },
-              { label: '🫁 Cough & Chest', query: 'I have a persistent dry cough and chest congestion.' },
-              { label: '📋 Upload Lab Report', query: 'I would like to analyze my CBC and blood test report.' },
-              { label: '🧘 4-4-4 Breathing', query: 'I feel anxious and overwhelmed, guide me through breathing exercises.' },
-              { label: '🏥 Chikkamagaluru Specialist', query: 'Find specialist doctors in Chikkamagaluru district.' },
+              {
+                label: language === 'kn' ? '🌡️ ಜ್ವರ ಮತ್ತು ಶೀತ' : '🌡️ Fever & Chills',
+                query:
+                  language === 'kn'
+                    ? 'ನನಗೆ ನೆನ್ನೆಯಿಂದ ಜ್ವರ ಮತ್ತು ನಡುಕ ಇದೆ.'
+                    : 'I have a fever and chills since yesterday.',
+              },
+              {
+                label: language === 'kn' ? '🫁 ಕೆಮ್ಮು (10 ದಿನ)' : '🫁 Cough (10 Days)',
+                query:
+                  language === 'kn'
+                    ? 'ನನಗೆ ಕಳೆದ ಹತ್ತು ದಿನಗಳಿಂದ ಕೆಮ್ಮು ಮತ್ತು ಎದೆ ಕಟ್ಟಿದಂತಿದೆ.'
+                    : 'I have had a persistent cough and chest congestion for ten days.',
+              },
+              {
+                label: language === 'kn' ? '📋 ಲ್ಯಾಬ್ ವರದಿ' : '📋 Lab Report',
+                query:
+                  language === 'kn'
+                    ? 'ನನ್ನ ರಕ್ತ ತಪಾಸಣೆ ವರದಿಯನ್ನು ವಿಶ್ಲೇಷಿಸಲು ಬಯಸುತ್ತೇನೆ.'
+                    : 'I would like to analyze my CBC and blood test report.',
+              },
+              {
+                label: language === 'kn' ? '🧘 ಉಸಿರಾಟದ ವ್ಯಾಯಾಮ' : '🧘 4-4-4 Breathing',
+                query:
+                  language === 'kn'
+                    ? 'ನನಗೆ ಆತಂಕವಿದೆ, ಶಾಂತಗೊಳಿಸುವ ಉಸಿರಾಟದ ವ್ಯಾಯಾಮ ತಿಳಿಸಿ.'
+                    : 'I feel anxious and overwhelmed, please guide me through breathing exercises.',
+              },
+              {
+                label: language === 'kn' ? '🏥 ತಜ್ಞ ವೈದ್ಯರು' : '🏥 Specialists (CKM)',
+                query:
+                  language === 'kn'
+                    ? 'ಚಿಕ್ಕಮಗಳೂರು ಜಿಲ್ಲೆಯ ತಜ್ಞ ವೈದ್ಯರನ್ನು ಹುಡುಕಿ.'
+                    : 'Find specialist doctors in Chikkamagaluru district.',
+              },
             ].map((shortcut, i) => (
               <button
                 key={i}
@@ -918,7 +963,13 @@ export function DoctorVideoCall({
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={`Ask ${doctor.name} symptoms or health questions…`}
+                placeholder={
+                  language === 'kn'
+                    ? `${doctor.name} ಅವರಿಗೆ ನಿಮ್ಮ ರೋಗಲಕ್ಷಣ ತಿಳಿಸಿ…`
+                    : language === 'hi'
+                    ? `${doctor.name} से अपनी परेशानी साझा करें…`
+                    : `Speak or type symptoms for ${doctor.name}…`
+                }
                 className="flex-1 bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
               />
               <button
