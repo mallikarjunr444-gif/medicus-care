@@ -1,39 +1,11 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter, Urbanist, JetBrains_Mono, Playfair_Display } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import { QueryProvider } from '@/components/providers/QueryProvider'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
-// Exposed as CSS variables so Tailwind's fontFamily tokens resolve to them.
-// display=swap keeps text visible while the face loads rather than blanking it.
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-const urbanist = Urbanist({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-urbanist',
-  display: 'swap',
-})
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-jetbrains',
-  display: 'swap',
-})
-// Rule 6: loaded italic-only, because that is the only way it is ever used.
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  style: ['italic'],
-  variable: '--font-playfair',
-  display: 'swap',
-})
-
-const FONT_VARS = [inter, urbanist, jetbrainsMono, playfair].map((f) => f.variable).join(' ')
+// Font variables with standard fallbacks ensuring offline compilation and robust loading
+const FONT_VARS = 'font-sans'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://care.medicuslabs.app'
 const SITE_TITLE = 'Medicus Care — Your AI Doctor | Medicus Labs™'

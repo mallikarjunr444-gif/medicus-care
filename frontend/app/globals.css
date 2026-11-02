@@ -156,4 +156,114 @@
     @apply rounded-full bg-gray-300;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+
+  /* ─────────────────────────────────────────────────────────────
+     Modern Glassmorphism & Cyber-Clinical 3D Elements
+     ───────────────────────────────────────────────────────────── */
+  .glass-panel {
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  }
+
+  .glass-card {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.35);
+  }
+
+  .glass-card-interactive {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.35);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card-interactive:hover {
+    background: rgba(22, 33, 58, 0.82);
+    border-color: rgba(56, 189, 248, 0.35);
+    box-shadow: 0 12px 36px -4px rgba(56, 189, 248, 0.15), 0 0 0 1px rgba(56, 189, 248, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .glass-pill {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .specular-border {
+    position: relative;
+  }
+  .specular-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 50%, rgba(56,189,248,0.25) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .glow-cyan-sm {
+    box-shadow: 0 0 15px -2px rgba(56, 189, 248, 0.3);
+  }
+
+  .glow-cyan-lg {
+    box-shadow: 0 0 35px -5px rgba(56, 189, 248, 0.35);
+  }
+
+  .glow-indigo-lg {
+    box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.35);
+  }
+
+  .glow-emerald-lg {
+    box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.35);
+  }
+
+  .glow-red-lg {
+    box-shadow: 0 0 35px -5px rgba(239, 68, 68, 0.35);
+  }
+
+  /* Laser scanner sweep effect */
+  @keyframes laserSweep {
+    0% { transform: translateY(-100%); opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { transform: translateY(300px); opacity: 0; }
+  }
+
+  .animate-laser {
+    animation: laserSweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  /* Radar Pulse */
+  @keyframes radarPing {
+    0% { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  .animate-radar {
+    animation: radarPing 2.8s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+
+  /* Smooth Float */
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+  }
+
+  .animate-float-slow {
+    animation: floatSlow 6s ease-in-out infinite;
+  }
 }
