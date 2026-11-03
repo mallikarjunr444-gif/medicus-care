@@ -32,3 +32,4 @@
 | Clinical Engine Triage & Turn | 550ms (artificial timeout) | 20ms (Immediate execution) |
 | Speech Synthesis Audio Dispatch | 900ms (unprimed voice) | 120ms (Pre-warmed synthesis engine) |
 | **Total Response Turnaround** | **~3.65 seconds** | **~0.85 – 1.1 seconds** |
+

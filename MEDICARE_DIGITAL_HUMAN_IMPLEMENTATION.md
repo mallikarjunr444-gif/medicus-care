@@ -26,3 +26,4 @@ To achieve **100% free, browser-native photorealistic human animation matching t
    - Attentive nods during patient speech; thoughtful gaze shifts during clinical evaluation.
 5. **3D WebGL Rig Switcher:**
    - Patients can toggle between the **Photorealistic Neural Avatar** and the **Interactive Three.js 3D Consultation Suite** seamlessly.
+

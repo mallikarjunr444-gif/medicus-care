@@ -39,7 +39,8 @@ import {
   Download,
   AlertOctagon,
 } from 'lucide-react'
-import { DoctorPhotorealisticViewport } from './DoctorPhotorealisticViewport'
+import { PhotorealisticDigitalHuman } from './PhotorealisticDigitalHuman'
+import { DoctorCanvas3D } from './DoctorCanvas3D'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
 import { useDoctorSpeech } from './useDoctorSpeech'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
@@ -109,9 +110,13 @@ export function DoctorVideoCall({
     createInitialSessionMemory('kn', initialDoctorId)
   )
 
-  // Speech Recognition state
+  // Speech Recognition state with continuous watchdog loop
   const [isListeningSpeech, setIsListeningSpeech] = useState(false)
+  const [avatarEngineMode, setAvatarEngineMode] = useState<'neural' | 'threejs'>('neural')
   const recognitionRef = useRef<any>(null)
+  const isSpeechActiveRef = useRef(false)
+  const speechWatchdogTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const lastFinalTranscriptRef = useRef<string>('')
   const chatScrollRef = useRef<HTMLDivElement>(null)
 
   const doctor = DOCTORS[doctorId] || DOCTORS.dr_arjun
@@ -168,64 +173,128 @@ export function DoctorVideoCall({
     return `${m}:${s}`
   }
 
-  // Speech Recognition Initialization with precise regional BCP-47 mapping
+  // Speech Recognition with Continuous Listening & Auto-Healing Watchdog Loop
   useEffect(() => {
     if (
-      typeof window !== 'undefined' &&
-      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
+      typeof window === 'undefined' ||
+      !('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
     ) {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-      const recognition = new SpeechRecognition()
-      recognition.continuous = false
-      recognition.interimResults = false
+      return
+    }
 
-      const bcp47Map: Record<ConsultationLanguage, string> = {
-        kn: 'kn-IN',
-        hi: 'hi-IN',
-        en: 'en-IN',
-        te: 'te-IN',
-        ta: 'ta-IN',
-        ml: 'ml-IN',
-        mr: 'mr-IN',
-        bn: 'bn-IN',
-        gu: 'gu-IN',
-      }
-      recognition.lang = bcp47Map[language] || 'kn-IN'
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    const recognition = new SpeechRecognition()
+    recognition.continuous = true
+    recognition.interimResults = true
 
-      recognition.onstart = () => {
-        setIsListeningSpeech(true)
+    const bcp47Map: Record<ConsultationLanguage, string> = {
+      kn: 'kn-IN',
+      hi: 'hi-IN',
+      en: 'en-IN',
+      te: 'te-IN',
+      ta: 'ta-IN',
+      ml: 'ml-IN',
+      mr: 'mr-IN',
+      bn: 'bn-IN',
+      gu: 'gu-IN',
+    }
+    recognition.lang = bcp47Map[language] || 'kn-IN'
+
+    recognition.onstart = () => {
+      setIsListeningSpeech(true)
+      setIsMicOn(true)
+      isSpeechActiveRef.current = true
+      if (doctorState !== 'speaking' && doctorState !== 'thinking') {
         setDoctorState('listening')
       }
+    }
 
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript
-        setIsListeningSpeech(false)
-        if (transcript) {
-          handleSendMessage(transcript)
+    recognition.onresult = (event: any) => {
+      let interim = ''
+      let final = ''
+
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          final += event.results[i][0].transcript
+        } else {
+          interim += event.results[i][0].transcript
         }
       }
 
-      recognition.onerror = () => {
-        setIsListeningSpeech(false)
-        setDoctorState('idle')
+      // Barge-in: If patient starts speaking while doctor speaks, interrupt doctor immediately
+      if ((final || interim.length > 2) && isSpeaking) {
+        interrupt()
       }
 
-      recognition.onend = () => {
-        setIsListeningSpeech(false)
+      if (final.trim()) {
+        const cleaned = final.trim()
+        if (cleaned !== lastFinalTranscriptRef.current) {
+          lastFinalTranscriptRef.current = cleaned
+          handleSendMessage(cleaned)
+        }
       }
-
-      recognitionRef.current = recognition
     }
-  }, [language])
+
+    recognition.onerror = (err: any) => {
+      // Auto-restart if user intends mic to remain on
+      if (err.error === 'no-speech' || err.error === 'network') {
+        if (isSpeechActiveRef.current) {
+          try {
+            recognition.stop()
+          } catch {}
+          setTimeout(() => {
+            if (isSpeechActiveRef.current) {
+              try {
+                recognition.start()
+              } catch {}
+            }
+          }, 300)
+        }
+      } else {
+        setIsListeningSpeech(false)
+      }
+    }
+
+    recognition.onend = () => {
+      // Auto-heal continuous connection unless explicitly turned off
+      if (isSpeechActiveRef.current) {
+        setTimeout(() => {
+          if (isSpeechActiveRef.current) {
+            try {
+              recognition.start()
+            } catch {}
+          }
+        }, 200)
+      } else {
+        setIsListeningSpeech(false)
+        setIsMicOn(false)
+      }
+    }
+
+    recognitionRef.current = recognition
+
+    return () => {
+      isSpeechActiveRef.current = false
+      try {
+        recognition.stop()
+      } catch {}
+    }
+  }, [language, isSpeaking, interrupt])
 
   const toggleMicListening = () => {
-    if (isListeningSpeech) {
-      recognitionRef.current?.stop()
+    if (isListeningSpeech || isSpeechActiveRef.current) {
+      isSpeechActiveRef.current = false
+      try {
+        recognitionRef.current?.stop()
+      } catch {}
       setIsListeningSpeech(false)
+      setIsMicOn(false)
       setDoctorState('idle')
+      toast('Microphone muted', { icon: '🎙️' })
     } else {
       if (recognitionRef.current) {
+        isSpeechActiveRef.current = true
         const bcp47Map: Record<ConsultationLanguage, string> = {
           kn: 'kn-IN',
           hi: 'hi-IN',
@@ -238,7 +307,14 @@ export function DoctorVideoCall({
           gu: 'gu-IN',
         }
         recognitionRef.current.lang = bcp47Map[language] || 'kn-IN'
-        recognitionRef.current.start()
+        try {
+          recognitionRef.current.start()
+          setIsMicOn(true)
+          toast.success('Microphone active — speaking to doctor', { icon: '🎙️' })
+        } catch {
+          setIsListeningSpeech(true)
+          setIsMicOn(true)
+        }
       } else {
         toast('Speech recognition not supported in this browser. Please type your message.', {
           icon: '🎙️',
@@ -276,21 +352,19 @@ export function DoctorVideoCall({
       sessionMemoryRef.current = result.updatedMemory
       setActiveTriage(result.triage)
 
-      // Add single doctor response to transcript and speak in selected language
-      setTimeout(() => {
-        const doctorEntry: ChatEntry = {
-          id: `doc-${Date.now()}`,
-          role: 'doctor',
-          speakerName: doctor.name,
-          text: result.response,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          triage: result.triage,
-          warningSign: result.warningSign,
-          actionCard: result.actionCard as ActionCardData | undefined,
-        }
-        setChatHistory((prev) => [...prev, doctorEntry])
-        speak(result.response)
-      }, 550)
+      // Fast Immediate Dispatch without artificial lag
+      const doctorEntry: ChatEntry = {
+        id: `doc-${Date.now()}`,
+        role: 'doctor',
+        speakerName: doctor.name,
+        text: result.response,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        triage: result.triage,
+        warningSign: result.warningSign,
+        actionCard: result.actionCard as ActionCardData | undefined,
+      }
+      setChatHistory((prev) => [...prev, doctorEntry])
+      speak(result.response)
     },
     [inputText, isSpeaking, interrupt, doctor.name, speak]
   )
@@ -653,19 +727,53 @@ export function DoctorVideoCall({
       <div className="relative flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* ── 65% MAIN CONSULTATION AREA: Photorealistic Digital Human Doctor ── */}
         <section className="relative w-full lg:w-[65%] h-[60vh] lg:h-full flex flex-col bg-slate-950 overflow-hidden">
-          {/* Photorealistic Digital Human Video Viewport */}
+          {/* Photorealistic Digital Human Video Viewport with 3D Rig Switcher */}
           <div className="relative w-full flex-1 overflow-hidden">
-            <DoctorPhotorealisticViewport
-              doctorId={doctorId}
-              doctorState={doctorState}
-              audioLevel={audioLevel}
-              isMuted={isMuted}
-              subtitles={subtitles}
-              activeTriage={activeTriage}
-              onStateChange={(st) => setDoctorState(st)}
-              onReconnect={() => setDoctorState('idle')}
-              className="w-full h-full"
-            />
+            {avatarEngineMode === 'neural' ? (
+              <PhotorealisticDigitalHuman
+                doctorId={doctorId}
+                doctorState={doctorState}
+                audioLevel={audioLevel}
+                isMuted={isMuted}
+                subtitles={subtitles}
+                onStateChange={(st) => setDoctorState(st)}
+                onReconnect={() => setDoctorState('idle')}
+                className="w-full h-full"
+              />
+            ) : (
+              <DoctorCanvas3D
+                doctorId={doctorId}
+                doctorState={doctorState}
+                audioLevel={audioLevel}
+                isMuted={isMuted}
+                onStateChange={(st) => setDoctorState(st)}
+                className="w-full h-full"
+              />
+            )}
+
+            {/* Mode Switcher Pill */}
+            <div className="absolute top-4 left-64 z-20 hidden md:flex items-center gap-1 p-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 shadow-lg">
+              <button
+                onClick={() => setAvatarEngineMode('neural')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                  avatarEngineMode === 'neural'
+                    ? 'bg-sky-600 text-white shadow'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Photorealistic AI
+              </button>
+              <button
+                onClick={() => setAvatarEngineMode('threejs')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                  avatarEngineMode === 'threejs'
+                    ? 'bg-sky-600 text-white shadow'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                WebGL 3D Rig
+              </button>
+            </div>
 
             {/* Floating Patient Camera Window (PiP) */}
             <div className="absolute top-4 right-4 z-20">
