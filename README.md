@@ -18,13 +18,13 @@ Unlike text-only healthcare chatbots or stylized cartoon avatars, MediCare featu
 
 ---
 
-## 👨‍⚕️ Photorealistic AI Doctor Identity
+## 👩‍⚕️ Meet the MediCare Doctors
 
-![Dr. Arjun, M.D. - MediCare](frontend/public/doctor/Friendly%20Doctor%20in%20a%20Modern%20Consultation%20Office.png)
+| Dr. Arjun — AI General Physician | Dr. Ananya — AI Mental Wellness Companion |
+|:---:|:---:|
+| <img src="frontend/public/doctor/dr_arjun.jpg" alt="Dr. Arjun, MediCare AI General Physician" width="420"> | <img src="frontend/public/doctor/dr_ananya.jpg" alt="Dr. Ananya, MediCare AI Mental Wellness Companion" width="420"> |
 
-* **Visual Identity**: Young professional male doctor with natural curly dark hair, realistic facial hair, transparent round spectacles, white medical coat, stethoscope, and professional striped dress shirt.
-* **Environment**: High-resolution modern medical consultation room with natural clinical lighting.
-* **Telemedicine Dynamics**: Attentive listening micro-expressions while the patient speaks, thoughtful processing gaze during inference, conversational head tilts, and audio-synchronized lip motion.
+These are the reference portraits used for MediCare's doctor experience.
 
 ---
 
