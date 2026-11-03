@@ -658,8 +658,13 @@ export function Hero3DScene({ onSelectDoctor }: Hero3DSceneProps) {
       {hologramMode === 'doctor' && (
         <div className="absolute bottom-5 left-5 z-20 max-w-sm w-[calc(100%-2.5rem)] sm:w-auto glass-card p-5 rounded-2xl border border-indigo-500/30 shadow-2xl backdrop-blur-xl animate-fade-in pointer-events-auto">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
-              {selectedDoctorId === 'dr_arjun' ? 'A' : 'An'}
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={selectedDoctorId === 'dr_arjun' ? '/doctor/dr_arjun.jpg' : '/doctor/dr_ananya.jpg'}
+                alt={selectedDoctorId === 'dr_arjun' ? 'Dr. Arjun' : 'Dr. Ananya'}
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <h3 className="text-sm font-bold text-white">

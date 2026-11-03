@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { soundFX } from '@/lib/audioEffects'
@@ -110,18 +111,18 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill mb-3">
             <Stethoscope size={13} className="text-sky-400" />
             <span className="text-xs font-mono font-semibold text-sky-300 uppercase tracking-wider">
-              Meet Your 3D Clinical Physicians
+              Meet Your Clinical Physicians
             </span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
             Consult With{' '}
             <span className="bg-gradient-to-r from-sky-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-              Realistic 3D Human Doctors
+              Realistic AI Doctors
             </span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Choose your physician for live WebGL 3D video-consultation. Real-time natural speech,
-            viseme kinematics, and regional multilingual consultations in English, Kannada, and Hindi.
+            Choose your physician for live video-consultation. Real-time natural speech
+            and regional multilingual consultations in English, Kannada, and Hindi.
           </p>
         </div>
 
@@ -130,38 +131,47 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
           {/* Card 1: Dr. Arjun */}
           <div className="doctor-card-anim">
             <TiltCard maxTilt={8} className="h-full">
-              <div className="glass-card p-7 rounded-3xl border border-sky-500/20 hover:border-sky-500/50 transition-all duration-300 h-full flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+              <div className="glass-card rounded-3xl border border-sky-500/20 hover:border-sky-500/50 transition-all duration-300 h-full flex flex-col justify-between shadow-2xl relative overflow-hidden group">
                 {/* Accent Corner Glow */}
                 <div className="absolute -top-12 -right-12 w-36 h-36 bg-sky-500/20 rounded-full blur-2xl group-hover:bg-sky-500/30 transition-all pointer-events-none" />
 
-                <div>
-                  <div className="flex items-start justify-between mb-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-600 via-sky-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-sky-500/25">
-                        A
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-xl font-bold text-white">Dr. Arjun, M.D.</h3>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800">
-                            Available Now
-                          </span>
-                        </div>
-                        <p className="text-xs text-sky-400 font-medium mt-0.5">
-                          Internal Medicine & Primary Care Triage
-                        </p>
-                      </div>
-                    </div>
+                {/* Doctor Photo */}
+                <div className="relative w-full h-72 sm:h-80 overflow-hidden rounded-t-3xl">
+                  <Image
+                    src="/doctor/dr_arjun.jpg"
+                    alt="Dr. Arjun - AI General Physician"
+                    fill
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
+                  />
+                  {/* Gradient overlay at bottom */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                  {/* Status badge on photo */}
+                  <div className="absolute top-4 right-4">
+                    <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 backdrop-blur-sm flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Available Now
+                    </span>
                   </div>
+                  {/* Name overlay on photo */}
+                  <div className="absolute bottom-4 left-5 right-5">
+                    <h3 className="text-2xl font-bold text-white drop-shadow-lg">Dr. Arjun, M.D.</h3>
+                    <p className="text-sm text-sky-300 font-medium mt-0.5">
+                      Internal Medicine & Primary Care Triage
+                    </p>
+                  </div>
+                </div>
 
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6">
+                <div className="p-6 pt-4 flex flex-col flex-1">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5">
                     Specialized in acute symptoms, fever evaluation, respiratory assessment, home
                     vitals review, and preventive health guidance. Employs real-time conversational
                     speech with precise medical explanations.
                   </p>
 
                   {/* Languages & Voice Test */}
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-6">
+                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-5">
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                         <Languages size={13} className="text-sky-400" />
@@ -197,7 +207,7 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
                   </div>
 
                   {/* Clinical Highlights */}
-                  <div className="space-y-2 mb-6">
+                  <div className="space-y-2 mb-5">
                     {[
                       'Deterministic 4-Tier Triage Screening',
                       'High-Fidelity WebGL 3D Lip-Sync Kinematics',
@@ -209,16 +219,18 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
                       </div>
                     ))}
                   </div>
-                </div>
 
-                <button
-                  onClick={() => onSelectDoctor('dr_arjun')}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02]"
-                >
-                  <Video size={16} />
-                  <span>Start 3D Consultation with Dr. Arjun</span>
-                  <ChevronRight size={15} />
-                </button>
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => onSelectDoctor('dr_arjun')}
+                      className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02]"
+                    >
+                      <Video size={16} />
+                      <span>Start Consultation with Dr. Arjun</span>
+                      <ChevronRight size={15} />
+                    </button>
+                  </div>
+                </div>
               </div>
             </TiltCard>
           </div>
@@ -226,37 +238,46 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
           {/* Card 2: Dr. Ananya */}
           <div className="doctor-card-anim">
             <TiltCard maxTilt={8} className="h-full">
-              <div className="glass-card p-7 rounded-3xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 h-full flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+              <div className="glass-card rounded-3xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 h-full flex flex-col justify-between shadow-2xl relative overflow-hidden group">
                 <div className="absolute -top-12 -right-12 w-36 h-36 bg-indigo-500/20 rounded-full blur-2xl group-hover:bg-indigo-500/30 transition-all pointer-events-none" />
 
-                <div>
-                  <div className="flex items-start justify-between mb-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-sky-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-indigo-500/25">
-                        An
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-xl font-bold text-white">Dr. Ananya, M.D.</h3>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800">
-                            Available Now
-                          </span>
-                        </div>
-                        <p className="text-xs text-indigo-400 font-medium mt-0.5">
-                          Metabolic Health, Lab Diagnostics & Wellness
-                        </p>
-                      </div>
-                    </div>
+                {/* Doctor Photo */}
+                <div className="relative w-full h-72 sm:h-80 overflow-hidden rounded-t-3xl">
+                  <Image
+                    src="/doctor/dr_ananya.jpg"
+                    alt="Dr. Ananya - AI Wellness Consultant"
+                    fill
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
+                  />
+                  {/* Gradient overlay at bottom */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                  {/* Status badge on photo */}
+                  <div className="absolute top-4 right-4">
+                    <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 backdrop-blur-sm flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Available Now
+                    </span>
                   </div>
+                  {/* Name overlay on photo */}
+                  <div className="absolute bottom-4 left-5 right-5">
+                    <h3 className="text-2xl font-bold text-white drop-shadow-lg">Dr. Ananya, M.D.</h3>
+                    <p className="text-sm text-indigo-300 font-medium mt-0.5">
+                      Metabolic Health, Lab Diagnostics & Wellness
+                    </p>
+                  </div>
+                </div>
 
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6">
+                <div className="p-6 pt-4 flex flex-col flex-1">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5">
                     Specialized in medical document intelligence, CBC and lipid interpretation,
                     thyroid kinetics, stress balance, and guided breathing exercises. Delivers warm,
                     empathetic, and evidence-grounded consultations.
                   </p>
 
                   {/* Languages & Voice Test */}
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-6">
+                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-5">
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                         <Languages size={13} className="text-indigo-400" />
@@ -292,7 +313,7 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
                   </div>
 
                   {/* Clinical Highlights */}
-                  <div className="space-y-2 mb-6">
+                  <div className="space-y-2 mb-5">
                     {[
                       'Lab Report Automated Extraction (CBC, Lipid, TSH)',
                       'Empathetic Stress & Guided Breath Exercises',
@@ -304,16 +325,18 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
                       </div>
                     ))}
                   </div>
-                </div>
 
-                <button
-                  onClick={() => onSelectDoctor('dr_ananya')}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02]"
-                >
-                  <Video size={16} />
-                  <span>Start 3D Consultation with Dr. Ananya</span>
-                  <ChevronRight size={15} />
-                </button>
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => onSelectDoctor('dr_ananya')}
+                      className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02]"
+                    >
+                      <Video size={16} />
+                      <span>Start Consultation with Dr. Ananya</span>
+                      <ChevronRight size={15} />
+                    </button>
+                  </div>
+                </div>
               </div>
             </TiltCard>
           </div>
