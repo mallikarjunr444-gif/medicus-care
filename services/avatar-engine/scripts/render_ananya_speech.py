@@ -147,3 +147,4 @@ if __name__ == "__main__":
     audio = sys.argv[2]
     out = sys.argv[3]
     generate_video(photo, audio, out)
+

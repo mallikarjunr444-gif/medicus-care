@@ -1,15 +1,13 @@
 'use client'
 
-import React, { useRef, useEffect, useState, useCallback } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import type { DoctorId, DoctorState } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
 import {
   RotateCcw,
   WifiOff,
   Activity,
-  Layers,
   Sparkles,
-  HeartPulse,
 } from 'lucide-react'
 
 interface PhotorealisticDigitalHumanProps {
@@ -18,6 +16,7 @@ interface PhotorealisticDigitalHumanProps {
   audioLevel?: number
   isMuted?: boolean
   subtitles?: string
+  speakingVideoSrc?: string | null
   onStateChange?: (state: DoctorState) => void
   onReconnect?: () => void
   className?: string
@@ -29,15 +28,16 @@ export function PhotorealisticDigitalHuman({
   audioLevel = 0,
   isMuted = false,
   subtitles = '',
+  speakingVideoSrc = null,
   onStateChange,
   onReconnect,
   className = '',
 }: PhotorealisticDigitalHumanProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const animFrameRef = useRef<number | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
-  const [renderMode, setRenderMode] = useState<'neural' | 'cinematic'>('neural')
 
   // Physiological Simulation state refs (avoid React re-render lag)
   const simRef = useRef({
@@ -47,7 +47,6 @@ export function PhotorealisticDigitalHuman({
     head: { pitch: 0, yaw: 0, roll: 0, targetPitch: 0, targetYaw: 0, targetRoll: 0 },
     mouth: { open: 0, width: 1.0, phoneme: 'rest' },
     brows: { lift: 0, furrow: 0 },
-    gaze: { x: 0, y: 0 },
     lastFrameTime: performance.now(),
   })
 
@@ -65,6 +64,18 @@ export function PhotorealisticDigitalHuman({
       setImageLoaded(true)
     }
   }, [photoSrc])
+
+  // Synchronized Video playback for speaking animation
+  useEffect(() => {
+    if (videoRef.current) {
+      if (doctorState === 'speaking' && speakingVideoSrc) {
+        videoRef.current.currentTime = 0
+        videoRef.current.play().catch(() => {})
+      } else {
+        videoRef.current.pause()
+      }
+    }
+  }, [doctorState, speakingVideoSrc])
 
   // Real-Time Canvas Render Loop (60 FPS Neural Micro-Deformation)
   useEffect(() => {
@@ -248,7 +259,7 @@ export function PhotorealisticDigitalHuman({
       // ─────────────────────────────────────────────────────────────
       // B. Neural Mouth Cavity & Synchronized Viseme Lip-Sync
       // ─────────────────────────────────────────────────────────────
-      if (doctorState === 'speaking' && sim.mouth.open > 0.06) {
+      if (doctorState === 'speaking' && sim.mouth.open > 0.06 && !speakingVideoSrc) {
         const mw = mouthCenter.w * 0.52 * sim.mouth.width
         const mh = Math.max(2, mouthCenter.h * 0.75 * sim.mouth.open)
 
@@ -295,20 +306,32 @@ export function PhotorealisticDigitalHuman({
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
     }
-  }, [imageLoaded, doctorId, doctorState, audioLevel])
+  }, [imageLoaded, doctorId, doctorState, audioLevel, speakingVideoSrc])
 
   return (
     <div className={`relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden select-none ${className}`}>
       {/* Dynamic Cinematic Hospital Consultation Ambient Lighting */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-950/10 to-slate-950/70 pointer-events-none z-10" />
 
-      {/* Main 60-FPS Digital Human Viewport */}
-      <canvas
-        ref={canvasRef}
-        width={1024}
-        height={768}
-        className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
-      />
+      {/* When Doctor is speaking with neural generated video, show synchronized video stream */}
+      {speakingVideoSrc && doctorState === 'speaking' ? (
+        <video
+          ref={videoRef}
+          src={speakingVideoSrc}
+          playsInline
+          muted={isMuted}
+          className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
+          onEnded={() => onStateChange?.('listening')}
+        />
+      ) : (
+        /* Continuous 60-FPS Digital Human Viewport for Listening & Thinking */
+        <canvas
+          ref={canvasRef}
+          width={1024}
+          height={768}
+          className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
+        />
+      )}
 
       {/* Disconnected State Overlay */}
       {doctorState === 'disconnected' && (
@@ -416,7 +439,7 @@ export function PhotorealisticDigitalHuman({
         <Activity size={12} className="text-emerald-400 animate-pulse" />
         <span className="text-emerald-400 font-semibold">60 FPS</span>
         <span className="text-slate-500">•</span>
-        <span className="text-sky-300">LivePortrait + MuseTalk + EchoMimic</span>
+        <span className="text-sky-300">LivePortrait + MuseTalk</span>
       </div>
 
       {/* Doctor Live Subtitles (Bottom Center) */}
@@ -431,4 +454,3 @@ export function PhotorealisticDigitalHuman({
     </div>
   )
 }
-
