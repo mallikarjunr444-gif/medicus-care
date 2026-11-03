@@ -51,3 +51,4 @@
   - Python adapters provide standard REST & WebSocket interfaces for integration testing.
 - **NVIDIA GPU Server (Production Cloud):**
   - RunPod / AWS A10G (24GB VRAM): LivePortrait and MuseTalk are loaded concurrently (Total VRAM: ~6.3GB), serving 60 FPS WebRTC video streams to the frontend.
+

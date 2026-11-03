@@ -54,3 +54,4 @@ class GPUModelManager:
             logger.info("All neural models unloaded.")
 
 gpu_model_manager = GPUModelManager()
+

@@ -31,3 +31,4 @@
 ## 3. Deployment Summary
 - **Local Dev (Free):** Running on Next.js 16 at `http://localhost:3000` with instant 60 FPS client-side neural mesh rendering.
 - **Microservice:** `services/avatar-engine/app/main.py` provides standardized REST (`/animate`) and WebSocket (`/ws/stream`) interfaces ready for CUDA worker deployment.
+
