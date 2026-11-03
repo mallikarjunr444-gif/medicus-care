@@ -1,5 +1,5 @@
 import './globals.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'react-hot-toast'
 import { QueryProvider } from '@/components/providers/QueryProvider'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
@@ -12,6 +12,13 @@ const SITE_TITLE = 'Medicus Care — Voice and Text Health Consultations | Medic
 const SITE_DESCRIPTION =
   'Share health concerns by voice or text, review medical reports, and access preliminary triage ' +
   'guidance with Dr. Arjun or Dr. Ananya in your selected language.'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#f5f8f6',
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -54,7 +61,7 @@ const JSON_LD = {
   '@type': 'SoftwareApplication',
   name: 'Medicus Care',
   applicationCategory: 'HealthApplication',
-  operatingSystem: 'Web, Linux, Docker',
+  operatingSystem: 'Web browser on iOS, iPadOS, Android, Windows, macOS, and Linux',
   description: SITE_DESCRIPTION,
   url: SITE_URL,
   softwareHelp: 'https://github.com/PunithVT/ai-avatar-system',

@@ -641,7 +641,7 @@ export function AdminKnowledgeDashboard() {
                   >
                     <div>
                       <span className="font-semibold text-white block">{res.category}</span>
-                      <span className="text-slate-400 italic">"{res.input}"</span>
+                      <span className="text-slate-400 italic">&quot;{res.input}&quot;</span>
                     </div>
                     <div className="text-right">
                       <span className="text-[11px] font-mono text-amber-300 block">Triage Level {res.triage_level}</span>

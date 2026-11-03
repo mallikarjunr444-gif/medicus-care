@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import type { DoctorId } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
-import { ArrowUpRight, Languages, Mic2, Stethoscope } from 'lucide-react'
+import { ArrowUpRight, Languages, Mic2, Sparkles, Stethoscope } from 'lucide-react'
 
 interface DoctorShowcaseSectionProps {
   onSelectDoctor: (doctorId: DoctorId) => void
@@ -14,14 +14,14 @@ const doctorCards: Array<{
   image: string
   imageAlt: string
   focus: string
-  accent: 'teal' | 'blue'
+  accent: 'green' | 'blue'
 }> = [
   {
     id: 'dr_arjun',
     image: '/doctor/dr_arjun.jpg',
     imageAlt: 'Dr. Arjun in his white coat with a stethoscope',
-    focus: 'General health guidance',
-    accent: 'teal',
+    focus: 'General health and symptom guidance',
+    accent: 'green',
   },
   {
     id: 'dr_ananya',
@@ -34,64 +34,66 @@ const doctorCards: Array<{
 
 export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionProps) {
   return (
-    <section id="doctor-selection" aria-labelledby="doctor-selection-title" className="relative w-full px-4 sm:px-6 py-16 sm:py-20 scroll-mt-20">
-      <div className="mx-auto max-w-6xl">
-        <div className="max-w-2xl mx-auto text-center mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-300">
-            <Stethoscope size={14} className="text-teal-300" />
-            Choose your consultation
+    <section id="doctor-selection" aria-labelledby="doctor-selection-title" className="w-full scroll-mt-24 px-4 py-12 sm:px-6 sm:py-16">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-7 flex flex-col gap-3 sm:mb-9 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#0f7565]">
+              <Stethoscope size={15} aria-hidden="true" /> Choose your consultation
+            </span>
+            <h2 id="doctor-selection-title" className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Meet your doctor</h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-[#6c7d76]">Pick a doctor and choose a language before you begin. You can speak or type.</p>
           </div>
-          <h2 id="doctor-selection-title" className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
-            Meet your doctor
-          </h2>
-          <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-400">
-            Pick a doctor, choose your language, then talk by voice or text.
-          </p>
+          <div className="hidden items-center gap-2 rounded-xl border border-[#e1e9e4] bg-white px-3.5 py-2.5 text-xs text-[#60746c] sm:flex">
+            <Sparkles size={15} className="text-[#c18243]" aria-hidden="true" /> Each consultation starts when you are ready
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 max-w-5xl mx-auto">
+        <div className="grid max-w-5xl gap-4 sm:gap-5 lg:grid-cols-2">
           {doctorCards.map((card) => {
             const doctor = DOCTORS[card.id]
-            const color = card.accent === 'teal'
-              ? 'text-teal-800 bg-teal-50 border-teal-100'
-              : 'text-blue-800 bg-blue-50 border-blue-100'
+            const colors = card.accent === 'green'
+              ? 'bg-[#e9f4ee] text-[#216052] border-[#d8e9df]'
+              : 'bg-[#edf2f8] text-[#395c7c] border-[#dfe8f1]'
 
             return (
-              <article key={card.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white text-slate-900 shadow-sm transition-shadow duration-200 hover:shadow-lg">
-                <div className="relative aspect-[16/9] bg-slate-100">
+              <article key={card.id} className="group overflow-hidden rounded-[1.5rem] border border-[#dfe8e2] bg-white shadow-[0_3px_14px_rgba(31,71,54,.045)] transition duration-200 hover:-translate-y-0.5 hover:border-[#c3d9cc] hover:shadow-[0_16px_36px_-20px_rgba(31,71,54,.24)]">
+                <div className="relative aspect-[16/9] overflow-hidden bg-[#e9eeeb] sm:aspect-[1.9/1]">
                   <Image
                     src={card.image}
                     alt={card.imageAlt}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover object-[50%_28%]"
+                    className="object-cover object-[50%_28%] transition duration-500 group-hover:scale-[1.025]"
+                    priority={card.id === 'dr_arjun'}
                   />
-                  <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/70 to-transparent" />
-                  <span className="absolute bottom-4 left-5 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-slate-800 shadow-sm">
+                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#122a27]/55 to-transparent" aria-hidden="true" />
+                  <span className="absolute bottom-4 left-4 rounded-full border border-white/75 bg-white/95 px-3 py-1.5 text-xs font-semibold text-[#243e37] shadow-sm sm:left-5">
                     {doctor.name}
                   </span>
                 </div>
 
-                <div className="p-5 sm:p-6">
-                  <div className="flex items-start justify-between gap-3">
+                <div className="p-4 sm:p-5">
+                  <div className="flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold tracking-tight">{doctor.name}</h3>
-                      <p className="mt-1 text-sm text-slate-600">{card.focus}</p>
+                      <h3 className="text-lg font-semibold tracking-tight text-[#203e37]">{doctor.name}</h3>
+                      <p className="mt-1 text-sm text-[#687a73]">{card.focus}</p>
                     </div>
-                    <span className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[11px] font-medium ${color}`}>
-                      Consultation
+                    <span className={`inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold ${colors}`}>
+                      AI care assistant
                     </span>
                   </div>
 
-                  <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500">
-                    <span className="inline-flex items-center gap-1.5"><Mic2 size={14} /> Voice and text</span>
-                    <span className="inline-flex items-center gap-1.5"><Languages size={14} /> Kannada, English and more</span>
+                  <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#6d7d77]">
+                    <span className="inline-flex items-center gap-1.5"><Mic2 size={14} className="text-[#0f7565]" aria-hidden="true" /> Voice and text</span>
+                    <span className="inline-flex items-center gap-1.5"><Languages size={14} className="text-[#0f7565]" aria-hidden="true" /> Kannada, English, Hindi</span>
+                    <span className="inline-flex items-center gap-1.5">{doctor.gender === 'male' ? 'Male voice' : 'Female voice'}</span>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => onSelectDoctor(card.id)}
-                    className="mt-6 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-[#123d55] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0d3145] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
+                    className="mt-5 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-[#0f6257] px-4 text-sm font-semibold text-white transition hover:bg-[#0b5149] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#b9dacf]"
                   >
                     <span>Start with {doctor.name}</span>
                     <ArrowUpRight size={17} aria-hidden="true" />

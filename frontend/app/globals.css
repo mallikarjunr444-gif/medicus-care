@@ -12,17 +12,26 @@
 @layer base {
   :root {
     color-scheme: light;
+    --medicare-ink: #183331;
+    --medicare-canvas: #f5f8f6;
+    --medicare-accent: #0f7565;
+    --medicare-accent-dark: #0b5149;
+    --medicare-border: #e1e9e4;
   }
 
   html {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-gray-25 text-gray-900;
+    background: var(--medicare-canvas);
+    color: var(--medicare-ink);
     font-size: 15px;
     line-height: 1.55;
+    min-width: 320px;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Rule 2: Urbanist headlines. H1 is weight 400 — thin on purpose; the
@@ -51,6 +60,10 @@
       animation-iteration-count: 1 !important;
       transition-duration: .01ms !important;
     }
+  }
+
+  @supports (padding: env(safe-area-inset-bottom)) {
+    body { padding-bottom: env(safe-area-inset-bottom); }
   }
 }
 
@@ -82,6 +95,22 @@
   .card-hover {
     @apply transition-shadow duration-200 hover:shadow-sm;
   }
+
+  .page-surface {
+    background: var(--medicare-canvas);
+    color: var(--medicare-ink);
+  }
+
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
 
   /* Rule 4: hero panels are solid ink, not a gradient. */
   .panel-hero {

@@ -1,0 +1,32 @@
+# Production image for a Linux host with NVIDIA Container Toolkit installed.
+# MuseTalk and the application share the CUDA-enabled PyTorch 2.2 runtime.
+FROM pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app/backend
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      ffmpeg libsm6 libxext6 libxrender-dev libgomp1 git wget curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt ./requirements.txt
+RUN sed -e '/^torch==/d' -e '/^torchvision==/d' -e '/^torchaudio==/d' \
+      requirements.txt > /tmp/gpu-requirements.txt \
+    && python -m pip install --no-cache-dir -r /tmp/gpu-requirements.txt \
+    && python -c "import torch; assert torch.version.cuda, 'CUDA PyTorch runtime is required'"
+
+COPY backend/ .
+COPY frontend/public/doctor /app/frontend/public/doctor
+RUN mkdir -p /tmp/avatars /tmp/videos /tmp/audio voice_profiles
+
+RUN chmod +x ./entrypoint.sh
+
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
+
+CMD ["./entrypoint.sh"]

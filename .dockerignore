@@ -1,0 +1,14 @@
+.git
+.github
+**/node_modules
+**/.next
+**/venv
+backend/models
+services/avatar-engine/models
+medicus-ai-data
+artifacts
+**/__pycache__
+**/*.py[cod]
+.env
+.env.*
+!.env.prod.example

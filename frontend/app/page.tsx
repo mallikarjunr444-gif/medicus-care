@@ -1,179 +1,109 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+import {
+  Activity,
+  ArrowRight,
+  AudioLines,
+  BadgeCheck,
+  BookOpenCheck,
+  ChevronRight,
+  Globe2,
+  HeartPulse,
+  History,
+  Languages,
+  Mic2,
+  MoreHorizontal,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Stethoscope,
+  X,
+} from 'lucide-react'
+import { toast } from 'react-hot-toast'
 import { AvatarUpload } from '@/components/AvatarUpload'
 import { AvatarList } from '@/components/AvatarList'
-import { CursorGlow } from '@/components/interactive/CursorGlow'
 import { api } from '@/lib/api'
-import { toast } from 'react-hot-toast'
-import { useStore } from '@/store/useStore'
 import type { DoctorId } from '@/lib/doctorTypes'
-import {
-  HeartPulse,
-  Camera,
-  MessageCircle,
-  Mic2,
-  Sparkles,
-  Zap,
-  Globe,
-  Shield,
-  Play,
-  ChevronRight,
-  Activity,
-  Brain,
-  AudioWaveform,
-  History,
-  Settings,
-  Stethoscope,
-  FileCheck,
-  Languages,
-  CheckCircle2,
-  ArrowRight,
-  ShieldAlert,
-  Database,
-  ExternalLink,
-  Layers,
-  Dna,
-} from 'lucide-react'
-
-// Dynamic imports for the existing clinical tools.
-const AnatomyViewer3D = dynamic(
-  () => import('@/components/3d/AnatomyViewer3D').then((m) => m.AnatomyViewer3D),
-  {
-    ssr: false,
-    loading: () => <PanelLoader label="Loading 3D Anatomical Organ Systems…" />,
-  }
-)
+import { useStore } from '@/store/useStore'
 
 const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
-  {
-    ssr: false,
-    loading: () => <PanelLoader label="Loading doctor profiles…" />,
-  }
+  { ssr: false, loading: () => <PanelLoader label="Preparing doctor profiles" /> },
 )
-
+const AnatomyViewer3D = dynamic(
+  () => import('@/components/3d/AnatomyViewer3D').then((m) => m.AnatomyViewer3D),
+  { ssr: false, loading: () => <PanelLoader label="Loading anatomy explorer" /> },
+)
 const TriageSimulator = dynamic(
   () => import('@/components/interactive/TriageSimulator').then((m) => m.TriageSimulator),
-  {
-    ssr: false,
-    loading: () => <PanelLoader label="Loading Triage Simulator…" />,
-  }
+  { ssr: false, loading: () => <PanelLoader label="Loading care guidance" /> },
 )
-
 const LabReportScanner3D = dynamic(
   () => import('@/components/interactive/LabReportScanner3D').then((m) => m.LabReportScanner3D),
-  {
-    ssr: false,
-    loading: () => <PanelLoader label="Loading Medical Document Intelligence Scanner…" />,
-  }
+  { ssr: false, loading: () => <PanelLoader label="Loading report tools" /> },
 )
-
 const MedicalSafetyRadar = dynamic(
   () => import('@/components/interactive/MedicalSafetyRadar').then((m) => m.MedicalSafetyRadar),
-  {
-    ssr: false,
-    loading: () => <PanelLoader label="Loading 4-Tier Safety Architecture…" />,
-  }
+  { ssr: false, loading: () => <PanelLoader label="Loading safety information" /> },
 )
-
 const DoctorVideoCall = dynamic(
   () => import('@/components/doctor/DoctorVideoCall').then((m) => m.DoctorVideoCall),
-  {
-    ssr: false,
-    loading: () => <PanelLoader label="Preparing your consultation…" />,
-  }
+  { ssr: false, loading: () => <PanelLoader label="Preparing your consultation" /> },
 )
-
 const ChatInterface = dynamic(
   () => import('@/components/ChatInterface').then((m) => m.ChatInterface),
-  { ssr: false, loading: () => <PanelLoader label="Connecting…" /> }
+  { ssr: false, loading: () => <PanelLoader label="Connecting" /> },
 )
-
 const VoicePanel = dynamic(
   () => import('@/components/VoicePanel').then((m) => m.VoicePanel),
-  { ssr: false, loading: () => <PanelLoader label="Loading voice studio…" /> }
+  { ssr: false, loading: () => <PanelLoader label="Loading voice settings" /> },
 )
-
 const HistoryPanel = dynamic(
   () => import('@/components/HistoryPanel').then((m) => m.HistoryPanel),
-  { ssr: false, loading: () => <PanelLoader label="Loading history…" /> }
+  { ssr: false, loading: () => <PanelLoader label="Loading your history" /> },
 )
-
 const SettingsPanel = dynamic(
   () => import('@/components/SettingsPanel').then((m) => m.SettingsPanel),
-  { ssr: false, loading: () => <PanelLoader label="Loading settings…" /> }
+  { ssr: false, loading: () => <PanelLoader label="Loading settings" /> },
 )
-
 const AdminKnowledgeDashboard = dynamic(
   () => import('@/components/admin/AdminKnowledgeDashboard').then((m) => m.AdminKnowledgeDashboard),
-  { ssr: false, loading: () => <PanelLoader label="Loading Knowledge & Safety Console…" /> }
+  { ssr: false, loading: () => <PanelLoader label="Loading knowledge console" /> },
 )
 
 function PanelLoader({ label }: { label: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-slate-400 text-sm bg-slate-950">
-      <div className="w-9 h-9 rounded-full border-2 border-sky-500/20 border-t-sky-400 animate-spin mb-3" />
-      <span className="font-mono text-xs">{label}</span>
+    <div className="flex min-h-56 flex-col items-center justify-center gap-3 text-sm text-slate-500">
+      <span className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-100 border-t-emerald-700" />
+      <span>{label}…</span>
     </div>
   )
 }
 
-const MEDICARE_FEATURES = [
-  {
-    icon: Stethoscope,
-    title: 'Doctor Consultations',
-    description:
-      'Choose Dr. Arjun or Dr. Ananya, then share symptoms by voice or text in your selected language.',
-    color: 'bg-sky-500/10 text-sky-400 border border-sky-500/20',
-  },
-  {
-    icon: AudioWaveform,
-    title: 'Voice & Text Conversations',
-    description:
-      'Use speech recognition, doctor audio, subtitles, and interruption controls during supported consultations.',
-    color: 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20',
-  },
-  {
-    icon: Languages,
-    title: 'Multilingual Consultations',
-    description:
-      'Full voice and text support in English, Kannada (ಕನ್ನಡ), and Hindi (हिन्दी) for natural regional healthcare access across India.',
-    color: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
-  },
-  {
-    icon: ShieldAlert,
-    title: '4-Tier Medical Safety Engine',
-    description:
-      'Deterministic clinical triage screening from Level 1 General Education to Level 4 Emergency with immediate 112 escalation.',
-    color: 'bg-red-500/10 text-red-400 border border-red-500/20',
-  },
-  {
-    icon: FileCheck,
-    title: 'Laboratory Report Review',
-    description:
-      'Paste report text for preliminary reference guidance, then discuss the original results with a qualified clinician.',
-    color: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
-  },
-  {
-    icon: Brain,
-    title: 'Mental Wellness & Guidance',
-    description:
-      'Empathetic stress management, guided breathing exercises, and supportive wellness triage for whole-body physiological equilibrium.',
-    color: 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
-  },
+type View = 'home' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings' | 'admin' | 'tools'
+
+const navItems: { id: View; icon: typeof HeartPulse; label: string }[] = [
+  { id: 'home', icon: HeartPulse, label: 'Home' },
+  { id: 'consultation', icon: Stethoscope, label: 'Consultation' },
+  { id: 'avatars', icon: Activity, label: 'Avatar studio' },
+  { id: 'tools', icon: BookOpenCheck, label: 'Care tools' },
+  { id: 'voice', icon: Mic2, label: 'Voice' },
+  { id: 'history', icon: History, label: 'History' },
+  { id: 'settings', icon: Settings, label: 'Settings' },
+  { id: 'admin', icon: ShieldCheck, label: 'Knowledge' },
 ]
 
-type View = 'home' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings' | 'admin'
+const mobileMoreItems = navItems.filter(({ id }) => ['avatars', 'tools', 'voice', 'settings', 'admin'].includes(id))
 
 export default function Home() {
   const { isAuthenticated, setAuth } = useStore()
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorId>('dr_arjun')
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [resumeSessionId, setResumeSessionId] = useState<string | null>(null)
   const [view, setView] = useState<View>('home')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -187,21 +117,27 @@ export default function Home() {
     }
   }, [isAuthenticated, setAuth])
 
-  const handleStartDoctorConsultation = (docId: DoctorId) => {
-    setSelectedDoctor(docId)
-    setView('consultation')
+  const navigate = (next: View) => {
+    setView(next)
+    setMobileMenuOpen(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleStartDoctorConsultation = (doctorId: DoctorId) => {
+    setSelectedDoctor(doctorId)
+    navigate('consultation')
   }
 
   const handleVoiceSelect = async (voiceId: string) => {
     if (!selectedAvatar) {
-      toast('Select an avatar first to assign this voice', { icon: '💡' })
+      toast('Choose an avatar before assigning a voice', { icon: '💡' })
       return
     }
     try {
       await api.setAvatarVoice(selectedAvatar, voiceId)
-      toast.success('Voice assigned to avatar', { icon: '🎙️' })
+      toast.success('Voice assigned to avatar')
     } catch {
-      toast.error('Failed to assign voice')
+      toast.error('Could not assign this voice')
     }
   }
 
@@ -213,318 +149,270 @@ export default function Home() {
   const handleStartChat = () => {
     if (selectedAvatar) {
       setResumeSessionId(null)
-      setView('chat')
+      navigate('chat')
     }
   }
 
   const handleResumeFromHistory = (avatarId: string, sessionId: string) => {
     setSelectedAvatar(avatarId)
     setResumeSessionId(sessionId)
-    setView('chat')
+    navigate('chat')
   }
 
-  const navItems: { id: View; icon: typeof HeartPulse; label: string; badge?: string }[] = [
-    { id: 'home', icon: Sparkles, label: 'Home' },
-    { id: 'consultation', icon: HeartPulse, label: 'Consultation' },
-    { id: 'avatars', icon: Camera, label: 'Avatar Studio' },
-    { id: 'voice', icon: Mic2, label: 'Voice' },
-    { id: 'history', icon: History, label: 'History' },
-    { id: 'settings', icon: Settings, label: 'Settings' },
-    { id: 'admin', icon: Database, label: 'Admin Console', badge: 'RAG' },
-  ]
+  const showMobileNavigation = view !== 'consultation'
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-950 text-slate-100 flex flex-col selection:bg-sky-500/30 selection:text-white">
-      {/* Dynamic Ambient Cursor Glow */}
-      <CursorGlow />
+    <div className={`min-h-screen overflow-x-clip bg-[#f5f8f6] text-[#183331] ${showMobileNavigation ? 'pb-20 lg:pb-0' : ''}`}>
+      <header className={`sticky top-0 z-50 border-b border-[#e2eae6] bg-white/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl ${view === 'consultation' ? 'hidden' : ''}`}>
+        <div className="mx-auto flex min-h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+          <button type="button" onClick={() => navigate('home')} className="group flex min-w-0 items-center gap-2.5 text-left">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#0f6257] text-white shadow-sm transition-transform group-hover:-rotate-3">
+              <HeartPulse size={20} aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[17px] font-bold leading-5 tracking-[-0.04em] text-[#183331]">MediCare</span>
+              <span className="hidden text-[11px] leading-4 text-[#657773] sm:block">Care, clarity, and conversation</span>
+            </span>
+          </button>
 
-      {/* ── Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-slate-950/85 backdrop-blur-2xl border-b border-slate-800/80 shadow-md">
-        <div className="h-full mx-auto max-w-7xl px-3 sm:px-6 flex items-center justify-between gap-2 min-w-0">
-          <div
-            onClick={() => setView('home')}
-            className="flex items-center gap-3 cursor-pointer select-none group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/25 transition-transform group-hover:scale-105">
-              <HeartPulse size={20} className="animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-base tracking-tight text-white flex items-center">
-                  Medi<span className="text-sky-400">Care</span>
-                </span>
-                <a
-                  href="https://medicuslabs.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800/60 font-semibold hover:border-sky-500 transition-colors flex items-center gap-1"
-                  title="Visit Medicus Labs Main Platform"
-                >
-                  <span>Medicus Labs™</span>
-                  <ExternalLink size={10} />
-                </a>
-              </div>
-              <span className="text-[11px] text-slate-400 block leading-tight">
-                Your AI Doctor • Telemedicine
-              </span>
-            </div>
-          </div>
-
-          <div className="min-w-0 max-w-[calc(100vw-150px)] sm:max-w-none flex items-center gap-1 p-1 rounded-xl bg-slate-900/90 border border-slate-800/80 overflow-x-auto">
-            {navItems.map(({ id, icon: Icon, label, badge }) => (
+          <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
+            {navItems.map(({ id, icon: Icon, label }) => (
               <button
                 key={id}
-                onClick={() => setView(id)}
+                type="button"
+                onClick={() => navigate(id)}
                 aria-current={view === id ? 'page' : undefined}
-                className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex-shrink-0 ${
-                  view === id
-                    ? 'bg-sky-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-                }`}
+                className={`inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-[13px] font-medium transition-colors ${view === id ? 'bg-[#e8f3ef] text-[#0e6257]' : 'text-[#60736e] hover:bg-[#f1f6f3] hover:text-[#183331]'}`}
               >
-                <Icon size={14} className={view === id ? 'text-white' : 'text-sky-400'} />
+                <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
                 <span className="hidden lg:inline">{label}</span>
-                {badge && (
-                  <span className="hidden xl:inline text-[9px] px-1 py-0.2 rounded bg-sky-400/20 text-sky-300 font-mono">
-                    {badge}
-                  </span>
-                )}
               </button>
             ))}
+          </nav>
+
+          <div className="hidden shrink-0 items-center gap-2 sm:flex">
+            <span className="hidden items-center gap-1.5 text-xs text-[#5f726e] xl:flex">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              Private, secure conversations
+            </span>
+            {view !== 'consultation' && (
+              <button type="button" onClick={() => navigate('consultation')} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#0f6257] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b5149]">
+                Talk to a doctor <ArrowRight size={15} aria-hidden="true" />
+              </button>
+            )}
           </div>
 
+          <span className="flex items-center gap-1.5 rounded-full border border-[#dce8e2] bg-[#f5f9f6] px-2.5 py-1.5 text-[11px] font-medium text-[#45645d] sm:hidden">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            Online care
+          </span>
         </div>
-      </nav>
+      </header>
 
-      <main className="pt-16 flex-1 flex flex-col">
-        {/* ── DOCTOR CONSULTATION VIEW ── */}
+      <main id="main-content" className={view === 'consultation' ? 'min-h-[100dvh]' : 'min-h-[calc(100dvh-4.25rem)]'}>
         {view === 'consultation' && (
-          <div className="w-full h-full flex-1 animate-fade-in">
-            <DoctorVideoCall
-              initialDoctorId={selectedDoctor}
-              onEndConsultation={() => setView('home')}
-            />
+          <div className="min-h-[calc(100dvh-4.25rem)] animate-fade-in">
+            <DoctorVideoCall initialDoctorId={selectedDoctor} onEndConsultation={() => navigate('home')} />
           </div>
         )}
 
-        {/* ── HOME VIEW ── */}
         {view === 'home' && (
-          <div className="animate-fade-in flex flex-col">
-            {/* ── CONSULTATION LANDING ── */}
-            <section className="relative px-6 pt-12 pb-16 max-w-7xl mx-auto w-full">
-              {/* Background Glow Accents */}
-              <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-600/10 rounded-full blur-[120px] pointer-events-none" />
-              <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
-
-              <div className="flex flex-col items-center text-center mb-10">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-pill mb-5 shadow-lg">
-                  <Sparkles size={14} className="text-sky-400 animate-spin" />
-                  <span className="text-xs text-sky-300 font-semibold uppercase tracking-wider font-mono">
-                    MediCare • Telemedicine & Clinical Support
-                  </span>
+          <div className="animate-fade-in">
+            <section className="relative isolate overflow-hidden border-b border-[#e7eeea] bg-[#eef5f1]">
+              <div aria-hidden="true" className="absolute -right-20 -top-40 -z-10 h-[26rem] w-[26rem] rounded-full bg-[#d8e9df] blur-3xl" />
+              <div className="mx-auto grid max-w-7xl gap-9 px-4 pb-12 pt-10 sm:px-6 sm:pb-16 sm:pt-14 lg:grid-cols-[1.3fr_0.7fr] lg:items-center lg:gap-14 lg:py-20">
+                <div>
+                  <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#d4e4db] bg-white/80 px-3 py-1.5 text-xs font-semibold text-[#34645a] shadow-sm">
+                    <Sparkles size={14} className="text-[#c18243]" aria-hidden="true" />
+                    A more thoughtful health conversation
+                  </div>
+                  <h1 className="max-w-3xl text-[2.55rem] font-semibold leading-[1.08] tracking-[-0.055em] text-[#173a35] sm:text-5xl lg:text-[4.15rem]">
+                    Care starts with being <span className="text-[#0f7565]">heard.</span>
+                  </h1>
+                  <p className="mt-5 max-w-2xl text-base leading-7 text-[#536a63] sm:text-lg sm:leading-8">
+                    Share what is on your mind in your own words. Talk with Dr. Arjun or Dr. Ananya by voice or text, in a language that feels comfortable.
+                  </p>
+                  <div className="mt-7 flex flex-col gap-3 min-[420px]:flex-row">
+                    <a href="#doctor-selection" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#0f6257] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b5149] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#acd5c9]">
+                      Choose your doctor <ChevronRight size={17} aria-hidden="true" />
+                    </a>
+                    <button type="button" onClick={() => navigate('tools')} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#cddcd3] bg-white px-5 text-sm font-semibold text-[#244b44] transition hover:bg-[#f8fbf9]">
+                      Explore care tools <ArrowRight size={15} aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-[#5c716b]">
+                    <span className="inline-flex items-center gap-1.5"><ShieldCheck size={15} className="text-[#0f7565]" /> Your conversation is private</span>
+                    <span className="inline-flex items-center gap-1.5"><Languages size={15} className="text-[#0f7565]" /> Kannada, English and Hindi</span>
+                  </div>
                 </div>
 
-                <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold leading-tight mb-5 tracking-tight max-w-5xl text-white">
-                  Talk with{' '}
-                  <span className="bg-gradient-to-r from-sky-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-                    Dr. Arjun or Dr. Ananya
-                  </span>
-                </h1>
-
-                <p className="max-w-2xl text-base sm:text-lg text-slate-300 mb-8 leading-relaxed">
-                  Share your health concerns by voice or text. Choose Kannada, English, Hindi, or
-                  another supported language before starting your consultation.
-                </p>
-
-                {/* Primary Action Buttons */}
-                <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
-                  <a
-                    href="#doctor-selection"
-                    className="min-h-12 px-6 py-3.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-semibold text-sm shadow-lg shadow-teal-950/20 flex items-center gap-2 transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-200"
-                  >
-                    <span>Choose a doctor</span>
-                    <ChevronRight size={17} />
-                  </a>
-                  <span className="text-xs text-slate-400">Voice and text consultation</span>
+                <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+                  <div className="rounded-[1.75rem] border border-white bg-white p-5 shadow-[0_24px_70px_-38px_rgba(26,74,60,.32)] sm:p-6">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#71837d]">A simple first step</p>
+                        <h2 className="mt-2 text-xl font-semibold tracking-tight text-[#1c3c36]">How can we help today?</h2>
+                      </div>
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#edf6f1] text-[#0f7565]">
+                        <MessageIcon />
+                      </span>
+                    </div>
+                    <div className="mt-5 space-y-3">
+                      {[
+                        { icon: Mic2, title: 'Speak naturally', body: 'Tell the doctor what you are experiencing.' },
+                        { icon: AudioLines, title: 'Listen and respond', body: 'Hear a spoken reply and continue the conversation.' },
+                        { icon: Globe2, title: 'Use your language', body: 'Choose Kannada, English, or Hindi to begin.' },
+                      ].map(({ icon: Icon, title, body }, index) => (
+                        <div key={title} className="flex gap-3 rounded-2xl bg-[#f7faf8] p-3.5 sm:p-4">
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#0f7565] shadow-sm">
+                            <Icon size={17} aria-hidden="true" />
+                          </span>
+                          <span>
+                            <span className="block text-sm font-semibold text-[#28453f]">{title}</span>
+                            <span className="mt-0.5 block text-xs leading-5 text-[#667872]">{body}</span>
+                          </span>
+                          <span className="ml-auto self-center text-xs font-semibold text-[#96a69f]">0{index + 1}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 rounded-xl border border-[#e6ece8] px-3.5 py-3 text-[11px] leading-5 text-[#6f7f79]">
+                      MediCare provides AI health information and preliminary guidance. It does not replace a qualified clinician or emergency care.
+                    </div>
+                  </div>
+                  <div className="absolute -bottom-3 -left-2 -z-10 h-24 w-24 rounded-full bg-[#d8eadf] blur-2xl sm:-left-5" />
                 </div>
               </div>
-
             </section>
 
-            {/* ── DOCTOR SELECTION ── */}
             <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
 
-            {/* ── SECTION 3: Interactive 3D Anatomy & Organ Explorer ── */}
-            <section className="border-t border-slate-900 bg-slate-950/70">
-              <AnatomyViewer3D />
-            </section>
-
-            {/* ── SECTION 4: Interactive 4-Tier Medical Safety Simulator ── */}
-            <section className="border-t border-slate-900 bg-slate-950">
-              <TriageSimulator onStartConsultation={handleStartDoctorConsultation} />
-            </section>
-
-            {/* ── SECTION 5: Holographic Lab Document Scanner ── */}
-            <section className="border-t border-slate-900 bg-slate-950/70">
-              <LabReportScanner3D />
-            </section>
-
-            {/* ── SECTION 6: Medical Safety Radar & Architecture ── */}
-            <section className="border-t border-slate-900 bg-slate-950">
-              <MedicalSafetyRadar />
-            </section>
-
-            {/* ── SECTION 7: Comprehensive Architecture & Features Grid ── */}
-            <section className="px-6 py-20 max-w-7xl mx-auto w-full border-t border-slate-900">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill mb-3">
-                  <Layers size={13} className="text-sky-400" />
-                  <span className="text-xs font-mono font-semibold text-sky-300 uppercase tracking-wider">
-                    Full Platform Capabilities
-                  </span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">
-                  Integrated Digital Healthcare Suite
-                </h2>
-                <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
-                  Clinical safety guidance, lab report tools, and multilingual consultation support.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {MEDICARE_FEATURES.map(({ icon: Icon, title, description, color }) => (
-                  <div
-                    key={title}
-                    className="p-6 rounded-2xl glass-card border border-slate-800/80 hover:border-sky-500/40 transition-all duration-300 group"
-                  >
-                    <div
-                      className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center mb-4 transition-transform group-hover:scale-105`}
-                    >
-                      <Icon size={22} />
-                    </div>
-                    <h3 className="font-bold text-base text-white mb-2">{title}</h3>
-                    <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                      {description}
-                    </p>
+            <section className="border-y border-[#e3ebe6] bg-white">
+              <div className="mx-auto grid max-w-7xl gap-6 px-4 py-9 sm:grid-cols-3 sm:px-6 sm:py-11">
+                {[
+                  { icon: ShieldCheck, title: 'Clear about AI', body: 'The doctor personas are AI assistants. They do not claim to be human clinicians.' },
+                  { icon: Activity, title: 'Safety comes first', body: 'Emergency warning signs are routed to urgent care guidance.' },
+                  { icon: Globe2, title: 'Made for conversation', body: 'Voice and text interactions support regional language choices.' },
+                ].map(({ icon: Icon, title, body }) => (
+                  <div key={title} className="flex gap-3.5">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#edf6f1] text-[#0f7565]"><Icon size={18} aria-hidden="true" /></span>
+                    <div><h3 className="text-sm font-semibold text-[#25423b]">{title}</h3><p className="mt-1 text-xs leading-5 text-[#697b74]">{body}</p></div>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* ── Mandatory Regulatory Disclaimer & Platform Footer ── */}
-            <footer className="mt-auto border-t border-slate-900 bg-slate-950 p-8 text-center text-xs text-slate-500 space-y-3">
-              <p className="max-w-3xl mx-auto leading-relaxed">
-                <span className="font-semibold text-slate-400">MediCare Notice:</span> MediCare is
-                a specialized healthcare sub-platform of{' '}
-                <a
-                  href="https://medicuslabs.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sky-400 hover:underline font-semibold"
-                >
-                  Medicus Labs™
-                </a>{' '}
-                designed for preliminary triage and health education. It is not an autonomous
-                licensed physician. Clinical diagnosis, prescriptions, and regulated services must
-                remain under qualified medical professionals. In medical emergencies, dial 112
-                immediately.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4 text-slate-400 text-xs pt-1">
-                <a
-                  href="https://medicuslabs.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-sky-400 transition-colors flex items-center gap-1 font-semibold"
-                >
-                  <span>Medicus Labs Main Platform (medicuslabs.app)</span>
-                  <ExternalLink size={12} />
-                </a>
-                <span>•</span>
-                <span>Direct Access Active (No Barrier)</span>
-                <span>•</span>
+            <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d8179]">More ways to explore</p>
+                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Helpful tools, in one place</h2>
+                </div>
+                <button type="button" onClick={() => navigate('tools')} className="inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-[#d7e2dc] bg-white px-4 text-sm font-semibold text-[#25564d] transition hover:bg-[#f3f8f5]">
+                  View care tools <ArrowRight size={15} aria-hidden="true" />
+                </button>
               </div>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { icon: BookOpenCheck, title: 'Health education', body: 'Explore anatomy and general health topics.' },
+                  { icon: Activity, title: 'Triage guidance', body: 'Learn what steps may be appropriate next.' },
+                  { icon: BadgeCheck, title: 'Report review', body: 'Share report text for preliminary explanation.' },
+                  { icon: ShieldCheck, title: 'Safety information', body: 'Understand how care guidance is reviewed.' },
+                ].map(({ icon: Icon, title, body }) => (
+                  <button key={title} type="button" onClick={() => navigate('tools')} className="group rounded-2xl border border-[#e1e9e4] bg-white p-5 text-left shadow-[0_2px_8px_rgba(34,71,56,.03)] transition hover:-translate-y-0.5 hover:border-[#b9d4c7] hover:shadow-md">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eff6f2] text-[#0f7565] transition group-hover:bg-[#0f6257] group-hover:text-white"><Icon size={18} aria-hidden="true" /></span>
+                    <span className="mt-4 block text-sm font-semibold text-[#25423b]">{title}</span>
+                    <span className="mt-1 block text-xs leading-5 text-[#6c7d76]">{body}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <footer className="border-t border-[#e2eae6] bg-white px-4 py-7 text-center sm:px-6">
+              <p className="mx-auto max-w-3xl text-xs leading-5 text-[#71817b]">
+                MediCare offers AI health education and preliminary triage guidance, not medical diagnosis or prescriptions. For urgent or life-threatening symptoms, call your local emergency number. In India, call 112.
+              </p>
+              <p className="mt-3 text-[11px] font-medium text-[#8a9993]">© {new Date().getFullYear()} Medicus Care</p>
             </footer>
           </div>
         )}
 
-        {/* ── AVATARS STUDIO VIEW ── */}
+        {view === 'tools' && (
+          <div className="animate-fade-in bg-[#102e2c]">
+            <div className="mx-auto max-w-7xl px-4 pb-8 pt-10 text-white sm:px-6 sm:pt-14">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200">Explore MediCare</p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Care and health tools</h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/75">Educational tools for learning about health and preparing questions for a qualified clinician.</p>
+            </div>
+            <section className="border-t border-white/10 bg-[#0b2423]"><AnatomyViewer3D /></section>
+            <section className="border-t border-white/10 bg-[#102e2c]"><TriageSimulator onStartConsultation={handleStartDoctorConsultation} /></section>
+            <section className="border-t border-white/10 bg-[#0b2423]"><LabReportScanner3D /></section>
+            <section className="border-t border-white/10 bg-[#102e2c]"><MedicalSafetyRadar /></section>
+          </div>
+        )}
+
         {view === 'avatars' && (
-          <div className="max-w-7xl mx-auto px-6 py-10 animate-fade-in w-full">
-            <div className="mb-8">
-              <h1 className="text-3xl font-extrabold text-white mb-2">Avatar Studio</h1>
-              <p className="text-slate-400 text-sm">
-                Custom avatar models and GLB configurations for MediCare.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <AvatarUpload />
-              <AvatarList selectedAvatar={selectedAvatar} onSelectAvatar={handleSelectAvatar} />
-            </div>
-            {selectedAvatar && (
-              <div className="mt-8 flex justify-center">
-                <button
-                  onClick={handleStartChat}
-                  className="px-8 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-semibold flex items-center gap-2 shadow-lg hover:scale-105 transition-transform"
-                >
-                  <MessageCircle size={18} />
-                  <span>Start Conversation with Selected Avatar</span>
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            )}
-          </div>
+          <PageFrame eyebrow="Personalize" title="Avatar studio" description="Manage your custom avatar and start a text or voice conversation.">
+            <div className="grid gap-5 lg:grid-cols-2"><AvatarUpload /><AvatarList selectedAvatar={selectedAvatar} onSelectAvatar={handleSelectAvatar} /></div>
+            {selectedAvatar && <div className="mt-6 flex justify-end"><button onClick={handleStartChat} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#0f6257] px-5 text-sm font-semibold text-white hover:bg-[#0b5149]"><span>Start conversation</span><ArrowRight size={16} /></button></div>}
+          </PageFrame>
         )}
 
-        {/* ── VOICE STUDIO VIEW ── */}
-        {view === 'voice' && (
-          <div className="max-w-4xl mx-auto px-6 py-10 animate-fade-in w-full">
-            <div className="mb-8">
-              <h1 className="text-3xl font-extrabold text-white mb-2">Voice Studio</h1>
-              <p className="text-slate-400 text-sm">
-                Configure doctor voices and regional language models.
-              </p>
-            </div>
-            <VoicePanel onVoiceSelect={handleVoiceSelect} />
-          </div>
-        )}
-
-        {/* ── CHAT VIEW ── */}
-        {view === 'chat' && selectedAvatar && (
-          <div className="max-w-7xl mx-auto px-6 py-10 animate-fade-in w-full">
-            <div className="mb-6">
-              <h1 className="text-3xl font-extrabold text-white mb-2">Live Conversation</h1>
-              <p className="text-slate-400 text-sm">Text & voice session with custom avatar.</p>
-            </div>
-            <ChatInterface
-              key={`${selectedAvatar}:${resumeSessionId ?? 'new'}`}
-              avatarId={selectedAvatar}
-              resumeSessionId={resumeSessionId ?? undefined}
-              onSessionCreated={setActiveSessionId}
-            />
-          </div>
-        )}
-
-        {/* ── HISTORY VIEW ── */}
-        {view === 'history' && (
-          <div className="max-w-5xl mx-auto px-6 py-10 animate-fade-in w-full">
-            <HistoryPanel onResume={handleResumeFromHistory} />
-          </div>
-        )}
-
-        {/* ── SETTINGS VIEW ── */}
-        {view === 'settings' && (
-          <div className="max-w-4xl mx-auto px-6 py-10 animate-fade-in w-full">
-            <SettingsPanel />
-          </div>
-        )}
-
-        {/* ── ADMIN KNOWLEDGE & SAFETY CONSOLE VIEW ── */}
-        {view === 'admin' && (
-          <div className="w-full flex-1 animate-fade-in">
-            <AdminKnowledgeDashboard />
-          </div>
-        )}
+        {view === 'voice' && <PageFrame eyebrow="Preferences" title="Voice settings" description="Choose the voice experience for your avatar."><VoicePanel onVoiceSelect={handleVoiceSelect} /></PageFrame>}
+        {view === 'chat' && selectedAvatar && <PageFrame eyebrow="Conversation" title="Live conversation" description="Continue your text and voice session."><ChatInterface key={`${selectedAvatar}:${resumeSessionId ?? 'new'}`} avatarId={selectedAvatar} resumeSessionId={resumeSessionId ?? undefined} onSessionCreated={() => undefined} /></PageFrame>}
+        {view === 'history' && <PageFrame eyebrow="Your care" title="Conversation history" description="Return to a previous conversation."><HistoryPanel onResume={handleResumeFromHistory} /></PageFrame>}
+        {view === 'settings' && <PageFrame eyebrow="Preferences" title="Settings" description="Manage your account and app preferences."><SettingsPanel /></PageFrame>}
+        {view === 'admin' && <div className="min-h-[calc(100dvh-4.25rem)] bg-[#f5f8f6]"><AdminKnowledgeDashboard /></div>}
       </main>
+
+      {showMobileNavigation && (
+        <>
+          {mobileMenuOpen && <button type="button" aria-label="Close menu" className="fixed inset-0 z-40 bg-[#183331]/15 lg:hidden" onClick={() => setMobileMenuOpen(false)} />}
+          {mobileMenuOpen && (
+            <nav aria-label="More navigation" className="fixed bottom-[calc(4.7rem+env(safe-area-inset-bottom))] left-3 right-3 z-50 rounded-2xl border border-[#dfe8e2] bg-white p-2 shadow-[0_16px_50px_rgba(26,55,45,.18)] lg:hidden">
+              <div className="grid grid-cols-2 gap-1">
+                {mobileMoreItems.map(({ id, icon: Icon, label }) => (
+                  <button key={id} type="button" onClick={() => navigate(id)} className={`flex min-h-12 items-center gap-2 rounded-xl px-3 text-sm font-medium ${view === id ? 'bg-[#eaf4ef] text-[#0e6257]' : 'text-[#425b54] hover:bg-[#f5f8f6]'}`}>
+                    <Icon size={17} aria-hidden="true" /> {label}
+                  </button>
+                ))}
+              </div>
+            </nav>
+          )}
+          <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-40 border-t border-[#dfe8e2] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_24px_rgba(33,64,52,.06)] backdrop-blur-xl lg:hidden">
+            <div className="mx-auto grid max-w-xl grid-cols-4 px-2 pt-1.5">
+              {[
+                { id: 'home' as View, icon: HeartPulse, label: 'Home' },
+                { id: 'consultation' as View, icon: Stethoscope, label: 'Doctor' },
+                { id: 'history' as View, icon: History, label: 'History' },
+              ].map(({ id, icon: Icon, label }) => (
+                <button key={id} type="button" onClick={() => navigate(id)} aria-current={view === id ? 'page' : undefined} className={`flex min-h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-medium ${view === id ? 'text-[#0f7565]' : 'text-[#71817b]'}`}>
+                  <Icon size={19} strokeWidth={view === id ? 2.4 : 1.8} aria-hidden="true" />{label}
+                </button>
+              ))}
+              <button type="button" onClick={() => setMobileMenuOpen((open) => !open)} aria-expanded={mobileMenuOpen} aria-label={mobileMenuOpen ? 'Close more options' : 'Open more options'} className={`flex min-h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-medium ${mobileMenuOpen ? 'text-[#0f7565]' : 'text-[#71817b]'}`}>
+                {mobileMenuOpen ? <X size={19} aria-hidden="true" /> : <MoreHorizontal size={19} aria-hidden="true" />}More
+              </button>
+            </div>
+          </nav>
+        </>
+      )}
     </div>
+  )
+}
+
+function MessageIcon() {
+  return <AudioLines size={19} strokeWidth={1.9} aria-hidden="true" />
+}
+
+function PageFrame({ children, eyebrow, title, description }: { children: React.ReactNode; eyebrow: string; title: string; description: string }) {
+  return (
+    <section className="mx-auto min-h-[calc(100dvh-4.25rem)] max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mb-7 max-w-2xl sm:mb-9">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0f7565]">{eyebrow}</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1c3c36] sm:text-4xl">{title}</h1>
+        <p className="mt-2 text-sm leading-6 text-[#6c7d76]">{description}</p>
+      </div>
+      {children}
+    </section>
   )
 }

@@ -40,24 +40,30 @@ fi
 echo ""
 echo "[2/5] Installing MuseTalk requirements..."
 
-# Install requirements, skipping packages incompatible with Python 3.12
-# (mmpose/mmcv have no 3.12 wheels; tensorflow is optional for our use case)
-"$VENV_PYTHON" -m pip install -q \
-  "diffusers==0.32.2" \
-  "accelerate==0.28.0" \
-  "transformers==4.39.2" \
-  "opencv-python==4.9.0.80" \
-  "soundfile==0.12.1" \
-  "librosa==0.11.0" \
-  "einops==0.8.1" \
-  "omegaconf" \
-  "pyyaml" \
-  "imageio" \
-  "imageio[ffmpeg]" \
-  "ffmpeg-python" \
-  "moviepy<2" \
-  "safetensors" \
-  "timm"
+# A deployment host only needs the downloader packages here; the production
+# image already installs the runtime dependencies with its CUDA PyTorch build.
+# Keep the full local development setup as the default.
+if [ "${SKIP_MUSETALK_REQUIREMENTS:-0}" = "1" ]; then
+  "$VENV_PYTHON" -m pip install -q huggingface_hub gdown
+else
+  # Skip packages incompatible with Python 3.12 (mmpose/mmcv have no wheels).
+  "$VENV_PYTHON" -m pip install -q \
+    "diffusers==0.32.2" \
+    "accelerate==0.28.0" \
+    "transformers==4.39.2" \
+    "opencv-python==4.9.0.80" \
+    "soundfile==0.12.1" \
+    "librosa==0.11.0" \
+    "einops==0.8.1" \
+    "omegaconf" \
+    "pyyaml" \
+    "imageio" \
+    "imageio[ffmpeg]" \
+    "ffmpeg-python" \
+    "moviepy<2" \
+    "safetensors" \
+    "timm"
+fi
 
 # ── 3. Replace preprocessing.py with a bundled OpenCV face detector ─────────
 echo ""

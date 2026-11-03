@@ -1,17 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 //
-// HireAI design system. The rules it states are load-bearing, not decoration:
-//
-//   1. Monochrome canvas — #0a0a0a ink on #fcfcfd. primary-600 is reserved for
-//      buttons, links and ONE accent per page. Never paint a surface with it.
-//   2. Urbanist headlines, Inter body, tracking -0.015em on headings.
-//   3. JetBrains Mono for 11px uppercase eyebrow labels — the signature.
-//   4. No gradients. Ever. Reach for a darker swatch instead.
-//   5. Rounded surfaces — 16px cards, 20-24px hero, 8px controls.
-//   6. One italic Playfair accent, sparingly.
-//
-// There is deliberately no gradient utility and no glow shadow defined below,
-// so rule 4 is enforced by the config rather than by remembering it.
+// MediCare's palette uses warm neutral surfaces, deep botanical text, and a
+// restrained evergreen accent. Keep interaction states high-contrast.
 module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -22,14 +12,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Ink: the near-black used for hero panels and highest-contrast text.
-        // Distinct from gray-900, which is the body text colour.
-        ink: '#0a0a0a',
+        // Deep green-tinged ink is used for high-contrast text and hero panels.
+        ink: '#153b35',
         gray: {
-          25: '#fcfcfd', // page canvas
-          50: '#f9fafb',
-          100: '#f2f4f7',
-          200: '#eaecf0',
+          25: '#f5f8f6', // page canvas
+          50: '#f8fbf9',
+          100: '#eef4f0',
+          200: '#e1e9e4',
           300: '#d0d5dd',
           400: '#98a2b3',
           500: '#667085',
@@ -39,16 +28,16 @@ module.exports = {
           900: '#101828',
         },
         primary: {
-          50: '#f0f5ff',
-          100: '#e0eaff',
-          200: '#c7d7fe',
-          300: '#a4bcfd',
-          400: '#8098f9',
-          500: '#6172f3',
-          600: '#444ce7', // the brand accent
-          700: '#3538cd',
-          800: '#2d31a6',
-          900: '#2b2f83',
+          50: '#eff7f2',
+          100: '#dceee3',
+          200: '#c5e2d1',
+          300: '#9dceb7',
+          400: '#6fb296',
+          500: '#378c73',
+          600: '#0f7565', // the brand accent
+          700: '#0e6257',
+          800: '#124d46',
+          900: '#163b37',
         },
         success: { 50: '#ecfdf3', 500: '#12b76a', 600: '#039855', 700: '#027a48' },
         warning: { 50: '#fffaeb', 500: '#f79009', 600: '#dc6803', 700: '#b54708' },
@@ -61,7 +50,7 @@ module.exports = {
         sans: ['var(--font-inter)', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['var(--font-urbanist)', 'Urbanist', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains)', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
-        // Rule 6: the single italic accent.
+        // A gentle editorial accent for occasional headings.
         accent: ['var(--font-playfair)', '"Playfair Display"', 'Georgia', 'serif'],
       },
 

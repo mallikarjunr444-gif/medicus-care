@@ -2,7 +2,7 @@
 
 > **Parent Brand:** Medicus Labs™ (Founder & CEO: Mallikarjun R)  
 > **Primary Website:** [medicuslabs.app](https://medicuslabs.app)  
-> **Production Subdomain:** [care.medicuslabs.app](https://care.medicuslabs.app)  
+> **Public deployment:** DNS and GPU hosting are not configured yet. See [`DEPLOY_WORLDWIDE.md`](DEPLOY_WORLDWIDE.md) for the HTTPS deployment setup.
 > **Repository:** [github.com/mallikarjunr444-gif/medicus-care](https://github.com/mallikarjunr444-gif/medicus-care)  
 
 ---
@@ -93,7 +93,8 @@ All formal documentation deliverables are maintained in [`documentation/`](docum
 7. [`clinical_safety_report.md`](documentation/clinical_safety_report.md) — Red-teaming and safety benchmark evaluation results.
 8. [`architecture.md`](documentation/architecture.md) — System architecture diagram and WebRTC data flow.
 9. [`deployment_guide.md`](documentation/deployment_guide.md) — Production AWS EC2 GPU deployment and local Mac Apple Silicon guide.
-10. [`documentation/README.md`](documentation/README.md) — Documentation index and master reference guide.
+10. [`DEPLOY_WORLDWIDE.md`](DEPLOY_WORLDWIDE.md) — HTTPS, GPU-hosted models, and multi-device production setup.
+11. [`documentation/README.md`](documentation/README.md) — Documentation index and master reference guide.
 
 ---
 

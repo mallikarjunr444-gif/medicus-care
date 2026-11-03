@@ -1,7 +1,5 @@
-# Production overrides for AWS GPU deployment.
-# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-
-version: '3.8'
+# Production stack for an NVIDIA GPU host with Caddy-managed HTTPS.
+# Usage: docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 services:
   postgres:
@@ -19,15 +17,26 @@ services:
       options: { max-size: "20m", max-file: "3" }
 
   backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.gpu
     restart: always
     env_file: .env.prod
-    volumes:
-      # Production: no source-code bind-mount — use the built image
+    volumes: !override
       - avatar_cache:/tmp/avatars
       - video_cache:/tmp/videos
       - audio_cache:/tmp/audio
       - voice_profiles:/app/voice_profiles
-      - musetalk_models:/app/models  # persist downloaded models across restarts
+      - model_cache:/root/.cache
+      - ./database/rag_store:/app/database/rag_store
+      - uploads_data:/app/backend/uploads
+      - ./backend/models:/app/backend/models  # populate with scripts/setup_musetalk.sh on the GPU host
+    environment:
+      - MEDICARE_RAG_STORE=/app/database/rag_store
+      - MUSETALK_PATH=/app/backend/models/MuseTalk
+    depends_on:
+      ollama:
+        condition: service_healthy
     deploy:
       resources:
         reservations:
@@ -42,8 +51,7 @@ services:
   frontend:
     restart: always
     env_file: .env.prod
-    volumes:
-      # Production: no source-code bind-mount — use the built image
+    volumes: !override
       - /app/node_modules
       - /app/.next
     logging:
@@ -51,14 +59,26 @@ services:
       options: { max-size: "50m", max-file: "3" }
 
   celery-worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.gpu
     restart: always
     env_file: .env.prod
-    volumes:
+    volumes: !override
       - avatar_cache:/tmp/avatars
       - video_cache:/tmp/videos
       - audio_cache:/tmp/audio
       - voice_profiles:/app/voice_profiles
-      - musetalk_models:/app/models
+      - model_cache:/root/.cache
+      - ./database/rag_store:/app/database/rag_store
+      - uploads_data:/app/backend/uploads
+      - ./backend/models:/app/backend/models
+    environment:
+      - MEDICARE_RAG_STORE=/app/database/rag_store
+      - MUSETALK_PATH=/app/backend/models/MuseTalk
+    depends_on:
+      ollama:
+        condition: service_healthy
     deploy:
       resources:
         reservations:
@@ -66,20 +86,67 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-    logging:
-      driver: json-file
-      options: { max-size: "100m", max-file: "5" }
 
-  flower:
-    # Disable Flower in production (security risk)
-    profiles: ["dev"]
+  ollama:
+    image: ollama/ollama:latest
+    restart: always
+    volumes:
+      - ollama_data:/root/.ollama
+    expose:
+      - "11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    environment:
+      - DOMAIN=${DOMAIN:?Set DOMAIN to the public hostname}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    networks:
+      - avatar-network
 
   nginx:
+    profiles: ["local-only"]
     restart: always
     logging:
       driver: json-file
       options: { max-size: "50m", max-file: "3" }
 
+  flower:
+    # Disable Flower in production (security risk)
+    profiles: ["dev"]
+
 volumes:
-  musetalk_models:
+  uploads_data:
+    driver: local
+  model_cache:
+    driver: local
+  ollama_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
     driver: local
