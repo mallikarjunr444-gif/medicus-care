@@ -33,7 +33,12 @@ class AvatarAnimator:
         self.engine = settings.AVATAR_ENGINE
         self.resolution = settings.AVATAR_RESOLUTION
         self.fps = settings.AVATAR_FPS
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            self.device = "cuda"
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            self.device = "mps"
+        else:
+            self.device = "cpu"
         self.use_float16 = self.device == "cuda"  # float16 on GPU = ~2× faster via Tensor Cores
         self._initialised = False
         self._musetalk_dir: Optional[Path] = None
@@ -55,8 +60,7 @@ class AvatarAnimator:
             )
         else:
             logger.info(
-                f"AvatarAnimator: engine={self.engine}, device=cpu "
-                f"(no GPU — consider AWS g5/g6 instance for real-time performance)"
+                f"AvatarAnimator: engine={self.engine}, device={self.device}"
             )
 
     # ── initialisation ────────────────────────────────────────────────────────
@@ -83,6 +87,8 @@ class AvatarAnimator:
                 self._worker_env["PYTHONPATH"] = str(self._musetalk_dir) + (
                     ":" + existing if existing else ""
                 )
+                if self.device == "mps":
+                    self._worker_env["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
         elif self.engine == "liveavatar":
             self._liveavatar_dir = self._find_dir(
@@ -256,7 +262,7 @@ class AvatarAnimator:
                 raise RuntimeError(f"MuseTalk worker pipe is dead: {e}") from e
 
             # GPU: expect ~5-15s per sentence; CPU: up to 5 min
-            infer_timeout = 60 if self.device == "cuda" else 300
+            infer_timeout = 60 if self.device == "cuda" else 600 if self.device == "mps" else 300
             try:
                 result_line = await asyncio.wait_for(proc.stdout.readline(), timeout=infer_timeout)
             except asyncio.TimeoutError:
@@ -285,6 +291,7 @@ class AvatarAnimator:
         audio_path: str,
         output_path: str,
         cache_key: Optional[str] = None,
+        require_lipsync: bool = False,
     ) -> str:
         """
         Animate avatar with audio. Returns path to the generated video.
@@ -296,6 +303,11 @@ class AvatarAnimator:
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         logger.info(f"Animating [{self.engine}] image={avatar_image_path} audio={audio_path}")
 
+        if require_lipsync and self.engine != "musetalk":
+            raise RuntimeError(
+                f"Synchronized animation is required, but the configured engine is {self.engine!r}."
+            )
+
         try:
             if self.engine == "musetalk":
                 return await self._animate_musetalk(avatar_image_path, audio_path, output_path)
@@ -304,6 +316,9 @@ class AvatarAnimator:
             else:
                 return await self._animate_simple(avatar_image_path, audio_path, output_path)
         except Exception as e:
+            if require_lipsync:
+                logger.error("Required lip-sync animation failed; refusing static fallback: %s", e)
+                raise RuntimeError("Audio-driven avatar animation failed; no unsynchronized fallback was served.") from e
             logger.error(f"Animation failed ({self.engine}): {e}. Falling back to simple.")
             return await self._animate_simple(avatar_image_path, audio_path, output_path)
 

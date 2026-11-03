@@ -6,7 +6,7 @@ set -e
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BACKEND_DIR="$PROJECT_ROOT/backend"
 MODELS_DIR="$BACKEND_DIR/models"
-MUSETALK_DIR="$MODELS_DIR/MuseTalk"
+MUSETALK_DIR="${MUSETALK_DIR:-$MODELS_DIR/MuseTalk}"
 VENV_PYTHON="$BACKEND_DIR/venv/bin/python"
 SENTINEL="$PROJECT_ROOT/.musetalk_ready"
 
@@ -21,12 +21,18 @@ echo "Python  : $VENV_PYTHON"
 echo ""
 
 # ── 1. Clone MuseTalk ────────────────────────────────────────────────────────
-if [ -d "$MUSETALK_DIR/.git" ]; then
+if [ "${SKIP_MUSETALK_GIT:-0}" = "1" ]; then
+  if [ ! -f "$MUSETALK_DIR/scripts/inference.py" ]; then
+    echo "  ERROR: Existing MuseTalk source not found at $MUSETALK_DIR" >&2
+    exit 1
+  fi
+  echo "[1/5] Using existing MuseTalk checkout at $MUSETALK_DIR"
+elif [ -d "$MUSETALK_DIR/.git" ]; then
   echo "[1/5] MuseTalk already cloned — pulling latest..."
   git -C "$MUSETALK_DIR" pull --ff-only
 else
   echo "[1/5] Cloning MuseTalk..."
-  mkdir -p "$MODELS_DIR"
+  mkdir -p "$(dirname "$MUSETALK_DIR")"
   git clone https://github.com/TMElyralab/MuseTalk.git "$MUSETALK_DIR"
 fi
 

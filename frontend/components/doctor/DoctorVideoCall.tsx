@@ -43,6 +43,7 @@ import { PhotorealisticDigitalHuman } from './PhotorealisticDigitalHuman'
 import { DoctorCanvas3D } from './DoctorCanvas3D'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
 import { useDoctorSpeech } from './useDoctorSpeech'
+import { useDoctorBackendSession } from './useDoctorBackendSession'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
 import { SpecialistBookingModal, VERIFIED_SPECIALISTS_LOCAL, type Specialist } from './SpecialistBookingModal'
@@ -63,6 +64,7 @@ import type {
 } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
 import { toast } from 'react-hot-toast'
+import type { WsMessage } from '@/lib/types'
 
 interface ActionCardData {
   type: 'specialist_recommendation' | 'appointment_confirmation' | 'breathing_exercise' | 'report_analysis'
@@ -104,6 +106,10 @@ export function DoctorVideoCall({
   const [isSpecialistModalOpen, setIsSpecialistModalOpen] = useState(false)
   const [summaryData, setSummaryData] = useState<ConsultationSummaryData | null>(null)
   const [reports, setReports] = useState<MedicalReportItem[]>([])
+  const [doctorVideoSrc, setDoctorVideoSrc] = useState<string | null>(null)
+  const doctorVideoActiveRef = useRef(false)
+  const doctorVideoQueueRef = useRef<string[]>([])
+  const doctorVideoTurnEndedRef = useRef(false)
 
   // Conversational Session Memory (Prevents repetitive questions & tracks symptoms across turns)
   const sessionMemoryRef = useRef<ClinicalSessionMemory>(
@@ -146,6 +152,88 @@ export function DoctorVideoCall({
 
   // Chat conversation history (Only ONE message added per interaction turn)
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([])
+
+  const handleDoctorBackendEvent = useCallback((event: WsMessage) => {
+    switch (event.type) {
+      case 'token':
+        setDoctorState('thinking')
+        setSubtitles((current) => current + event.token)
+        break
+      case 'message':
+        if (event.role === 'assistant') {
+          setChatHistory((prev) => [...prev, {
+            id: `doc-${Date.now()}`,
+            role: 'doctor',
+            speakerName: 'Dr. Ananya',
+            text: event.content,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          }])
+          setSubtitles(event.content)
+        }
+        break
+      case 'video_chunk_start':
+        doctorVideoQueueRef.current = []
+        doctorVideoTurnEndedRef.current = false
+        doctorVideoActiveRef.current = false
+        setDoctorVideoSrc(null)
+        setDoctorState('thinking')
+        break
+      case 'video_chunk':
+        if (doctorVideoActiveRef.current) doctorVideoQueueRef.current.push(event.video_url)
+        else {
+          doctorVideoActiveRef.current = true
+          setDoctorVideoSrc(event.video_url)
+          setDoctorState('speaking')
+        }
+        break
+      case 'video_chunk_end':
+        doctorVideoTurnEndedRef.current = true
+        if (!doctorVideoSrc && doctorVideoQueueRef.current.length === 0) {
+          setDoctorState('listening')
+          setSubtitles('')
+        }
+        break
+      case 'interrupted':
+        doctorVideoQueueRef.current = []
+        doctorVideoTurnEndedRef.current = true
+        doctorVideoActiveRef.current = false
+        setDoctorVideoSrc(null)
+        setDoctorState('listening')
+        setSubtitles('')
+        break
+      case 'error':
+        doctorVideoQueueRef.current = []
+        doctorVideoActiveRef.current = false
+        setDoctorVideoSrc(null)
+        setDoctorState('listening')
+        toast.error(event.message)
+        break
+      case 'tts_fallback':
+        toast(event.message, { icon: '⚠️', duration: 5000 })
+        break
+      case 'status':
+        if (event.stage === 'llm' || event.stage === 'animation') setDoctorState('thinking')
+        break
+      case 'transcription':
+      case 'pong':
+        break
+    }
+  }, [setSubtitles])
+
+  const doctorBackend = useDoctorBackendSession(handleDoctorBackendEvent)
+
+  const handleDoctorVideoEnded = useCallback(() => {
+    const next = doctorVideoQueueRef.current.shift()
+    if (next) {
+      setDoctorVideoSrc(next)
+      setDoctorState('speaking')
+    } else {
+      doctorVideoActiveRef.current = false
+      setDoctorVideoSrc(null)
+      setDoctorState(doctorVideoTurnEndedRef.current ? 'listening' : 'thinking')
+      if (doctorVideoTurnEndedRef.current) setSubtitles('')
+    }
+  }, [setSubtitles])
 
   // Auto-scroll chat
   useEffect(() => {
@@ -226,6 +314,13 @@ export function DoctorVideoCall({
       if ((final || interim.length > 2) && isSpeaking) {
         interrupt()
       }
+      if ((final || interim.length > 2) && doctorVideoActiveRef.current) {
+        doctorBackend.interrupt()
+        doctorVideoQueueRef.current = []
+        doctorVideoActiveRef.current = false
+        setDoctorVideoSrc(null)
+        setDoctorState('listening')
+      }
 
       if (final.trim()) {
         const cleaned = final.trim()
@@ -280,7 +375,7 @@ export function DoctorVideoCall({
         recognition.stop()
       } catch {}
     }
-  }, [language, isSpeaking, interrupt])
+  }, [language, isSpeaking, interrupt, doctorBackend.interrupt])
 
   const toggleMicListening = () => {
     if (isListeningSpeech || isSpeechActiveRef.current) {
@@ -347,6 +442,14 @@ export function DoctorVideoCall({
       setInputText('')
       setDoctorState('thinking')
 
+      if (doctorId === 'dr_ananya') {
+        if (!doctorBackend.sendText(msg)) {
+          setDoctorState('listening')
+          toast.error('Dr. Ananya is not connected to the AI backend yet. Please reconnect and try again.')
+        }
+        return
+      }
+
       // Process through Context-Aware Medical Consultation Engine with Conversational Memory
       const result = analyzePatientInput(msg, sessionMemoryRef.current)
       sessionMemoryRef.current = result.updatedMemory
@@ -366,13 +469,20 @@ export function DoctorVideoCall({
       setChatHistory((prev) => [...prev, doctorEntry])
       speak(result.response)
     },
-    [inputText, isSpeaking, interrupt, doctor.name, speak]
+    [inputText, isSpeaking, interrupt, doctor.name, doctorId, doctorBackend.sendText, speak]
   )
 
   // Language Selection Confirmation Handler (First Step Gate)
   const handleLanguageConfirm = (selectedLang: ConsultationLanguage) => {
     setLanguage(selectedLang)
     setIsLanguageModalOpen(false)
+    doctorBackend.setLanguage(selectedLang)
+    if (doctorId === 'dr_ananya') {
+      void doctorBackend.connect('dr_ananya', selectedLang).catch((error) => {
+        setDoctorState('disconnected')
+        toast.error(error instanceof Error ? error.message : 'Could not connect to the AI consultation backend.')
+      })
+    }
 
     // Initialize session memory with selected language
     sessionMemoryRef.current = createInitialSessionMemory(selectedLang, doctorId)
@@ -392,7 +502,8 @@ export function DoctorVideoCall({
     }
     setChatHistory([initialEntry])
 
-    speak(greetingText)
+    if (doctorId === 'dr_ananya') setDoctorState('listening')
+    else speak(greetingText)
     toast.success(`Consultation language set: ${langConfig.label} (${langConfig.nativeName})`, {
       icon: '🌐',
     })
@@ -438,7 +549,8 @@ export function DoctorVideoCall({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ])
-    speak(notice)
+    if (doctorId === 'dr_ananya') doctorBackend.setLanguage(newLang)
+    else speak(notice)
     toast.success(`Switched language to ${langConfig.nativeName}`, { icon: '🌐' })
   }
 
@@ -448,6 +560,17 @@ export function DoctorVideoCall({
     if (nextDoc === doctorId) return
 
     interrupt()
+    doctorVideoQueueRef.current = []
+    doctorVideoActiveRef.current = false
+    setDoctorVideoSrc(null)
+    if (nextDoc === 'dr_ananya') {
+      void doctorBackend.connect('dr_ananya', language).catch((error) => {
+        setDoctorState('disconnected')
+        toast.error(error instanceof Error ? error.message : 'Could not connect to the AI consultation backend.')
+      })
+    } else {
+      doctorBackend.disconnect()
+    }
     setDoctorId(nextDoc)
 
     // Update session memory doctorId while preserving symptoms
@@ -509,7 +632,8 @@ export function DoctorVideoCall({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ])
-    speak(greeting)
+    if (nextDoc !== 'dr_ananya') speak(greeting)
+    else setDoctorState('listening')
     toast.success(
       `Consultation transferred to ${nextDocObj.formalTitle} (${nextDoc === 'dr_ananya' ? 'Wellness & Labs' : 'General Physician'})`,
       { icon: '👨‍⚕️' }
@@ -519,6 +643,10 @@ export function DoctorVideoCall({
   // End consultation and generate structured clinical notes
   const handleEndCall = () => {
     interrupt()
+    doctorBackend.disconnect()
+    doctorVideoQueueRef.current = []
+    doctorVideoActiveRef.current = false
+    setDoctorVideoSrc(null)
 
     const patientSymptoms = chatHistory
       .filter((m) => m.role === 'patient')
@@ -735,7 +863,8 @@ export function DoctorVideoCall({
                 audioLevel={audioLevel}
                 isMuted={isMuted}
                 subtitles={subtitles}
-                speakingVideoSrc={null}
+                speakingVideoSrc={doctorId === 'dr_ananya' ? doctorVideoSrc : null}
+                onSpeakingVideoEnded={handleDoctorVideoEnded}
                 onStateChange={(st) => setDoctorState(st)}
                 onReconnect={() => setDoctorState('idle')}
                 className="w-full h-full"

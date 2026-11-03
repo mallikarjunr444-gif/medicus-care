@@ -17,6 +17,7 @@ interface PhotorealisticDigitalHumanProps {
   isMuted?: boolean
   subtitles?: string
   speakingVideoSrc?: string | null
+  onSpeakingVideoEnded?: () => void
   onStateChange?: (state: DoctorState) => void
   onReconnect?: () => void
   className?: string
@@ -29,6 +30,7 @@ export function PhotorealisticDigitalHuman({
   isMuted = false,
   subtitles = '',
   speakingVideoSrc = null,
+  onSpeakingVideoEnded,
   onStateChange,
   onReconnect,
   className = '',
@@ -321,7 +323,10 @@ export function PhotorealisticDigitalHuman({
           playsInline
           muted={isMuted}
           className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
-          onEnded={() => onStateChange?.('listening')}
+          onEnded={() => {
+            if (onSpeakingVideoEnded) onSpeakingVideoEnded()
+            else onStateChange?.('listening')
+          }}
         />
       ) : (
         /* Continuous 60-FPS Digital Human Viewport for Listening & Thinking */

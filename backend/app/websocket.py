@@ -409,6 +409,7 @@ class ConnectionManager:
                             meta = json.loads(meta)
                         except Exception:
                             meta = {}
+                    self.session_data[session_id]["doctor_id"] = meta.get("doctor_id")
                     sp = meta.get("system_prompt")
                     if sp:
                         self.session_data[session_id]["system_prompt"] = sp
@@ -994,6 +995,7 @@ class ConnectionManager:
                         avatar_image_path=avatar_image,
                         audio_path=str(tmp_audio),
                         output_path=str(tmp_video),
+                        require_lipsync=data.get("doctor_id") == "dr_ananya",
                     )
 
                 ts = int(datetime.now(timezone.utc).timestamp() * 1000)

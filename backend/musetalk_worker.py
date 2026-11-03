@@ -225,7 +225,12 @@ def main():
     # ── read init config ──────────────────────────────────────────────────────
     init = json.loads(sys.stdin.readline())
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda:0")
+    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
 
     use_float16 = init.get("use_float16", False)
 

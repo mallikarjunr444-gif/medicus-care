@@ -158,6 +158,11 @@ export const api = {
     return response.data
   },
 
+  getDoctorAvatar: async (doctorId: 'dr_ananya' | 'dr_arjun') => {
+    const response = await apiClient.post(`/api/v1/doctors/${doctorId}/avatar`)
+    return response.data
+  },
+
   getSessions: async () => {
     const response = await apiClient.get('/api/v1/sessions/')
     return response.data
