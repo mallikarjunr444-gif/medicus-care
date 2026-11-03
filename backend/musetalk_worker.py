@@ -20,10 +20,12 @@ All paths may be absolute or relative to cwd (the MuseTalk repo root).
 """
 
 import copy
+import contextlib
 import json
 import os
 import pickle
 import shutil
+import subprocess
 import sys
 import traceback
 from typing import Any, List
@@ -211,14 +213,36 @@ def _run_job(job, vae, unet, pe, audio_processor, whisper, fp, timesteps, device
 
     # ── assemble video ───────────────────────────────────────────────────────
     tmp_vid = output_path + ".tmp.mp4"
-    os.system(
-        f"ffmpeg -y -v warning -r {FPS} -f image2 "
-        f"-i {frames_dir}/%08d.png "
-        f"-vcodec libx264 -vf format=yuv420p -crf 18 {tmp_vid}"
-    )
-    os.system(f"ffmpeg -y -v warning -i {audio_path} -i {tmp_vid} {output_path}")
-    shutil.rmtree(frames_dir)
-    os.remove(tmp_vid)
+    try:
+        subprocess.run(
+            [
+                "ffmpeg", "-y", "-v", "error", "-r", str(FPS), "-f", "image2",
+                "-i", f"{frames_dir}/%08d.png", "-vcodec", "libx264",
+                "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2,format=yuv420p",
+                "-crf", "18", tmp_vid,
+            ],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        subprocess.run(
+            [
+                "ffmpeg", "-y", "-v", "error", "-i", audio_path, "-i", tmp_vid,
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-shortest", output_path,
+            ],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        detail = (exc.stderr or str(exc)).strip()
+        raise RuntimeError(f"FFmpeg failed to create synchronized video: {detail}") from exc
+    finally:
+        shutil.rmtree(frames_dir, ignore_errors=True)
+        if os.path.exists(tmp_vid):
+            os.remove(tmp_vid)
 
 
 def main():
@@ -233,40 +257,51 @@ def main():
         device = torch.device("cpu")
 
     use_float16 = init.get("use_float16", False)
+    # MPS shares system memory. The CUDA-sized fp32 batch of 8 OOMed on this
+    # 16 GB Mac, while batch 1 was prohibitively slow. Half precision with a
+    # batch of 4 is the conservative compromise for MPS.
+    global BATCH_SIZE
+    if device.type == "mps":
+        use_float16 = True
+        BATCH_SIZE = 4
 
-    vae, unet, pe = load_all_model(
-        unet_model_path=init["unet_model_path"],
-        vae_type=init["vae_type"],
-        unet_config=init["unet_config"],
-        device=device,
-    )
+    # stdout is the parent process' line-delimited JSON protocol. MuseTalk
+    # prints model and frame diagnostics there, so redirect them to the
+    # captured stderr log during initialization and inference.
+    with contextlib.redirect_stdout(sys.stderr):
+        vae, unet, pe = load_all_model(
+            unet_model_path=init["unet_model_path"],
+            vae_type=init["vae_type"],
+            unet_config=init["unet_config"],
+            device=device,
+        )
 
     # float16 on GPU = ~2× faster via Tensor Cores (A10G / L4 / V100 all support it)
-    if use_float16 and device.type == "cuda":
+    if use_float16 and device.type in ("cuda", "mps"):
         pe = pe.half()
         vae.vae = vae.vae.half()
         unet.model = unet.model.half()
-        sys.stderr.write("INFO: float16 enabled — ~2× faster on GPU\n")
+        sys.stderr.write(f"INFO: float16 enabled on {device.type}\n")
         sys.stderr.flush()
 
-    pe = pe.to(device)
-    vae.vae = vae.vae.to(device)
-    unet.model = unet.model.to(device)
+    with contextlib.redirect_stdout(sys.stderr):
+        pe = pe.to(device)
+        vae.vae = vae.vae.to(device)
+        unet.model = unet.model.to(device)
 
-    weight_dtype = unet.model.dtype
-    audio_processor = AudioProcessor(feature_extractor_path=init["whisper_dir"])
-    whisper = WhisperModel.from_pretrained(init["whisper_dir"])
-    whisper = whisper.to(device=device, dtype=weight_dtype).eval()
-    whisper.requires_grad_(False)
+        weight_dtype = unet.model.dtype
+        audio_processor = AudioProcessor(feature_extractor_path=init["whisper_dir"])
+        whisper = WhisperModel.from_pretrained(init["whisper_dir"])
+        whisper = whisper.to(device=device, dtype=weight_dtype).eval()
+        whisper.requires_grad_(False)
 
-    fp = FaceParsing()
-    timesteps = torch.tensor([0], device=device)
+        fp = FaceParsing()
+        timesteps = torch.tensor([0], device=device)
 
-    # Loaded once, like every other model here — the worker is persistent
-    # precisely so per-turn cost is inference only.
-    restorer = _load_face_restorer(
-        init.get("face_restore", "off"), init.get("face_restore_model", ""), device
-    )
+        # Loaded once; per-turn cost is inference only.
+        restorer = _load_face_restorer(
+            init.get("face_restore", "off"), init.get("face_restore_model", ""), device
+        )
 
     sys.stdout.write("READY\n")
     sys.stdout.flush()
@@ -281,7 +316,8 @@ def main():
         except json.JSONDecodeError:
             continue
         try:
-            _run_job(job, vae, unet, pe, audio_processor, whisper, fp, timesteps, device, restorer)
+            with torch.inference_mode(), contextlib.redirect_stdout(sys.stderr):
+                _run_job(job, vae, unet, pe, audio_processor, whisper, fp, timesteps, device, restorer)
             _reply({"status": "ok", "output": job["output"]})
         except Exception as e:
             _reply({"status": "error", "msg": str(e), "tb": traceback.format_exc()})

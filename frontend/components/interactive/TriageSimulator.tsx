@@ -362,7 +362,7 @@ export function TriageSimulator({ onStartConsultation }: TriageSimulatorProps) {
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02]"
               >
                 <Video size={15} />
-                <span>Review with Dr. Arjun (3D Call)</span>
+                <span>Review with Dr. Arjun</span>
               </button>
               <button
                 onClick={() => onStartConsultation?.('dr_ananya')}

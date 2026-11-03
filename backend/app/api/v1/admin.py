@@ -213,8 +213,8 @@ async def upload_document(
 @router.post("/knowledge/reindex")
 async def trigger_reindex():
     """Trigger full re-indexing of MedQuAD, ESConv, and CACTUS."""
-    m_count = rag_service.ingest_medquad(max_records=300)
-    e_count = rag_service.ingest_esconv(max_dialogues=100)
+    m_count = rag_service.ingest_medquad(max_records=20_000)
+    e_count = rag_service.ingest_esconv(max_dialogues=150)
     c_count = rag_service.ingest_cactus_and_psy_insight()
     rag_service.persist()
     return {

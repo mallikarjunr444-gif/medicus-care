@@ -1,34 +1,42 @@
-# Dr. Ananya speaking-cycle acceptance report
+# Dr. Ananya speaking-cycle test report
 
-**Checked:** 2026-11-03 (Asia/Kolkata)
-**Result:** NOT PASSED — the requested real model-driven cycle could not be run in this checkout.
+**Run date:** 2026-11-03 (Asia/Kolkata)
+**Result:** Partial pass. One real Kannada TTS-to-MuseTalk video chunk played in the browser. Full acceptance is not passed.
 
-## Environment evidence
+## Verified
 
-- `http://localhost:3000/` responds with HTTP 200 and serves the existing Next.js application.
-- No backend is listening on `localhost:8000`; Docker reports no running services.
-- Host: Apple Silicon macOS, 16 GB unified memory. `nvidia-smi` is unavailable.
-- The active Python environment has no PyTorch, FastAPI, OpenCV, Diffusers, Transformers, or SoundFile.
-- The five model source repositories exist. No `.pth`, `.pt`, `.onnx`, `.bin`, `.ckpt`, or `.safetensors` model checkpoints were found under `services/avatar-engine/models/`.
-- MuseTalk's `models/` directory is absent. LivePortrait's `pretrained_weights/` contains only `.gitkeep`.
-- The two Dr. Ananya MP4 files under `frontend/public/videos/` are prerecorded 7.33-second clips with AAC audio. They are not response-specific model output and were not used as evidence.
-
-## Acceptance steps
-
-| Step | Result | Evidence |
-|---|---|---|
-| Open application | Partial | Frontend HTTP check passes. In-app browser control was unavailable. |
-| Select Dr. Ananya and start a consultation | Not run | No browser control and no backend session service. |
-| Kannada question reaches AI backend | Not run | Backend is not running; the current DoctorVideoCall path uses the client-side `analyzePatientInput` helper. |
-| English question reaches AI backend | Not run | Same blocker. |
-| Existing TTS creates actual Kannada and English response audio | Not run | No backend/TTS process was available. |
-| Actual response audio drives generated Dr. Ananya frames | Not run | No model checkpoints or inference dependencies are installed. |
-| Verify lip-sync, audio-end stop, listening return, and second turn | Not run | No generated video/audio cycle exists to inspect. |
+- The existing frontend at `http://localhost:3000` and backend at `http://localhost:8000` ran. Backend health reported the database, Ollama LLM, Gnani STT/TTS, and Apple MPS available.
+- A Kannada patient question was entered as text and reached the backend. Microphone speech recognition was not used in this run.
+- Ollama generated the response. Gnani generated the actual Kannada response audio using its female `Nayana` voice. Its WAV size header was repaired before inference.
+- MuseTalk consumed that response audio and the Dr. Ananya reference identity and generated an H.264 clip with AAC audio. Sampled frames show mouth shape changes.
+- The backend delivered a `video_chunk` URL over the consultation WebSocket. The browser's existing doctor `<video>` element loaded and played it (`readyState=4`, 1024×582, 3.52 seconds, not paused at observation).
+- `ffprobe` measured both audio and video starting at 0.000 seconds with 3.520-second duration. Video is 25 fps. This confirms stream container timing, not phoneme-level synchronization accuracy.
+- Actual English and Kannada TTS WAV generation was checked separately for both configured doctor genders: Ananya female, Arjun male. English browser animation was not run.
+- Follow-up Arjun model check: male Kannada Edge TTS successfully drove MuseTalk using the attached Arjun identity. [Generated sample](../../artifacts/dr_arjun_musetalk_male_voice_demo.mp4) is 1528×1030 H.264 at 25 fps; AAC audio starts at 0 and ends 29 ms before video. [Sampled frames](../../artifacts/dr_arjun_musetalk_frames.png) show mouth-shape changes. TTS plus generation took 126.6 seconds on Apple MPS; GPU utilization was not measured. This was a test phrase, not an AI consultation response or browser playback.
+- In the follow-up WebSocket run, the Kannada question was persisted, but the configured LLM provider could not connect. Therefore no Arjun consultation answer reached TTS in that run.
 
 ## Measurements
 
-Frame rate, first-frame latency, audio/video synchronization error, and GPU usage were **not measured**. Reporting values for them would be fabricated. No demonstration video was produced because there was no genuine model-generated animation to record.
+- First video chunk: approximately 321 seconds after the message reached the backend (about 53 seconds model startup and 267 seconds inference, based on backend timestamps).
+- Output: 1024×582 H.264, 25 fps, with 24 kHz mono AAC audio, 3.520 seconds.
+- Hardware: Apple Silicon MacBook Air M5, 16 GB unified memory; inference used Apple MPS. Per-worker GPU memory/usage was not measured. An earlier larger-batch float32 attempt exhausted MPS memory; the successful run used batch size 4 and fp16.
+- No independent audio/viseme alignment metric was recorded. Matching start and duration are container-level measurements only.
 
-## Current conclusion
+## Acceptance steps not completed
 
-The first speaking cycle is not implemented or acceptance-tested. The avatar-engine REST/WebSocket adapters in this repository return placeholder results rather than invoking their named models; its health endpoint has been changed to report inference as unavailable instead of claiming simultaneous model success or 60 FPS. See [INTEGRATION_STATUS.md](INTEGRATION_STATUS.md) for the model audit and prerequisites.
+| Scenario | Result |
+|---|---|
+| Kannada question captured through microphone | Not tested; the verified question was typed. |
+| Actual Kannada TTS audio drives Ananya video and is shown in the existing browser area | One genuine 3.52-second chunk verified. |
+| Full response, stop exactly at audio end, then return to listening | Not verified across the complete response. Only one chunk's browser playback was observed. |
+| Second patient turn after listening resumes | Not verified. |
+| English conversation and browser lip-sync | Not verified. |
+| Interruption while speaking and cancellation of generation | Not verified. |
+| Dr. Arjun model output from male Kannada TTS | Verified as a generated video file using his reference image. This was a test phrase, not an LLM response. |
+| Dr. Arjun AI-response and browser cycle | Not verified. The LLM provider could not connect during the follow-up WebSocket run. |
+| End consultation media cleanup | Not verified. |
+| Mobile layout | A 390 px viewport overflow check passed before the final listening-view overlay cleanup. |
+
+## Limitations
+
+The listening state currently uses the correct reference portrait with subtle whole-frame motion. It is not model-generated listening footage and has no animated blink or eye movement. The speaking output is genuine MuseTalk-generated video, but first-frame latency on this MPS machine is about five minutes. The single short clip is not proof that a full consultation turn is production-ready.

@@ -56,37 +56,25 @@ echo "[2/5] Installing MuseTalk requirements..."
   "imageio[ffmpeg]" \
   "ffmpeg-python" \
   "moviepy<2" \
-  "mediapipe" \
-  "face-alignment" \
   "safetensors" \
   "timm"
 
-# ── 3. Replace preprocessing.py with CPU-compatible version ─────────────────
+# ── 3. Replace preprocessing.py with a bundled OpenCV face detector ─────────
 echo ""
-echo "[3/5] Writing CPU-compatible preprocessing.py (replaces mmpose with face_alignment)..."
+echo "[3/5] Writing portable preprocessing.py (uses OpenCV's bundled Haar cascade)..."
 
 PREPROCESS="$MUSETALK_DIR/musetalk/utils/preprocessing.py"
 # Always overwrite — idempotent, works on first run and re-runs
 cp "$PREPROCESS" "${PREPROCESS}.orig" 2>/dev/null || true
 cat > "$PREPROCESS" << 'PYEOF'
-# preprocessing.py — rewritten for Python 3.12 / CPU-only compatibility
-# Uses face_alignment (pip install face-alignment) instead of mmpose/mmcv.
+# preprocessing.py — uses OpenCV's bundled frontal-face cascade. This avoids
+# downloading separate landmark checkpoints just to locate the face crop.
 import os
 import json
 import pickle
 import numpy as np
 import cv2
-import torch
 from tqdm import tqdm
-import face_alignment
-
-# Initialise face alignment on CPU or GPU automatically
-_device = "cuda" if torch.cuda.is_available() else "cpu"
-_fa = face_alignment.FaceAlignment(
-    face_alignment.LandmarksType.TWO_D,
-    flip_input=False,
-    device=_device,
-)
 
 # Sentinel value used by callers when no face is detected in a frame
 coord_placeholder = (0.0, 0.0, 0.0, 0.0)
@@ -107,14 +95,21 @@ def read_imgs(img_list):
 
 
 def _detect_face_bbox(frame_bgr, bbox_shift=0):
-    """Detect face bounding box using 68-point landmarks. Returns (x1,y1,x2,y2) or None."""
-    frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-    preds = _fa.get_landmarks(frame_rgb)
-    if preds is None or len(preds) == 0:
+    """Return the largest frontal-face box without downloading extra models."""
+    cascade = cv2.CascadeClassifier(
+        os.path.join(cv2.data.haarcascades, "haarcascade_frontalface_default.xml")
+    )
+    gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
+    faces = cascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(80, 80),
+    )
+    if len(faces) == 0:
         return None
-    lm = preds[0]  # (68, 2)
-    x1, y1 = int(lm[:, 0].min()), int(lm[:, 1].min())
-    x2, y2 = int(lm[:, 0].max()), int(lm[:, 1].max())
+    x1, y1, width, height = max(faces, key=lambda box: box[2] * box[3])
+    x2, y2 = x1 + width, y1 + height
     y1 = max(0, y1 + bbox_shift)
     if x2 <= x1 or y2 <= y1 or x1 < 0:
         return None
@@ -138,17 +133,15 @@ def get_landmark_and_bbox(img_list, upperbondrange=0):
 
 def get_bbox_range(img_list, upperbondrange=0):
     frames = read_imgs(img_list)
-    deltas = []
+    heights = []
     for frame in tqdm(frames):
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        preds = _fa.get_landmarks(frame_rgb)
-        if preds is None or len(preds) == 0:
+        bbox = _detect_face_bbox(frame, upperbondrange)
+        if bbox is None:
             continue
-        lm = preds[0]
-        deltas.append(int(lm[:, 1].max()) - int(lm[:, 1].mean()))
-    if not deltas:
+        heights.append(bbox[3] - bbox[1])
+    if not heights:
         return "No faces detected"
-    avg = int(sum(deltas) / len(deltas))
+    avg = int(sum(heights) / len(heights))
     return f"Total frame: {len(frames)}  Adjust range: [-{avg}~{avg}]  current value: {upperbondrange}"
 PYEOF
 echo "  preprocessing.py replaced ✓"

@@ -305,9 +305,9 @@ export function analyzePatientInput(
   // Case E: Lab Report Analysis
   if (lower.includes('report') || lower.includes('blood test') || lower.includes('cbc') || lower.includes('ವರದಿ')) {
     const responses: Record<ConsultationLanguage, string> = {
-      kn: 'ಖಂಡಿತ! ನಿಮ್ಮ ರಕ್ತ ತಪಾಸಣೆ ಅಥವಾ ಪ್ರಯೋಗಾಲಯದ ವರದಿಯನ್ನು ಸೈಡ್‌ಬಾರ್‌ನ "Report" ಬಟನ್ ಒತ್ತಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ನಾನು ಪ್ರತಿಯೊಂದು ಪ್ಯಾರಾಮೀಟರ್ ಅನ್ನು ವಿವರಿಸುತ್ತೇನೆ.',
+      kn: 'ಖಂಡಿತ. ಸೈಡ್‌ಬಾರ್‌ನ "Report" ಬಟನ್ ತೆರೆಯಿರಿ ಮತ್ತು ನಿಮ್ಮ ವರದಿಯ ಪಠ್ಯವನ್ನು ಅಂಟಿಸಿ. ವರದಿಯ ಅರ್ಥವನ್ನು ಚರ್ಚಿಸಲು ನಾನು ಸಹಾಯ ಮಾಡುತ್ತೇನೆ.',
       hi: 'जरूर! अपनी रक्त जांच या लैब रिपोर्ट को अपलोड करें। मैं सामान्य संदर्भ सीमाओं के आधार पर आपके परिणामों की व्याख्या करूँगा।',
-      en: 'Certainly! Please upload your blood test or lab report using the "Report" button in the sidebar. I will explain each parameter against normal reference ranges.',
+      en: 'Certainly. Open the "Report" button in the conversation panel and paste your lab report text. I can help discuss the preliminary reference guidance with you.',
       te: 'తప్పకుండా! మీ రక్త పరీక్ష లేదా ల్యాబ్ రిపోర్టును అప్‌లోడ్ చేయండి. నేను వివరాలను పరిశీలిస్తాను.',
       ta: 'நிச்சயமாக! உங்கள் இரத்தப் பரிசோதனை அறிக்கையை பதிவேற்றவும். நான் முடிவுகளை விளக்குகிறேன்.',
       ml: 'തീർച്ചയായും! നിങ്ങളുടെ ലാബ് റിപ്പോർട്ട് അപ്‌ലോഡ് ചെയ്യുക. ഞാൻ പരിശോധിച്ചു വ്യക്തമാക്കാം.',

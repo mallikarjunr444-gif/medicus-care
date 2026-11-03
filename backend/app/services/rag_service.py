@@ -1,7 +1,6 @@
-"""
-Medicus Care™ — Dual-Collection Unified RAG Knowledge System
-Separates Medical Clinical Guidance from Mental Wellness Counseling.
-Supports BGE-M3 embeddings, metadata preservation, and semantic retrieval with attribution.
+"""Local, attribution-preserving retrieval over medical and wellness collections.
+
+The current index uses lexical ranking; embeddings are not generated or queried.
 """
 
 from __future__ import annotations
@@ -13,6 +12,7 @@ import logging
 import os
 import re
 import xml.etree.ElementTree as ET
+from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -55,9 +55,14 @@ class UnifiedRAGService:
     2. Mental Wellness Knowledge Collection
     """
 
-    def __init__(self, data_root: Optional[Path] = None):
-        self.data_root = data_root or Path("/Users/malikarjunr/medicus-care/medicus-ai-data")
-        self.storage_dir = Path("/Users/malikarjunr/medicus-care/database/rag_store")
+    def __init__(self, data_root: Optional[Path] = None, storage_dir: Optional[Path] = None):
+        repo_root = Path(__file__).resolve().parents[3]
+        self.data_root = data_root or Path(
+            os.getenv("MEDICARE_KNOWLEDGE_DATA", str(repo_root / "medicus-ai-data"))
+        )
+        self.storage_dir = storage_dir or Path(
+            os.getenv("MEDICARE_RAG_STORE", str(repo_root / "database" / "rag_store"))
+        )
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         
         # Dual collection in-memory / persisted index
@@ -134,7 +139,11 @@ class UnifiedRAGService:
     # ── Ingestion Handlers ──────────────────────────────────────────────────
 
     def ingest_medquad(self, max_records: int = 500) -> int:
-        """Extract clinical Q&A pairs from MedQuAD XML files (skips copyright-emptied ADAM/Drugs folders)."""
+        """Rebuild MedQuAD Q&A from its CC BY 4.0 XML source.
+
+        Copyright-emptied ADAM and drug-information subsets are excluded.
+        Stable identifiers make repeated ingestion idempotent.
+        """
         mq_dir = self.data_root / "MedQuAD"
         if not mq_dir.exists():
             return 0
@@ -158,6 +167,16 @@ class UnifiedRAGService:
             if sub.exists():
                 xml_files.extend(sorted(list(sub.glob("*.xml"))))
 
+        # Replace earlier MedQuAD imports to avoid stale attribution and IDs.
+        for chunk_id in list(self.medical_store):
+            if chunk_id.startswith("MQ-"):
+                del self.medical_store[chunk_id]
+        self.content_hashes = {
+            self._hash_text(chunk.content)
+            for store in (self.medical_store, self.mental_wellness_store)
+            for chunk in store.values()
+        }
+
         ingested = 0
 
         for xml_path in xml_files:
@@ -167,6 +186,7 @@ class UnifiedRAGService:
                 tree = ET.parse(xml_path)
                 root = tree.getroot()
                 focus = root.findtext(".//Focus") or "General Health"
+                origin_url = root.attrib.get("url") or None
                 
                 # Check for Q&A pairs
                 for qa in root.findall(".//QAPair"):
@@ -178,12 +198,14 @@ class UnifiedRAGService:
                     if not q or not a or len(a.strip()) < 30:
                         continue
 
-                    h = self._hash_text(a)
+                    content = f"Question: {q.strip()}\n\nClinical Guidance: {a.strip()}"
+                    h = self._hash_text(content)
                     if h in self.content_hashes:
                         self.ingestion_stats["duplicates_filtered"] += 1
                         continue
 
-                    chunk_id = f"MQ-{xml_path.stem}-{ingested}"
+                    stable_key = hashlib.sha256(content.encode("utf-8")).hexdigest()[:20]
+                    chunk_id = f"MQ-{xml_path.stem}-{stable_key}"
                     # Classify category
                     q_lower = q.lower()
                     if any(k in q_lower for k in ["symptom", "sign", "feel"]):
@@ -199,16 +221,15 @@ class UnifiedRAGService:
                     else:
                         cat = "general_health_education"
 
-                    content = f"Question: {q.strip()}\n\nClinical Guidance: {a.strip()}"
                     chunk = KnowledgeChunk(
                         chunk_id=chunk_id,
                         collection="medical",
                         category=cat,
                         title=f"{focus}: {q[:80]}",
                         content=content,
-                        source_name="MedQuAD (NIH / MedlinePlus)",
-                        license="Creative Commons / Public Domain",
-                        origin_url="https://medlineplus.gov/",
+                        source_name="MedQuAD dataset (Asma Ben Abacha; NIH source collection)",
+                        license="CC BY 4.0",
+                        origin_url=origin_url,
                         metadata={"focus": focus, "file": xml_path.name, "folder": xml_path.parent.name}
                     )
                     self.medical_store[chunk_id] = chunk
@@ -325,36 +346,85 @@ class UnifiedRAGService:
         collection: str = "medical",
         category: Optional[str] = None,
         top_k: int = 3,
-        threshold: float = 0.15
+        threshold: float = 0.35
     ) -> List[RetrievalResult]:
         """
-        Query the targeted collection using lexical + semantic relevance scoring.
+        Query the targeted collection using lexical relevance scoring.
         Appends mandatory source attribution and license metadata.
         """
-        target_store = self.medical_store if collection == "medical" else self.mental_wellness_store
-        
-        query_terms = set(re.findall(r"\w+", query.lower()))
+        if collection == "medical":
+            target_stores = [self.medical_store]
+        elif collection == "mental_wellness":
+            target_stores = [self.mental_wellness_store]
+        elif collection in {"all", "both"}:
+            target_stores = [self.medical_store, self.mental_wellness_store]
+        else:
+            raise ValueError(f"Unknown knowledge collection: {collection}")
+
+        stopwords = {
+            "what", "when", "where", "which", "about", "have", "with", "from",
+            "that", "this", "does", "your", "you", "are", "for", "the", "and",
+            "how", "can", "tell", "please",
+        }
+
+        def normalize(token: str) -> str:
+            if token == "anxious":
+                return "anxiety"
+            if token == "worried":
+                return "worry"
+            if token.endswith("ies") and len(token) > 4:
+                return token[:-3] + "y"
+            if token.endswith("ing") and len(token) > 5:
+                token = token[:-3]
+                if len(token) > 2 and token[-1] == token[-2]:
+                    token = token[:-1]
+                return token
+            if token.endswith("ed") and len(token) > 4:
+                return token[:-2]
+            if token.endswith("s") and len(token) > 4:
+                return token[:-1]
+            return token
+
+        query_terms = {
+            normalize(token)
+            for token in re.findall(r"\w+", query.lower())
+            if len(token) > 2 and token not in stopwords
+        }
+        mental_intent = bool(
+            query_terms
+            & {"stress", "anxiety", "worry", "sadness", "depression", "lonely", "mindful", "overwhelm"}
+        )
+        candidates: List[Tuple[KnowledgeChunk, set[str], set[str]]] = []
+        for target_store in target_stores:
+            for chunk in target_store.values():
+                if not chunk.approved_by_admin:
+                    continue
+                if category and chunk.category != category:
+                    continue
+
+                title_words = {normalize(t) for t in re.findall(r"\w+", chunk.title.lower())}
+                content_words = {normalize(t) for t in re.findall(r"\w+", chunk.content.lower())}
+                candidates.append((chunk, title_words, content_words))
+
+        document_frequency: Counter[str] = Counter()
+        for _, title_words, content_words in candidates:
+            document_frequency.update(query_terms.intersection(title_words | content_words))
+
+        document_count = max(1, len(candidates))
+        term_weights = {
+            term: 1.0 + (document_count / (1 + document_frequency[term])) ** 0.5
+            for term in query_terms
+        }
+        max_score = sum(weight * 3.0 for weight in term_weights.values()) or 1.0
         results: List[Tuple[float, KnowledgeChunk]] = []
-
-        for chunk in target_store.values():
-            if not chunk.approved_by_admin:
-                continue
-            if category and chunk.category != category:
-                continue
-
-            # Calculate word overlap & semantic density
-            chunk_text = f"{chunk.title} {chunk.content}".lower()
-            chunk_words = set(re.findall(r"\w+", chunk_text))
-            
-            overlap = len(query_terms.intersection(chunk_words))
-            if overlap == 0:
-                continue
-
-            score = overlap / (len(query_terms) + 0.5)
-            # Boost title matches
-            if any(term in chunk.title.lower() for term in query_terms):
-                score += 0.35
-
+        for chunk, title_words, content_words in candidates:
+            score = sum(
+                term_weights[term] * (3.0 if term in title_words else 1.0)
+                for term in query_terms
+                if term in title_words or term in content_words
+            ) / max_score
+            if mental_intent and chunk.collection == "mental_wellness":
+                score = min(1.0, score * 1.7)
             if score >= threshold:
                 results.append((score, chunk))
 
@@ -376,7 +446,7 @@ class UnifiedRAGService:
                     content=chunk.content,
                     source_name=chunk.source_name,
                     license=chunk.license,
-                    similarity_score=round(min(1.0, score), 3),
+                    similarity_score=round(score, 3),
                     origin_url=chunk.origin_url,
                     attribution_text=attr
                 )

@@ -17,7 +17,10 @@ export function useDoctorBackendSession(onMessage: (message: WsMessage) => void)
   const reconnectAttemptsRef = useRef(0)
   const intentionalCloseRef = useRef(false)
   const handlerRef = useRef(onMessage)
-  handlerRef.current = onMessage
+
+  useEffect(() => {
+    handlerRef.current = onMessage
+  }, [onMessage])
 
   const openSocket = useCallback((sessionId: string) => {
     if (intentionalCloseRef.current) return
@@ -51,22 +54,25 @@ export function useDoctorBackendSession(onMessage: (message: WsMessage) => void)
     languageRef.current = language
     setStatus('connecting')
     try {
+      const createGuestAuth = async () => {
+        const guest = await api.createGuest()
+        const temporaryUser = {
+          id: '', email: '', username: 'Guest', full_name: 'Guest', is_guest: true,
+        }
+        useStore.getState().setAuth(guest.access_token, temporaryUser)
+        const user = await api.getProfile()
+        useStore.getState().setAuth(guest.access_token, user)
+      }
       const token = api.getToken()
       const isPlaceholder = !token || /direct-token|patient-direct/.test(token)
       if (isPlaceholder) {
-        const guest = await api.createGuest()
-        useStore.getState().setAuth(guest.access_token, {
-          id: '', email: '', username: 'Guest', full_name: 'Guest', is_guest: true,
-        })
+        await createGuestAuth()
       } else {
         try {
           const user = await api.getProfile()
           useStore.getState().setAuth(token, user)
         } catch {
-          const guest = await api.createGuest()
-          useStore.getState().setAuth(guest.access_token, {
-            id: '', email: '', username: 'Guest', full_name: 'Guest', is_guest: true,
-          })
+          await createGuestAuth()
         }
       }
 
@@ -74,23 +80,28 @@ export function useDoctorBackendSession(onMessage: (message: WsMessage) => void)
       const session = await api.createSession(avatar.id)
       sessionIdRef.current = session.id
       await new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Consultation WebSocket connection timed out.')), 15000)
+        let pollTimer: ReturnType<typeof setInterval> | null = null
+        const timeout = setTimeout(() => {
+          if (pollTimer) clearInterval(pollTimer)
+          reject(new Error('Consultation WebSocket connection timed out.'))
+        }, 15000)
         const ready = () => {
           if (socketRef.current?.readyState !== WebSocket.OPEN) return
           clearTimeout(timeout)
+          if (pollTimer) clearInterval(pollTimer)
           resolve()
         }
         const failed = () => {
           if (socketRef.current?.readyState === WebSocket.CLOSED) {
             clearTimeout(timeout)
+            if (pollTimer) clearInterval(pollTimer)
             reject(new Error('Could not connect to the consultation backend.'))
           }
         }
         openSocket(session.id)
-        const timer = setInterval(() => {
+        pollTimer = setInterval(() => {
           ready()
           failed()
-          if (socketRef.current?.readyState === WebSocket.OPEN || socketRef.current?.readyState === WebSocket.CLOSED) clearInterval(timer)
         }, 50)
       })
     } catch (error) {

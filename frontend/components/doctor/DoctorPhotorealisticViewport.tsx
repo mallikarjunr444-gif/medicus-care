@@ -326,7 +326,7 @@ export function DoctorPhotorealisticViewport({
               {doctor.formalTitle}
             </span>
             <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 font-semibold">
-              Photorealistic AI
+              Doctor video
             </span>
           </div>
           <span className="text-xs text-slate-300 block mt-0.5">{doctor.specialty}</span>
@@ -384,7 +384,7 @@ export function DoctorPhotorealisticViewport({
       {/* ── Stream Quality Badge (Top Right) ── */}
       <div className="absolute top-4 right-64 hidden lg:flex items-center gap-2 px-3 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 text-[11px] text-slate-300 font-mono shadow-lg">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-        <span>1080p • 60 FPS • WebRTC Live</span>
+        <span>Video playback</span>
       </div>
 
       {/* ── Single Authoritative Live Subtitle Component (Bottom Center) ── */}

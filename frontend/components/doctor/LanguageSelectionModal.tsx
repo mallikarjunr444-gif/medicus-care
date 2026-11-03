@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import type { ConsultationLanguage, DoctorId } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
-import { Globe, Check, Sparkles, Volume2, ArrowRight, ShieldCheck, HeartPulse } from 'lucide-react'
+import { Globe, Check, ArrowRight } from 'lucide-react'
 import { soundFX } from '@/lib/audioEffects'
 
 export interface LanguageOption {
@@ -137,91 +137,83 @@ export function LanguageSelectionModal({
     SUPPORTED_LANGUAGES.find((l) => l.code === currentSelected) || SUPPORTED_LANGUAGES[0]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xl animate-fade-in select-none">
-      <div className="relative w-full max-w-3xl glass-panel border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
-        {/* Ambient Top Glow */}
-        <div className="absolute -top-24 -left-24 w-60 h-60 bg-sky-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-sm animate-fade-in">
+      <div role="dialog" aria-modal="true" aria-labelledby="consultation-language-title" className="relative w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 sm:p-8 shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-pill mb-3">
-            <Globe size={14} className="text-sky-400" />
-            <span className="text-xs font-mono font-semibold text-sky-300 uppercase tracking-wider">
-              MediCare • Welcome to Your Consultation
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 border border-teal-100 mb-3">
+            <Globe size={14} className="text-teal-800" />
+            <span className="text-xs font-semibold text-teal-900">
+              Consultation preferences
             </span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight">
+          <h2 id="consultation-language-title" className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-2 tracking-tight">
             Which language are you most comfortable speaking?
           </h2>
-          <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
-            Choose your preferred language for the entire consultation. {doctor.name} will speak,
-            listen, understand symptoms, and respond naturally in this language.
+          <p className="text-slate-600 text-sm max-w-xl mx-auto leading-relaxed">
+            Choose a language for voice recognition and messages. After you start, the microphone listens for a phrase and sends it when you pause. You can mute it at any time.
           </p>
         </div>
 
         {/* Language Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto pr-1 mb-6 max-h-[38vh] scrollbar-thin">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto pr-1 mb-5 max-h-[42vh] scrollbar-thin">
           {SUPPORTED_LANGUAGES.map((lang) => {
             const isSelected = currentSelected === lang.code
             return (
-              <div
+              <button
+                type="button"
                 key={lang.code}
                 onClick={() => handleCardClick(lang.code)}
-                className={`p-3.5 rounded-2xl cursor-pointer border transition-all duration-200 flex flex-col justify-between ${
+                aria-pressed={isSelected}
+                className={`min-h-[88px] p-3.5 rounded-xl text-left border transition-colors duration-150 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100 ${
                   isSelected
-                    ? 'glass-card border-sky-400/80 bg-sky-950/50 shadow-lg shadow-sky-500/20 scale-[1.02]'
-                    : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/80'
+                    ? 'border-teal-700 bg-teal-50'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-base sm:text-lg font-bold text-white">
+                  <span className="text-base sm:text-lg font-semibold text-slate-900">
                     {lang.nativeName}
                   </span>
                   {isSelected ? (
-                    <div className="w-5 h-5 rounded-full bg-sky-500 flex items-center justify-center text-white">
+                    <span className="w-5 h-5 rounded-full bg-teal-700 flex items-center justify-center text-white">
                       <Check size={12} strokeWidth={3} />
-                    </div>
+                    </span>
                   ) : (
-                    <div className="w-5 h-5 rounded-full border border-slate-700" />
+                    <span className="w-5 h-5 rounded-full border border-slate-300" />
                   )}
                 </div>
 
                 <div>
-                  <span className="text-xs font-medium text-slate-300 block">{lang.label}</span>
-                  <span className="text-[10px] text-slate-400 font-mono">{lang.region}</span>
+                  <span className="text-xs font-medium text-slate-800 block">{lang.label}</span>
+                  <span className="text-[10px] text-slate-500">{lang.region}</span>
                 </div>
-              </div>
+              </button>
             )
           })}
         </div>
 
-        {/* Doctor Preview Greeting Card */}
-        <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-6 flex items-start gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">
+        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-5 flex items-start gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-[#123d55] flex items-center justify-center text-white font-semibold flex-shrink-0">
             {doctorId === 'dr_ananya' ? 'An' : 'Ar'}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold text-white">
-                {doctor.name} will greet you in {selectedOption.label} ({selectedOption.nativeName}):
-              </span>
-              <span className="text-[10px] text-sky-400 font-mono font-semibold flex items-center gap-1">
-                <Volume2 size={12} />
-                <span>Native Voice Active</span>
+              <span className="text-sm font-semibold text-slate-900">
+                Consultation language: {selectedOption.label} ({selectedOption.nativeName})
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-sky-200 leading-relaxed italic bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
-              "{selectedOption.sampleGreeting[doctorId]}"
+            <p className="text-xs text-slate-600 leading-relaxed">
+              With {doctor.name}. You can switch languages during the call or type instead of speaking.
             </p>
           </div>
         </div>
 
         {/* Action Button */}
-        <div className="flex items-center justify-between pt-2 border-t border-slate-800">
-          <span className="text-xs text-slate-400 font-mono hidden sm:inline">
-            You can also switch language at any time during the call
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200">
+          <span className="text-xs text-slate-500 hidden sm:inline">
+            Microphone starts if this browser supports voice input.
           </span>
 
           <button
@@ -229,7 +221,7 @@ export function LanguageSelectionModal({
               soundFX.playClick()
               onConfirm()
             }}
-            className="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02]"
+            className="min-h-12 w-full sm:w-auto px-6 py-3 rounded-xl bg-[#123d55] hover:bg-[#0d3145] text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
           >
             <span>Start Consultation in {selectedOption.nativeName}</span>
             <ArrowRight size={16} />

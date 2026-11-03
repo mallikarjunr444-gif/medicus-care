@@ -47,6 +47,7 @@ _EDGE_VOICES = {
     "de": "de-DE-KatjaNeural",
     "el": "el-GR-AthinaNeural",
     "en": "en-US-AriaNeural",
+    "kn": "kn-IN-SapnaNeural",
     "es": "es-ES-ElviraNeural",
     "fi": "fi-FI-NooraNeural",
     "fr": "fr-FR-DeniseNeural",
@@ -65,6 +66,11 @@ _EDGE_VOICES = {
     "sw": "sw-KE-ZuriNeural",
     "tr": "tr-TR-EmelNeural",
     "zh": "zh-CN-XiaoxiaoNeural",
+}
+
+_EDGE_VOICES_BY_GENDER = {
+    "en": {"female": "en-IN-NeerjaNeural", "male": "en-IN-PrabhatNeural"},
+    "kn": {"female": "kn-IN-SapnaNeural", "male": "kn-IN-GaganNeural"},
 }
 
 # Older configs may still say "coqui"/"xtts" (the engine Chatterbox replaced).
@@ -135,6 +141,7 @@ class TTSService:
         output_path: str,
         speaker_wav: Optional[str] = None,
         language: str = "en",
+        voice_gender: Optional[str] = None,
     ) -> SynthResult:
         """
         Synthesize speech.
@@ -151,6 +158,18 @@ class TTSService:
         """
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
+        # The configured Gnani language defaults are female for English and
+        # Kannada. Keep Dr. Arjun male by selecting a documented free neural
+        # voice for those languages rather than silently using that default.
+        if voice_gender == "male":
+            await self._edge_fallback(text, output_path, language, voice_gender)
+            return SynthResult(
+                output_path=output_path,
+                engine="edge-tts",
+                fallback=False,
+                voice_cloned=False,
+            )
+
         if self.provider == "gnani":
             from app.services.gnani_service import gnani_service
             try:
@@ -164,7 +183,7 @@ class TTSService:
             except Exception as e:
                 logger.warning(f"Gnani TTS failed ({e}), falling back to Edge TTS")
                 try:
-                    await self._edge_fallback(text, output_path, language)
+                    await self._edge_fallback(text, output_path, language, voice_gender)
                     return SynthResult(
                         output_path=output_path,
                         engine="edge-tts",
@@ -234,7 +253,7 @@ class TTSService:
             # Prefer Edge TTS (Microsoft neural voices — much better prosody
             # than gTTS, still free and CPU-only); gTTS is the last resort.
             try:
-                await self._edge_fallback(text, output_path, language)
+                await self._edge_fallback(text, output_path, language, voice_gender)
                 engine = "edge-tts"
             except Exception as edge_err:
                 logger.warning(f"Edge TTS failed ({edge_err}), falling back to gTTS")
@@ -248,12 +267,19 @@ class TTSService:
                 voice_cloned=False,
             )
 
-    async def _edge_fallback(self, text: str, output_path: str, language: str = "en") -> str:
+    async def _edge_fallback(
+        self,
+        text: str,
+        output_path: str,
+        language: str = "en",
+        voice_gender: Optional[str] = None,
+    ) -> str:
         """Free neural-voice fallback via Microsoft Edge TTS (no key, no GPU)."""
         import edge_tts
         from pydub import AudioSegment
 
-        voice = _EDGE_VOICES.get(language, _EDGE_VOICES["en"])
+        voice = _EDGE_VOICES_BY_GENDER.get(language, {}).get(voice_gender or "")
+        voice = voice or _EDGE_VOICES.get(language, _EDGE_VOICES["en"])
         logger.info(f"Synthesizing (edge-tts, {voice}): {text[:80]}...")
         mp3_path = str(Path(output_path).with_suffix(".edge.mp3"))
 

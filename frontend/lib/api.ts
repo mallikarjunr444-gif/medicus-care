@@ -163,6 +163,27 @@ export const api = {
     return response.data
   },
 
+  getSpecialists: async (district = 'Chikkamagaluru') => {
+    const response = await apiClient.get('/api/v1/doctor/specialists', { params: { district } })
+    return response.data
+  },
+
+  requestAppointment: async (request: {
+    specialist_id: string
+    preferred_date: string
+    preferred_time_slot: string
+    reason: string
+    patient_confirmed: boolean
+  }) => {
+    const response = await apiClient.post('/api/v1/doctor/appointments/request', request)
+    return response.data
+  },
+
+  analyzeLaboratoryReport: async (request: { report_text: string; test_type?: string }) => {
+    const response = await apiClient.post('/api/v1/doctor/reports/analyze', request)
+    return response.data
+  },
+
   getSessions: async () => {
     const response = await apiClient.get('/api/v1/sessions/')
     return response.data

@@ -1,19 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Phone,
-  CheckCircle2,
-  X,
-  Stethoscope,
-  ShieldCheck,
-  Building,
-  UserCheck,
-} from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { AlertCircle, Building2, CalendarDays, CheckCircle2, Clock3, Loader2, MapPin, Phone, ShieldCheck, Stethoscope, X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { api } from '@/lib/api'
 
 export interface Specialist {
   id: string
@@ -29,296 +19,174 @@ export interface Specialist {
   contact_phone?: string
 }
 
-export const VERIFIED_SPECIALISTS_LOCAL: Specialist[] = [
-  {
-    id: 'DOC-CKM-01',
-    name: 'Dr. Srinivas Murthy, M.D.',
-    specialty: 'General Medicine / Internal Medicine',
-    qualification: 'MBBS, MD (General Medicine)',
-    hospital: 'District Hospital Chikkamagaluru',
-    location: 'MG Road, Chikkamagaluru',
-    district: 'Chikkamagaluru',
-    state: 'Karnataka',
-    available_days: ['Monday', 'Wednesday', 'Friday', 'Saturday'],
-    consultation_type: 'In-Person',
-    contact_phone: '+91 8262 230230',
-  },
-  {
-    id: 'DOC-CKM-02',
-    name: 'Dr. Rashmi Gowda, M.D.',
-    specialty: 'Pulmonology & Respiratory Medicine',
-    qualification: 'MBBS, MD (Pulmonary Medicine)',
-    hospital: 'Chikkamagaluru Medical Sciences Hospital',
-    location: 'Kadur Road, Chikkamagaluru',
-    district: 'Chikkamagaluru',
-    state: 'Karnataka',
-    available_days: ['Tuesday', 'Thursday', 'Saturday'],
-    consultation_type: 'In-Person',
-    contact_phone: '+91 8262 245100',
-  },
-  {
-    id: 'DOC-CKM-03',
-    name: 'Dr. Pradeep Kumar, D.P.M.',
-    specialty: 'Clinical Psychiatry & Mental Health',
-    qualification: 'MBBS, DPM, MD (Psychiatry)',
-    hospital: 'District Mental Health Clinic & De-Addiction Centre',
-    location: 'Indira Gandhi Road, Chikkamagaluru',
-    district: 'Chikkamagaluru',
-    state: 'Karnataka',
-    available_days: ['Monday', 'Tuesday', 'Thursday'],
-    consultation_type: 'In-Person & Telemedicine',
-    contact_phone: '+91 8262 235544',
-  },
-  {
-    id: 'DOC-BLR-01',
-    name: 'Dr. K. Ananth, M.D., DM',
-    specialty: 'Cardiology & Cardiovascular Sciences',
-    qualification: 'MBBS, MD, DM (Cardiology)',
-    hospital: 'Sri Jayadeva Institute of Cardiovascular Sciences',
-    location: 'Bannerghatta Road, Bengaluru',
-    district: 'Bengaluru Urban',
-    state: 'Karnataka',
-    available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-    consultation_type: 'In-Person & Telemedicine',
-    contact_phone: '+91 80 2297 7400',
-  },
-  {
-    id: 'DOC-MYS-01',
-    name: 'Dr. Kavitha Hegde, M.D.',
-    specialty: 'Endocrinology & Diabetology',
-    qualification: 'MBBS, MD, DNB (Endocrinology)',
-    hospital: 'K.R. Hospital & Mysore Medical College',
-    location: 'Irwin Road, Mysuru',
-    district: 'Mysuru',
-    state: 'Karnataka',
-    available_days: ['Monday', 'Wednesday', 'Thursday'],
-    consultation_type: 'In-Person & Telemedicine',
-    contact_phone: '+91 821 242 0100',
-  },
-]
+export interface AppointmentRequestResult {
+  booking_id: string
+  doctor_name: string
+  specialty: string
+  hospital: string
+  location: string
+  district: string
+  date: string
+  time_slot: string
+  phone?: string
+}
 
 interface SpecialistBookingModalProps {
   isOpen: boolean
   onClose: () => void
   initialSpecialty?: string
-  onAppointmentBooked?: (details: any) => void
+  onAppointmentBooked?: (details: AppointmentRequestResult) => void
 }
 
-export function SpecialistBookingModal({
-  isOpen,
-  onClose,
-  initialSpecialty,
-  onAppointmentBooked,
-}: SpecialistBookingModalProps) {
-  const [selectedSpecialist, setSelectedSpecialist] = useState<Specialist>(
-    VERIFIED_SPECIALISTS_LOCAL[0]
-  )
-  const [preferredDate, setPreferredDate] = useState(
-    new Date(Date.now() + 86400000).toISOString().split('T')[0]
-  )
+export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAppointmentBooked }: SpecialistBookingModalProps) {
+  const [specialists, setSpecialists] = useState<Specialist[]>([])
+  const [selectedId, setSelectedId] = useState('')
+  const [preferredDate, setPreferredDate] = useState('')
   const [preferredSlot, setPreferredSlot] = useState('Morning (10:00 AM - 1:00 PM)')
   const [patientConfirmed, setPatientConfirmed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const selectedSpecialist = specialists.find((specialist) => specialist.id === selectedId) || null
+
+  useEffect(() => {
+    if (!isOpen) return
+    let active = true
+    setIsLoading(true)
+    setErrorMessage(null)
+    api.getSpecialists().then((result) => {
+      if (!active) return
+      const items = (result.specialists || []) as Specialist[]
+      setSpecialists(items)
+      const preferred = initialSpecialty
+        ? items.find((item) => item.specialty.toLowerCase().includes(initialSpecialty.toLowerCase()))
+        : undefined
+      setSelectedId(preferred?.id || items[0]?.id || '')
+      if (!items.length) setErrorMessage('No specialists were returned for this district.')
+    }).catch(() => {
+      if (active) setErrorMessage('The specialist directory could not be loaded. Try again when the service is available.')
+    }).finally(() => {
+      if (active) setIsLoading(false)
+    })
+    return () => { active = false }
+  }, [isOpen, initialSpecialty])
 
   if (!isOpen) return null
 
-  const handleConfirmBooking = async () => {
-    if (!patientConfirmed) {
-      toast.error('Please check the confirmation box to authorize this appointment request.')
-      return
-    }
-
+  const handleRequest = async () => {
+    if (!selectedSpecialist || !patientConfirmed) return
     setIsSubmitting(true)
-    const bookingDetails = {
-      booking_id: `APT-${selectedSpecialist.id}-${Date.now().toString().slice(-4)}`,
-      doctor_name: selectedSpecialist.name,
-      specialty: selectedSpecialist.specialty,
-      hospital: selectedSpecialist.hospital,
-      location: selectedSpecialist.location,
-      district: selectedSpecialist.district,
-      date: preferredDate,
-      time_slot: preferredSlot,
-      phone: selectedSpecialist.contact_phone,
-    }
-
-    // Try posting to backend API
+    setErrorMessage(null)
     try {
-      await fetch('http://localhost:8000/api/v1/doctor/appointments/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          specialist_id: selectedSpecialist.id,
-          preferred_date: preferredDate,
-          preferred_time_slot: preferredSlot,
-          reason: 'Specialist medical evaluation recommended during MediCare consultation.',
-          patient_confirmed: true,
-        }),
+      const result = await api.requestAppointment({
+        specialist_id: selectedSpecialist.id,
+        preferred_date: preferredDate,
+        preferred_time_slot: preferredSlot,
+        reason: `Specialist consultation request for ${selectedSpecialist.specialty}.`,
+        patient_confirmed: true,
       })
-    } catch {
-      // Local fallback
+      const details: AppointmentRequestResult = {
+        booking_id: result.booking_id,
+        doctor_name: result.specialist.name,
+        specialty: result.specialist.specialty,
+        hospital: result.specialist.hospital,
+        location: result.clinic_location,
+        district: result.specialist.district,
+        date: result.appointment_date,
+        time_slot: result.time_slot,
+        phone: result.hospital_contact,
+      }
+      toast.success('Your appointment request was submitted. Contact the clinic to confirm availability.')
+      onAppointmentBooked?.(details)
+      onClose()
+    } catch (error) {
+      const message = (error as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+      setErrorMessage(message || 'The appointment request could not be submitted. Please try again.')
+      toast.error('Appointment request was not submitted.')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    setIsSubmitting(false)
-    toast.success(`Appointment requested with ${selectedSpecialist.name}!`, { icon: '🩺' })
-    if (onAppointmentBooked) onAppointmentBooked(bookingDetails)
-    onClose()
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans">
-      <div className="relative w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
-              <Stethoscope size={18} />
-            </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6">
+      <section role="dialog" aria-modal="true" aria-labelledby="specialist-title" className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+        <header className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-800"><Stethoscope size={19} /></div>
             <div>
-              <h2 className="text-sm font-bold text-white tracking-tight">
-                Schedule Specialist Consultation
-              </h2>
-              <p className="text-[11px] text-slate-400">
-                Verified Physicians & Hospitals in Chikkamagaluru & Karnataka
-              </p>
+              <h2 id="specialist-title" className="text-base font-semibold text-slate-900">Request a specialist appointment</h2>
+              <p className="mt-0.5 text-xs text-slate-500">Directory results from MediCare’s specialist service</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-          >
-            <X size={16} />
-          </button>
-        </div>
+          <button type="button" onClick={onClose} aria-label="Close specialist request" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900"><X size={18} /></button>
+        </header>
 
-        {/* Body */}
-        <div className="p-5 overflow-y-auto space-y-4 text-xs">
-          {/* Doctor Selection */}
-          <div>
-            <label className="block text-slate-300 font-semibold mb-2">
-              Select Attending Medical Professional
-            </label>
-            <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-              {VERIFIED_SPECIALISTS_LOCAL.map((doc) => {
-                const isSelected = selectedSpecialist.id === doc.id
-                return (
-                  <div
-                    key={doc.id}
-                    onClick={() => setSelectedSpecialist(doc)}
-                    className={`p-3 rounded-xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'bg-sky-600/15 border-sky-500 text-white shadow-md'
-                        : 'bg-slate-950/70 border-slate-800 text-slate-300 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <div>
-                        <span className="font-bold text-xs text-white block">{doc.name}</span>
-                        <span className="text-[11px] text-sky-400 font-medium">
-                          {doc.specialty} ({doc.qualification})
-                        </span>
+        <div className="space-y-4 overflow-y-auto p-5 sm:p-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2 py-12 text-sm text-slate-600"><Loader2 size={18} className="animate-spin" />Loading specialists…</div>
+          ) : errorMessage && !specialists.length ? (
+            <div role="alert" className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800"><AlertCircle size={18} className="mt-0.5 shrink-0" />{errorMessage}</div>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-slate-800">Available specialists</h3>
+                {specialists.map((specialist) => {
+                  const selected = specialist.id === selectedId
+                  return (
+                    <button key={specialist.id} type="button" aria-pressed={selected} onClick={() => setSelectedId(specialist.id)} className={`w-full rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-100 ${selected ? 'border-sky-700 bg-sky-50' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="font-semibold text-slate-900">{specialist.name}</div>
+                          <div className="mt-0.5 text-sm text-sky-900">{specialist.specialty}</div>
+                          <div className="mt-0.5 text-xs text-slate-500">{specialist.qualification}</div>
+                        </div>
+                        {selected && <CheckCircle2 size={18} className="shrink-0 text-sky-800" />}
                       </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-                        {doc.consultation_type}
-                      </span>
-                    </div>
+                      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-600">
+                        <span className="inline-flex items-center gap-1"><Building2 size={13} />{specialist.hospital}</span>
+                        <span className="inline-flex items-center gap-1"><MapPin size={13} />{specialist.location}</span>
+                        {specialist.contact_phone && <span className="inline-flex items-center gap-1"><Phone size={13} />{specialist.contact_phone}</span>}
+                        <span>{specialist.consultation_type}</span>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
 
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-400 mt-2">
-                      <span className="flex items-center gap-1">
-                        <Building size={12} className="text-slate-500" />
-                        {doc.hospital}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MapPin size={12} className="text-slate-500" />
-                        {doc.location}
-                      </span>
-                      {doc.contact_phone && (
-                        <span className="flex items-center gap-1 font-mono text-slate-300">
-                          <Phone size={12} className="text-sky-400" />
-                          {doc.contact_phone}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+              <div className="grid gap-3 border-t border-slate-100 pt-4 sm:grid-cols-2">
+                <label className="space-y-1 text-sm font-medium text-slate-800">
+                  <span className="inline-flex items-center gap-1.5"><CalendarDays size={15} className="text-sky-800" />Preferred date</span>
+                  <input type="date" value={preferredDate} min={new Date().toISOString().slice(0, 10)} onChange={(event) => setPreferredDate(event.target.value)} className="min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-900 focus:border-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-100" />
+                </label>
+                <label className="space-y-1 text-sm font-medium text-slate-800">
+                  <span className="inline-flex items-center gap-1.5"><Clock3 size={15} className="text-sky-800" />Preferred time</span>
+                  <select value={preferredSlot} onChange={(event) => setPreferredSlot(event.target.value)} className="min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-900 focus:border-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-100">
+                    <option>Morning (10:00 AM - 1:00 PM)</option>
+                    <option>Afternoon (2:00 PM - 5:00 PM)</option>
+                    <option>Evening (5:30 PM - 7:30 PM)</option>
+                  </select>
+                </label>
+              </div>
 
-          {/* Date & Time Selection */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
-            <div>
-              <label className="block text-slate-300 font-medium mb-1 flex items-center gap-1">
-                <Calendar size={13} className="text-sky-400" />
-                Preferred Date
+              <label className="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm leading-5 text-slate-700">
+                <input type="checkbox" checked={patientConfirmed} onChange={(event) => setPatientConfirmed(event.target.checked)} className="mt-1 h-4 w-4 rounded border-slate-300 text-sky-800 focus:ring-sky-700" />
+                <span>I authorize MediCare to submit an appointment request for {selectedSpecialist?.name || 'the selected specialist'}. The clinic must confirm availability separately.</span>
               </label>
-              <input
-                type="date"
-                value={preferredDate}
-                min={new Date().toISOString().split('T')[0]}
-                onChange={(e) => setPreferredDate(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-sky-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-slate-300 font-medium mb-1 flex items-center gap-1">
-                <Clock size={13} className="text-sky-400" />
-                Time Slot
-              </label>
-              <select
-                value={preferredSlot}
-                onChange={(e) => setPreferredSlot(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-sky-500"
-              >
-                <option value="Morning (10:00 AM - 1:00 PM)">Morning (10:00 AM - 1:00 PM)</option>
-                <option value="Afternoon (2:00 PM - 5:00 PM)">Afternoon (2:00 PM - 5:00 PM)</option>
-                <option value="Evening (5:30 PM - 7:30 PM)">Evening (5:30 PM - 7:30 PM)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Mandatory Patient Confirmation Checkbox */}
-          <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-start gap-2.5">
-            <input
-              type="checkbox"
-              id="confirm-appointment"
-              checked={patientConfirmed}
-              onChange={(e) => setPatientConfirmed(e.target.checked)}
-              className="mt-0.5 rounded border-slate-700 text-sky-600 focus:ring-sky-500"
-            />
-            <label htmlFor="confirm-appointment" className="text-[11px] text-slate-300 leading-snug cursor-pointer">
-              I authorize MediCare to prepare this specialist consultation request with{' '}
-              <span className="font-semibold text-white">{selectedSpecialist.name}</span> at{' '}
-              <span className="text-sky-300">{selectedSpecialist.hospital}</span>. I understand this appointment request is confirmed directly with the clinic facility.
-            </label>
-          </div>
+              <p className="flex items-start gap-2 text-xs leading-5 text-slate-500"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-sky-800" />This sends a request to the configured directory service; it does not guarantee a clinic booking.</p>
+              {errorMessage && <div role="alert" className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"><AlertCircle size={17} className="mt-0.5 shrink-0" />{errorMessage}</div>}
+            </>
+          )}
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-            <ShieldCheck size={14} className="text-emerald-400" />
-            <span>NMC Telemedicine Guidelines Compliant</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white text-xs transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleConfirmBooking}
-              disabled={!patientConfirmed || isSubmitting}
-              className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center gap-1.5 shadow-lg transition-colors"
-            >
-              <UserCheck size={14} />
-              <span>{isSubmitting ? 'Confirming...' : 'Confirm Appointment Request'}</span>
-            </button>
-          </div>
-        </div>
-      </div>
+        <footer className="flex flex-wrap justify-end gap-2 border-t border-slate-100 bg-slate-50 px-5 py-4 sm:px-6">
+          <button type="button" onClick={onClose} className="min-h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
+          <button type="button" onClick={handleRequest} disabled={!selectedSpecialist || !preferredDate || !patientConfirmed || isSubmitting || isLoading} className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#123d55] px-4 text-sm font-semibold text-white hover:bg-[#0d3145] disabled:cursor-not-allowed disabled:opacity-50">
+            {isSubmitting && <Loader2 size={15} className="animate-spin" />}
+            {isSubmitting ? 'Submitting…' : 'Submit appointment request'}
+          </button>
+        </footer>
+      </section>
     </div>
   )
 }

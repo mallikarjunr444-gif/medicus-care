@@ -780,19 +780,40 @@ class ConnectionManager:
                     },
                 )
                 await self._persist_message(session_id, "assistant", emergency_reply)
+                emergency_queue: asyncio.Queue[Optional[str]] = asyncio.Queue(maxsize=2)
+                await emergency_queue.put(emergency_reply)
+                await emergency_queue.put(None)
+                await self._animate_from_queue(session_id, emergency_queue)
                 return
 
-            # ── 2. Dual-Collection Unified RAG Retrieval ───────────────────
+            # ── 2. Shared medical + wellness reference retrieval ───────────
             from app.services.rag_service import rag_service
-            avatar_id = str(data.get("avatar_id") or "").lower()
-            is_wellness = "ananya" in avatar_id or any(
-                w in text.lower() for w in ["stress", "anxiety", "sleep", "mindful", "cbt", "lonely", "depress"]
-            )
-            rag_col = "mental_wellness" if is_wellness else "medical"
-            rag_matches = rag_service.search(text, collection=rag_col, top_k=2)
+            retrieval_query = text
+            # MedQuAD and the counseling references are primarily English.
+            # Translate Kannada search text locally for retrieval, while the
+            # response remains in the patient's selected language.
+            if any("\u0c80" <= char <= "\u0cff" for char in text):
+                try:
+                    expanded_query = await llm_service.generate_response(
+                        [{"role": "user", "content": (
+                            "Translate the following Kannada health question into a short English "
+                            "search query. Return only the query terms, preserving medical names. "
+                            "Do not answer the question.\n\n" + text
+                        )}],
+                        system_prompt="You translate search queries. Return at most 12 English words.",
+                    )
+                    if expanded_query.strip():
+                        retrieval_query = expanded_query.strip()
+                except Exception as exc:
+                    logger.info("Kannada knowledge query translation unavailable: %s", type(exc).__name__)
+
+            rag_matches = rag_service.search(retrieval_query, collection="all", top_k=4)
 
             if rag_matches:
-                rag_block = "\n\nVerified Reference Knowledge:\n"
+                rag_block = (
+                    "\n\nRetrieved reference excerpts (use only when relevant; do not treat as "
+                    "patient-specific diagnosis; preserve source attribution and mention uncertainty):\n"
+                )
                 for m in rag_matches:
                     rag_block += f"• [{m.title}]: {m.content}\n  ({m.attribution_text})\n"
                 system_prompt = (system_prompt or "") + rag_block
@@ -912,6 +933,8 @@ class ConnectionManager:
         """
         data = self.session_data.get(session_id, {})
         avatar_image = data.get("avatar_image_local")
+        require_lipsync = data.get("doctor_id") in {"dr_ananya", "dr_arjun"}
+        voice_gender = "male" if data.get("doctor_id") == "dr_arjun" else "female"
         speaker_wav: Optional[str] = data.get("voice_wav")
         language: str = data.get("language", "en")
 
@@ -970,6 +993,7 @@ class ConnectionManager:
                         output_path=str(tmp_audio),
                         speaker_wav=speaker_wav,
                         language=language,
+                        voice_gender=voice_gender,
                     )
 
                 # Notify the client exactly once if Chatterbox bailed and
@@ -995,7 +1019,7 @@ class ConnectionManager:
                         avatar_image_path=avatar_image,
                         audio_path=str(tmp_audio),
                         output_path=str(tmp_video),
-                        require_lipsync=data.get("doctor_id") == "dr_ananya",
+                        require_lipsync=data.get("doctor_id") in {"dr_ananya", "dr_arjun"},
                     )
 
                 ts = int(datetime.now(timezone.utc).timestamp() * 1000)
@@ -1024,6 +1048,14 @@ class ConnectionManager:
 
             except Exception as e:
                 logger.error(f"Chunk {chunk_index} failed [{session_id}]: {e}")
+                if require_lipsync:
+                    await self.send_message(
+                        session_id,
+                        {
+                            "type": "error",
+                            "message": "The doctor's synchronized video could not be generated for this response.",
+                        },
+                    )
 
             finally:
                 tmp_audio.unlink(missing_ok=True)
@@ -1106,6 +1138,10 @@ class ConnectionManager:
             "sw",
             "tr",
             "zh",
+            # Kannada is the default consultation language in the frontend.
+            # Without this entry the requested language was silently reset
+            # to English before both TTS voice selection and STT.
+            "kn",
         }
         lang = (language or "en").lower()
         if lang not in allowed:

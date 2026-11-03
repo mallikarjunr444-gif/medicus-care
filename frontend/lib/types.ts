@@ -49,7 +49,7 @@ export type WsMessageType =
 export type WsMessage =
   | { type: 'token'; token: string }
   | { type: 'transcription'; text: string }
-  | { type: 'message'; role: 'assistant'; content: string }
+  | { type: 'message'; role: 'assistant'; content: string; triage?: 4; is_emergency?: boolean }
   | { type: 'video_chunk_start'; total_chunks: number }
   | { type: 'video_chunk'; chunk_index: number; total_chunks: number; video_url: string; text: string }
   | { type: 'video_chunk_end'; sent_chunks: number }

@@ -231,6 +231,10 @@ async def health_check(response: Response):
             used_gb = torch.cuda.memory_allocated(0) / 1024**3
             total_gb = props.total_memory / 1024**3
             services["gpu"] = f"{props.name} ({used_gb:.1f}/{total_gb:.1f} GB used)"
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            # Avatar inference runs in a separate worker process, so this API
+            # process cannot report the worker's MPS allocation accurately.
+            services["gpu"] = "Apple MPS available (worker memory not measured)"
         else:
             services["gpu"] = "not available (CPU mode)"
     except ImportError:

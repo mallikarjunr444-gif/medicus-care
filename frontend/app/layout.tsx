@@ -8,11 +8,10 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 const FONT_VARS = 'font-sans'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://care.medicuslabs.app'
-const SITE_TITLE = 'Medicus Care — Your AI Doctor | Medicus Labs™'
+const SITE_TITLE = 'Medicus Care — Voice and Text Health Consultations | Medicus Labs™'
 const SITE_DESCRIPTION =
-  'Interactive real-time healthcare assistance through photorealistic 3D human AI doctors. ' +
-  'Multilingual voice and video-consultations with Dr. Arjun and Dr. Ananya, medical document ' +
-  'intelligence, and symptom triage.'
+  'Share health concerns by voice or text, review medical reports, and access preliminary triage ' +
+  'guidance with Dr. Arjun or Dr. Ananya in your selected language.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   applicationName: 'Medicus Care',
   keywords: [
-    'Medicus Care', 'AI Doctor', '3D Doctor Avatar', 'Dr. Arjun', 'Dr. Ananya',
+    'Medicus Care', 'Doctor consultation', 'Dr. Arjun', 'Dr. Ananya',
     'telemedicine', 'medical triage', 'symptom checker', 'digital healthcare',
     'multilingual healthcare', 'Kannada doctor', 'Hindi doctor', 'Medicus Labs',
   ],
@@ -53,20 +52,18 @@ export const metadata: Metadata = {
 const JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'AvatarAI',
-  applicationCategory: 'MultimediaApplication',
+  name: 'Medicus Care',
+  applicationCategory: 'HealthApplication',
   operatingSystem: 'Web, Linux, Docker',
   description: SITE_DESCRIPTION,
   url: SITE_URL,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   softwareHelp: 'https://github.com/PunithVT/ai-avatar-system',
   sameAs: ['https://github.com/PunithVT/ai-avatar-system'],
   featureList: [
-    'Real-time lip-sync avatar video (MuseTalk)',
-    'Zero-shot voice cloning in 23 languages (Chatterbox)',
-    'Streaming LLM conversations (Claude / GPT)',
-    'Whisper speech-to-text',
-    'Self-hostable with Docker',
+    'Voice and text symptom sharing',
+    'Multilingual consultation options',
+    'Medical report review',
+    'Preliminary triage guidance',
   ],
 }
 

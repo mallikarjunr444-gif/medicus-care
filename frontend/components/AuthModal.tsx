@@ -94,7 +94,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
       full_name: 'Guest Patient',
       is_guest: true,
     })
-    toast('Free Patient Session Active — Ready for 3D Consultation', { icon: '🩺' })
+    toast('Guest patient session started', { icon: '🩺' })
     setIsLoading(false)
     if (onClose) onClose()
   }

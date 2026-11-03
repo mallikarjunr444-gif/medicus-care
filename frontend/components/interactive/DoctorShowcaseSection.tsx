@@ -1,345 +1,105 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { soundFX } from '@/lib/audioEffects'
-import { TiltCard } from '@/components/interactive/TiltCard'
-import { DOCTORS } from '@/lib/doctorTypes'
 import type { DoctorId } from '@/lib/doctorTypes'
-import {
-  Video,
-  Languages,
-  Sparkles,
-  Stethoscope,
-  Volume2,
-  CheckCircle2,
-  Brain,
-  ShieldCheck,
-  ChevronRight,
-  Play,
-  Pause,
-} from 'lucide-react'
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
-}
+import { DOCTORS } from '@/lib/doctorTypes'
+import { ArrowUpRight, Languages, Mic2, Stethoscope } from 'lucide-react'
 
 interface DoctorShowcaseSectionProps {
   onSelectDoctor: (doctorId: DoctorId) => void
 }
 
+const doctorCards: Array<{
+  id: DoctorId
+  image: string
+  imageAlt: string
+  focus: string
+  accent: 'teal' | 'blue'
+}> = [
+  {
+    id: 'dr_arjun',
+    image: '/doctor/dr_arjun.jpg',
+    imageAlt: 'Dr. Arjun in his white coat with a stethoscope',
+    focus: 'General health guidance',
+    accent: 'teal',
+  },
+  {
+    id: 'dr_ananya',
+    image: '/doctor/dr_ananya.jpg',
+    imageAlt: 'Dr. Ananya in her white coat with a blue stethoscope',
+    focus: 'Wellness and report support',
+    accent: 'blue',
+  },
+]
+
 export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionProps) {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const cardsContainerRef = useRef<HTMLDivElement>(null)
-  const [playingVoice, setPlayingVoice] = useState<{ docId: DoctorId; lang: string } | null>(null)
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const ctx = gsap.context(() => {
-      // Stagger reveal for doctor cards
-      gsap.from('.doctor-card-anim', {
-        scrollTrigger: {
-          trigger: cardsContainerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        y: 60,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.25,
-        ease: 'power3.out',
-      })
-
-      // Parallax glow effect
-      gsap.to('.doctor-glow-bg', {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.5,
-        },
-        y: -40,
-        scale: 1.15,
-        ease: 'none',
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
-  // Simulated Voice Greeting preview
-  const handlePlayVoiceSample = (docId: DoctorId, lang: 'en' | 'kn' | 'hi') => {
-    soundFX.playTelemetryPing()
-    setPlayingVoice({ docId, lang })
-
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-
-      const textMap: Record<string, Record<string, string>> = {
-        dr_arjun: {
-          en: 'Hello, I am Doctor Arjun. Welcome to MediCare. How are you feeling today?',
-          kn: 'ನಮಸ್ಕಾರ, ನಾನು ಡಾಕ್ಟರ್ ಅರ್ಜುನ್. ಮೆಡಿಕೇರ್‌ಗೆ ಸ್ವಾಗತ. ಇಂದು ನಿಮ್ಮ ಆರೋಗ್ಯ ಹೇಗಿದೆ?',
-          hi: 'नमस्ते, मैं डॉक्टर अर्जुन हूँ। मेडिकेयर में आपका स्वागत है। आज आप कैसा महसूस कर रहे हैं?',
-        },
-        dr_ananya: {
-          en: 'Welcome, I am Doctor Ananya. Let us review your lab report and wellbeing together.',
-          kn: 'ನಮಸ್ಕಾರ, ನಾನು ಡಾಕ್ಟರ್ ಅನನ್ಯಾ. ನಿಮ್ಮ ಲ್ಯಾಬ್ ವರದಿ ಮತ್ತು ಆರೋಗ್ಯವನ್ನು ಪರಿಶೀಲಿಸೋಣ.',
-          hi: 'नमस्ते, मैं डॉक्टर अनन्या हूँ। आइए आपकी लैब रिपोर्ट और स्वास्थ्य की समीक्षा करें।',
-        },
-      }
-
-      const utterance = new SpeechSynthesisUtterance(textMap[docId]?.[lang] || 'Welcome to MediCare.')
-      utterance.rate = 0.95
-      utterance.onend = () => setPlayingVoice(null)
-      utterance.onerror = () => setPlayingVoice(null)
-      window.speechSynthesis.speak(utterance)
-    } else {
-      setTimeout(() => setPlayingVoice(null), 2500)
-    }
-  }
-
   return (
-    <section ref={sectionRef} className="relative w-full py-20 px-6 overflow-hidden">
-      {/* Background Animated Parallax Glow */}
-      <div className="doctor-glow-bg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-gradient-to-tr from-sky-600/15 via-indigo-600/10 to-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill mb-3">
-            <Stethoscope size={13} className="text-sky-400" />
-            <span className="text-xs font-mono font-semibold text-sky-300 uppercase tracking-wider">
-              Meet Your Clinical Physicians
-            </span>
+    <section id="doctor-selection" aria-labelledby="doctor-selection-title" className="relative w-full px-4 sm:px-6 py-16 sm:py-20 scroll-mt-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="max-w-2xl mx-auto text-center mb-10 sm:mb-12">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-300">
+            <Stethoscope size={14} className="text-teal-300" />
+            Choose your consultation
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
-            Consult With{' '}
-            <span className="bg-gradient-to-r from-sky-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-              Realistic AI Doctors
-            </span>
+          <h2 id="doctor-selection-title" className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-white">
+            Meet your doctor
           </h2>
-          <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Choose your physician for live video-consultation. Real-time natural speech
-            and regional multilingual consultations in English, Kannada, and Hindi.
+          <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-400">
+            Pick a doctor, choose your language, then talk by voice or text.
           </p>
         </div>
 
-        {/* Doctor Cards Container */}
-        <div ref={cardsContainerRef} className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Card 1: Dr. Arjun */}
-          <div className="doctor-card-anim">
-            <TiltCard maxTilt={8} className="h-full">
-              <div className="glass-card rounded-3xl border border-sky-500/20 hover:border-sky-500/50 transition-all duration-300 h-full flex flex-col justify-between shadow-2xl relative overflow-hidden group">
-                {/* Accent Corner Glow */}
-                <div className="absolute -top-12 -right-12 w-36 h-36 bg-sky-500/20 rounded-full blur-2xl group-hover:bg-sky-500/30 transition-all pointer-events-none" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 max-w-5xl mx-auto">
+          {doctorCards.map((card) => {
+            const doctor = DOCTORS[card.id]
+            const color = card.accent === 'teal'
+              ? 'text-teal-800 bg-teal-50 border-teal-100'
+              : 'text-blue-800 bg-blue-50 border-blue-100'
 
-                {/* Doctor Photo */}
-                <div className="relative w-full h-72 sm:h-80 overflow-hidden rounded-t-3xl">
+            return (
+              <article key={card.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white text-slate-900 shadow-sm transition-shadow duration-200 hover:shadow-lg">
+                <div className="relative aspect-[16/9] bg-slate-100">
                   <Image
-                    src="/doctor/dr_arjun.jpg"
-                    alt="Dr. Arjun - AI General Physician"
+                    src={card.image}
+                    alt={card.imageAlt}
                     fill
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
+                    className="object-cover object-[50%_28%]"
                   />
-                  {/* Gradient overlay at bottom */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-                  {/* Status badge on photo */}
-                  <div className="absolute top-4 right-4">
-                    <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 backdrop-blur-sm flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Available Now
+                  <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/70 to-transparent" />
+                  <span className="absolute bottom-4 left-5 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-slate-800 shadow-sm">
+                    {doctor.name}
+                  </span>
+                </div>
+
+                <div className="p-5 sm:p-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-semibold tracking-tight">{doctor.name}</h3>
+                      <p className="mt-1 text-sm text-slate-600">{card.focus}</p>
+                    </div>
+                    <span className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[11px] font-medium ${color}`}>
+                      Consultation
                     </span>
                   </div>
-                  {/* Name overlay on photo */}
-                  <div className="absolute bottom-4 left-5 right-5">
-                    <h3 className="text-2xl font-bold text-white drop-shadow-lg">Dr. Arjun, M.D.</h3>
-                    <p className="text-sm text-sky-300 font-medium mt-0.5">
-                      Internal Medicine & Primary Care Triage
-                    </p>
+
+                  <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500">
+                    <span className="inline-flex items-center gap-1.5"><Mic2 size={14} /> Voice and text</span>
+                    <span className="inline-flex items-center gap-1.5"><Languages size={14} /> Kannada, English and more</span>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => onSelectDoctor(card.id)}
+                    className="mt-6 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-[#123d55] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0d3145] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
+                  >
+                    <span>Start with {doctor.name}</span>
+                    <ArrowUpRight size={17} aria-hidden="true" />
+                  </button>
                 </div>
-
-                <div className="p-6 pt-4 flex flex-col flex-1">
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5">
-                    Specialized in acute symptoms, fever evaluation, respiratory assessment, home
-                    vitals review, and preventive health guidance. Employs real-time conversational
-                    speech with precise medical explanations.
-                  </p>
-
-                  {/* Languages & Voice Test */}
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-5">
-                    <div className="flex items-center justify-between mb-2.5">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <Languages size={13} className="text-sky-400" />
-                        <span>Interactive Voice Audio</span>
-                      </span>
-                      <span className="text-[10px] text-slate-500 font-mono">EN • KN • HI</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {[
-                        { code: 'en' as const, label: 'English' },
-                        { code: 'kn' as const, label: 'ಕನ್ನಡ (Kannada)' },
-                        { code: 'hi' as const, label: 'हिन्दी (Hindi)' },
-                      ].map((lang) => {
-                        const isThisPlaying =
-                          playingVoice?.docId === 'dr_arjun' && playingVoice?.lang === lang.code
-                        return (
-                          <button
-                            key={lang.code}
-                            onClick={() => handlePlayVoiceSample('dr_arjun', lang.code)}
-                            className={`flex-1 py-1.5 px-2 rounded-xl text-[11px] font-medium flex items-center justify-center gap-1 transition-all ${
-                              isThisPlaying
-                                ? 'bg-sky-500 text-white shadow-md'
-                                : 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700'
-                            }`}
-                          >
-                            {isThisPlaying ? <Pause size={11} /> : <Play size={11} />}
-                            <span>{lang.label}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Clinical Highlights */}
-                  <div className="space-y-2 mb-5">
-                    {[
-                      'Deterministic 4-Tier Triage Screening',
-                      'High-Fidelity WebGL 3D Lip-Sync Kinematics',
-                      'Instant Interruption Recovery & VAD',
-                    ].map((feature, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-slate-400">
-                        <CheckCircle2 size={13} className="text-sky-400 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto">
-                    <button
-                      onClick={() => onSelectDoctor('dr_arjun')}
-                      className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02]"
-                    >
-                      <Video size={16} />
-                      <span>Start Consultation with Dr. Arjun</span>
-                      <ChevronRight size={15} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </TiltCard>
-          </div>
-
-          {/* Card 2: Dr. Ananya */}
-          <div className="doctor-card-anim">
-            <TiltCard maxTilt={8} className="h-full">
-              <div className="glass-card rounded-3xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-300 h-full flex flex-col justify-between shadow-2xl relative overflow-hidden group">
-                <div className="absolute -top-12 -right-12 w-36 h-36 bg-indigo-500/20 rounded-full blur-2xl group-hover:bg-indigo-500/30 transition-all pointer-events-none" />
-
-                {/* Doctor Photo */}
-                <div className="relative w-full h-72 sm:h-80 overflow-hidden rounded-t-3xl">
-                  <Image
-                    src="/doctor/dr_ananya.jpg"
-                    alt="Dr. Ananya - AI Wellness Consultant"
-                    fill
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
-                  />
-                  {/* Gradient overlay at bottom */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-                  {/* Status badge on photo */}
-                  <div className="absolute top-4 right-4">
-                    <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 backdrop-blur-sm flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Available Now
-                    </span>
-                  </div>
-                  {/* Name overlay on photo */}
-                  <div className="absolute bottom-4 left-5 right-5">
-                    <h3 className="text-2xl font-bold text-white drop-shadow-lg">Dr. Ananya, M.D.</h3>
-                    <p className="text-sm text-indigo-300 font-medium mt-0.5">
-                      Metabolic Health, Lab Diagnostics & Wellness
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-6 pt-4 flex flex-col flex-1">
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5">
-                    Specialized in medical document intelligence, CBC and lipid interpretation,
-                    thyroid kinetics, stress balance, and guided breathing exercises. Delivers warm,
-                    empathetic, and evidence-grounded consultations.
-                  </p>
-
-                  {/* Languages & Voice Test */}
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-5">
-                    <div className="flex items-center justify-between mb-2.5">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <Languages size={13} className="text-indigo-400" />
-                        <span>Interactive Voice Audio</span>
-                      </span>
-                      <span className="text-[10px] text-slate-500 font-mono">EN • KN • HI</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {[
-                        { code: 'en' as const, label: 'English' },
-                        { code: 'kn' as const, label: 'ಕನ್ನಡ (Kannada)' },
-                        { code: 'hi' as const, label: 'हिन्दी (Hindi)' },
-                      ].map((lang) => {
-                        const isThisPlaying =
-                          playingVoice?.docId === 'dr_ananya' && playingVoice?.lang === lang.code
-                        return (
-                          <button
-                            key={lang.code}
-                            onClick={() => handlePlayVoiceSample('dr_ananya', lang.code)}
-                            className={`flex-1 py-1.5 px-2 rounded-xl text-[11px] font-medium flex items-center justify-center gap-1 transition-all ${
-                              isThisPlaying
-                                ? 'bg-indigo-500 text-white shadow-md'
-                                : 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700'
-                            }`}
-                          >
-                            {isThisPlaying ? <Pause size={11} /> : <Play size={11} />}
-                            <span>{lang.label}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Clinical Highlights */}
-                  <div className="space-y-2 mb-5">
-                    {[
-                      'Lab Report Automated Extraction (CBC, Lipid, TSH)',
-                      'Empathetic Stress & Guided Breath Exercises',
-                      'Natural Kannada & Hindi Regional Phonation',
-                    ].map((feature, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-slate-400">
-                        <CheckCircle2 size={13} className="text-indigo-400 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto">
-                    <button
-                      onClick={() => onSelectDoctor('dr_ananya')}
-                      className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02]"
-                    >
-                      <Video size={16} />
-                      <span>Start Consultation with Dr. Ananya</span>
-                      <ChevronRight size={15} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </TiltCard>
-          </div>
+              </article>
+            )
+          })}
         </div>
       </div>
     </section>

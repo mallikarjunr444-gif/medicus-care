@@ -1,46 +1,45 @@
-# Avatar model audit and first-cycle readiness
+# Avatar model audit and current integration
 
-**Audit date:** 2026-11-03
-**Outcome:** Source checkouts are present; usable model installations and an end-to-end Dr. Ananya implementation are not.
+**Updated:** 2026-11-03 23:00 IST
 
-## Model comparison
+## Current result
 
-| Model | What its upstream implementation does | Repository/checkpoint state here | Licence and runtime notes | Fit for first cycle |
-|---|---|---|---|---|
-| **MuseTalk** | Audio-conditioned mouth inpainting on a portrait/video. Upstream provides a real-time dubbing inference path. | Source exists; `models/` and all required weights are absent. The backend's separate `musetalk_worker.py` can run real inference only after its model assets and dependencies are installed. The avatar-engine adapter here is a placeholder. | Upstream code and model are stated as MIT / available for commercial use; the README calls out separate licences for dependencies and test data. The provided setup is GPU-oriented. | **Best first speaking candidate** because it focuses on audio lip-sync and the backend already contains a worker integration. It still requires checkpoint setup and browser/session wiring. |
-| **EchoMimic V3** | Audio-driven portrait/human video generation using a 1.3B-parameter diffusion model; supports audio conditioning but is designed for generated clips, not low-latency turn streaming. | Source exists; expected Wan base model, transformer, audio encoder and other model assets are absent. Its adapter does not load or call upstream inference. | Repository and models state Apache-2.0. Upstream Flash notes 12 GB VRAM; the regular setup is CUDA-centric. | Useful quality comparison after a GPU runner exists. Poor fit for first-frame latency in a live consultation on this Mac. |
-| **EchoMimic (V1)** | Audio-driven portrait video diffusion with editable landmark conditioning. Upstream documents about 50 seconds for 240 frames on a V100 with its accelerated model (older non-accelerated path is much slower). | Source exists; its denoising/reference/motion/face-locator checkpoints and audio processor are absent. | Upstream setup targets CUDA 11.7+ and lists V100 16 GB, RTX 4090D 24 GB, or A100 80 GB. Repository describes intended academic research use; review exact model/data terms before product deployment. | A batch-generation alternative, not a streaming first choice. |
-| **LivePortrait** | Portrait motion transfer from a driving video; it is not an audio-to-mouth model and does not by itself create a live listening stream. | Source exists; `pretrained_weights/` contains only `.gitkeep`. The local adapter checks outdated checkpoint names and returns metadata, not frames. | Code is MIT, but upstream notes InsightFace detection models are non-commercial research only. Upstream documents Apple Silicon support, with a warning that it can be much slower than an RTX 4090. | Could create idle motion from a driving sequence after weights and a real frame-serving path are added. It cannot replace MuseTalk for speaking. |
-| **AniPortrait** | Audio-to-pose/mesh and diffusion rendering for portrait animation. Generates a clip rather than a response-time stream. | Source exists; the listed trained and base-model weights are absent (the local `pretrained_model/` directory contains only an instruction placeholder). The adapter does not run inference. | Code is Apache-2.0. Its published requirements pin CUDA-era PyTorch, `onnxruntime-gpu`, and `xformers`; its checkpoints and third-party base models have separate conditions to verify. | Not suitable for the first live turn without a GPU deployment and substantial inference work. |
+The backend's MuseTalk path has generated and delivered one genuine Kannada speaking clip for Dr. Ananya. The clip uses the Kannada WAV produced by the active Gnani TTS voice (`Nayana`) for the same response. It was played by the existing consultation video element in the browser. This demonstrates a real model output for one video chunk; it does not complete the full consultation acceptance cycle.
 
-## Existing MediCare path
+Evidence:
 
-`backend/app/websocket.py` already sends response sentences through the configured TTS provider, passes the generated WAV to `backend/app/services/animator.py`, then emits video chunks. Its MuseTalk worker is the shortest route to real audio-driven frames. However:
+- [`artifacts/dr_ananya_musetalk_speaking_clip.mp4`](../../artifacts/dr_ananya_musetalk_speaking_clip.mp4): H.264 1024×582 at 25 fps with AAC audio, both streams starting at 0 and lasting 3.520 seconds.
+- [`artifacts/dr_arjun_musetalk_male_voice_demo.mp4`](../../artifacts/dr_arjun_musetalk_male_voice_demo.mp4): direct male Kannada Edge TTS → MuseTalk output using Dr. Arjun's supplied reference identity; H.264 1528×1030 at 25 fps with AAC audio. Both tracks start at 0; video is 7.240 s and audio is 7.211 s. TTS plus first generated clip took 126.6 s on this Apple Silicon MPS host. This uses a test phrase, not an AI consultation answer, and was not browser-recorded.
+- [`artifacts/dr_ananya_musetalk_frames.png`](../../artifacts/dr_ananya_musetalk_frames.png): sampled frames showing changing mouth shapes during the generated clip.
+- [`artifacts/dr_ananya_browser_playback.json`](../../artifacts/dr_ananya_browser_playback.json): observed browser video element and backend `video_chunk` event.
+- [`MEDICARE_FRONTEND_FINAL_REPORT.md`](../../MEDICARE_FRONTEND_FINAL_REPORT.md): implementation, measurements and acceptance gaps.
 
-1. `frontend/components/doctor/DoctorVideoCall.tsx` currently generates responses with the local `analyzePatientInput` helper and uses browser speech synthesis; it does not create a backend session or send the question to the AI backend.
-2. Two fixed prerecorded Dr. Ananya MP4s are present in `frontend/public/videos/`, but they are not response-specific model output and are no longer wired into `DoctorVideoCall`.
-3. The component has no connection to the backend's real `video_chunk` events.
-4. The main backend server is not running in the checked environment, and its database, LLM/TTS availability, and MuseTalk worker cannot be exercised here.
-5. `backend/app/services/animator.py` falls back to a still-image-plus-audio MP4 on inference errors. That fallback must be disabled for this acceptance path so it cannot be mistaken for synchronized animation.
+The measured first-chunk latency was about 321 seconds from the patient message reaching the backend to the generated video chunk becoming available. About 53 seconds were model startup and 267 seconds were inference. The run used Apple MPS on an Apple Silicon MacBook Air M5 with 16 GB unified memory. Per-process GPU memory use was not measured. This latency is not suitable for a live conversation.
 
-The separate `services/avatar-engine/app/models/*_adapter.py` files are not executable model integrations: their `generate_*` methods return dictionaries without loading weights, generating frames, or checking audio/video alignment. They must not be described as active models.
+## Model audit
 
-## Host and checkpoint inspection
+| Model | Local state and capability | Licence/runtime notes | Decision |
+|---|---|---|---|
+| MuseTalk | Inference was executed successfully with local checkpoints. Audio-conditioned mouth inpainting generated the speaking clip above. | Upstream code is MIT; separately review dependency and asset terms. The available worker was adapted for Apple MPS. | Selected for this first audio-driven speaking path. Current MPS latency is high. |
+| EchoMimic V3 | Source checkout is present; required pretrained checkpoints are not present. It is an audio-driven diffusion video generator, not currently wired to this working consultation path. | Apache-2.0 source; model/runtime is GPU intensive and upstream setup is CUDA-oriented. | Not executed or selected. |
+| EchoMimic V1 | Source checkout is present; required pretrained checkpoints are not present. It generates audio-conditioned portrait video. | Apache-2.0 source; upstream requirements target CUDA-era GPU environments. Review model/data terms before product deployment. | Not executed or selected. |
+| LivePortrait | Source checkout is present; pretrained checkpoints are absent. It transfers motion from a driving video and does not itself create audio-synchronized mouth motion. | MIT code; upstream notes InsightFace model terms separately. It documents Apple Silicon support. | Not used; listening view currently uses the reference portrait with subtle whole-frame movement. |
+| AniPortrait | Source checkout is present; required trained/base weights are absent. It can render audio-driven portrait motion but is a clip-generation pipeline. | Apache-2.0 code; checkpoints and base models have separate terms; published setup is CUDA-centric. | Not executed or selected. |
 
-- Machine: Apple Silicon macOS, 16 GB unified memory; no NVIDIA GPU/CUDA.
-- Active Python environment: no PyTorch, FastAPI, OpenCV, Diffusers, Transformers, or SoundFile.
-- No model checkpoint files were found in the five checked-out model directories.
-- Existing source code alone is insufficient to reproduce model output. The project does not currently have the required checkpoints or an installed inference environment on this machine.
+The MuseTalk weights used for this run are installed under `services/avatar-engine/models/MuseTalk/models`. The other four checkouts have source code only, without the required pretrained model checkpoints. A source checkout or adapter is not evidence of executable inference.
 
-## Service behavior change
+## Integration notes
 
-The avatar-engine `/health` response no longer advertises a simultaneous ensemble or fabricated FPS/latency. `/animate` now returns HTTP 503, and `/ws/stream` emits an error until a real inference adapter and model files are installed. This makes the current state observable without implying that placeholder outputs are model results.
+- For Dr. Ananya and Dr. Arjun, the consultation WebSocket sends the generated response audio through the MuseTalk worker and emits generated video chunks. The frontend plays the returned MP4, which carries its matching audio. Ananya's Kannada chunk was previously run end to end. Arjun's Kannada TTS-to-MuseTalk path was also run directly using his reference photo. His WebSocket received and persisted a test question, but the configured LLM provider could not connect, so no AI answer was generated for this check.
+- The frontend no longer applies CSS mouth animation or reports fabricated FPS, 3D readiness, model readiness, or voice-preview results.
+- During listening, the original portrait remains visible with small whole-frame pose/breathing movement. There is no model-generated blink or eye motion yet.
+- Backend TTS voice selection uses doctor gender: Dr. Ananya receives female voices and Dr. Arjun receives male voices for the configured Kannada/English paths. The frontend now sends both doctors' consultation turns to that backend model path. Ananya's AI response clip was previously browser-played. Arjun's separate model demo is verified as a file, but his AI-response browser playback remains unverified.
+- The complete response queue/turn, microphone capture, English browser animation, interruption, and return-to-listening cycle remain unverified.
 
-## Official references consulted
+## Upstream references
 
-- [MuseTalk repository and licence/setup notes](https://github.com/TMElyralab/MuseTalk)
-- [EchoMimic V3 repository and GPU notes](https://github.com/antgroup/echomimic_v3)
-- [EchoMimic repository and tested GPUs](https://github.com/antgroup/echomimic)
-- [LivePortrait repository, macOS setup, and model-weight notes](https://github.com/KlingAIResearch/LivePortrait)
-- [LivePortrait licence and InsightFace caveat](https://github.com/KlingAIResearch/LivePortrait/blob/main/LICENSE)
+- [MuseTalk repository, setup, and licence notes](https://github.com/TMElyralab/MuseTalk)
+- [EchoMimic V3 repository](https://github.com/antgroup/echomimic_v3)
+- [EchoMimic V1 repository and tested GPU notes](https://github.com/antgroup/echomimic)
+- [LivePortrait repository and Apple Silicon notes](https://github.com/KlingAIResearch/LivePortrait)
 - [AniPortrait repository and checkpoint list](https://github.com/Zejun-Yang/AniPortrait)

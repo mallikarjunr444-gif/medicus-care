@@ -26,7 +26,6 @@ import {
   Maximize2,
   Minimize2,
   PhoneCall,
-  Activity,
   HeartPulse,
   Brain,
   Stethoscope,
@@ -40,15 +39,14 @@ import {
   AlertOctagon,
 } from 'lucide-react'
 import { PhotorealisticDigitalHuman } from './PhotorealisticDigitalHuman'
-import { DoctorCanvas3D } from './DoctorCanvas3D'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
 import { useDoctorSpeech } from './useDoctorSpeech'
+import { useConsultationSpeechRecognition } from './useConsultationSpeechRecognition'
 import { useDoctorBackendSession } from './useDoctorBackendSession'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
-import { SpecialistBookingModal, VERIFIED_SPECIALISTS_LOCAL, type Specialist } from './SpecialistBookingModal'
+import { SpecialistBookingModal, type Specialist } from './SpecialistBookingModal'
 import { LanguageSelectionModal, SUPPORTED_LANGUAGES } from './LanguageSelectionModal'
-import { useConnectionManager } from '@/lib/useConnectionManager'
 import {
   analyzePatientInput,
   createInitialSessionMemory,
@@ -82,6 +80,8 @@ interface ChatEntry {
   actionCard?: ActionCardData
 }
 
+type PendingClinicalMeta = Pick<ChatEntry, 'triage' | 'warningSign' | 'actionCard'>
+
 interface DoctorVideoCallProps {
   initialDoctorId?: DoctorId
   onEndConsultation?: () => void
@@ -92,12 +92,11 @@ export function DoctorVideoCall({
   onEndConsultation,
 }: DoctorVideoCallProps) {
   // Doctor & Session State
-  const [doctorId, setDoctorId] = useState<DoctorId>(initialDoctorId)
+  const [doctorId] = useState<DoctorId>(initialDoctorId)
   const [doctorState, setDoctorState] = useState<DoctorState>('idle')
   const [language, setLanguage] = useState<ConsultationLanguage>('kn') // Default to regional Kannada or selected
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(true)
-  const [isCameraOn, setIsCameraOn] = useState(true)
-  const [isMicOn, setIsMicOn] = useState(false)
+  const [isCameraOn, setIsCameraOn] = useState(false)
   const [consultationSeconds, setConsultationSeconds] = useState(0)
   const [inputText, setInputText] = useState('')
   const [activeTriage, setActiveTriage] = useState<TriageLevel>(1)
@@ -107,32 +106,40 @@ export function DoctorVideoCall({
   const [summaryData, setSummaryData] = useState<ConsultationSummaryData | null>(null)
   const [reports, setReports] = useState<MedicalReportItem[]>([])
   const [doctorVideoSrc, setDoctorVideoSrc] = useState<string | null>(null)
+  const pendingClinicalMetaRef = useRef<PendingClinicalMeta | null>(null)
   const doctorVideoActiveRef = useRef(false)
   const doctorVideoQueueRef = useRef<string[]>([])
   const doctorVideoTurnEndedRef = useRef(false)
+  const doctorVideoFailureRef = useRef(false)
 
   // Conversational Session Memory (Prevents repetitive questions & tracks symptoms across turns)
   const sessionMemoryRef = useRef<ClinicalSessionMemory>(
     createInitialSessionMemory('kn', initialDoctorId)
   )
 
-  // Speech Recognition state with continuous watchdog loop
-  const [isListeningSpeech, setIsListeningSpeech] = useState(false)
-  const [avatarEngineMode, setAvatarEngineMode] = useState<'neural' | 'threejs'>('neural')
-  const recognitionRef = useRef<any>(null)
-  const isSpeechActiveRef = useRef(false)
-  const speechWatchdogTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const lastFinalTranscriptRef = useRef<string>('')
+  // Speech input stays enabled across turns, pauses while the doctor speaks,
+  // then resumes automatically after the response video/audio ends.
+  const handleSendMessageRef = useRef<(text?: string) => void>(() => {})
+  const dispatchRecognizedSpeech = useCallback((text: string) => {
+    handleSendMessageRef.current(text)
+  }, [])
+  const voiceInput = useConsultationSpeechRecognition(language, dispatchRecognizedSpeech)
+  const {
+    pause: pauseVoiceInput,
+    resume: resumeVoiceInput,
+    start: startVoiceInput,
+    stop: stopVoiceInput,
+  } = voiceInput
+  const isListeningSpeech = voiceInput.isListening
   const chatScrollRef = useRef<HTMLDivElement>(null)
 
-  const doctor = DOCTORS[doctorId] || DOCTORS.dr_arjun
+  const onDoctorSpeechStateChange = useCallback((state: DoctorState) => {
+    setDoctorState(state)
+    if (state === 'speaking' || state === 'thinking') pauseVoiceInput()
+    if (state === 'listening') resumeVoiceInput()
+  }, [pauseVoiceInput, resumeVoiceInput])
 
-  // Centralized Connection Management Hook
-  const { statusLabel, overallStatus } = useConnectionManager({
-    isCameraOn,
-    isMicListening: isListeningSpeech,
-    isDigitalHumanReady: true,
-  })
+  const doctor = DOCTORS[doctorId] || DOCTORS.dr_arjun
 
   // Doctor Speech Hook (Natural voice synthesis & lip-sync amplitude tracking)
   const {
@@ -147,7 +154,7 @@ export function DoctorVideoCall({
   } = useDoctorSpeech({
     doctorId,
     language,
-    onStateChange: (state) => setDoctorState(state),
+    onStateChange: onDoctorSpeechStateChange,
   })
 
   // Chat conversation history (Only ONE message added per interaction turn)
@@ -161,19 +168,28 @@ export function DoctorVideoCall({
         break
       case 'message':
         if (event.role === 'assistant') {
+          const pendingClinicalMeta = pendingClinicalMetaRef.current
+          const triage = event.triage || pendingClinicalMeta?.triage
           setChatHistory((prev) => [...prev, {
             id: `doc-${Date.now()}`,
             role: 'doctor',
-            speakerName: 'Dr. Ananya',
+            speakerName: DOCTORS[doctorId].name,
             text: event.content,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            triage,
+            warningSign: pendingClinicalMeta?.warningSign,
+            actionCard: pendingClinicalMeta?.actionCard,
           }])
+          if (triage) setActiveTriage(triage)
+          pendingClinicalMetaRef.current = null
           setSubtitles(event.content)
         }
         break
       case 'video_chunk_start':
+        pauseVoiceInput()
         doctorVideoQueueRef.current = []
         doctorVideoTurnEndedRef.current = false
+        doctorVideoFailureRef.current = false
         doctorVideoActiveRef.current = false
         setDoctorVideoSrc(null)
         setDoctorState('thinking')
@@ -189,8 +205,9 @@ export function DoctorVideoCall({
       case 'video_chunk_end':
         doctorVideoTurnEndedRef.current = true
         if (!doctorVideoSrc && doctorVideoQueueRef.current.length === 0) {
-          setDoctorState('listening')
+          setDoctorState(doctorVideoFailureRef.current ? 'error' : 'listening')
           setSubtitles('')
+          resumeVoiceInput()
         }
         break
       case 'interrupted':
@@ -200,27 +217,71 @@ export function DoctorVideoCall({
         setDoctorVideoSrc(null)
         setDoctorState('listening')
         setSubtitles('')
+        resumeVoiceInput()
         break
       case 'error':
+        doctorVideoFailureRef.current = true
         doctorVideoQueueRef.current = []
         doctorVideoActiveRef.current = false
         setDoctorVideoSrc(null)
-        setDoctorState('listening')
+        setDoctorState('error')
+        resumeVoiceInput()
         toast.error(event.message)
         break
       case 'tts_fallback':
         toast(event.message, { icon: '⚠️', duration: 5000 })
         break
       case 'status':
-        if (event.stage === 'llm' || event.stage === 'animation') setDoctorState('thinking')
+        if (event.stage === 'llm' || (event.stage === 'animation' && !doctorVideoActiveRef.current)) {
+          setDoctorState('thinking')
+        }
         break
       case 'transcription':
       case 'pong':
         break
     }
-  }, [setSubtitles])
+  }, [doctorId, doctorVideoSrc, setSubtitles, pauseVoiceInput, resumeVoiceInput])
 
   const doctorBackend = useDoctorBackendSession(handleDoctorBackendEvent)
+  const {
+    sendText: sendTextToBackend,
+    interrupt: interruptBackend,
+  } = doctorBackend
+
+  const interruptDoctor = useCallback(() => {
+    interrupt()
+    if (doctorVideoActiveRef.current || doctorState === 'thinking') {
+      interruptBackend()
+      doctorVideoQueueRef.current = []
+      doctorVideoTurnEndedRef.current = true
+      doctorVideoActiveRef.current = false
+      setDoctorVideoSrc(null)
+      setDoctorState('listening')
+    }
+    resumeVoiceInput()
+  }, [interrupt, interruptBackend, doctorState, resumeVoiceInput])
+
+  const consultationStatus = doctorBackend.status === 'connecting'
+    ? 'Connecting'
+    : doctorBackend.status === 'disconnected'
+      ? 'Disconnected'
+      : doctorState === 'thinking'
+        ? 'Thinking'
+        : doctorState === 'speaking'
+          ? 'Speaking'
+          : doctorState === 'disconnected'
+            ? 'Disconnected'
+      : doctorState === 'error'
+              ? 'Error'
+              : isListeningSpeech
+                ? 'Listening'
+                : voiceInput.isEnabled
+                  ? 'Connecting'
+                  : 'Ready'
+
+  useEffect(() => {
+    if (isListeningSpeech && doctorState === 'idle') setDoctorState('listening')
+  }, [isListeningSpeech, doctorState])
 
   const handleDoctorVideoEnded = useCallback(() => {
     const next = doctorVideoQueueRef.current.shift()
@@ -231,9 +292,23 @@ export function DoctorVideoCall({
       doctorVideoActiveRef.current = false
       setDoctorVideoSrc(null)
       setDoctorState(doctorVideoTurnEndedRef.current ? 'listening' : 'thinking')
-      if (doctorVideoTurnEndedRef.current) setSubtitles('')
+      if (doctorVideoTurnEndedRef.current) {
+        setSubtitles('')
+                resumeVoiceInput()
+      }
     }
-  }, [setSubtitles])
+  }, [setSubtitles, resumeVoiceInput])
+
+  const handleDoctorVideoError = useCallback(() => {
+    doctorVideoFailureRef.current = true
+    doctorVideoQueueRef.current = []
+    doctorVideoTurnEndedRef.current = true
+    doctorVideoActiveRef.current = false
+    setDoctorVideoSrc(null)
+    setDoctorState('error')
+    resumeVoiceInput()
+    toast.error(`${doctor.name}'s generated response video could not be played.`)
+  }, [doctor.name, resumeVoiceInput])
 
   // Auto-scroll chat
   useEffect(() => {
@@ -261,161 +336,22 @@ export function DoctorVideoCall({
     return `${m}:${s}`
   }
 
-  // Speech Recognition with Continuous Listening & Auto-Healing Watchdog Loop
-  useEffect(() => {
-    if (
-      typeof window === 'undefined' ||
-      !('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
-    ) {
+  const toggleMicListening = () => {
+    if (voiceInput.isEnabled) {
+      stopVoiceInput()
+      setDoctorState('idle')
+      toast('Microphone paused', { icon: '🎙️' })
       return
     }
 
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    const recognition = new SpeechRecognition()
-    recognition.continuous = true
-    recognition.interimResults = true
-
-    const bcp47Map: Record<ConsultationLanguage, string> = {
-      kn: 'kn-IN',
-      hi: 'hi-IN',
-      en: 'en-IN',
-      te: 'te-IN',
-      ta: 'ta-IN',
-      ml: 'ml-IN',
-      mr: 'mr-IN',
-      bn: 'bn-IN',
-      gu: 'gu-IN',
-    }
-    recognition.lang = bcp47Map[language] || 'kn-IN'
-
-    recognition.onstart = () => {
-      setIsListeningSpeech(true)
-      setIsMicOn(true)
-      isSpeechActiveRef.current = true
-      if (doctorState !== 'speaking' && doctorState !== 'thinking') {
-        setDoctorState('listening')
-      }
+    if (!voiceInput.isSupported) {
+      toast('Voice input is not supported in this browser. You can type below.', { icon: '🎙️' })
+      return
     }
 
-    recognition.onresult = (event: any) => {
-      let interim = ''
-      let final = ''
-
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          final += event.results[i][0].transcript
-        } else {
-          interim += event.results[i][0].transcript
-        }
-      }
-
-      // Barge-in: If patient starts speaking while doctor speaks, interrupt doctor immediately
-      if ((final || interim.length > 2) && isSpeaking) {
-        interrupt()
-      }
-      if ((final || interim.length > 2) && doctorVideoActiveRef.current) {
-        doctorBackend.interrupt()
-        doctorVideoQueueRef.current = []
-        doctorVideoActiveRef.current = false
-        setDoctorVideoSrc(null)
-        setDoctorState('listening')
-      }
-
-      if (final.trim()) {
-        const cleaned = final.trim()
-        if (cleaned !== lastFinalTranscriptRef.current) {
-          lastFinalTranscriptRef.current = cleaned
-          handleSendMessage(cleaned)
-        }
-      }
-    }
-
-    recognition.onerror = (err: any) => {
-      // Auto-restart if user intends mic to remain on
-      if (err.error === 'no-speech' || err.error === 'network') {
-        if (isSpeechActiveRef.current) {
-          try {
-            recognition.stop()
-          } catch {}
-          setTimeout(() => {
-            if (isSpeechActiveRef.current) {
-              try {
-                recognition.start()
-              } catch {}
-            }
-          }, 300)
-        }
-      } else {
-        setIsListeningSpeech(false)
-      }
-    }
-
-    recognition.onend = () => {
-      // Auto-heal continuous connection unless explicitly turned off
-      if (isSpeechActiveRef.current) {
-        setTimeout(() => {
-          if (isSpeechActiveRef.current) {
-            try {
-              recognition.start()
-            } catch {}
-          }
-        }, 200)
-      } else {
-        setIsListeningSpeech(false)
-        setIsMicOn(false)
-      }
-    }
-
-    recognitionRef.current = recognition
-
-    return () => {
-      isSpeechActiveRef.current = false
-      try {
-        recognition.stop()
-      } catch {}
-    }
-  }, [language, isSpeaking, interrupt, doctorBackend.interrupt])
-
-  const toggleMicListening = () => {
-    if (isListeningSpeech || isSpeechActiveRef.current) {
-      isSpeechActiveRef.current = false
-      try {
-        recognitionRef.current?.stop()
-      } catch {}
-      setIsListeningSpeech(false)
-      setIsMicOn(false)
-      setDoctorState('idle')
-      toast('Microphone muted', { icon: '🎙️' })
-    } else {
-      if (recognitionRef.current) {
-        isSpeechActiveRef.current = true
-        const bcp47Map: Record<ConsultationLanguage, string> = {
-          kn: 'kn-IN',
-          hi: 'hi-IN',
-          en: 'en-IN',
-          te: 'te-IN',
-          ta: 'ta-IN',
-          ml: 'ml-IN',
-          mr: 'mr-IN',
-          bn: 'bn-IN',
-          gu: 'gu-IN',
-        }
-        recognitionRef.current.lang = bcp47Map[language] || 'kn-IN'
-        try {
-          recognitionRef.current.start()
-          setIsMicOn(true)
-          toast.success('Microphone active — speaking to doctor', { icon: '🎙️' })
-        } catch {
-          setIsListeningSpeech(true)
-          setIsMicOn(true)
-        }
-      } else {
-        toast('Speech recognition not supported in this browser. Please type your message.', {
-          icon: '🎙️',
-        })
-      }
-    }
+    startVoiceInput()
+    setDoctorState('listening')
+    toast.success('Microphone active — speak naturally, then pause for a reply.', { icon: '🎙️' })
   }
 
   // Handle patient asking symptoms or speaking naturally
@@ -424,9 +360,16 @@ export function DoctorVideoCall({
       const msg = (customText || inputText).trim()
       if (!msg) return
 
-      // Interrupt ongoing doctor speech if patient starts speaking
-      if (isSpeaking) {
-        interrupt()
+      // Pause recognition during the response so it cannot transcribe the doctor's audio.
+      pauseVoiceInput()
+      if (isSpeaking) interrupt()
+      if (doctorVideoActiveRef.current || doctorState === 'thinking') {
+        interruptBackend()
+        doctorVideoQueueRef.current = []
+        doctorVideoTurnEndedRef.current = true
+        doctorVideoActiveRef.current = false
+        setDoctorVideoSrc(null)
+        setDoctorState('listening')
       }
 
       const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -442,68 +385,51 @@ export function DoctorVideoCall({
       setInputText('')
       setDoctorState('thinking')
 
-      if (doctorId === 'dr_ananya') {
-        if (!doctorBackend.sendText(msg)) {
-          setDoctorState('listening')
-          toast.error('Dr. Ananya is not connected to the AI backend yet. Please reconnect and try again.')
-        }
-        return
-      }
-
       // Process through Context-Aware Medical Consultation Engine with Conversational Memory
       const result = analyzePatientInput(msg, sessionMemoryRef.current)
       sessionMemoryRef.current = result.updatedMemory
       setActiveTriage(result.triage)
-
-      // Fast Immediate Dispatch without artificial lag
-      const doctorEntry: ChatEntry = {
-        id: `doc-${Date.now()}`,
-        role: 'doctor',
-        speakerName: doctor.name,
-        text: result.response,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      pendingClinicalMetaRef.current = {
         triage: result.triage,
         warningSign: result.warningSign,
         actionCard: result.actionCard as ActionCardData | undefined,
       }
-      setChatHistory((prev) => [...prev, doctorEntry])
-      speak(result.response)
+
+      // The backend response is the sole spoken answer. Its actual TTS audio
+      // is passed to the model video generator for both built-in doctors.
+      if (!sendTextToBackend(msg)) {
+        pendingClinicalMetaRef.current = null
+        setDoctorState('disconnected')
+        resumeVoiceInput()
+        toast.error(`${doctor.name} is not connected to the AI backend. Reconnect and try again.`)
+      }
     },
-    [inputText, isSpeaking, interrupt, doctor.name, doctorId, doctorBackend.sendText, speak]
+    [inputText, isSpeaking, interrupt, doctor.name, doctorState, sendTextToBackend, interruptBackend, pauseVoiceInput, resumeVoiceInput]
   )
+
+  useEffect(() => {
+    handleSendMessageRef.current = handleSendMessage
+  }, [handleSendMessage])
 
   // Language Selection Confirmation Handler (First Step Gate)
   const handleLanguageConfirm = (selectedLang: ConsultationLanguage) => {
     setLanguage(selectedLang)
     setIsLanguageModalOpen(false)
     doctorBackend.setLanguage(selectedLang)
-    if (doctorId === 'dr_ananya') {
-      void doctorBackend.connect('dr_ananya', selectedLang).catch((error) => {
-        setDoctorState('disconnected')
-        toast.error(error instanceof Error ? error.message : 'Could not connect to the AI consultation backend.')
-      })
-    }
+    void doctorBackend.connect(doctorId, selectedLang).then(() => {
+      setDoctorState('listening')
+      if (voiceInput.isSupported) startVoiceInput(selectedLang)
+      else toast('This browser does not support voice input. You can type during the consultation.', { icon: '🎙️' })
+    }).catch((error) => {
+      setDoctorState('disconnected')
+      toast.error(error instanceof Error ? error.message : 'Could not connect to the AI consultation backend.')
+    })
 
     // Initialize session memory with selected language
     sessionMemoryRef.current = createInitialSessionMemory(selectedLang, doctorId)
 
-    // Find native greeting for selected language
-    const langConfig =
-      SUPPORTED_LANGUAGES.find((l) => l.code === selectedLang) || SUPPORTED_LANGUAGES[0]
-    const greetingText = langConfig.sampleGreeting[doctorId]
-
-    // Set initial greeting in transcript
-    const initialEntry: ChatEntry = {
-      id: `init-${Date.now()}`,
-      role: 'doctor',
-      speakerName: doctor.name,
-      text: greetingText,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    }
-    setChatHistory([initialEntry])
-
-    if (doctorId === 'dr_ananya') setDoctorState('listening')
-    else speak(greetingText)
+    setChatHistory([])
+    const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === selectedLang) || SUPPORTED_LANGUAGES[0]
     toast.success(`Consultation language set: ${langConfig.label} (${langConfig.nativeName})`, {
       icon: '🌐',
     })
@@ -514,6 +440,12 @@ export function DoctorVideoCall({
     if (newLang === language) return
 
     interrupt()
+    interruptBackend()
+    doctorVideoQueueRef.current = []
+    doctorVideoTurnEndedRef.current = true
+    doctorVideoActiveRef.current = false
+    setDoctorVideoSrc(null)
+    setDoctorState('listening')
     setLanguage(newLang)
 
     // Update session memory language while preserving symptoms & context
@@ -525,124 +457,19 @@ export function DoctorVideoCall({
     const langConfig =
       SUPPORTED_LANGUAGES.find((l) => l.code === newLang) || SUPPORTED_LANGUAGES[0]
 
-    const switchNotificationMap: Record<ConsultationLanguage, string> = {
-      kn: `ಭಾಷೆಯನ್ನು ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ. ನಾನು ನಿಮ್ಮ ಹಿಂದಿನ ಆರೋಗ್ಯ ಮಾಹಿತಿಯನ್ನು ಗಮನದಲ್ಲಿಟ್ಟುಕೊಂಡು ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದುವರಿಸುತ್ತೇನೆ.`,
-      hi: `भाषा को हिन्दी में बदल दिया गया है। मैं आपकी पिछली स्वास्थ्य जानकारी को ध्यान में रखते हुए बातचीत जारी रखूँगा।`,
-      en: `Language switched to English. I have retained your previous symptoms and will continue our consultation in English.`,
-      te: `భాష తెలుగుకు మార్చబడింది. మీ మునుపటి ఆరోగ్య వివరాలను దృష్టిలో ఉంచుకుని సంభాషణ కొనసాగిస్తాను.`,
-      ta: `மொழி தமிழுக்கு மாற்றப்பட்டது. உங்கள் முந்தைய உடல்நல விவரங்களை நினைவில் வைத்து உரையாடலைத் தொடர்கிறேன்.`,
-      ml: `ഭാഷ മലയാളത്തിലേക്ക് മാറ്റി. നിങ്ങളുടെ മുൻ വിവരങ്ങൾ നിലനിർത്തിക്കൊണ്ട് ഞങ്ങൾ തുടരും.`,
-      mr: `भाषा मराठीमध्ये बदलली आहे. मी आपल्या मागील माहितीसह संभाषण सुरू ठेवेन.`,
-      bn: `ভাষা বাংলায় পরিবর্তন করা হয়েছে। আমি পূর্ববর্তী তথ্যের ভিত্তিতে আলোচনা চালিয়ে যাব।`,
-      gu: `ભાષા ગુજરાતીમાં બદલાઈ ગઈ છે. હું તમારી અગાઉની વિગતો સાથે ચર્ચા ચાલુ રાખીશ.`,
+    doctorBackend.setLanguage(newLang)
+    if (voiceInput.isEnabled) {
+      pauseVoiceInput()
+      window.setTimeout(() => resumeVoiceInput(), 150)
     }
-
-    const notice = switchNotificationMap[newLang] || switchNotificationMap.en
-
-    setChatHistory((prev) => [
-      ...prev,
-      {
-        id: `lang-switch-${Date.now()}`,
-        role: 'doctor',
-        speakerName: doctor.name,
-        text: notice,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      },
-    ])
-    if (doctorId === 'dr_ananya') doctorBackend.setLanguage(newLang)
-    else speak(notice)
     toast.success(`Switched language to ${langConfig.nativeName}`, { icon: '🌐' })
-  }
-
-  // Switch doctor identity (Dr. Arjun vs Dr. Ananya)
-  const handleToggleDoctor = (targetDoctorId?: DoctorId) => {
-    const nextDoc: DoctorId = targetDoctorId || (doctorId === 'dr_arjun' ? 'dr_ananya' : 'dr_arjun')
-    if (nextDoc === doctorId) return
-
-    interrupt()
-    doctorVideoQueueRef.current = []
-    doctorVideoActiveRef.current = false
-    setDoctorVideoSrc(null)
-    if (nextDoc === 'dr_ananya') {
-      void doctorBackend.connect('dr_ananya', language).catch((error) => {
-        setDoctorState('disconnected')
-        toast.error(error instanceof Error ? error.message : 'Could not connect to the AI consultation backend.')
-      })
-    } else {
-      doctorBackend.disconnect()
-    }
-    setDoctorId(nextDoc)
-
-    // Update session memory doctorId while preserving symptoms
-    sessionMemoryRef.current = {
-      ...sessionMemoryRef.current,
-      doctorId: nextDoc,
-    }
-
-    const nextDocObj = DOCTORS[nextDoc]
-    const welcomeMessages: Record<ConsultationLanguage, Record<DoctorId, string>> = {
-      kn: {
-        dr_ananya: `ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಅನನ್ಯಾ, ನಿಮ್ಮ ಮಾನಸಿಕ ಕ್ಷೇಮ ಮತ್ತು ಲ್ಯಾಬ್ ತಪಾಸಣೆ ಸಮಾಲೋಚಕಿ. ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳ ವಿವರಗಳನ್ನು ನಾನು ಪಡೆದಿದ್ದೇನೆ. ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?`,
-        dr_arjun: `ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಅರ್ಜುನ್, ನಿಮ್ಮ ಸಾಮಾನ್ಯ ವೈದ್ಯ. ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳ ವಿವರಗಳನ್ನು ನಾನು ಪರಿಶೀಲಿಸಿದ್ದೇನೆ. ಮುಂದಿನ ಆರೋಗ್ಯ ತಪಾಸಣೆ ಮಾಡೋಣ.`,
-      },
-      hi: {
-        dr_ananya: `नमस्ते! मैं डॉ. अनन्या हूँ, आपकी वेलनेस और लैब डायग्नोस्टिक सलाहकार। मैं आपकी पिछली जानकारी से अवगत हूँ। मैं कैसे सहायता करूँ?`,
-        dr_arjun: `नमस्ते! मैं डॉ. अर्जुन हूँ, आपका सामान्य चिकित्सक। मैंने आपके लक्षणों को नोट कर लिया है। चलिए आगे की बात करते हैं।`,
-      },
-      en: {
-        dr_ananya: `Hello! I'm Dr. Ananya, your Wellness & Diagnostic Lab Consultant. I have reviewed your previous symptoms. How can I guide you further?`,
-        dr_arjun: `Hello! I'm Dr. Arjun, your General Physician. I have your reported symptom history in mind. Let us continue your medical evaluation.`,
-      },
-      te: {
-        dr_ananya: `నమస్కారం! నేను డాక్టర్ అనన్య. మీ వివరాలను గమనించాను. నేను మీకు ఎలా సహాయపడగలను?`,
-        dr_arjun: `నమస్కారం! నేను డాక్టర్ అర్జున్. మీ లక్షణాలను సమీక్షించాను. ముందుకు వెళ్దాం.`,
-      },
-      ta: {
-        dr_ananya: `வணக்கம்! நான் டாக்டர் அனன்யா. உங்கள் முந்தைய தகவல்களை பார்த்தேன். நான் எவ்வாறு உதவ முடியும்?`,
-        dr_arjun: `வணக்கம்! நான் டாக்டர் அர்ஜுன். உங்கள் அறிகுறிகளை கவனித்தேன். மருத்துவ பரிசோதனையை தொடர்வோம்.`,
-      },
-      ml: {
-        dr_ananya: `നമസ്കാരം! ഞാൻ ഡോ. അനന്യ. നിങ്ങളുടെ മുൻ വിവരങ്ങൾ ഞാൻ മനസ്സിലാക്കി. ഞാൻ എങ്ങനെ സഹായിക്കണം?`,
-        dr_arjun: `നമസ്കാരം! ഞാൻ ഡോ. അർജുൻ. നിങ്ങളുടെ ലക്ഷണങ്ങൾ ഞാൻ പരിശോധിച്ചു. നമുക്ക് തുടരാം.`,
-      },
-      mr: {
-        dr_ananya: `नमस्कार! मी डॉ. अनन्या. मी आपली माहिती पाहिली आहे. मी कशी मदत करू?`,
-        dr_arjun: `नमस्कार! मी डॉ. अर्जुन. मी आपले लक्षणे तपासली आहेत. आपण चर्चा पुढे सुरू ठेवूया.`,
-      },
-      bn: {
-        dr_ananya: `নমস্কার! আমি ডঃ অনন্যা। আপনার পূর্ববর্তী তথ্য পেয়েছি। আমি কীভাবে সাহায্য করতে পারি?`,
-        dr_arjun: `নমস্কার! আমি ডঃ অর্জুন। আপনার লক্ষণগুলি দেখেছি। চলুন কথা এগিয়ে নিয়ে যাই।`,
-      },
-      gu: {
-        dr_ananya: `નમસ્તે! હું ડૉ. અનન્યા છું. મેં તમારી વિગતો નોંધી છે. હું તમને કેવી રીતે મદદ કરું?`,
-        dr_arjun: `નમસ્તે! હું ડૉ. અર્જુન છું. મેં તમારા લક્ષણો તપાસ્યા છે. ચાલો આગળ વાત કરીએ.`,
-      },
-    }
-
-    const greeting =
-      welcomeMessages[language]?.[nextDoc] || welcomeMessages.en[nextDoc]
-
-    setChatHistory((prev) => [
-      ...prev,
-      {
-        id: `switch-${Date.now()}`,
-        role: 'doctor',
-        speakerName: nextDocObj.name,
-        text: greeting,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      },
-    ])
-    if (nextDoc !== 'dr_ananya') speak(greeting)
-    else setDoctorState('listening')
-    toast.success(
-      `Consultation transferred to ${nextDocObj.formalTitle} (${nextDoc === 'dr_ananya' ? 'Wellness & Labs' : 'General Physician'})`,
-      { icon: '👨‍⚕️' }
-    )
   }
 
   // End consultation and generate structured clinical notes
   const handleEndCall = () => {
-    interrupt()
+    interruptDoctor()
+    stopVoiceInput()
+    setIsCameraOn(false)
     doctorBackend.disconnect()
     doctorVideoQueueRef.current = []
     doctorVideoActiveRef.current = false
@@ -710,7 +537,7 @@ export function DoctorVideoCall({
   }
 
   return (
-    <div className="relative w-full h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
+    <div className="relative w-full min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] flex flex-col bg-[#f3f7fa] text-slate-900 overflow-x-hidden font-sans">
       {/* ── 1. PRE-CONSULTATION LANGUAGE SELECTION GATE MODAL ── */}
       <LanguageSelectionModal
         isOpen={isLanguageModalOpen}
@@ -730,14 +557,11 @@ export function DoctorVideoCall({
             {
               id: `apt-${Date.now()}`,
               role: 'doctor',
-              speakerName: doctor.name,
-              text: `Appointment request confirmed with ${details.doctor_name} at ${details.hospital} on ${details.date} (${details.time_slot}). Booking ID: ${details.booking_id}.`,
+              speakerName: 'MediCare',
+              text: `Appointment request submitted for ${details.doctor_name} at ${details.hospital} on ${details.date} (${details.time_slot}). Please contact the clinic to confirm availability. Request ID: ${details.booking_id}.`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ])
-          speak(
-            `Your appointment request with ${details.doctor_name} has been prepared. Please arrive 15 minutes prior to your consultation slot.`
-          )
         }}
       />
 
@@ -747,21 +571,10 @@ export function DoctorVideoCall({
         onClose={() => setIsReportDrawerOpen(false)}
         onReportAnalyzed={(rep: MedicalReportItem) => {
           setReports((prev) => [...prev, rep])
-          setChatHistory((prev) => [
-            ...prev,
-            {
-              id: `rep-${Date.now()}`,
-              role: 'doctor',
-              speakerName: doctor.name,
-              text: `I've analyzed your report (${rep.fileName}). Parameter breakdown: ${rep.tests
-                .map((t) => `${t.name}: ${t.value} ${t.unit} (${t.status})`)
-                .join(', ')}. Clinical Note: ${rep.aiInterpretation}`,
-              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            },
-          ])
-          speak(
-            `I have examined your diagnostic report for ${rep.fileName}. I analyzed the clinical parameters and summarized the reference ranges. Please discuss these with your attending physician.`
-          )
+        }}
+        onDiscussWithDoctor={(reportText) => {
+          setIsReportDrawerOpen(false)
+          handleSendMessageRef.current(`Please help me understand this laboratory report. Here is the report text: ${reportText}`)
         }}
       />
 
@@ -778,139 +591,91 @@ export function DoctorVideoCall({
       )}
 
       {/* ── TOP NAVIGATION BAR ── */}
-      <header className="h-14 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl px-5 flex items-center justify-between z-30 flex-shrink-0">
+      <header className="h-16 border-b border-slate-200 bg-white px-4 sm:px-6 flex items-center justify-between gap-3 z-30 flex-shrink-0 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
-            <HeartPulse size={19} className="animate-pulse" />
+          <div className="w-10 h-10 rounded-2xl bg-[#123d55] flex items-center justify-center text-white shadow-sm">
+            <HeartPulse size={19} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-sm tracking-tight text-white">
-                Medi<span className="text-sky-400">Care</span>
+              <span className="font-bold text-sm tracking-tight text-slate-900">
+                Medi<span className="text-teal-700">Care</span>
               </span>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/60 font-semibold">
-                Your AI Doctor
-              </span>
-              <span
-                className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
-                  doctorId === 'dr_ananya'
-                    ? 'bg-purple-950/80 text-purple-300 border-purple-800'
-                    : 'bg-sky-950/80 text-sky-300 border-sky-800'
-                }`}
-              >
-                {doctorId === 'dr_ananya' ? 'Wellness & Diagnostics' : 'General Physician'}
+              <span className="hidden sm:inline text-[10px] uppercase px-2 py-1 rounded-full bg-teal-50 text-teal-800 border border-teal-100 font-semibold">
+                Care consultation
               </span>
             </div>
-            <span className="text-xs text-slate-400">
-              Consulting with <span className="text-sky-300 font-semibold">{doctor.name}</span> •{' '}
-              <span className="text-slate-400">Chikkamagaluru, KA</span>
+            <span className="text-xs text-slate-500">
+              With <span className="text-slate-800 font-semibold">{doctor.name}</span>
             </span>
           </div>
         </div>
 
-        {/* Central Consultation Telemetry */}
-        <div className="hidden sm:flex items-center gap-3">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300">
-            <Clock size={13} className="text-sky-400" />
+        <div className="hidden sm:flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+            <Clock size={14} className="text-teal-700" />
             <span>{formatTimer(consultationSeconds)}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-emerald-400 font-medium">{statusLabel}</span>
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-700">
+            <span className={`w-2 h-2 rounded-full ${consultationStatus === 'Listening' ? 'bg-emerald-500' : consultationStatus === 'Speaking' ? 'bg-teal-600' : consultationStatus === 'Error' || consultationStatus === 'Disconnected' ? 'bg-rose-500' : consultationStatus === 'Thinking' || consultationStatus === 'Connecting' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+            <span className="font-medium">{consultationStatus}</span>
           </div>
         </div>
 
         {/* Right Controls: Language Selector Dropdown & End Call */}
         <div className="flex items-center gap-2">
           {/* Active Language Pill & Switcher */}
-          <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-xl p-1 text-xs">
-            <Globe size={13} className="text-sky-400 ml-1.5 mr-0.5" />
+          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 text-xs shadow-sm">
+            <Globe size={14} className="text-teal-700 ml-1.5 mr-0.5" />
             <select
               value={language}
               onChange={(e) => handleSwitchLanguage(e.target.value as ConsultationLanguage)}
-              className="bg-transparent text-white font-medium text-xs focus:outline-none cursor-pointer pr-1"
+              aria-label="Consultation language"
+              className="bg-transparent text-slate-800 font-medium text-xs focus:outline-none cursor-pointer pr-1 py-1"
             >
               {SUPPORTED_LANGUAGES.map((l) => (
-                <option key={l.code} value={l.code} className="bg-slate-900 text-white">
+                <option key={l.code} value={l.code} className="bg-white text-slate-900">
                   {l.nativeName} ({l.label})
                 </option>
               ))}
             </select>
           </div>
 
-          {/* End Call Button */}
-          <button
-            onClick={handleEndCall}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition-colors shadow-md ml-1"
-          >
-            <PhoneOff size={14} />
-            <span className="hidden sm:inline">End Call</span>
-          </button>
         </div>
       </header>
 
-      {/* ── MAIN CONSULTATION LAYOUT: 65% VIDEO / 35% SIDEBAR ── */}
-      <div className="relative flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* ── 65% MAIN CONSULTATION AREA: Photorealistic Digital Human Doctor ── */}
-        <section className="relative w-full lg:w-[65%] h-[60vh] lg:h-full flex flex-col bg-slate-950 overflow-hidden">
-          {/* Photorealistic Digital Human Video Viewport with 3D Rig Switcher */}
+      {/* ── MAIN CONSULTATION LAYOUT: DOCTOR-FOCUSED VIDEO + TRANSCRIPT ── */}
+      <div className="relative flex-1 min-h-0 w-full max-w-[1600px] mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-4 overflow-y-auto lg:overflow-hidden">
+        {/* ── MAIN CONSULTATION AREA ── */}
+        <section className="relative w-full lg:flex-[1.75] h-[60vh] min-h-[380px] lg:h-auto lg:min-h-0 flex flex-col bg-[#101b25] overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
+          {/* Doctor video viewport */}
           <div className="relative w-full flex-1 overflow-hidden">
-            {avatarEngineMode === 'neural' ? (
-              <PhotorealisticDigitalHuman
-                doctorId={doctorId}
-                doctorState={doctorState}
-                audioLevel={audioLevel}
-                isMuted={isMuted}
-                subtitles={subtitles}
-                speakingVideoSrc={doctorId === 'dr_ananya' ? doctorVideoSrc : null}
-                onSpeakingVideoEnded={handleDoctorVideoEnded}
-                onStateChange={(st) => setDoctorState(st)}
-                onReconnect={() => setDoctorState('idle')}
-                className="w-full h-full"
-              />
-            ) : (
-              <DoctorCanvas3D
-                doctorId={doctorId}
-                doctorState={doctorState}
-                audioLevel={audioLevel}
-                isMuted={isMuted}
-                onStateChange={(st) => setDoctorState(st)}
-                className="w-full h-full"
-              />
-            )}
-
-            {/* Mode Switcher Pill */}
-            <div className="absolute top-4 left-64 z-20 hidden md:flex items-center gap-1 p-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 shadow-lg">
-              <button
-                onClick={() => setAvatarEngineMode('neural')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                  avatarEngineMode === 'neural'
-                    ? 'bg-sky-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Photorealistic AI
-              </button>
-              <button
-                onClick={() => setAvatarEngineMode('threejs')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                  avatarEngineMode === 'threejs'
-                    ? 'bg-sky-600 text-white shadow'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                WebGL 3D Rig
-              </button>
-            </div>
+            <PhotorealisticDigitalHuman
+              doctorId={doctorId}
+              doctorState={doctorState}
+              isMuted={isMuted}
+              subtitles={subtitles}
+              speakingVideoSrc={doctorVideoSrc}
+              onSpeakingVideoEnded={handleDoctorVideoEnded}
+              onSpeakingVideoError={handleDoctorVideoError}
+              onStateChange={(st) => setDoctorState(st)}
+              onReconnect={() => {
+                void doctorBackend.connect(doctorId, language).then(() => setDoctorState('listening')).catch((error) => {
+                  setDoctorState('disconnected')
+                  toast.error(error instanceof Error ? error.message : 'Could not reconnect to the consultation backend.')
+                })
+              }}
+              className="w-full h-full"
+            />
 
             {/* Floating Patient Camera Window (PiP) */}
             <div className="absolute top-4 right-4 z-20">
               <PatientWebcamPiP
                 isCameraOn={isCameraOn}
-                isMicOn={isMicOn}
+                isMicOn={isListeningSpeech}
                 onToggleCamera={() => setIsCameraOn((prev) => !prev)}
-                onToggleMic={() => setIsMicOn((prev) => !prev)}
+                onToggleMic={toggleMicListening}
               />
             </div>
 
@@ -942,21 +707,10 @@ export function DoctorVideoCall({
           </div>
 
           {/* ── BOTTOM CONSULTATION CONTROLS (Zero dead black space) ── */}
-          <div className="h-16 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between z-20 flex-shrink-0">
-            {/* Left: Triage Status Indicator */}
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  activeTriage === 4
-                    ? 'bg-red-500 animate-ping'
-                    : activeTriage === 3
-                    ? 'bg-amber-400 animate-pulse'
-                    : 'bg-emerald-400'
-                }`}
-              />
-              <span className="text-xs text-slate-300 font-mono hidden sm:inline">
-                Triage Level {activeTriage} • Clinical Screening Active
-              </span>
+          <div className="min-h-[76px] border-t border-slate-700/70 bg-white px-3 sm:px-5 flex items-center justify-between gap-2 z-20 flex-shrink-0">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 min-w-[130px]">
+              <span className={`w-2 h-2 rounded-full ${isListeningSpeech ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+              <span>{isListeningSpeech ? 'Listening to you' : voiceInput.isEnabled ? 'Mic paused for reply' : 'Voice off'}</span>
             </div>
 
             {/* Center: Essential Telemedicine Actions */}
@@ -964,55 +718,60 @@ export function DoctorVideoCall({
               {/* Mic Speech Button */}
               <button
                 onClick={toggleMicListening}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-md ${
-                  isListeningSpeech
-                    ? 'bg-emerald-600 text-white animate-pulse ring-2 ring-emerald-400'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                aria-label={voiceInput.isEnabled ? 'Turn microphone off' : 'Turn microphone on'}
+                aria-pressed={voiceInput.isEnabled}
+                className={`h-12 w-12 sm:w-auto sm:px-4 rounded-2xl text-xs font-semibold flex items-center justify-center sm:justify-start gap-2 transition-all shadow-sm focus-visible:ring-4 focus-visible:ring-teal-100 ${
+                  voiceInput.isEnabled
+                    ? 'bg-teal-700 text-white hover:bg-teal-800'
+                    : 'bg-white border border-slate-300 hover:bg-slate-50 text-slate-700'
                 }`}
-                title="Speak to doctor (Speech-to-Text in selected language)"
+                title="Speak naturally. Pause when you finish and the doctor will reply."
               >
-                {isListeningSpeech ? <Mic size={15} /> : <MicOff size={15} />}
-                <span className="hidden md:inline">
-                  {isListeningSpeech ? 'Listening…' : 'Speak'}
-                </span>
+                {voiceInput.isEnabled ? <Mic size={17} /> : <MicOff size={17} />}
+                <span className="hidden sm:inline">{voiceInput.isEnabled ? (isListeningSpeech ? 'Listening' : 'Mic on') : 'Start speaking'}</span>
               </button>
 
               {/* Camera Toggle */}
               <button
                 onClick={() => setIsCameraOn(!isCameraOn)}
-                className={`p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                aria-label={isCameraOn ? 'Turn camera off' : 'Turn camera on'}
+                className={`h-11 w-11 sm:w-auto sm:px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all border ${
                   isCameraOn
-                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                    : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                    ? 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                    : 'bg-white text-slate-500 border-slate-200'
                 }`}
-                title="Toggle Patient Camera"
+                title={isCameraOn ? 'Turn camera off' : 'Turn camera on'}
               >
                 {isCameraOn ? <Video size={15} /> : <VideoOff size={15} />}
-                <span className="hidden md:inline">{isCameraOn ? 'Cam On' : 'Cam Off'}</span>
+                <span className="hidden sm:inline">{isCameraOn ? 'Cam On' : 'Cam Off'}</span>
               </button>
 
               {/* Speaker Mute */}
               <button
                 onClick={toggleMute}
-                className={`p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                aria-label={isMuted ? 'Unmute doctor' : 'Mute doctor'}
+                aria-pressed={isMuted}
+                className={`h-11 w-11 sm:w-auto sm:px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all border ${
                   isMuted
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                    ? 'bg-amber-50 text-amber-800 border-amber-200'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
                 }`}
                 title={isMuted ? 'Unmute Doctor' : 'Mute Doctor'}
               >
                 {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                <span className="hidden md:inline">{isMuted ? 'Muted' : 'Audio'}</span>
+                <span className="hidden sm:inline">{isMuted ? 'Muted' : 'Audio'}</span>
               </button>
 
               {/* Patient Interrupt Button */}
               <button
-                onClick={interrupt}
-                className="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/50 text-purple-200 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+                onClick={interruptDoctor}
+                disabled={doctorState !== 'speaking' && doctorState !== 'thinking' && !isSpeaking}
+                className="h-11 w-11 sm:w-auto sm:px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 text-xs font-semibold flex items-center justify-center sm:justify-start gap-1.5 transition-all"
                 title="Interrupt doctor politely"
+                aria-label="Interrupt doctor"
               >
-                <Hand size={14} className="text-purple-300" />
-                <span>Interrupt</span>
+                <Hand size={14} className="text-teal-700" />
+                <span className="hidden sm:inline">Interrupt</span>
               </button>
             </div>
 
@@ -1020,100 +779,68 @@ export function DoctorVideoCall({
             <div className="flex items-center gap-2">
               <button
                 onClick={handleEndCall}
-                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all hover:scale-105"
+                className="h-11 w-11 sm:w-auto sm:px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+                aria-label="End call and create summary"
               >
                 <PhoneOff size={14} />
-                <span>End Call &amp; Summary</span>
+                <span className="hidden sm:inline">End Call &amp; Summary</span>
               </button>
             </div>
           </div>
         </section>
 
-        {/* ── 35% RIGHT SIDEBAR: Consultation Transcript, Quick Tools & Specialist Switcher ── */}
-        <aside className="w-full lg:w-[35%] h-[40vh] lg:h-full border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/95 flex flex-col z-20 flex-shrink-0 shadow-2xl backdrop-blur-xl">
-          {/* Sidebar Header with Doctor Switcher */}
-          <div className="p-3.5 border-b border-slate-800/80 bg-slate-950/70 flex flex-wrap items-center justify-between gap-2">
+        {/* ── TRANSCRIPT SIDEBAR ── */}
+        <aside className="w-full lg:w-[390px] xl:w-[420px] h-[38vh] min-h-[270px] lg:h-auto lg:min-h-0 border border-slate-200 bg-white flex flex-col z-20 flex-shrink-0 rounded-3xl shadow-sm overflow-hidden">
+          {/* Transcript Header */}
+          <div className="p-4 border-b border-slate-100 bg-white flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <MessageSquare size={16} className="text-sky-400" />
-              <span className="font-bold text-xs text-white">Consultation Transcript</span>
+              <MessageSquare size={16} className="text-teal-700" />
+              <span className="font-semibold text-sm text-slate-900">Conversation</span>
             </div>
 
-            {/* Doctor Switcher Buttons */}
-            <div className="flex items-center gap-1 bg-slate-900 p-0.5 rounded-xl border border-slate-800">
-              <button
-                onClick={() => handleToggleDoctor('dr_arjun')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                  doctorId === 'dr_arjun'
-                    ? 'bg-sky-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Dr. Arjun
-              </button>
-              <button
-                onClick={() => handleToggleDoctor('dr_ananya')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                  doctorId === 'dr_ananya'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Dr. Ananya
-              </button>
-            </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500">{SUPPORTED_LANGUAGES.find((item) => item.code === language)?.nativeName}</span>
+                <button
+                  type="button"
+                  onClick={() => setIsReportDrawerOpen(true)}
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
+                >
+                  <FileText size={14} className="text-teal-800" />
+                  <span>Report</span>
+                </button>
+              </div>
           </div>
 
-          {/* Quick Clinical Inquiries Carousel */}
-          <div className="px-3.5 py-2.5 border-b border-slate-800 bg-slate-900/60 flex items-center gap-1.5 overflow-x-auto scrollbar-thin">
-            {[
-              {
-                label: language === 'kn' ? '🌡️ ಜ್ವರ ಮತ್ತು ಶೀತ' : '🌡️ Fever & Chills',
-                query:
-                  language === 'kn'
-                    ? 'ನನಗೆ ನೆನ್ನೆಯಿಂದ ಜ್ವರ ಮತ್ತು ನಡುಕ ಇದೆ.'
-                    : 'I have a fever and chills since yesterday.',
-              },
-              {
-                label: language === 'kn' ? '🫁 ಕೆಮ್ಮು (10 ದಿನ)' : '🫁 Cough (10 Days)',
-                query:
-                  language === 'kn'
-                    ? 'ನನಗೆ ಕಳೆದ ಹತ್ತು ದಿನಗಳಿಂದ ಕೆಮ್ಮು ಮತ್ತು ಎದೆ ಕಟ್ಟಿದಂತಿದೆ.'
-                    : 'I have had a persistent cough and chest congestion for ten days.',
-              },
-              {
-                label: language === 'kn' ? '📋 ಲ್ಯಾಬ್ ವರದಿ' : '📋 Lab Report',
-                query:
-                  language === 'kn'
-                    ? 'ನನ್ನ ರಕ್ತ ತಪಾಸಣೆ ವರದಿಯನ್ನು ವಿಶ್ಲೇಷಿಸಲು ಬಯಸುತ್ತೇನೆ.'
-                    : 'I would like to analyze my CBC and blood test report.',
-              },
-              {
-                label: language === 'kn' ? '🧘 ಉಸಿರಾಟದ ವ್ಯಾಯಾಮ' : '🧘 4-4-4 Breathing',
-                query:
-                  language === 'kn'
-                    ? 'ನನಗೆ ಆತಂಕವಿದೆ, ಶಾಂತಗೊಳಿಸುವ ಉಸಿರಾಟದ ವ್ಯಾಯಾಮ ತಿಳಿಸಿ.'
-                    : 'I feel anxious and overwhelmed, please guide me through breathing exercises.',
-              },
-              {
-                label: language === 'kn' ? '🏥 ತಜ್ಞ ವೈದ್ಯರು' : '🏥 Specialists (CKM)',
-                query:
-                  language === 'kn'
-                    ? 'ಚಿಕ್ಕಮಗಳೂರು ಜಿಲ್ಲೆಯ ತಜ್ಞ ವೈದ್ಯರನ್ನು ಹುಡುಕಿ.'
-                    : 'Find specialist doctors in Chikkamagaluru district.',
-              },
-            ].map((shortcut, i) => (
-              <button
-                key={i}
-                onClick={() => handleSendMessage(shortcut.query)}
-                className="whitespace-nowrap px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-[11px] text-slate-300 hover:text-white transition-colors flex-shrink-0"
-              >
-                {shortcut.label}
-              </button>
-            ))}
+          <div className="px-4 py-3 border-b border-slate-100 bg-[#f7fafb]" aria-live="polite" role="status">
+            {voiceInput.error ? (
+              <p className="text-xs leading-relaxed text-rose-700">{voiceInput.error}</p>
+            ) : voiceInput.transcript ? (
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-teal-800 mb-1">I heard</p>
+                <p className="text-sm text-slate-700 leading-relaxed">{voiceInput.transcript}</p>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500">
+                {isListeningSpeech
+                  ? 'Listening. Say what is bothering you, then pause for a reply.'
+                  : voiceInput.isEnabled
+                    ? 'Your microphone will resume after the doctor finishes.'
+                    : 'Turn on the microphone to talk, or type a message below.'}
+              </p>
+            )}
           </div>
 
           {/* Transcript Messages List */}
-          <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+          <div ref={chatScrollRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm">
+            {chatHistory.length === 0 && (
+              <div className="h-full min-h-[120px] flex flex-col items-center justify-center text-center px-5">
+                <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-800 flex items-center justify-center mb-3">
+                  <HeartPulse size={20} />
+                </div>
+                <p className="text-sm font-semibold text-slate-800">Start with what brought you in</p>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">Your words will appear here, followed by the doctor’s response.</p>
+              </div>
+            )}
             {chatHistory.map((item) => (
               <div
                 key={item.id}
@@ -1121,20 +848,31 @@ export function DoctorVideoCall({
                   item.role === 'patient' ? 'items-end' : 'items-start'
                 } animate-fade-in`}
               >
-                <div className="flex items-center gap-1.5 mb-1 text-[10px] text-slate-500">
-                  <span className="font-semibold text-slate-400">{item.speakerName}</span>
+                <div className="flex items-center gap-1.5 mb-1.5 text-[10px] text-slate-400">
+                  <span className="font-semibold text-slate-600">{item.speakerName}</span>
                   <span>•</span>
                   <span>{item.time}</span>
                 </div>
 
                 <div
-                  className={`max-w-[90%] p-3.5 rounded-2xl text-xs leading-relaxed ${
+                    className={`max-w-[94%] p-3.5 rounded-2xl text-sm leading-relaxed ${
                     item.role === 'patient'
-                      ? 'bg-sky-600 text-white rounded-br-xs shadow-md'
-                      : 'glass-card text-slate-200 border border-slate-700/70 rounded-bl-xs shadow-md'
+                      ? 'bg-[#123d55] text-white rounded-br-md shadow-sm'
+                      : 'bg-[#f2f7f7] text-slate-800 border border-slate-100 rounded-bl-md'
                   }`}
                 >
                   <p>{item.text}</p>
+
+                  {item.actionCard?.type === 'report_analysis' && (
+                    <button
+                      type="button"
+                      onClick={() => setIsReportDrawerOpen(true)}
+                      className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[#123d55] px-3 text-xs font-semibold text-white hover:bg-[#0d3145]"
+                    >
+                      <FileText size={14} />
+                      Review report text
+                    </button>
+                  )}
 
                   {/* Specialist Referral Card */}
                   {item.actionCard?.type === 'specialist_recommendation' && (
@@ -1188,13 +926,13 @@ export function DoctorVideoCall({
           </div>
 
           {/* Transcript Text Input Area */}
-          <div className="p-3 border-t border-slate-800 bg-slate-950/80">
+          <div className="p-4 border-t border-slate-100 bg-white">
             <form
               onSubmit={(e) => {
                 e.preventDefault()
                 handleSendMessage()
               }}
-              className="flex items-center gap-2"
+                className="flex items-center gap-2"
             >
               <input
                 type="text"
@@ -1207,21 +945,23 @@ export function DoctorVideoCall({
                     ? `${doctor.name} से अपनी परेशानी साझा करें…`
                     : `Speak or type symptoms for ${doctor.name}…`
                 }
-                className="flex-1 bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
+                aria-label="Type a message for the doctor"
+                className="flex-1 min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-teal-600 transition-colors"
               />
               <button
                 type="submit"
                 disabled={!inputText.trim()}
-                className="p-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+                className="h-11 w-11 rounded-xl bg-teal-700 hover:bg-teal-800 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center justify-center"
                 title="Send message"
+                aria-label="Send message"
               >
                 <Send size={15} />
               </button>
             </form>
 
-            <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-2 px-1">
-              <span>District Hospital Chikkamagaluru Network</span>
-              <span>Emergency: Dial 112 / 108</span>
+            <div className="flex items-center justify-between gap-2 text-[10px] text-slate-400 mt-2 px-1">
+              <span>Health information only</span>
+              <a href="tel:112" className="text-rose-700 font-medium hover:underline">Emergency: 112</a>
             </div>
           </div>
         </aside>

@@ -4,16 +4,13 @@ import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { AvatarUpload } from '@/components/AvatarUpload'
 import { AvatarList } from '@/components/AvatarList'
-import { ConnectionStatus } from '@/components/ui/ConnectionStatus'
 import { CursorGlow } from '@/components/interactive/CursorGlow'
-import { MagneticButton } from '@/components/interactive/MagneticButton'
 import { api } from '@/lib/api'
 import { toast } from 'react-hot-toast'
 import { useStore } from '@/store/useStore'
 import type { DoctorId } from '@/lib/doctorTypes'
 import {
   HeartPulse,
-  Video,
   Camera,
   MessageCircle,
   Mic2,
@@ -40,20 +37,7 @@ import {
   Dna,
 } from 'lucide-react'
 
-// Dynamic imports for 3D and interactive components
-const Hero3DScene = dynamic(
-  () => import('@/components/3d/Hero3DScene').then((m) => m.Hero3DScene),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-[580px] lg:h-[680px] rounded-3xl glass-panel flex flex-col items-center justify-center text-slate-400">
-        <div className="w-12 h-12 rounded-full border-2 border-sky-500/20 border-t-sky-400 animate-spin mb-4" />
-        <span className="text-sm font-mono text-sky-300">Initializing WebGL 3D Holographic Core…</span>
-      </div>
-    ),
-  }
-)
-
+// Dynamic imports for the existing clinical tools.
 const AnatomyViewer3D = dynamic(
   () => import('@/components/3d/AnatomyViewer3D').then((m) => m.AnatomyViewer3D),
   {
@@ -66,7 +50,7 @@ const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
   {
     ssr: false,
-    loading: () => <PanelLoader label="Loading 3D Doctor Studio…" />,
+    loading: () => <PanelLoader label="Loading doctor profiles…" />,
   }
 )
 
@@ -98,7 +82,7 @@ const DoctorVideoCall = dynamic(
   () => import('@/components/doctor/DoctorVideoCall').then((m) => m.DoctorVideoCall),
   {
     ssr: false,
-    loading: () => <PanelLoader label="Initializing 3D Telemedicine Consultation Suite…" />,
+    loading: () => <PanelLoader label="Preparing your consultation…" />,
   }
 )
 
@@ -139,16 +123,16 @@ function PanelLoader({ label }: { label: string }) {
 const MEDICARE_FEATURES = [
   {
     icon: Stethoscope,
-    title: 'Photorealistic 3D Human Doctors',
+    title: 'Doctor Consultations',
     description:
-      'Interact with Dr. Arjun or Dr. Ananya in a live WebGL 3D video-consultation room with natural gestures, micro-expressions, and viseme lip-sync.',
+      'Choose Dr. Arjun or Dr. Ananya, then share symptoms by voice or text in your selected language.',
     color: 'bg-sky-500/10 text-sky-400 border border-sky-500/20',
   },
   {
     icon: AudioWaveform,
-    title: 'Real-Time Speech & Lip-Sync',
+    title: 'Voice & Text Conversations',
     description:
-      'Speech recognition paired with phoneme kinematics, voice activity detection, and instant interruption recovery within <250ms.',
+      'Use speech recognition, doctor audio, subtitles, and interruption controls during supported consultations.',
     color: 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20',
   },
   {
@@ -167,9 +151,9 @@ const MEDICARE_FEATURES = [
   },
   {
     icon: FileCheck,
-    title: 'Medical Document Intelligence',
+    title: 'Laboratory Report Review',
     description:
-      'Upload blood tests, CBC, lipid profiles, and thyroid panels with automated test extraction and physician explanation.',
+      'Paste report text for preliminary reference guidance, then discuss the original results with a qualified clinician.',
     color: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
   },
   {
@@ -179,14 +163,6 @@ const MEDICARE_FEATURES = [
       'Empathetic stress management, guided breathing exercises, and supportive wellness triage for whole-body physiological equilibrium.',
     color: 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
   },
-]
-
-const STATS = [
-  { value: '2', label: 'Selectable 3D Doctors' },
-  { value: '3+', label: 'Languages (EN, KN, HI)' },
-  { value: '<250ms', label: 'Interactive Voice Latency' },
-  { value: 'Level 1-4', label: 'Clinical Safety Engine' },
-  { value: '60 FPS', label: 'WebGL 3D Rendering' },
 ]
 
 type View = 'home' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings' | 'admin'
@@ -249,7 +225,7 @@ export default function Home() {
 
   const navItems: { id: View; icon: typeof HeartPulse; label: string; badge?: string }[] = [
     { id: 'home', icon: Sparkles, label: 'Home' },
-    { id: 'consultation', icon: HeartPulse, label: '3D Consultation', badge: '3D' },
+    { id: 'consultation', icon: HeartPulse, label: 'Consultation' },
     { id: 'avatars', icon: Camera, label: 'Avatar Studio' },
     { id: 'voice', icon: Mic2, label: 'Voice' },
     { id: 'history', icon: History, label: 'History' },
@@ -258,13 +234,13 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-sky-500/30 selection:text-white">
+    <div className="min-h-screen overflow-x-hidden bg-slate-950 text-slate-100 flex flex-col selection:bg-sky-500/30 selection:text-white">
       {/* Dynamic Ambient Cursor Glow */}
       <CursorGlow />
 
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-slate-950/85 backdrop-blur-2xl border-b border-slate-800/80 shadow-md">
-        <div className="h-full mx-auto max-w-7xl px-6 flex items-center justify-between">
+        <div className="h-full mx-auto max-w-7xl px-3 sm:px-6 flex items-center justify-between gap-2 min-w-0">
           <div
             onClick={() => setView('home')}
             className="flex items-center gap-3 cursor-pointer select-none group"
@@ -289,12 +265,12 @@ export default function Home() {
                 </a>
               </div>
               <span className="text-[11px] text-slate-400 block leading-tight">
-                Your AI Doctor • 3D Telemedicine
+                Your AI Doctor • Telemedicine
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-900/90 border border-slate-800/80 overflow-x-auto">
+          <div className="min-w-0 max-w-[calc(100vw-150px)] sm:max-w-none flex items-center gap-1 p-1 rounded-xl bg-slate-900/90 border border-slate-800/80 overflow-x-auto">
             {navItems.map(({ id, icon: Icon, label, badge }) => (
               <button
                 key={id}
@@ -307,9 +283,9 @@ export default function Home() {
                 }`}
               >
                 <Icon size={14} className={view === id ? 'text-white' : 'text-sky-400'} />
-                <span>{label}</span>
+                <span className="hidden lg:inline">{label}</span>
                 {badge && (
-                  <span className="text-[9px] px-1 py-0.2 rounded bg-sky-400/20 text-sky-300 font-mono">
+                  <span className="hidden xl:inline text-[9px] px-1 py-0.2 rounded bg-sky-400/20 text-sky-300 font-mono">
                     {badge}
                   </span>
                 )}
@@ -317,30 +293,11 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <ConnectionStatus />
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-emerald-400 hidden sm:flex items-center gap-1.5 font-mono bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-1 rounded-md">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                3D Live Ready
-              </span>
-              <a
-                href="https://medicuslabs.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-md shadow-sky-500/20 transition-all hover:scale-[1.02]"
-                title="Go to Medicus Labs Main Platform"
-              >
-                <span>Medicus Labs</span>
-                <ExternalLink size={13} />
-              </a>
-            </div>
-          </div>
         </div>
       </nav>
 
       <main className="pt-16 flex-1 flex flex-col">
-        {/* ── 3D CONSULTATION VIEW (Flagship Telemedicine Video-Call) ── */}
+        {/* ── DOCTOR CONSULTATION VIEW ── */}
         {view === 'consultation' && (
           <div className="w-full h-full flex-1 animate-fade-in">
             <DoctorVideoCall
@@ -353,7 +310,7 @@ export default function Home() {
         {/* ── HOME VIEW ── */}
         {view === 'home' && (
           <div className="animate-fade-in flex flex-col">
-            {/* ── HERO SECTION: Interactive 3D Holographic Core & Telemedicine Suite ── */}
+            {/* ── CONSULTATION LANDING ── */}
             <section className="relative px-6 pt-12 pb-16 max-w-7xl mx-auto w-full">
               {/* Background Glow Accents */}
               <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-600/10 rounded-full blur-[120px] pointer-events-none" />
@@ -363,66 +320,38 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-pill mb-5 shadow-lg">
                   <Sparkles size={14} className="text-sky-400 animate-spin" />
                   <span className="text-xs text-sky-300 font-semibold uppercase tracking-wider font-mono">
-                    Next-Gen 3D Interactive Telemedicine & Clinical Diagnostics
+                    MediCare • Telemedicine & Clinical Support
                   </span>
                 </div>
 
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold leading-tight mb-5 tracking-tight max-w-5xl text-white">
-                  Interactive Healthcare with{' '}
+                  Talk with{' '}
                   <span className="bg-gradient-to-r from-sky-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-                    Realistic 3D Human Doctors
+                    Dr. Arjun or Dr. Ananya
                   </span>
                 </h1>
 
                 <p className="max-w-2xl text-base sm:text-lg text-slate-300 mb-8 leading-relaxed">
-                  Real-time face-to-face consultations with Dr. Arjun and Dr. Ananya. WebGL 3D
-                  speech kinematics, multilingual diagnosis in English, Kannada, and Hindi, and
-                  automated clinical lab report intelligence.
+                  Share your health concerns by voice or text. Choose Kannada, English, Hindi, or
+                  another supported language before starting your consultation.
                 </p>
 
                 {/* Primary Action Buttons */}
                 <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
-                  <MagneticButton
-                    onClick={() => handleStartDoctorConsultation('dr_arjun')}
-                    className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-sky-500/25 flex items-center gap-2 transition-transform"
+                  <a
+                    href="#doctor-selection"
+                    className="min-h-12 px-6 py-3.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-semibold text-sm shadow-lg shadow-teal-950/20 flex items-center gap-2 transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-200"
                   >
-                    <Video size={17} />
-                    <span>Consult Dr. Arjun (General Physician)</span>
-                    <ChevronRight size={16} />
-                  </MagneticButton>
-
-                  <MagneticButton
-                    onClick={() => handleStartDoctorConsultation('dr_ananya')}
-                    className="px-6 py-3.5 rounded-2xl glass-pill text-white font-bold text-sm shadow-xl hover:bg-slate-800/80 flex items-center gap-2 transition-transform"
-                  >
-                    <HeartPulse size={17} className="text-indigo-400" />
-                    <span>Consult Dr. Ananya (Labs & Wellness)</span>
-                  </MagneticButton>
+                    <span>Choose a doctor</span>
+                    <ChevronRight size={17} />
+                  </a>
+                  <span className="text-xs text-slate-400">Voice and text consultation</span>
                 </div>
               </div>
 
-              {/* ── 3D Interactive WebGL Scene Component Mount ── */}
-              <div className="w-full mb-12">
-                <Hero3DScene onSelectDoctor={handleStartDoctorConsultation} />
-              </div>
-
-              {/* Stats Bar */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                {STATS.map(({ value, label }) => (
-                  <div
-                    key={label}
-                    className="glass-card p-4 rounded-2xl border border-slate-800/80 text-center hover:border-sky-500/30 transition-colors"
-                  >
-                    <div className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-sky-400 font-mono">
-                      {value}
-                    </div>
-                    <div className="text-xs text-slate-400 mt-1 font-mono">{label}</div>
-                  </div>
-                ))}
-              </div>
             </section>
 
-            {/* ── SECTION 2: GSAP Scroll Pinned 3D Doctor Studio Showcase ── */}
+            {/* ── DOCTOR SELECTION ── */}
             <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
 
             {/* ── SECTION 3: Interactive 3D Anatomy & Organ Explorer ── */}
@@ -458,8 +387,7 @@ export default function Home() {
                   Integrated Digital Healthcare Suite
                 </h2>
                 <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
-                  Built to the MediCare specification, combining 3D WebGL avatars, clinical safety
-                  triage, OCR lab extraction, and multilingual speech.
+                  Clinical safety guidance, lab report tools, and multilingual consultation support.
                 </p>
               </div>
 
@@ -514,7 +442,6 @@ export default function Home() {
                 <span>•</span>
                 <span>Direct Access Active (No Barrier)</span>
                 <span>•</span>
-                <span>Three.js WebGL & GSAP Engine</span>
               </div>
             </footer>
           </div>

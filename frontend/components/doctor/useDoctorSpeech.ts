@@ -45,6 +45,13 @@ export function useDoctorSpeech({
     }
   }, [])
 
+  // Keep mute changes effective while a local doctor utterance is already playing.
+  useEffect(() => {
+    if (activeUtteranceRef.current) {
+      activeUtteranceRef.current.volume = isMuted ? 0 : 1
+    }
+  }, [isMuted])
+
   // Resolve matching speech voice
   const getDoctorVoice = useCallback((): SpeechSynthesisVoice | null => {
     if (!synthRef.current) return null

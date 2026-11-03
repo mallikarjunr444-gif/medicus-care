@@ -14,6 +14,7 @@ import json
 import logging
 import mimetypes
 from pathlib import Path
+import struct
 from typing import Any, Dict, Optional, Union
 import urllib.error
 import urllib.request
@@ -22,6 +23,19 @@ import uuid
 from app.config import settings
 
 logger = logging.getLogger(__name__)
+
+
+def _repair_pcm_wav_sizes(data: bytes) -> bytes:
+    """Normalize Gnani's streaming WAV sentinel lengths for browser/ffmpeg tools."""
+    if len(data) < 44 or data[:4] != b"RIFF" or data[8:12] != b"WAVE":
+        return data
+    data_offset = data.find(b"data", 12)
+    if data_offset < 0 or data_offset + 8 > len(data):
+        return data
+    repaired = bytearray(data)
+    struct.pack_into("<I", repaired, 4, len(repaired) - 8)
+    struct.pack_into("<I", repaired, data_offset + 4, len(repaired) - data_offset - 8)
+    return bytes(repaired)
 
 # Map of ISO 639-1 language codes to recommended Gnani voice profiles
 LANGUAGE_VOICE_MAP: Dict[str, str] = {
@@ -138,6 +152,10 @@ class GnaniVoiceService:
                 raise RuntimeError(f"Gnani TTS error {e.code}: {err_body}") from e
 
         audio_bytes = await asyncio.to_thread(_do_tts_request)
+        # The service can return 0xffffffff RIFF/data lengths for streamed PCM.
+        # Those sentinels make libsndfile reject the WAV and ffmpeg report
+        # corrupt packets; replace them with the actual response size.
+        audio_bytes = _repair_pcm_wav_sizes(audio_bytes)
 
         out_file = Path(output_path)
         out_file.parent.mkdir(parents=True, exist_ok=True)

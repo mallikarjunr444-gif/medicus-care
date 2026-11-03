@@ -7,6 +7,7 @@ export type DoctorState =
   | 'speaking'
   | 'interrupted'
   | 'disconnected'
+  | 'error'
   | 'explaining'
   | 'waiting'
   | 'reconnecting'
@@ -50,7 +51,7 @@ export interface MedicalReportItem {
     value: string
     unit: string
     referenceRange: string
-    status: 'normal' | 'low' | 'high' | 'critical'
+    status: 'normal' | 'low' | 'high' | 'critical' | 'review'
   }[]
   aiInterpretation: string
   warningSigns: string[]

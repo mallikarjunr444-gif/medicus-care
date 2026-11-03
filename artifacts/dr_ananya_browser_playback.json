@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-03",
+  "scenario": "Kannada typed question -> backend AI response -> Gnani TTS -> MuseTalk -> consultation browser video",
+  "backend_event": {
+    "type": "video_chunk",
+    "video_url": "http://localhost:8000/uploads/videos/c5a2491c-f984-45fa-b150-9e8ee3e96243/1793726567117_c0.mp4"
+  },
+  "browser_video_element": {
+    "readyState": 4,
+    "paused_at_observation": false,
+    "videoWidth": 1024,
+    "videoHeight": 582,
+    "duration_seconds": 3.52,
+    "currentTime_seconds_at_observation": 0
+  },
+  "clip": "dr_ananya_musetalk_speaking_clip.mp4",
+  "timing_note": "The browser element loaded and was playing at the observation point. The video file has H.264 at 25 fps and AAC audio; both tracks start at 0.000 seconds and last 3.520 seconds. This does not measure phoneme-level lip-sync error."
+}

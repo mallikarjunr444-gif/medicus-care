@@ -921,7 +921,7 @@ export function DoctorCanvas3D({
       {/* Performance & Medical Telemedicine Indicator (Top Right) */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2 text-[11px] font-mono text-slate-400 bg-slate-900/60 backdrop-blur-sm px-2.5 py-1 rounded-md border border-slate-800">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-        <span>WebRTC 60 FPS</span>
+        <span>3D preview</span>
       </div>
     </div>
   )

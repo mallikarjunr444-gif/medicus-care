@@ -216,16 +216,36 @@ class AvatarAnimator:
         # out at 120s on this machine even on GPU.
         model_load_timeout = 300 if self.device == "cuda" else 600
         logger.info(f"Waiting for worker to finish loading models (timeout={model_load_timeout}s)…")
+        # Upstream MuseTalk prints model-load progress to stdout before our
+        # worker emits READY. Treating the first line as the handshake killed
+        # every cold start before model initialization could finish.
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + model_load_timeout
+        startup_output: list[str] = []
         try:
-            ready_line = await asyncio.wait_for(proc.stdout.readline(), timeout=model_load_timeout)
+            while True:
+                remaining = deadline - loop.time()
+                if remaining <= 0:
+                    raise asyncio.TimeoutError
+                ready_line = await asyncio.wait_for(proc.stdout.readline(), timeout=remaining)
+                if not ready_line:
+                    break
+                line = ready_line.decode(errors="replace").strip()
+                if line.startswith("READY"):
+                    break
+                startup_output.append(line)
+                startup_output = startup_output[-30:]
         except asyncio.TimeoutError:
             proc.kill()
             raise RuntimeError("MuseTalk worker timed out while loading models")
 
-        if not ready_line.decode().strip().startswith("READY"):
+        if not ready_line or not ready_line.decode(errors="replace").strip().startswith("READY"):
             proc.kill()
             stderr_out = self._worker_stderr_path.read_text(errors="replace")[-4000:]
-            raise RuntimeError(f"Worker failed to start. stderr (tail):\n{stderr_out}")
+            stdout_out = "\n".join(startup_output[-15:])
+            raise RuntimeError(
+                f"Worker failed to start. stdout (tail):\n{stdout_out}\nstderr (tail):\n{stderr_out}"
+            )
 
         logger.info("MuseTalk worker ready — models loaded")
         self._worker_proc = proc
@@ -265,6 +285,14 @@ class AvatarAnimator:
             infer_timeout = 60 if self.device == "cuda" else 600 if self.device == "mps" else 300
             try:
                 result_line = await asyncio.wait_for(proc.stdout.readline(), timeout=infer_timeout)
+            except asyncio.CancelledError:
+                # The worker is a line-oriented protocol. If a turn is
+                # interrupted while inference is in flight, its eventual
+                # response would otherwise be consumed as the next turn's
+                # result and its temporary audio may already be deleted.
+                proc.kill()
+                self._worker_proc = None
+                raise
             except asyncio.TimeoutError:
                 proc.kill()
                 self._worker_proc = None
@@ -279,6 +307,8 @@ class AvatarAnimator:
 
             result = json.loads(result_line.decode().strip())
             if result["status"] != "ok":
+                detail = result.get("tb") or result.get("msg", "Unknown worker error")
+                logger.error("MuseTalk inference failed:\n%s", detail)
                 raise RuntimeError(result.get("msg", "Unknown worker error"))
 
             return output_path

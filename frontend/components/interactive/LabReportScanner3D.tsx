@@ -189,16 +189,19 @@ export function LabReportScanner3D() {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill mb-3">
           <Scan size={14} className="text-sky-400" />
           <span className="text-xs font-mono font-semibold text-sky-300 uppercase tracking-wider">
-            Medical Document Intelligence
+            Sample Report Preview
           </span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">
-          Holographic Diagnostic Lab Report Scanner
+          Interactive Laboratory Report Example
         </h2>
         <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
-          Upload or preview clinical lab reports with automated parameter extraction, reference
-          range validation, and natural language physician explanations.
+          Explore a visual example using illustrative values. This preview does not upload, scan, or analyze patient reports.
         </p>
+      </div>
+
+      <div role="note" className="mb-6 rounded-xl border border-amber-800/50 bg-amber-950/30 px-4 py-3 text-center text-xs leading-5 text-amber-200">
+        Sample data only. No OCR, clinical verification, or report upload occurs in this preview. To review your own results, open a consultation and use the Report button to submit report text.
       </div>
 
       {/* Preset Switcher Tabs */}
@@ -298,21 +301,21 @@ export function LabReportScanner3D() {
           </div>
         </div>
 
-        {/* Right: Physician AI Diagnostic Interpretation */}
+        {/* Right: example explanation for the selected sample parameter */}
         <div className="lg:col-span-5 glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col gap-5 shadow-2xl relative">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
               <Sparkles size={18} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">Physician Interpretation</h3>
-              <p className="text-xs text-sky-400 font-mono">Dr. Ananya, M.D. • Diagnostic Lab</p>
+              <h3 className="text-sm font-bold text-white">Example guidance</h3>
+              <p className="text-xs text-sky-400 font-mono">Illustrative content • not a clinician review</p>
             </div>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
             <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
-              Active Parameter Analysis
+              Example parameter
             </span>
             <div className="flex items-baseline justify-between mb-2">
               <span className="text-base font-bold text-white">{currentTest.name}</span>
@@ -321,7 +324,7 @@ export function LabReportScanner3D() {
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
-              <span>Standard Range:</span>
+              <span>Example reference range:</span>
               <span className="text-slate-200">
                 {currentTest.referenceRange} {currentTest.unit}
               </span>
@@ -339,8 +342,8 @@ export function LabReportScanner3D() {
 
           <div className="pt-2 border-t border-slate-800/80">
             <div className="flex items-center justify-between text-xs text-slate-400 mb-4">
-              <span>OCR Extraction Integrity</span>
-              <span className="text-emerald-400 font-mono font-bold">100% Certified</span>
+              <span>Preview status</span>
+              <span className="text-amber-300 font-mono font-bold">Sample only</span>
             </div>
             <div className="flex items-center gap-2">
               <a

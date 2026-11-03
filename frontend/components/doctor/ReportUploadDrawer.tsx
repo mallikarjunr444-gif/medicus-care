@@ -1,302 +1,221 @@
 'use client'
 
 import React, { useState } from 'react'
-import {
-  FileUp,
-  FileCheck,
-  AlertCircle,
-  X,
-  FileText,
-  CheckCircle,
-  HelpCircle,
-  ShieldCheck,
-  ChevronRight,
-  TrendingUp,
-  TrendingDown,
-} from 'lucide-react'
+import { AlertCircle, FileCheck2, FileText, Loader2, X } from 'lucide-react'
+import { api } from '@/lib/api'
 import type { MedicalReportItem } from '@/lib/doctorTypes'
 
 interface ReportUploadDrawerProps {
   isOpen: boolean
   onClose: () => void
   onReportAnalyzed: (report: MedicalReportItem) => void
+  onDiscussWithDoctor: (reportText: string) => void
 }
 
-export function ReportUploadDrawer({
-  isOpen,
-  onClose,
-  onReportAnalyzed,
-}: ReportUploadDrawerProps) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+interface ReportAnalysisResponse {
+  report_title: string
+  parameters_analyzed: Array<{
+    parameter: string
+    reference_range: string
+    interpretation: string
+    status: string
+  }>
+  preliminary_explanation: string
+  clinical_limitations: string
+  recommended_doctor_review: string
+}
+
+export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscussWithDoctor }: ReportUploadDrawerProps) {
+  const [reportText, setReportText] = useState('')
+  const [fileName, setFileName] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [analyzedReport, setAnalyzedReport] = useState<MedicalReportItem | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   if (!isOpen) return null
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
     if (!file) return
-
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg']
-    if (!allowedTypes.includes(file.type)) {
-      setErrorMsg('Invalid file format. Please upload PDF, JPG, or PNG files only.')
+    const isTextFile = file.type === 'text/plain' || file.type === 'text/csv' || /\.(txt|csv)$/i.test(file.name)
+    if (!isTextFile) {
+      setErrorMsg('Choose a plain-text or CSV report, or paste the report text below. PDF and image OCR is not connected yet.')
+      event.target.value = ''
       return
     }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setErrorMsg('File exceeds 10MB limit.')
+    if (file.size > 2 * 1024 * 1024) {
+      setErrorMsg('Text report exceeds the 2 MB limit.')
+      event.target.value = ''
       return
     }
-
-    setErrorMsg(null)
-    setSelectedFile(file)
+    try {
+      const text = await file.text()
+      setReportText(text)
+      setFileName(file.name)
+      setErrorMsg(null)
+    } catch {
+      setErrorMsg('Could not read this file. Paste the report text instead.')
+    }
   }
 
-  const handleProcessReport = () => {
-    if (!selectedFile) return
+  const handleAnalyze = async () => {
+    const submittedText = reportText.trim()
+    if (!submittedText) {
+      setErrorMsg('Paste report text or choose a text/CSV file first.')
+      return
+    }
     setIsProcessing(true)
-
-    // Simulate clinical document intelligence extraction (MedGemma / pipeline)
-    setTimeout(() => {
-      const mockReport: MedicalReportItem = {
+    setErrorMsg(null)
+    try {
+      const result = await api.analyzeLaboratoryReport({ report_text: submittedText }) as ReportAnalysisResponse
+      const report: MedicalReportItem = {
         id: `REP-${Date.now()}`,
-        fileName: selectedFile.name,
-        fileSize: `${(selectedFile.size / 1024).toFixed(1)} KB`,
-        fileType: selectedFile.type,
+        fileName: fileName || 'Pasted laboratory report text',
+        fileSize: `${submittedText.length.toLocaleString()} characters reviewed`,
+        fileType: fileName.toLowerCase().endsWith('.csv') ? 'text/csv' : 'text/plain',
         uploadDate: new Date().toLocaleDateString('en-IN', {
           day: '2-digit',
           month: 'short',
           year: 'numeric',
         }),
-        tests: [
-          {
-            name: 'Fasting Blood Glucose',
-            value: '118',
-            unit: 'mg/dL',
-            referenceRange: '70 - 99 mg/dL',
-            status: 'high',
-          },
-          {
-            name: 'HbA1c (Glycated Hemoglobin)',
-            value: '6.2',
-            unit: '%',
-            referenceRange: '< 5.7 % (Normal), 5.7-6.4% (Prediabetes)',
-            status: 'high',
-          },
-          {
-            name: 'Total Cholesterol',
-            value: '185',
-            unit: 'mg/dL',
-            referenceRange: '< 200 mg/dL',
-            status: 'normal',
-          },
-          {
-            name: 'Hemoglobin (Hb)',
-            value: '14.2',
-            unit: 'g/dL',
-            referenceRange: '13.0 - 17.0 g/dL',
-            status: 'normal',
-          },
-          {
-            name: 'Thyroid Stimulating Hormone (TSH)',
-            value: '2.84',
-            unit: 'uIU/mL',
-            referenceRange: '0.40 - 4.20 uIU/mL',
-            status: 'normal',
-          },
-        ],
-        aiInterpretation:
-          'Your fasting glucose (118 mg/dL) and HbA1c (6.2%) are slightly elevated, indicating a prediabetic metabolic pattern. Other basic metabolic parameters, including hemoglobin and thyroid hormone levels, fall within normal reference ranges.',
-        warningSigns: [
-          'Elevated fasting blood sugar requires dietary assessment and confirmation testing.',
-          'Consult a registered physician or endocrinologist before making medication changes.',
-        ],
+        tests: result.parameters_analyzed.map((parameter) => ({
+          name: parameter.parameter,
+          value: parameter.status,
+          unit: '',
+          referenceRange: parameter.reference_range,
+          status: 'review' as const,
+        })),
+        aiInterpretation: result.preliminary_explanation,
+        warningSigns: [result.clinical_limitations, result.recommended_doctor_review],
       }
-
-      setAnalyzedReport(mockReport)
+      setAnalyzedReport(report)
+      onReportAnalyzed(report)
+    } catch (error) {
+      const message = (error as { response?: { data?: { detail?: string } }; message?: string })
+        ?.response?.data?.detail || 'The report review service is unavailable. Your text has not been analyzed.'
+      setErrorMsg(message)
+    } finally {
       setIsProcessing(false)
-      onReportAnalyzed(mockReport)
-    }, 1400)
+    }
+  }
+
+  const reset = () => {
+    setAnalyzedReport(null)
+    setReportText('')
+    setFileName('')
+    setErrorMsg(null)
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-xl max-h-[85vh] overflow-y-auto bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl flex flex-col">
-        {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between p-4 px-5 border-b border-slate-800 bg-slate-900/95">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
-              <FileUp size={16} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-3 backdrop-blur-sm sm:p-6" role="presentation">
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="report-review-title"
+        className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+      >
+        <header className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-800">
+              <FileText size={19} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Medical Report Intelligence</h3>
-              <p className="text-[11px] text-slate-400">Upload lab tests (PDF, JPG, PNG)</p>
+              <h2 id="report-review-title" className="text-base font-semibold text-slate-900">Review a laboratory report</h2>
+              <p className="mt-0.5 text-xs text-slate-500">Submit text to MediCare’s existing report-review endpoint.</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-          >
-            <X size={16} />
+          <button type="button" onClick={onClose} aria-label="Close report review" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900">
+            <X size={18} />
           </button>
-        </div>
+        </header>
 
-        {/* Body */}
-        <div className="p-5 space-y-4 text-xs">
-          {!analyzedReport && (
-            <>
-              {/* Dropzone */}
-              <label className="border-2 border-dashed border-slate-700 hover:border-sky-500/60 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-950/40">
-                <input
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-                <FileText size={32} className="text-slate-500 mb-2" />
-                <span className="text-slate-300 font-medium mb-1">
-                  {selectedFile ? selectedFile.name : 'Click to select or drag a medical document'}
-                </span>
-                <span className="text-slate-500 text-[11px]">
-                  Supports CBC, Blood Sugar, HbA1c, Thyroid, Lipid profile (Max 10MB)
-                </span>
-              </label>
+        <div className="overflow-y-auto p-5 sm:p-6">
+          {!analyzedReport ? (
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-slate-800" htmlFor="report-text">Report text</label>
+              <textarea
+                id="report-text"
+                value={reportText}
+                onChange={(event) => setReportText(event.target.value)}
+                rows={9}
+                maxLength={30000}
+                placeholder="Paste the report text, including values and laboratory reference ranges…"
+                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm leading-6 text-slate-900 placeholder:text-slate-400 focus:border-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-100"
+              />
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                  <FileCheck2 size={16} className="text-sky-800" />
+                  {fileName || 'Choose text/CSV file'}
+                  <input type="file" accept=".txt,.csv,text/plain,text/csv" onChange={handleFileChange} className="sr-only" />
+                </label>
+                <span className="text-xs text-slate-500">{reportText.length.toLocaleString()} / 30,000 characters</span>
+              </div>
+              <p className="text-xs leading-5 text-slate-500">PDF/image upload and OCR are not connected. Only the report text is sent for review; selected files are read locally in this browser.</p>
 
               {errorMsg && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-300 flex items-center gap-2">
-                  <AlertCircle size={15} />
+                <div role="alert" className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
+                  <AlertCircle size={17} className="mt-0.5 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}
 
-              {selectedFile && !isProcessing && (
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    onClick={() => setSelectedFile(null)}
-                    className="px-3 py-1.5 rounded-lg text-slate-400 hover:bg-slate-800"
-                  >
-                    Clear
-                  </button>
-                  <button
-                    onClick={handleProcessReport}
-                    className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-medium flex items-center gap-1.5 transition-colors shadow-md"
-                  >
-                    <span>Analyze Medical Report</span>
-                    <ChevronRight size={14} />
-                  </button>
+              <div className="flex justify-end border-t border-slate-100 pt-4">
+                <button
+                  type="button"
+                  onClick={handleAnalyze}
+                  disabled={isProcessing || !reportText.trim()}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#123d55] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0d3145] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isProcessing && <Loader2 size={16} className="animate-spin" />}
+                  {isProcessing ? 'Reviewing report…' : 'Review report text'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                <div className="flex items-center gap-2 font-semibold text-emerald-900">
+                  <FileCheck2 size={18} />
+                  <span>Report text reviewed</span>
                 </div>
-              )}
-
-              {isProcessing && (
-                <div className="p-6 text-center space-y-2">
-                  <div className="w-8 h-8 rounded-full border-2 border-sky-400/20 border-t-sky-400 animate-spin mx-auto" />
-                  <p className="text-slate-300 font-medium">Extracting medical test parameters...</p>
-                  <p className="text-slate-500 text-[11px]">
-                    Preserving test units, reference ranges, and clinical values
-                  </p>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Analyzed Report View */}
-          {analyzedReport && (
-            <div className="space-y-4">
-              <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FileCheck size={18} className="text-emerald-400" />
-                  <div>
-                    <span className="font-semibold text-slate-200">{analyzedReport.fileName}</span>
-                    <span className="block text-[10px] text-slate-500">
-                      {analyzedReport.fileSize} • Uploaded {analyzedReport.uploadDate}
-                    </span>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                  Extracted
-                </span>
+                <p className="mt-1 text-sm text-emerald-800">{analyzedReport.fileName} · {analyzedReport.fileSize}</p>
               </div>
 
-              {/* Tests Table */}
-              <div className="border border-slate-800 rounded-xl overflow-hidden">
-                <div className="grid grid-cols-12 bg-slate-950 p-2.5 text-[11px] font-mono text-slate-400 border-b border-slate-800">
-                  <span className="col-span-5">Test Parameter</span>
-                  <span className="col-span-3">Result</span>
-                  <span className="col-span-4">Reference Range</span>
+              <div className="overflow-hidden rounded-xl border border-slate-200">
+                <div className="grid grid-cols-12 gap-2 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-600">
+                  <span className="col-span-4">Test parameter</span>
+                  <span className="col-span-3">Review status</span>
+                  <span className="col-span-5">Reference guidance</span>
                 </div>
-                <div className="divide-y divide-slate-800/60">
-                  {analyzedReport.tests.map((t, idx) => (
-                    <div
-                      key={idx}
-                      className="grid grid-cols-12 p-2.5 items-center bg-slate-900/40 text-xs"
-                    >
-                      <span className="col-span-5 font-medium text-slate-200">{t.name}</span>
-                      <div className="col-span-3 flex items-center gap-1 font-mono font-semibold">
-                        <span
-                          className={
-                            t.status === 'high'
-                              ? 'text-amber-400'
-                              : t.status === 'low'
-                              ? 'text-sky-400'
-                              : 'text-emerald-400'
-                          }
-                        >
-                          {t.value} {t.unit}
-                        </span>
-                        {t.status === 'high' && <TrendingUp size={12} className="text-amber-400" />}
-                        {t.status === 'low' && <TrendingDown size={12} className="text-sky-400" />}
-                      </div>
-                      <span className="col-span-4 text-[11px] text-slate-400 font-mono">
-                        {t.referenceRange}
-                      </span>
+                <div className="divide-y divide-slate-100">
+                  {analyzedReport.tests.map((test) => (
+                    <div key={test.name} className="grid grid-cols-12 gap-2 px-3 py-3 text-xs leading-5">
+                      <span className="col-span-4 font-medium text-slate-900">{test.name}</span>
+                      <span className="col-span-3 text-amber-800">{test.value}</span>
+                      <span className="col-span-5 text-slate-600">{test.referenceRange}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Interpretation */}
-              <div className="p-3.5 rounded-xl bg-sky-950/20 border border-sky-900/40 space-y-1">
-                <span className="font-semibold text-sky-300 uppercase font-mono text-[10px]">
-                  AI Doctor Explanation:
-                </span>
-                <p className="text-slate-300 text-xs leading-relaxed">
-                  {analyzedReport.aiInterpretation}
-                </p>
+              <div className="rounded-xl border border-sky-100 bg-sky-50 p-4">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-sky-900">Preliminary guidance</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-700">{analyzedReport.aiInterpretation}</p>
               </div>
 
-              <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 text-amber-200 text-[11px] space-y-1">
-                <span className="font-bold flex items-center gap-1">
-                  <AlertCircle size={12} />
-                  Important Clinical Note:
-                </span>
-                <p>
-                  This AI extraction is for informational understanding only. Always verify reports
-                  with an authorized medical practitioner.
-                </p>
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+                {analyzedReport.warningSigns.map((note) => <p key={note}>{note}</p>)}
+                <p className="mt-2 font-medium">This is not a diagnosis, and the service does not extract or verify numeric results. Review the original report with a qualified clinician.</p>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  onClick={() => {
-                    setAnalyzedReport(null)
-                    setSelectedFile(null)
-                  }}
-                  className="px-3 py-1.5 rounded-lg text-slate-400 hover:bg-slate-800"
-                >
-                  Upload Another
-                </button>
-                <button
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-medium"
-                >
-                  Discuss with AI Doctor
-                </button>
+              <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4">
+                <button type="button" onClick={reset} className="min-h-10 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Review another report</button>
+                <button type="button" onClick={() => { onDiscussWithDoctor(reportText); onClose() }} className="min-h-10 rounded-lg bg-[#123d55] px-4 text-sm font-semibold text-white hover:bg-[#0d3145]">Discuss with doctor</button>
               </div>
             </div>
           )}
         </div>
-      </div>
+      </section>
     </div>
   )
 }

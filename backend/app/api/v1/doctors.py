@@ -1,6 +1,8 @@
 """Built-in doctor identities exposed through the existing avatar session flow."""
 
 import uuid
+import hashlib
+import json
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -46,16 +48,55 @@ async def get_or_create_doctor_avatar(
     avatar_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"medicare:{current_user.id}:{doctor_id}"))
     result = await db.execute(select(Avatar).where(Avatar.id == avatar_id))
     avatar = result.scalar_one_or_none()
-    if avatar:
-        return _avatar_payload(avatar)
 
     image_path: Path = profile["image"]
     if not image_path.is_file():
         raise HTTPException(status_code=503, detail="Doctor reference photo is missing")
 
     key = f"avatars/{avatar_id}/image.jpg"
+    image_bytes = image_path.read_bytes()
+    reference_hash = hashlib.sha256(image_bytes).hexdigest()
+    system_prompt = (
+        f"You are MediCare's AI doctor persona named {profile['name']}, focused on "
+        f"{profile['specialty']}. Be warm, concise, and conversational for speech. "
+        "Use the patient's selected language. Be transparent that you are an AI assistant, "
+        "not a human clinician. Answer questions about your identity only from this profile; "
+        "do not invent a biography, credentials, clinic, or personal experiences. Use provided "
+        "reference excerpts as informational sources, explain uncertainty, and do not diagnose "
+        "or prescribe. Recommend urgent care for emergency symptoms. Reference material may "
+        "be incomplete or outdated, so encourage checking current local clinical guidance."
+    )
+
+    if avatar:
+        metadata = avatar.avatar_metadata or {}
+        if isinstance(metadata, str):
+            try:
+                metadata = json.loads(metadata)
+            except json.JSONDecodeError:
+                metadata = {}
+        metadata = dict(metadata) if isinstance(metadata, dict) else {}
+
+        if avatar.s3_key != key or metadata.get("reference_sha256") != reference_hash:
+            image_url = await storage_service.upload_file(
+                image_bytes, key, content_type="image/jpeg"
+            )
+            avatar.image_url = image_url
+            avatar.thumbnail_url = image_url
+            avatar.s3_key = key
+        avatar.name = profile["name"]
+        avatar.status = "ready"
+        avatar.avatar_metadata = {
+            **metadata,
+            "doctor_id": doctor_id,
+            "reference_sha256": reference_hash,
+            "system_prompt": system_prompt,
+        }
+        await db.commit()
+        await db.refresh(avatar)
+        return _avatar_payload(avatar)
+
     image_url = await storage_service.upload_file(
-        image_path.read_bytes(), key, content_type="image/jpeg"
+        image_bytes, key, content_type="image/jpeg"
     )
     avatar = Avatar(
         id=avatar_id,
@@ -67,12 +108,8 @@ async def get_or_create_doctor_avatar(
         status="ready",
         avatar_metadata={
             "doctor_id": doctor_id,
-            "system_prompt": (
-                f"You are {profile['name']}, a compassionate medical professional specializing in "
-                f"{profile['specialty']}. Give concise, careful responses suitable for speech. "
-                "Use the patient's selected language. Do not claim a diagnosis; explain uncertainty "
-                "and recommend urgent care for emergency symptoms."
-            ),
+            "reference_sha256": reference_hash,
+            "system_prompt": system_prompt,
         },
     )
     db.add(avatar)
