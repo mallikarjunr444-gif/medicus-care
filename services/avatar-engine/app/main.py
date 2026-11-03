@@ -1,6 +1,7 @@
 """
 Medicus Care™ — Avatar Engine FastAPI Service
-Provides REST endpoints and WebSocket channels for streaming real-time AI doctor animation.
+Provides REST endpoints and WebSocket channels for streaming real-time AI doctor animation
+with ALL MODELS RUNNING SIMULTANEOUSLY.
 """
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -10,14 +11,15 @@ from typing import Optional, Dict, Any
 import logging
 
 from app.pipeline.animation_pipeline import avatar_animation_pipeline
+from app.pipeline.simultaneous_orchestrator import simultaneous_orchestrator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("medicus_care.avatar_service")
 
 app = FastAPI(
     title="MediCare Avatar Engine",
-    description="Photorealistic Neural AI Doctor Animation Service",
-    version="1.0.0"
+    description="Photorealistic Neural AI Doctor Animation Service (Simultaneous Multi-Model Ensemble)",
+    version="2.0.0"
 )
 
 app.add_middleware(
@@ -36,7 +38,8 @@ class AnimationRequest(BaseModel):
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("Starting MediCare Avatar Engine...")
+    logger.info("Starting MediCare Simultaneous Multi-Model Avatar Engine...")
+    await simultaneous_orchestrator.initialize_all_simultaneously()
     await avatar_animation_pipeline.initialize()
 
 @app.get("/health")
@@ -44,12 +47,17 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "medicare-avatar-engine",
+        "mode": "SIMULTANEOUS_MULTI_MODEL_ENSEMBLE",
         "doctors": ["dr_arjun", "dr_ananya"],
-        "models": {
-            "idle_animation": "LivePortrait",
-            "lip_sync": "MuseTalk",
-            "diffusion_portrait": "EchoMimicV3"
-        }
+        "active_models_simultaneous": [
+            "LivePortrait (Gaze & Micro-Motion)",
+            "MuseTalk (Real-Time Audio Lip-Sync)",
+            "EchoMimic_V3 (Multimodal Expression Diffusion)",
+            "EchoMimic (Landmark Audio Alignment)",
+            "AniPortrait (Audio-Driven Pose Validation)"
+        ],
+        "fps": 60,
+        "concurrency": "asyncio.gather_parallel"
     }
 
 @app.get("/doctors/{doctor_id}")
@@ -60,9 +68,14 @@ async def get_doctor_profile(doctor_id: str):
 
 @app.post("/animate")
 async def trigger_animation(req: AnimationRequest):
-    result = await avatar_animation_pipeline.render_state_transition(
+    # Process through all models simultaneously
+    profile = avatar_animation_pipeline.get_doctor_profile(req.doctor_id)
+    ref_photo = profile.get("reference_photo", "")
+
+    result = await simultaneous_orchestrator.process_simultaneous_turn(
         doctor_id=req.doctor_id,
-        target_state=req.target_state,
+        doctor_state=req.target_state,
+        reference_image_path=ref_photo,
         audio_path=req.audio_path
     )
     return result
@@ -77,13 +90,14 @@ async def stream_avatar_ws(websocket: WebSocket):
             doc_id = data.get("doctor_id", "dr_arjun")
             state = data.get("state", "listening")
             audio = data.get("audio_path")
+            profile = avatar_animation_pipeline.get_doctor_profile(doc_id)
 
-            response = await avatar_animation_pipeline.render_state_transition(
+            response = await simultaneous_orchestrator.process_simultaneous_turn(
                 doctor_id=doc_id,
-                target_state=state,
+                doctor_state=state,
+                reference_image_path=profile.get("reference_photo", ""),
                 audio_path=audio
             )
             await websocket.send_json(response)
     except WebSocketDisconnect:
         logger.info("Avatar streaming client disconnected.")
-
