@@ -1,0 +1,24 @@
+{
+  "doctor_id": "dr_ananya",
+  "name": "Dr. Ananya, M.D.",
+  "gender": "female",
+  "specialty": "Metabolic Health, Lab Diagnostics & Wellness",
+  "reference_photo": "/Users/malikarjunr/medicus-care/frontend/public/doctor/dr_ananya.jpg",
+  "reference_photo_web": "/doctor/dr_ananya.jpg",
+  "visual_identity": {
+    "coat": "White Medical Coat",
+    "stethoscope": "Cobalt Blue Stethoscope",
+    "hair": "Dark brown sleek shoulder-length hair",
+    "environment": "Modern Diagnostic Consultation Clinic"
+  },
+  "voice_defaults": {
+    "en": "Nalini",
+    "kn": "Nayana",
+    "hi": "Aarohi"
+  },
+  "behavioral_profile": {
+    "listening_posture": "Compassionate attentive posture, gentle reassurance nods",
+    "thinking_gaze": "Diagnostic analytical reflection",
+    "speaking_gestures": "Clear lab report explanation, empathetic reassurance"
+  }
+}
