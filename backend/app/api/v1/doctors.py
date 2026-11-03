@@ -23,7 +23,7 @@ DOCTORS = {
         "specialty": "Metabolic Health, Lab Diagnostics & Wellness",
     },
     "dr_arjun": {
-        "name": "Dr. Arjun",
+        "name": "Dr. Smit",
         "image": REPO_ROOT / "frontend/public/doctor/dr_arjun.jpg",
         "specialty": "General Physician",
     },

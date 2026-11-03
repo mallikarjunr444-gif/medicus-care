@@ -1,6 +1,6 @@
 """
 Medicus Care™ — Interactive Doctor Agent & Controlled Tool Calling Engine
-Connects Dr. Arjun, M.D. and Dr. Ananya, M.D. to controlled healthcare application tools.
+Connects Dr. Smit, M.D. and Dr. Ananya, M.D. to controlled healthcare application tools.
 Requires explicit patient consent before executing sensitive or external actions.
 """
 
@@ -225,7 +225,7 @@ class DoctorAgentOrchestrator:
                 parameters={"target_mode": "mental_wellness", "target_doctor": "dr_ananya"},
                 requires_confirmation=False
             )
-        elif any(k in lower for k in ["switch to general physician", "switch to dr arjun", "switch to physician", "medical doctor"]):
+        elif any(k in lower for k in ["switch to general physician", "switch to dr smit", "switch to physician", "medical doctor"]):
             return DoctorToolCall(
                 tool_name="switch_consultation_mode",
                 parameters={"target_mode": "general_physician", "target_doctor": "dr_arjun"},

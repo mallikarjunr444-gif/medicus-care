@@ -162,7 +162,7 @@ export function DoctorPhotorealisticViewport({
             {/* Base High-Resolution Doctor Image */}
             <img
               src="/doctor/Friendly Doctor in a Modern Consultation Office.png"
-              alt="Dr. Arjun, M.D. - MediCare AI Doctor"
+              alt="Dr. Smit, M.D. - MediCare AI Doctor"
               className="w-full h-full object-cover filter contrast-[1.02] brightness-[1.01]"
               onError={(e) => {
                 // Graceful fallback to root asset path if relative path differs
@@ -242,7 +242,7 @@ export function DoctorPhotorealisticViewport({
           {doctorState === 'speaking' && (
             <>
               <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
-              <span>Dr. Arjun is speaking...</span>
+              <span>Dr. Smit is speaking...</span>
             </>
           )}
           {doctorState === 'listening' && (

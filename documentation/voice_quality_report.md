@@ -47,15 +47,15 @@ Voice processing is evaluated across four core criteria:
 ### Tested Sample Clinical Sentences:
 
 1. **English**:
-   > *"Hello, I am Dr. Arjun from Medicus Care. I notice you've had a mild temperature and body aches. Could you tell me if you have any difficulty breathing or chest heaviness?"*
+   > *"Hello, I am Dr. Smit from Medicus Care. I notice you've had a mild temperature and body aches. Could you tell me if you have any difficulty breathing or chest heaviness?"*
    * *IndicF5 / Edge-TTS Assessment*: Natural pitch inflection on clinical inquiries; authentic, reassuring pause before the safety question.
 
 2. **Kannada (ಕನ್ನಡ)**:
-   > *"ನಮಸ್ಕಾರ, ನಾನು ಡಾ. ಅರ್ಜುನ್, ಮೆಡಿಕಸ್ ಕೇರ್‌ನ ನಿಮ್ಮ AI ವೈದ್ಯ. ನಿಮಗೆ ಎಷ್ಟು ದಿನಗಳಿಂದ ಜ್ವರ ಮತ್ತು ತಲೆನೋವು ಇದೆ ಎಂದು ದಯವಿಟ್ಟು ತಿಳಿಸಿ."*
+   > *"ನಮಸ್ಕಾರ, ನಾನು ಡಾ. ಸ್ಮಿತ್, ಮೆಡಿಕಸ್ ಕೇರ್‌ನ ನಿಮ್ಮ AI ವೈದ್ಯ. ನಿಮಗೆ ಎಷ್ಟು ದಿನಗಳಿಂದ ಜ್ವರ ಮತ್ತು ತಲೆನೋವು ಇದೆ ಎಂದು ದಯವಿಟ್ಟು ತಿಳಿಸಿ."*
    * *IndicF5 Assessment*: Correct retroflex consonant articulation (ಣ, ಳ) and natural interrogative intonation.
 
 3. **Hindi (हिन्दी)**:
-   > *"नमस्ते, मैं डॉ. अर्जुन हूँ। आपकी सेहत का ध्यान रखना हमारी प्राथमिकता है। कृपया बताएं कि आपको यह दर्द कब से महसूस हो रहा है?"*
+   > *"नमस्ते, मैं डॉ. स्मित हूँ। आपकी सेहत का ध्यान रखना हमारी प्राथमिकता है। कृपया बताएं कि आपको यह दर्द कब से महसूस हो रहा है?"*
    * *IndicF5 / Edge-TTS Assessment*: Polite respectful phrasing (*Aapki*, *Bataein*); smooth schwa-deletion handling.
 
 ---
@@ -87,7 +87,7 @@ To provide native Indian phonetics and ultra-low conversational latency across K
   * Medical Vocabulary WER: **6.2% in Kannada**, **5.8% in Hindi**, **4.9% in Indian English**.
 * **TTS Engine**: **Timbre v3.0 / v2.5** (`/api/v1/tts/inference`)
   * Linear PCM WAV @ 24,000 Hz, mono channel, native conversational cadence.
-  * **Dr. Arjun (General Physician)**: Mapped to `Avinash` (Timbre v3.0) / `Deepak` (Hindi) / `Roopesh` (Kannada). Reassuring, deep clinical resonance.
+  * **Dr. Smit (General Physician)**: Mapped to `Avinash` (Timbre v3.0) / `Deepak` (Hindi) / `Roopesh` (Kannada). Reassuring, deep clinical resonance.
   * **Dr. Ananya (Psychologist / Wellness)**: Mapped to `Shivani` (Timbre v3.0) / `Nayana` (Kannada) / `Nalini` (English). Empathetic, warm, gentle acoustic profile.
 
 | Metric | Gnani Timbre TTS | faster-whisper STT | Gnani Prisma STT | Edge-TTS Fallback |

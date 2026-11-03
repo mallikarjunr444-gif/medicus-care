@@ -662,13 +662,13 @@ export function Hero3DScene({ onSelectDoctor }: Hero3DSceneProps) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={selectedDoctorId === 'dr_arjun' ? '/doctor/dr_arjun.jpg' : '/doctor/dr_ananya.jpg'}
-                alt={selectedDoctorId === 'dr_arjun' ? 'Dr. Arjun' : 'Dr. Ananya'}
+                alt={selectedDoctorId === 'dr_arjun' ? 'Dr. Smit' : 'Dr. Ananya'}
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
               <h3 className="text-sm font-bold text-white">
-                {selectedDoctorId === 'dr_arjun' ? 'Dr. Arjun, M.D.' : 'Dr. Ananya, M.D.'}
+                {selectedDoctorId === 'dr_arjun' ? 'Dr. Smit, M.D.' : 'Dr. Ananya, M.D.'}
               </h3>
               <p className="text-xs text-sky-400">
                 {selectedDoctorId === 'dr_arjun' ? 'General Physician & Triage' : 'Diagnostic Lab & Wellness'}

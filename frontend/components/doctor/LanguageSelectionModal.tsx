@@ -21,7 +21,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'ಕನ್ನಡ',
     region: 'Karnataka (ಕರ್ನಾಟಕ)',
     sampleGreeting: {
-      dr_arjun: 'ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಅರ್ಜುನ್. ನಿಮ್ಮ ಆರೋಗ್ಯದ ಬಗ್ಗೆ ಮಾತನಾಡಲು ಬಂದಿದ್ದೇನೆ. ಇಂದು ನಿಮಗೆ ಏನು ತೊಂದರೆಯಾಗುತ್ತಿದೆ?',
+      dr_arjun: 'ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಸ್ಮಿತ್. ನಿಮ್ಮ ಆರೋಗ್ಯದ ಬಗ್ಗೆ ಮಾತನಾಡಲು ಬಂದಿದ್ದೇನೆ. ಇಂದು ನಿಮಗೆ ಏನು ತೊಂದರೆಯಾಗುತ್ತಿದೆ?',
       dr_ananya: 'ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಅನನ್ಯಾ. ನಿಮ್ಮ ಆರೋಗ್ಯ ಮತ್ತು ಕ್ಷೇಮದ ಬಗ್ಗೆ ಮಾತನಾಡಲು ಬಂದಿದ್ದೇನೆ. ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?',
     },
   },
@@ -31,7 +31,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'English',
     region: 'All India & Global',
     sampleGreeting: {
-      dr_arjun: "Hello! I'm Dr. Arjun, your AI physician. I'm here to talk about your health. How can I help you today?",
+      dr_arjun: "Hello! I'm Dr. Smit, your AI physician. I'm here to talk about your health. How can I help you today?",
       dr_ananya: "Hello! I'm Dr. Ananya. I'm here to guide your diagnostic review and wellness. What symptoms are you experiencing?",
     },
   },
@@ -41,7 +41,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'हिन्दी',
     region: 'National (भारत)',
     sampleGreeting: {
-      dr_arjun: 'नमस्ते! मैं डॉ. अर्जुन हूँ। आपके स्वास्थ्य के बारे में बात करने आया हूँ। आज आपको क्या परेशानी हो रही है?',
+      dr_arjun: 'नमस्ते! मैं डॉ. स्मित हूँ। आपके स्वास्थ्य के बारे में बात करने आया हूँ। आज आपको क्या परेशानी हो रही है?',
       dr_ananya: 'नमस्ते! मैं डॉ. अनन्या हूँ। आपकी सेहत और जांच रिपोर्ट की समीक्षा के लिए यहाँ हूँ। आपको क्या समस्या है?',
     },
   },
@@ -51,7 +51,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'తెలుగు',
     region: 'Andhra Pradesh & Telangana',
     sampleGreeting: {
-      dr_arjun: 'నమస్కారం! నేను డాక్టర్ అర్జున్. మీ ఆరోగ్య సమస్య గురించి చర్చించడానికి వచ్చాను. ఈ రోజు మీకు ఏ విధమైన సమస్య ఉంది?',
+      dr_arjun: 'నమస్కారం! నేను డాక్టర్ స్మిత్. మీ ఆరోగ్య సమస్య గురించి చర్చించడానికి వచ్చాను. ఈ రోజు మీకు ఏ విధమైన సమస్య ఉంది?',
       dr_ananya: 'నమస్కారం! నేను డాక్టర్ అనన్య. మీ ఆరోగ్య మరియు వెల్‌నెస్ సమీక్షకు నేను ఇక్కడ ఉన్నాను. మీకు ఎలా సహాయపడగలను?',
     },
   },
@@ -61,7 +61,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'தமிழ்',
     region: 'Tamil Nadu (தமிழ்நாடு)',
     sampleGreeting: {
-      dr_arjun: 'வணக்கம்! நான் டாக்டர் அர்ஜுன். உங்கள் உடல்நலம் பற்றி பேச வந்துள்ளேன். இன்று உங்களுக்கு என்ன பிரச்சனை?',
+      dr_arjun: 'வணக்கம்! நான் டாக்டர் ஸ்மித். உங்கள் உடல்நலம் பற்றி பேச வந்துள்ளேன். இன்று உங்களுக்கு என்ன பிரச்சனை?',
       dr_ananya: 'வணக்கம்! நான் டாக்டர் அனன்யா. உங்கள் ஆரோக்கியம் மற்றும் நல்வாழ்வு பற்றி விவாதிக்க வந்துள்ளேன். உங்களுக்கு என்ன உதவி தேவை?',
     },
   },
@@ -71,7 +71,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'മലയാളം',
     region: 'Kerala (കേരളം)',
     sampleGreeting: {
-      dr_arjun: 'നമസ്കാരം! ഞാൻ ഡോ. അർജുൻ. നിങ്ങളുടെ ആരോഗ്യത്തെക്കുറിച്ച് സംസാരിക്കാൻ വന്നതാണ്. ഇന്ന് നിങ്ങൾക്ക് എന്താണ് ബുദ്ധിമുട്ട്?',
+      dr_arjun: 'നമസ്കാരം! ഞാൻ ഡോ. സ്മിത്ത്. നിങ്ങളുടെ ആരോഗ്യത്തെക്കുറിച്ച് സംസാരിക്കാൻ വന്നതാണ്. ഇന്ന് നിങ്ങൾക്ക് എന്താണ് ബുദ്ധിമുട്ട്?',
       dr_ananya: 'നമസ്കാരം! ഞാൻ ഡോ. അനന്യ. നിങ്ങളുടെ ആരോഗ്യവും ക്ഷേമവും വിലയിരുത്താൻ ഞാൻ ഇവിടെയുണ്ട്. ഞാൻ എങ്ങനെ സഹായിക്കണം?',
     },
   },
@@ -81,7 +81,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'मराठी',
     region: 'Maharashtra (महाराष्ट्र)',
     sampleGreeting: {
-      dr_arjun: 'नमस्कार! मी डॉ. अर्जुन आहे. आपल्या आरोग्याबद्दल चर्चा करण्यासाठी आलो आहे. आज आपल्याला काय त्रास होत आहे?',
+      dr_arjun: 'नमस्कार! मी डॉ. स्मित आहे. आपल्या आरोग्याबद्दल चर्चा करण्यासाठी आलो आहे. आज आपल्याला काय त्रास होत आहे?',
       dr_ananya: 'नमस्कार! मी डॉ. अनन्या आहे. आपल्या आरोग्याची आणि निरोगीपणाची काळजी घेण्यासाठी मी येथे आहे. मी कशी मदत करू?',
     },
   },
@@ -91,7 +91,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'বাংলা',
     region: 'West Bengal & Tripura',
     sampleGreeting: {
-      dr_arjun: 'নমস্কার! আমি ডঃ অর্জুন। আপনার স্বাস্থ্য নিয়ে কথা বলতে এসেছি। আজ আপনার কী সমস্যা হচ্ছে?',
+      dr_arjun: 'নমস্কার! আমি ডঃ স্মিত। আপনার স্বাস্থ্য নিয়ে কথা বলতে এসেছি। আজ আপনার কী সমস্যা হচ্ছে?',
       dr_ananya: 'নমস্কার! আমি ডঃ অনন্যা। আপনার সুস্থতা এবং স্বাস্থ্য পরীক্ষার জন্য আমি এখানে আছি। আমি কীভাবে সাহায্য করতে পারি?',
     },
   },
@@ -101,7 +101,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     nativeName: 'ગુજરાતી',
     region: 'Gujarat (ગુજરાત)',
     sampleGreeting: {
-      dr_arjun: 'નમસ્તે! હું ડૉ. અર્જુન છું. તમારા સ્વાસ્થ્ય વિશે વાત કરવા આવ્યો છું. આજે તમને શું તકલીફ છે?',
+      dr_arjun: 'નમસ્તે! હું ડૉ. સ્મિત છું. તમારા સ્વાસ્થ્ય વિશે વાત કરવા આવ્યો છું. આજે તમને શું તકલીફ છે?',
       dr_ananya: 'નમસ્તે! હું ડૉ. અનન્યા છું. તમારા આરોગ્ય અને સુખાકારીની સમીક્ષા કરવા માટે હું અહીં છું. હું તમને કેવી રીતે મદદ કરી શકું?',
     },
   },

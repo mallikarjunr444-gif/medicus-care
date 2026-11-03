@@ -144,7 +144,7 @@ export function TriageSimulator({ onStartConsultation }: TriageSimulatorProps) {
         bgColor: 'bg-amber-500/15',
         borderColor: 'border-amber-500/40',
         badge: 'Priority Doctor Consultation',
-        action: 'Same-day 3D video-consult with Dr. Arjun or Dr. Ananya',
+        action: 'Same-day 3D video-consult with Dr. Smit or Dr. Ananya',
         recommendation:
           'Moderate-to-high clinical risk. A physician evaluation is strongly advised today to review vitals, prescribe medications, or order confirmatory lab work.',
         isEmergency: false,
@@ -362,7 +362,7 @@ export function TriageSimulator({ onStartConsultation }: TriageSimulatorProps) {
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02]"
               >
                 <Video size={15} />
-                <span>Review with Dr. Arjun</span>
+                <span>Review with Dr. Smit</span>
               </button>
               <button
                 onClick={() => onStartConsultation?.('dr_ananya')}

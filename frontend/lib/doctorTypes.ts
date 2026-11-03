@@ -80,8 +80,8 @@ export interface ConsultationSummaryData {
 export const DOCTORS: Record<DoctorId, DoctorProfile> = {
   dr_arjun: {
     id: 'dr_arjun',
-    name: 'Dr. Arjun',
-    formalTitle: 'Dr. Arjun, M.D.',
+    name: 'Dr. Smit',
+    formalTitle: 'Dr. Smit, M.D.',
     specialty: 'AI General Physician & Health Assistant',
     gender: 'male',
     bio: 'Specialized in primary healthcare triage, symptom assessment, and preventative medical guidance.',

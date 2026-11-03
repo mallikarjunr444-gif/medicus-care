@@ -28,7 +28,7 @@ The design avoids cartoonish graphics, excessive neon, and cluttered AI dashboar
 | :--- | :--- | :--- |
 | `sky-500` | `#0EA5E9` | Primary clinical action, active doctor indicator |
 | `sky-400` | `#38BDF8` | Focus rings, highlighted clinical values, telemetry |
-| `indigo-600`| `#4F46E5` | Secondary brand gradient stop, Dr. Arjun secondary |
+| `indigo-600`| `#4F46E5` | Secondary brand gradient stop, Dr. Smit secondary |
 | `purple-500`| `#A855F7` | Wellness consultation accent, Dr. Ananya badge |
 | `teal-400`  | `#2DD4BF` | Physiological telemetry, breathing animations |
 

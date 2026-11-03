@@ -159,7 +159,7 @@ class TTSService:
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
         # The configured Gnani language defaults are female for English and
-        # Kannada. Keep Dr. Arjun male by selecting a documented free neural
+        # Kannada. Keep Dr. Smit male by selecting a documented free neural
         # voice for those languages rather than silently using that default.
         if voice_gender == "male":
             await self._edge_fallback(text, output_path, language, voice_gender)

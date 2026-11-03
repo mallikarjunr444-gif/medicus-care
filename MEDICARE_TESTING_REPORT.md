@@ -16,7 +16,7 @@
 | **TEST 5** | Patient Interruption | Speak while doctor is talking | Passed: Active utterance cancelled, state transitions to 'interrupted' -> 'listening' |
 | **TEST 6** | Digital Human Lip Sync | Doctor speaks response | Passed: Real-time mouth cavity rendering with oral depth, teeth, and viseme articulation |
 | **TEST 7** | Natural Doctor Actions | Doctor in 'listening' & 'thinking' states | Passed: Sinusoidal 14 bpm respiration, natural 120ms blinks every 3.2s, attentive nods |
-| **TEST 8** | Doctor Switching | Switch Dr. Arjun <-> Dr. Ananya | Passed: Photo reference, voice pitch, credentials, and specialty update while preserving history |
+| **TEST 8** | Doctor Switching | Switch Dr. Smit <-> Dr. Ananya | Passed: Photo reference, voice pitch, credentials, and specialty update while preserving history |
 | **TEST 9** | Conversational Memory | Provide duration, follow up with symptoms | Passed: `ClinicalSessionMemory` retains complaints and avoids repeating questions |
 | **TEST 10** | Error Recovery | Ambient silence / `no-speech` event | Passed: Auto-healing watchdog loop restarts listener within 200ms without freezing UI |
 | **TEST 11** | Full Controls | Camera, Mic, Audio, Summary Report, End Call | Passed: PiP webcam toggle, mute/unmute, End Call modal, and summary PDF export functional |

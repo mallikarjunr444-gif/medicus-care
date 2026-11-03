@@ -48,7 +48,7 @@ class AvatarAnimationPipeline:
         # Fallback profile
         return {
             "doctor_id": doctor_id,
-            "name": "Dr. Arjun, M.D." if doctor_id == "dr_arjun" else "Dr. Ananya, M.D.",
+            "name": "Dr. Smit, M.D." if doctor_id == "dr_arjun" else "Dr. Ananya, M.D.",
             "reference_photo": f"/Users/malikarjunr/medicus-care/frontend/public/doctor/{doctor_id}.jpg"
         }
 

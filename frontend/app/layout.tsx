@@ -11,7 +11,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://care.medicuslabs.a
 const SITE_TITLE = 'Medicus Care — Voice and Text Health Consultations | Medicus Labs™'
 const SITE_DESCRIPTION =
   'Share health concerns by voice or text, review medical reports, and access preliminary triage ' +
-  'guidance with Dr. Arjun or Dr. Ananya in your selected language.'
+  'guidance with Dr. Smit or Dr. Ananya in your selected language.'
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   applicationName: 'Medicus Care',
   keywords: [
-    'Medicus Care', 'Doctor consultation', 'Dr. Arjun', 'Dr. Ananya',
+    'Medicus Care', 'Doctor consultation', 'Dr. Smit', 'Dr. Ananya',
     'telemedicine', 'medical triage', 'symptom checker', 'digital healthcare',
     'multilingual healthcare', 'Kannada doctor', 'Hindi doctor', 'Medicus Labs',
   ],

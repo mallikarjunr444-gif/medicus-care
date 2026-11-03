@@ -401,12 +401,12 @@ export function DoctorCanvas3D({
     headGroup.add(jawGroup)
 
     // ─────────────────────────────────────────────
-    // 7. Hair Styles (Dr. Arjun vs Dr. Ananya)
+    // 7. Hair Styles (Dr. Smit vs Dr. Ananya)
     // ─────────────────────────────────────────────
     const hairGroup = new THREE.Group()
 
     if (isArjun) {
-      // Dr. Arjun: Professional physician modern taper haircut
+      // Dr. Smit: Professional physician modern taper haircut
       const hairTopGeo = new THREE.SphereGeometry(0.25, 24, 24, 0, Math.PI * 2, 0, Math.PI * 0.55)
       hairTopGeo.scale(1.02, 1.16, 1.05)
       const hairTop = new THREE.Mesh(hairTopGeo, hairMat)

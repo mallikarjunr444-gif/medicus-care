@@ -547,7 +547,7 @@ export function DoctorVideoCall({
             className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300 transition-colors shadow-sm"
           >
             <RotateCcw size={12} className="text-sky-400" />
-            <span>Switch to {doctorId === 'dr_arjun' ? 'Dr. Ananya (Wellness)' : 'Dr. Arjun (Physician)'}</span>
+            <span>Switch to {doctorId === 'dr_arjun' ? 'Dr. Ananya (Wellness)' : 'Dr. Smit (Physician)'}</span>
           </button>
         </div>
 

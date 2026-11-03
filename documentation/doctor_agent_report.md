@@ -11,7 +11,7 @@
 
 ## 1. Executive Summary
 
-Medicus Care has been upgraded from a static avatar into a **central interactive AI healthcare assistant** featuring the photorealistic human doctor (Dr. Arjun, M.D.) and mental wellness consultant (Dr. Ananya, M.D.).
+Medicus Care has been upgraded from a static avatar into a **central interactive AI healthcare assistant** featuring the photorealistic human doctor (Dr. Smit, M.D.) and mental wellness consultant (Dr. Ananya, M.D.).
 
 The upgrade integrates:
 * Natural voice dialogue with speech recognition and instant interruption (barge-in).
@@ -31,7 +31,7 @@ The upgrade integrates:
 | **Photorealistic Doctor Visual Identity** | High-resolution portrait of young male doctor with natural curly dark hair, spectacles, stethoscope, white medical coat, and striped shirt in a modern clinical suite. | ✅ **100% Preserved** (`Friendly Doctor in a Modern Consultation Office.png`) |
 | **Physiological Micro-Animation** | WebGL/Canvas viewport (`DoctorPhotorealisticViewport.tsx`) simulating natural eye contact, physiological blinking (2.8–4.5s intervals), sinusoidal breathing (14 breaths/min), and mouth visemes. | ✅ **Active** |
 | **Telemedicine 70/30 Layout** | Desktop 70% doctor video viewport + floating patient webcam PiP, 30% clinical transcript sidebar, and touch-friendly mobile full-screen view. | ✅ **Active** |
-| **Dual Consultation Modes** | Instant mode switching between **AI General Physician (Dr. Arjun)** and **AI Mental Wellness (Dr. Ananya)**. | ✅ **Active** |
+| **Dual Consultation Modes** | Instant mode switching between **AI General Physician (Dr. Smit)** and **AI Mental Wellness (Dr. Ananya)**. | ✅ **Active** |
 | **Dual-Collection RAG Engine** | PostgreSQL (`rag_service.py`) dual collections: 300+ MedQuAD clinical guides and 119 ESConv/CACTUS emotional support protocols. | ✅ **Active** |
 | **Deterministic Safety Triage** | 4-tier triage screener (`safety_validator.py`) with Level 4 Emergency detection, one-touch **112** calling, and autonomous prescription blocking. | ✅ **Active** |
 | **Structured Clinical Notes** | Compliant with PRD Section 20: patient-reported symptoms, differential possibilities, home care steps, and downloadable consultation summaries. | ✅ **Active** |

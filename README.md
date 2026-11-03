@@ -11,7 +11,7 @@
 
 **MediCare** is an advanced, multilingual, AI-powered healthcare consultation platform engineered with two independent clinical intelligence modules:
 
-1. **AI General Physician (Dr. Arjun, M.D.)**: Specializing in primary care symptom triage, duration/severity assessment, differential possibilities, home care hydration, and red-flag identification.
+1. **AI General Physician (Dr. Smit, M.D.)**: Specializing in primary care symptom triage, duration/severity assessment, differential possibilities, home care hydration, and red-flag identification.
 2. **AI Psychologist / Mental Wellness Companion (Dr. Ananya, M.D.)**: Specializing in supportive stress management, guided 4-4-4 box breathing, sleep hygiene, emotional validation, and 24/7 crisis escalation.
 
 Unlike text-only healthcare chatbots or stylized cartoon avatars, MediCare features an **authentic photorealistic human AI doctor** participating in a live video consultation with natural eye contact, physiological blinking (every 2.8–4.5s), sinusoidal breathing (14 breaths/min), attentive listening posture, and audio-synchronized mouth visemes.
@@ -20,9 +20,9 @@ Unlike text-only healthcare chatbots or stylized cartoon avatars, MediCare featu
 
 ## 👩‍⚕️ Meet the MediCare Doctors
 
-| Dr. Arjun — AI General Physician | Dr. Ananya — AI Mental Wellness Companion |
+| Dr. Smit — AI General Physician | Dr. Ananya — AI Mental Wellness Companion |
 |:---:|:---:|
-| <img src="frontend/public/doctor/dr_arjun.jpg" alt="Dr. Arjun, MediCare AI General Physician" width="420"> | <img src="frontend/public/doctor/dr_ananya.jpg" alt="Dr. Ananya, MediCare AI Mental Wellness Companion" width="420"> |
+| <img src="frontend/public/doctor/dr_arjun.jpg" alt="Dr. Smit, MediCare AI General Physician" width="420"> | <img src="frontend/public/doctor/dr_ananya.jpg" alt="Dr. Ananya, MediCare AI Mental Wellness Companion" width="420"> |
 
 These are the reference portraits used for MediCare's doctor experience.
 

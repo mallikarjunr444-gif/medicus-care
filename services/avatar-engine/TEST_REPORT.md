@@ -11,9 +11,9 @@
 - MuseTalk consumed that response audio and the Dr. Ananya reference identity and generated an H.264 clip with AAC audio. Sampled frames show mouth shape changes.
 - The backend delivered a `video_chunk` URL over the consultation WebSocket. The browser's existing doctor `<video>` element loaded and played it (`readyState=4`, 1024×582, 3.52 seconds, not paused at observation).
 - `ffprobe` measured both audio and video starting at 0.000 seconds with 3.520-second duration. Video is 25 fps. This confirms stream container timing, not phoneme-level synchronization accuracy.
-- Actual English and Kannada TTS WAV generation was checked separately for both configured doctor genders: Ananya female, Arjun male. English browser animation was not run.
-- Follow-up Arjun model check: male Kannada Edge TTS successfully drove MuseTalk using the attached Arjun identity. [Generated sample](../../artifacts/dr_arjun_musetalk_male_voice_demo.mp4) is 1528×1030 H.264 at 25 fps; AAC audio starts at 0 and ends 29 ms before video. [Sampled frames](../../artifacts/dr_arjun_musetalk_frames.png) show mouth-shape changes. TTS plus generation took 126.6 seconds on Apple MPS; GPU utilization was not measured. This was a test phrase, not an AI consultation response or browser playback.
-- In the follow-up WebSocket run, the Kannada question was persisted, but the configured LLM provider could not connect. Therefore no Arjun consultation answer reached TTS in that run.
+- Actual English and Kannada TTS WAV generation was checked separately for both configured doctor genders: Ananya female, Smit male. English browser animation was not run.
+- Follow-up Smit model check: male Kannada Edge TTS successfully drove MuseTalk using the attached Smit identity. [Generated sample](../../artifacts/dr_arjun_musetalk_male_voice_demo.mp4) is 1528×1030 H.264 at 25 fps; AAC audio starts at 0 and ends 29 ms before video. [Sampled frames](../../artifacts/dr_arjun_musetalk_frames.png) show mouth-shape changes. TTS plus generation took 126.6 seconds on Apple MPS; GPU utilization was not measured. This was a test phrase, not an AI consultation response or browser playback.
+- In the follow-up WebSocket run, the Kannada question was persisted, but the configured LLM provider could not connect. Therefore no Smit consultation answer reached TTS in that run.
 
 ## Measurements
 
@@ -32,8 +32,8 @@
 | Second patient turn after listening resumes | Not verified. |
 | English conversation and browser lip-sync | Not verified. |
 | Interruption while speaking and cancellation of generation | Not verified. |
-| Dr. Arjun model output from male Kannada TTS | Verified as a generated video file using his reference image. This was a test phrase, not an LLM response. |
-| Dr. Arjun AI-response and browser cycle | Not verified. The LLM provider could not connect during the follow-up WebSocket run. |
+| Dr. Smit model output from male Kannada TTS | Verified as a generated video file using his reference image. This was a test phrase, not an LLM response. |
+| Dr. Smit AI-response and browser cycle | Not verified. The LLM provider could not connect during the follow-up WebSocket run. |
 | End consultation media cleanup | Not verified. |
 | Mobile layout | A 390 px viewport overflow check passed before the final listening-view overlay cleanup. |
 

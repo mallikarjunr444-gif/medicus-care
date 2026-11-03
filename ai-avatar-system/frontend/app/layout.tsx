@@ -39,7 +39,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://care.medicuslabs.a
 const SITE_TITLE = 'Medicus Care — Your AI Doctor | Medicus Labs™'
 const SITE_DESCRIPTION =
   'Interactive real-time healthcare assistance through photorealistic 3D human AI doctors. ' +
-  'Multilingual voice and video-consultations with Dr. Arjun and Dr. Ananya, medical document ' +
+  'Multilingual voice and video-consultations with Dr. Smit and Dr. Ananya, medical document ' +
   'intelligence, and symptom triage.'
 
 export const metadata: Metadata = {
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   applicationName: 'Medicus Care',
   keywords: [
-    'Medicus Care', 'AI Doctor', '3D Doctor Avatar', 'Dr. Arjun', 'Dr. Ananya',
+    'Medicus Care', 'AI Doctor', '3D Doctor Avatar', 'Dr. Smit', 'Dr. Ananya',
     'telemedicine', 'medical triage', 'symptom checker', 'digital healthcare',
     'multilingual healthcare', 'Kannada doctor', 'Hindi doctor', 'Medicus Labs',
   ],

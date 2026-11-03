@@ -82,7 +82,7 @@ const MEDICARE_FEATURES = [
   {
     icon: Stethoscope,
     title: 'Photorealistic 3D Human Doctors',
-    description: 'Interact with Dr. Arjun or Dr. Ananya in a live WebGL 3D video-consultation room with natural gestures and expressions.',
+    description: 'Interact with Dr. Smit or Dr. Ananya in a live WebGL 3D video-consultation room with natural gestures and expressions.',
     color: 'bg-sky-500/10 text-sky-400 border border-sky-500/20',
     glow: 'rgba(56,189,248,0.25)',
   },
@@ -328,7 +328,7 @@ export default function Home() {
 
               {/* 3D Doctor Selection Cards */}
               <div className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 text-left">
-                {/* Doctor 1: Dr. Arjun */}
+                {/* Doctor 1: Dr. Smit */}
                 <div className="relative group p-6 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-sky-500/60 transition-all duration-300 shadow-xl backdrop-blur-md">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -336,7 +336,7 @@ export default function Home() {
                         A
                       </div>
                       <div>
-                        <h3 className="text-base font-bold text-white">Dr. Arjun, M.D.</h3>
+                        <h3 className="text-base font-bold text-white">Dr. Smit, M.D.</h3>
                         <p className="text-xs text-sky-400">AI General Physician</p>
                       </div>
                     </div>
@@ -359,7 +359,7 @@ export default function Home() {
                       className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-md group-hover:translate-x-0.5"
                     >
                       <Video size={14} />
-                      <span>Consult Dr. Arjun</span>
+                      <span>Consult Dr. Smit</span>
                     </button>
                   </div>
                 </div>

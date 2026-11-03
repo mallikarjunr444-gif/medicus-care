@@ -230,7 +230,7 @@ export default function Home() {
                     Care starts with being <span className="text-[#0f7565]">heard.</span>
                   </h1>
                   <p className="mt-5 max-w-2xl text-base leading-7 text-[#536a63] sm:text-lg sm:leading-8">
-                    Share what is on your mind in your own words. Talk with Dr. Arjun or Dr. Ananya by voice or text, in a language that feels comfortable.
+                    Share what is on your mind in your own words. Talk with Dr. Smit or Dr. Ananya by voice or text, in a language that feels comfortable.
                   </p>
                   <div className="mt-7 flex flex-col gap-3 min-[420px]:flex-row">
                     <a href="#doctor-selection" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#0f6257] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b5149] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#acd5c9]">

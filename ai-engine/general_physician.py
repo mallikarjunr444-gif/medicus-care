@@ -73,7 +73,7 @@ class GeneralPhysicianEngine:
         return ConsultationSummary(
             consultation_id=f"MC-{now.strftime('%Y%m%d%H%M')}-{int(now.timestamp()) % 10000}",
             date=now.strftime("%d %B %Y, %I:%M %p"),
-            doctor_name="Dr. Arjun, M.D. (AI Doctor)",
+            doctor_name="Dr. Smit, M.D. (AI Doctor)",
             triage_level=triage_level,
             reported_symptoms=[intake.primary_complaint] + intake.associated_symptoms,
             possible_differential_causes=differentials,

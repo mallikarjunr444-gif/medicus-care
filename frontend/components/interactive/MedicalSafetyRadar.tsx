@@ -70,7 +70,7 @@ const TIERS: TierInfo[] = [
       'Uncontrolled systolic BP > 160 mmHg at rest',
       'Abnormal CBC or lipid panel requiring prescription',
     ],
-    action: 'Priority live 3D video-consultation with Dr. Arjun or Dr. Ananya today.',
+    action: 'Priority live 3D video-consultation with Dr. Smit or Dr. Ananya today.',
   },
   {
     level: 4,

@@ -9,7 +9,7 @@ The backend's MuseTalk path has generated and delivered one genuine Kannada spea
 Evidence:
 
 - [`artifacts/dr_ananya_musetalk_speaking_clip.mp4`](../../artifacts/dr_ananya_musetalk_speaking_clip.mp4): H.264 1024×582 at 25 fps with AAC audio, both streams starting at 0 and lasting 3.520 seconds.
-- [`artifacts/dr_arjun_musetalk_male_voice_demo.mp4`](../../artifacts/dr_arjun_musetalk_male_voice_demo.mp4): direct male Kannada Edge TTS → MuseTalk output using Dr. Arjun's supplied reference identity; H.264 1528×1030 at 25 fps with AAC audio. Both tracks start at 0; video is 7.240 s and audio is 7.211 s. TTS plus first generated clip took 126.6 s on this Apple Silicon MPS host. This uses a test phrase, not an AI consultation answer, and was not browser-recorded.
+- [`artifacts/dr_arjun_musetalk_male_voice_demo.mp4`](../../artifacts/dr_arjun_musetalk_male_voice_demo.mp4): direct male Kannada Edge TTS → MuseTalk output using Dr. Smit's supplied reference identity; H.264 1528×1030 at 25 fps with AAC audio. Both tracks start at 0; video is 7.240 s and audio is 7.211 s. TTS plus first generated clip took 126.6 s on this Apple Silicon MPS host. This uses a test phrase, not an AI consultation answer, and was not browser-recorded.
 - [`artifacts/dr_ananya_musetalk_frames.png`](../../artifacts/dr_ananya_musetalk_frames.png): sampled frames showing changing mouth shapes during the generated clip.
 - [`artifacts/dr_ananya_browser_playback.json`](../../artifacts/dr_ananya_browser_playback.json): observed browser video element and backend `video_chunk` event.
 - [`MEDICARE_FRONTEND_FINAL_REPORT.md`](../../MEDICARE_FRONTEND_FINAL_REPORT.md): implementation, measurements and acceptance gaps.
@@ -30,10 +30,10 @@ The MuseTalk weights used for this run are installed under `services/avatar-engi
 
 ## Integration notes
 
-- For Dr. Ananya and Dr. Arjun, the consultation WebSocket sends the generated response audio through the MuseTalk worker and emits generated video chunks. The frontend plays the returned MP4, which carries its matching audio. Ananya's Kannada chunk was previously run end to end. Arjun's Kannada TTS-to-MuseTalk path was also run directly using his reference photo. His WebSocket received and persisted a test question, but the configured LLM provider could not connect, so no AI answer was generated for this check.
+- For Dr. Ananya and Dr. Smit, the consultation WebSocket sends the generated response audio through the MuseTalk worker and emits generated video chunks. The frontend plays the returned MP4, which carries its matching audio. Ananya's Kannada chunk was previously run end to end. Smit's Kannada TTS-to-MuseTalk path was also run directly using his reference photo. His WebSocket received and persisted a test question, but the configured LLM provider could not connect, so no AI answer was generated for this check.
 - The frontend no longer applies CSS mouth animation or reports fabricated FPS, 3D readiness, model readiness, or voice-preview results.
 - During listening, the original portrait remains visible with small whole-frame pose/breathing movement. There is no model-generated blink or eye motion yet.
-- Backend TTS voice selection uses doctor gender: Dr. Ananya receives female voices and Dr. Arjun receives male voices for the configured Kannada/English paths. The frontend now sends both doctors' consultation turns to that backend model path. Ananya's AI response clip was previously browser-played. Arjun's separate model demo is verified as a file, but his AI-response browser playback remains unverified.
+- Backend TTS voice selection uses doctor gender: Dr. Ananya receives female voices and Dr. Smit receives male voices for the configured Kannada/English paths. The frontend now sends both doctors' consultation turns to that backend model path. Ananya's AI response clip was previously browser-played. Smit's separate model demo is verified as a file, but his AI-response browser playback remains unverified.
 - The complete response queue/turn, microphone capture, English browser animation, interruption, and return-to-listening cycle remain unverified.
 
 ## Upstream references

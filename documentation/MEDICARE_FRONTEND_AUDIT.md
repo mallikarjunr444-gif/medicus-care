@@ -69,7 +69,7 @@ frontend/
    - WebGL biological systems (Cardiovascular with systolic pumping, Neuro-Synaptic with synaptic bursts, Pulmonary with breathing, Cellular Nanosphere).
    - Mouse 360° drag orbit, wireframe mode, and live clinical telemetry.
 3. **Photorealistic AI Doctor Viewport (`components/doctor/DoctorPhotorealisticViewport.tsx`)**:
-   - High-resolution photographic digital human base portraits for Dr. Arjun (`/doctor/dr_arjun.jpg`) and Dr. Ananya (`/doctor/dr_ananya.jpg`).
+   - High-resolution photographic digital human base portraits for Dr. Smit (`/doctor/dr_arjun.jpg`) and Dr. Ananya (`/doctor/dr_ananya.jpg`).
    - Real-time audio-driven viseme lip-sync (`AA`, `EE`, `OO`, `M`, and `Rest`) driven by speech volume and phoneme frequency.
    - Physiological eye blinking (125ms natural sinusoidal curve every 2.8s–4.5s).
    - Sinusoidal respiration chest expansion (14 breaths/min).

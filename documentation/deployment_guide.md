@@ -116,7 +116,7 @@ print('Ingestion Complete:', rag_service.get_stats())
    npm install
    npm run dev
    ```
-   Open `http://localhost:3000` to consult with Dr. Arjun, M.D.
+   Open `http://localhost:3000` to consult with Dr. Smit, M.D.
 
 ---
 

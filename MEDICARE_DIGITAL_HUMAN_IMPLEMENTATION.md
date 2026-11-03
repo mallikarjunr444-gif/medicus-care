@@ -10,7 +10,7 @@
 Unreal Engine MetaHuman requires a 40GB+ native engine or expensive cloud pixel streaming (AWS G4dn/G5 instances costing $1.50–$3.00/hr per user). 
 
 To achieve **100% free, browser-native photorealistic human animation matching the user's exact doctor photographs** without external fees or GPU servers, we implement a **Hybrid Neural Three.js / Canvas Morphometric Facial Mesh Deformer**:
-1. **Photorealistic Base Projection:** Takes the exact high-resolution photographs of Dr. Arjun and Dr. Ananya.
+1. **Photorealistic Base Projection:** Takes the exact high-resolution photographs of Dr. Smit and Dr. Ananya.
 2. **Anatomical Mesh Grid (Bilinear Delaunay / Quadratic Bezier Warp):** Maps facial landmarks:
    - Jaw & Lip Boundaries (Upper lip, lower lip, oral commissures).
    - Eyelids & Brow arcs (Medial/lateral canthi, supraorbital margin).

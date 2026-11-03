@@ -40,7 +40,7 @@ This report documents the architectural transformation of **MediCare** into a pr
 
 ### A. Photographic Digital Human Realism
 - Eliminated all stylized vector illustrations and replaced them with high-resolution photographic portraits of real medical doctors:
-  - **Dr. Arjun, M.D.**: [/doctor/dr_arjun.jpg](file:///Users/malikarjunr/medicus-care/frontend/public/doctor/dr_arjun.jpg)
+  - **Dr. Smit, M.D.**: [/doctor/dr_arjun.jpg](file:///Users/malikarjunr/medicus-care/frontend/public/doctor/dr_arjun.jpg)
   - **Dr. Ananya, M.D.**: [/doctor/dr_ananya.jpg](file:///Users/malikarjunr/medicus-care/frontend/public/doctor/dr_ananya.jpg)
 - [DoctorPhotorealisticViewport.tsx](file:///Users/malikarjunr/medicus-care/frontend/components/doctor/DoctorPhotorealisticViewport.tsx) renders these digital humans with:
   - **Real-Time Audio-Driven Viseme Lip-Sync**: Articulates mouth opening, width, and phoneme shapes (`AA`, `EE`, `OO`, `M`, `Rest`) proportional to the actual speech audio level.

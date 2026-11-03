@@ -1,6 +1,6 @@
 # MediCare doctor knowledge
 
-Both Dr. Ananya and Dr. Arjun use the same retrieval-augmented knowledge
+Both Dr. Ananya and Dr. Smit use the same retrieval-augmented knowledge
 service during consultation. Their name, specialty, and voice remain persona
 settings; they do not select separate medical knowledge collections.
 

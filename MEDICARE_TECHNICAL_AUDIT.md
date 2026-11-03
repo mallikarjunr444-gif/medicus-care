@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-A comprehensive architectural and code-level audit was conducted across the entire MediCare digital health repository (`frontend/` and `backend/`). The platform is designed to provide real-time, multilingual, clinical triage and consultation with two primary care physicians: **Dr. Arjun, M.D.** (Internal Medicine & Triage) and **Dr. Ananya, M.D.** (Metabolic Health, Lab Diagnostics & Wellness).
+A comprehensive architectural and code-level audit was conducted across the entire MediCare digital health repository (`frontend/` and `backend/`). The platform is designed to provide real-time, multilingual, clinical triage and consultation with two primary care physicians: **Dr. Smit, M.D.** (Internal Medicine & Triage) and **Dr. Ananya, M.D.** (Metabolic Health, Lab Diagnostics & Wellness).
 
 While the repository contains sophisticated clinical knowledge staging, 4-tier triage logic, and high-performance WebGL/GSAP foundations, the video consultation experience suffered from severe disconnects:
 1. **Static 2D Photograph Display:** The telemedicine call viewport was rendering a static `<img>` overlay (`DoctorPhotorealisticViewport.tsx`) with rudimentary CSS radial gradients for mouth movement rather than active 3D digital-human animation.
@@ -132,10 +132,10 @@ While the repository contains sophisticated clinical knowledge staging, 4-tier t
 
 1. **Digital Human Model Engine (Three.js WebGL):**
    - Implement an advanced Three.js Digital Human viewport combining:
-     - Anatomically contoured 3D facial mesh with Dr. Arjun and Dr. Ananya reference identities.
+     - Anatomically contoured 3D facial mesh with Dr. Smit and Dr. Ananya reference identities.
      - Morph targets for 8 primary visemes: `rest`, `aa`, `ee`, `oo`, `oh`, `ch`, `th`, `m`.
      - Natural physiological micro-expressions: bilateral synchronous blinking (2.8–4.2s), saccadic eye gaze tracking, sinusoidal breathing (14 bpm), and conversational head nods/tilts.
-     - Distinct clinical attires: Dr. Arjun (White Lab Coat + Dark Teal Scrubs + Classic Stethoscope) and Dr. Ananya (White Lab Coat + Cobalt Scrubs + Blue Stethoscope).
+     - Distinct clinical attires: Dr. Smit (White Lab Coat + Dark Teal Scrubs + Classic Stethoscope) and Dr. Ananya (White Lab Coat + Cobalt Scrubs + Blue Stethoscope).
 2. **Resilient Continuous Audio & VAD Pipeline:**
    - Redesign `useDoctorSpeech` and `DoctorVideoCall` with an auto-healing Speech Recognition watchdog.
    - Continuous speech listening with intelligent pause detection: detects sentence completion without terminating the microphone session.

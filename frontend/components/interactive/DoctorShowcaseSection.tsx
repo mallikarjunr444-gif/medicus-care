@@ -19,7 +19,7 @@ const doctorCards: Array<{
   {
     id: 'dr_arjun',
     image: '/doctor/dr_arjun.jpg',
-    imageAlt: 'Dr. Arjun in his white coat with a stethoscope',
+    imageAlt: 'Dr. Smit in his white coat with a stethoscope',
     focus: 'General health and symptom guidance',
     accent: 'green',
   },
