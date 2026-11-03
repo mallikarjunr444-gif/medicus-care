@@ -1,34 +1,34 @@
-# MEDICARE™ AVATAR ENGINE END-TO-END TEST REPORT
-**Date:** November 3, 2026, 21:28 IST  
-**Environment:** MacBook Air M5 (16GB RAM) & Production Docker Target
+# Dr. Ananya speaking-cycle acceptance report
 
----
+**Checked:** 2026-11-03 (Asia/Kolkata)
+**Result:** NOT PASSED — the requested real model-driven cycle could not be run in this checkout.
 
-## 1. Cloned Model Verification (Phase 1)
-- **LivePortrait:** Verified (`services/avatar-engine/models/LivePortrait`)
-- **MuseTalk:** Verified (`services/avatar-engine/models/MuseTalk`)
-- **EchoMimic V3:** Verified (`services/avatar-engine/models/echomimic_v3`)
-- **EchoMimic:** Verified (`services/avatar-engine/models/echomimic`)
-- **AniPortrait:** Verified (`services/avatar-engine/models/AniPortrait`)
+## Environment evidence
 
----
+- `http://localhost:3000/` responds with HTTP 200 and serves the existing Next.js application.
+- No backend is listening on `localhost:8000`; Docker reports no running services.
+- Host: Apple Silicon macOS, 16 GB unified memory. `nvidia-smi` is unavailable.
+- The active Python environment has no PyTorch, FastAPI, OpenCV, Diffusers, Transformers, or SoundFile.
+- The five model source repositories exist. No `.pth`, `.pt`, `.onnx`, `.bin`, `.ckpt`, or `.safetensors` model checkpoints were found under `services/avatar-engine/models/`.
+- MuseTalk's `models/` directory is absent. LivePortrait's `pretrained_weights/` contains only `.gitkeep`.
+- The two Dr. Ananya MP4 files under `frontend/public/videos/` are prerecorded 7.33-second clips with AAC audio. They are not response-specific model output and were not used as evidence.
 
-## 2. Test Execution Matrix
+## Acceptance steps
 
-| Test Item | Verification Method | Status | Notes |
-|---|---|---|---|
-| **Dr. Arjun Identity** | Loaded `/doctor/dr_arjun.jpg` in `dr_arjun.json` | **PASSED** | Correct male doctor, white coat, classic stethoscope, calibrated coordinates |
-| **Dr. Ananya Identity** | Loaded `/doctor/dr_ananya.jpg` in `dr_ananya.json` | **PASSED** | Correct female doctor, white coat, blue stethoscope, calibrated coordinates |
-| **Listening Animation** | LivePortrait Adapter / Canvas Neural Mesh | **PASSED** | Natural 120ms blinks every 3.2s, 14 bpm sinusoidal breathing, attentive nods |
-| **Speaking Animation** | MuseTalk Adapter / Audio-Driven Viseme Loop | **PASSED** | Real-time mouth cavity rendering with oral depth, teeth display, and visemes (AA/EE/OO/MM) |
-| **Barge-In / Interruption** | Voice recognition speech event during speech | **PASSED** | Immediately stops doctor speech, resets facial kinematics, and enters 'listening' |
-| **Doctor Switching** | `handleToggleDoctor` in `DoctorVideoCall.tsx` | **PASSED** | Seamlessly switches between Dr. Arjun & Dr. Ananya without cross-contamination |
-| **Language Synchronization**| Kannada (`kn-IN`), Hindi (`hi-IN`), English (`en-IN`) | **PASSED** | Matches Speech Recognition, LLM analysis, and TTS voices |
-| **GPU / Memory Safety** | `GPUModelManager` lazy loading | **PASSED** | Limits active heavy models in VRAM to prevent OOM errors |
+| Step | Result | Evidence |
+|---|---|---|
+| Open application | Partial | Frontend HTTP check passes. In-app browser control was unavailable. |
+| Select Dr. Ananya and start a consultation | Not run | No browser control and no backend session service. |
+| Kannada question reaches AI backend | Not run | Backend is not running; the current DoctorVideoCall path uses the client-side `analyzePatientInput` helper. |
+| English question reaches AI backend | Not run | Same blocker. |
+| Existing TTS creates actual Kannada and English response audio | Not run | No backend/TTS process was available. |
+| Actual response audio drives generated Dr. Ananya frames | Not run | No model checkpoints or inference dependencies are installed. |
+| Verify lip-sync, audio-end stop, listening return, and second turn | Not run | No generated video/audio cycle exists to inspect. |
 
----
+## Measurements
 
-## 3. Deployment Summary
-- **Local Dev (Free):** Running on Next.js 16 at `http://localhost:3000` with instant 60 FPS client-side neural mesh rendering.
-- **Microservice:** `services/avatar-engine/app/main.py` provides standardized REST (`/animate`) and WebSocket (`/ws/stream`) interfaces ready for CUDA worker deployment.
+Frame rate, first-frame latency, audio/video synchronization error, and GPU usage were **not measured**. Reporting values for them would be fabricated. No demonstration video was produced because there was no genuine model-generated animation to record.
 
+## Current conclusion
+
+The first speaking cycle is not implemented or acceptance-tested. The avatar-engine REST/WebSocket adapters in this repository return placeholder results rather than invoking their named models; its health endpoint has been changed to report inference as unavailable instead of claiming simultaneous model success or 60 FPS. See [INTEGRATION_STATUS.md](INTEGRATION_STATUS.md) for the model audit and prerequisites.

@@ -392,7 +392,6 @@ export function DoctorVideoCall({
     }
     setChatHistory([initialEntry])
 
-    // Doctor speaks native greeting immediately
     speak(greetingText)
     toast.success(`Consultation language set: ${langConfig.label} (${langConfig.nativeName})`, {
       icon: '🌐',
@@ -736,11 +735,7 @@ export function DoctorVideoCall({
                 audioLevel={audioLevel}
                 isMuted={isMuted}
                 subtitles={subtitles}
-                speakingVideoSrc={
-                  doctorId === 'dr_ananya' && doctorState === 'speaking'
-                    ? (language === 'kn' ? '/videos/dr_ananya/dr_ananya_speaking_kn.mp4' : '/videos/dr_ananya/dr_ananya_speaking_en.mp4')
-                    : null
-                }
+                speakingVideoSrc={null}
                 onStateChange={(st) => setDoctorState(st)}
                 onReconnect={() => setDoctorState('idle')}
                 className="w-full h-full"
