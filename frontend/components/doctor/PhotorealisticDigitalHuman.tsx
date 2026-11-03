@@ -412,9 +412,11 @@ export function PhotorealisticDigitalHuman({
       </div>
 
       {/* Live Stream Telemetry (Top Right) */}
-      <div className="absolute top-4 right-4 hidden lg:flex items-center gap-2 px-3 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 text-[11px] text-slate-300 font-mono shadow-lg">
+      <div className="absolute top-4 right-4 hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/85 backdrop-blur-md border border-slate-700/60 text-[11px] text-slate-300 font-mono shadow-lg">
         <Activity size={12} className="text-emerald-400 animate-pulse" />
-        <span>60 FPS • 1080p Neural Digital Human</span>
+        <span className="text-emerald-400 font-semibold">60 FPS</span>
+        <span className="text-slate-500">•</span>
+        <span className="text-sky-300">LivePortrait + MuseTalk + EchoMimic</span>
       </div>
 
       {/* Doctor Live Subtitles (Bottom Center) */}
