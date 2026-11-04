@@ -80,6 +80,7 @@ interface ChatEntry {
   triage?: TriageLevel
   warningSign?: string
   actionCard?: ActionCardData
+  sources?: { title: string; year: string; url: string }[]
 }
 
 type PendingClinicalMeta = Pick<ChatEntry, 'triage' | 'warningSign' | 'actionCard'>
@@ -250,6 +251,7 @@ export function DoctorVideoCall({
             triage,
             warningSign: pendingClinicalMeta?.warningSign,
             actionCard: pendingClinicalMeta?.actionCard,
+            sources: event.sources,
           }])
           if (triage) setActiveTriage(triage)
           pendingClinicalMetaRef.current = null
@@ -1044,6 +1046,21 @@ export function DoctorVideoCall({
                   }`}
                 >
                   <p>{item.text}</p>
+
+                  {item.sources && item.sources.length > 0 && (
+                    <div className="mt-3 border-t border-slate-200 pt-2">
+                      <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">Medical sources</p>
+                      <ul className="space-y-1">
+                        {item.sources.map((source) => (
+                          <li key={source.url}>
+                            <a href={source.url} target="_blank" rel="noreferrer" className="text-xs text-teal-800 underline underline-offset-2 hover:text-teal-950">
+                              {source.title} ({source.year})
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   {item.actionCard?.type === 'report_analysis' && (
                     <button

@@ -53,7 +53,7 @@ export type WsMessageType =
 export type WsMessage =
   | { type: 'token'; token: string }
   | { type: 'transcription'; text: string }
-  | { type: 'message'; role: 'assistant'; content: string; triage?: 4; is_emergency?: boolean }
+  | { type: 'message'; role: 'assistant'; content: string; triage?: 4; is_emergency?: boolean; sources?: { title: string; year: string; url: string }[] }
   | { type: 'audio_chunk'; chunk_index: number; mime_type: string; text: string; audio_data: string }
   | { type: 'audio_stream_end' }
   | { type: 'audio_error'; message: string }

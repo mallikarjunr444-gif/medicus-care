@@ -219,7 +219,7 @@ export function LanguageSelectionModal({
             className="mt-0.5 h-4 w-4 flex-shrink-0 accent-teal-700"
           />
           <span>
-            I agree to use the microphone for speech recognition and to send my transcript and the doctor's replies to MediCare for this consultation. The conversation is saved in my consultation history. If local medical references have no match, a de-identified search query may be sent to PubMed. Camera access is optional and starts only if I turn it on. I understand this is an AI health assistant, not a licensed physician.
+            I agree to use the microphone for speech recognition and to send my transcript and the doctor's replies to MediCare for this consultation. The conversation is saved in my consultation history. If local medical references have no match, a search query with common direct identifiers removed may be sent to PubMed; I will avoid sharing identifying details. Camera access is optional and starts only if I turn it on. I understand this is an AI health assistant, not a licensed physician.
           </span>
         </label>
 

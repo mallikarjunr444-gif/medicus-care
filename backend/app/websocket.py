@@ -851,6 +851,7 @@ class ConnectionManager:
             # ── 2. Shared medical + wellness reference retrieval ───────────
             from app.services.rag_service import rag_service
             rag_matches = []
+            web_references = []
             if not _is_social_greeting(text):
                 retrieval_query = text
                 # MedQuAD and the counseling references are primarily English.
@@ -919,7 +920,13 @@ class ConnectionManager:
             # so a trace shows exactly where a slow turn spent its time.
             with span("chat.turn", **{"input_chars": len(text)}):
                 results = await asyncio.gather(
-                    self._llm_producer(session_id, messages, system_prompt, sentence_queue),
+                    self._llm_producer(
+                        session_id, messages, system_prompt, sentence_queue,
+                        [
+                            {"title": ref.title, "year": ref.year, "url": ref.url}
+                            for ref in web_references
+                        ],
+                    ),
                     self._animate_from_queue(session_id, sentence_queue),
                     return_exceptions=True,
                 )
@@ -953,6 +960,7 @@ class ConnectionManager:
         messages: List[dict],
         system_prompt: Optional[str],
         queue: "asyncio.Queue[Optional[str]]",
+        sources: Optional[list[dict[str, str]]] = None,
     ) -> str:
         """
         Stream LLM tokens, emit `token` events to the frontend, and push
@@ -999,9 +1007,14 @@ class ConnectionManager:
             await queue.put(None)
 
         # Send complete assembled message
-        await self.send_message(
-            session_id, {"type": "message", "role": "assistant", "content": full_text}
-        )
+        completed_message: dict[str, object] = {
+            "type": "message",
+            "role": "assistant",
+            "content": full_text,
+        }
+        if sources:
+            completed_message["sources"] = sources
+        await self.send_message(session_id, completed_message)
         return full_text
 
     async def _animate_from_queue(
