@@ -1046,6 +1046,20 @@ class ConnectionManager:
                         voice_gender=voice_gender,
                     )
 
+                # Deliver the gender-matched voice as soon as TTS finishes.
+                # On Apple MPS, MuseTalk may take minutes to render the
+                # synchronized video, so audio must not wait for inference.
+                audio_bytes = await asyncio.to_thread(tmp_audio.read_bytes)
+                await self.send_message(
+                    session_id,
+                    {
+                        "type": "audio_chunk",
+                        "chunk_index": chunk_index,
+                        "mime_type": "audio/wav",
+                        "audio_data": base64.b64encode(audio_bytes).decode("ascii"),
+                    },
+                )
+
                 # Notify the client exactly once if Chatterbox bailed and
                 # we ended up serving the un-cloned gTTS voice instead.
                 if synth.fallback and not fallback_announced:
