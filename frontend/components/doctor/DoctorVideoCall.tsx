@@ -84,6 +84,11 @@ interface ChatEntry {
 
 type PendingClinicalMeta = Pick<ChatEntry, 'triage' | 'warningSign' | 'actionCard'>
 
+function appendLiveCaption(current: string, token: string) {
+  const words = `${current}${token}`.trimStart().split(/\s+/).filter(Boolean)
+  return words.slice(-14).join(' ')
+}
+
 interface DoctorVideoCallProps {
   initialDoctorId?: DoctorId
   onEndConsultation?: () => void
@@ -114,7 +119,7 @@ export function DoctorVideoCall({
   const [hasSeparateTtsAudio, setHasSeparateTtsAudio] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const audioObjectUrlRef = useRef<string | null>(null)
-  const audioQueueRef = useRef<string[]>([])
+  const audioQueueRef = useRef<Array<{ url: string; text: string }>>([])
   const audioStreamEndedRef = useRef(false)
   const startNextAudioRef = useRef<() => void>(() => {})
   const pendingClinicalMetaRef = useRef<PendingClinicalMeta | null>(null)
@@ -146,8 +151,8 @@ export function DoctorVideoCall({
 
   startNextAudioRef.current = () => {
     if (audioRef.current) return
-    const objectUrl = audioQueueRef.current.shift()
-    if (!objectUrl) {
+    const queuedAudio = audioQueueRef.current.shift()
+    if (!queuedAudio) {
       if (audioStreamEndedRef.current) {
         if (!doctorVideoActiveRef.current) {
           setDoctorState('listening')
@@ -159,6 +164,7 @@ export function DoctorVideoCall({
       return
     }
 
+    const { url: objectUrl, text } = queuedAudio
     const audio = new Audio(objectUrl)
     audio.muted = isMuted
     audioRef.current = audio
@@ -166,6 +172,7 @@ export function DoctorVideoCall({
     audio.onplay = () => {
       pauseVoiceInput()
       setDoctorState('speaking')
+      setSubtitles(text)
     }
     const finishAudio = () => {
       if (audioRef.current !== audio) return
@@ -190,7 +197,7 @@ export function DoctorVideoCall({
     audioRef.current = null
     if (audioObjectUrlRef.current) URL.revokeObjectURL(audioObjectUrlRef.current)
     audioObjectUrlRef.current = null
-    audioQueueRef.current.forEach((url) => URL.revokeObjectURL(url))
+    audioQueueRef.current.forEach(({ url }) => URL.revokeObjectURL(url))
     audioQueueRef.current = []
     audioStreamEndedRef.current = false
     setHasSeparateTtsAudio(false)
@@ -227,7 +234,7 @@ export function DoctorVideoCall({
     switch (event.type) {
       case 'token':
         setDoctorState('thinking')
-        setSubtitles((current) => current + event.token)
+        setSubtitles((current) => appendLiveCaption(current, event.token))
         break
       case 'message':
         if (event.role === 'assistant') {
@@ -245,14 +252,13 @@ export function DoctorVideoCall({
           }])
           if (triage) setActiveTriage(triage)
           pendingClinicalMetaRef.current = null
-          setSubtitles(event.content)
         }
         break
       case 'audio_chunk': {
         const binary = window.atob(event.audio_data)
         const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0))
         const objectUrl = URL.createObjectURL(new Blob([bytes], { type: event.mime_type }))
-        audioQueueRef.current.push(objectUrl)
+        audioQueueRef.current.push({ url: objectUrl, text: event.text })
         setHasSeparateTtsAudio(true)
         setIsRenderingLipSync(true)
         startNextAudioRef.current()
@@ -398,7 +404,7 @@ export function DoctorVideoCall({
   useEffect(() => () => {
     audioRef.current?.pause()
     if (audioObjectUrlRef.current) URL.revokeObjectURL(audioObjectUrlRef.current)
-    audioQueueRef.current.forEach((url) => URL.revokeObjectURL(url))
+    audioQueueRef.current.forEach(({ url }) => URL.revokeObjectURL(url))
   }, [])
 
   const handleDoctorVideoEnded = useCallback(() => {
@@ -481,6 +487,7 @@ export function DoctorVideoCall({
       // Let the patient interrupt while the model is thinking/rendering. Pause only
       // when audible doctor speech starts so it is not transcribed as patient speech.
       clearDoctorAudio()
+      setSubtitles('')
       if (isSpeaking) interrupt()
       if (doctorVideoActiveRef.current || doctorState === 'thinking' || doctorState === 'speaking' || isRenderingLipSync) {
         interruptBackend()
@@ -562,6 +569,9 @@ export function DoctorVideoCall({
 
     interrupt()
     interruptBackend()
+    clearDoctorAudio()
+    setSubtitles('')
+    setIsRenderingLipSync(false)
     doctorVideoQueueRef.current = []
     doctorVideoTurnEndedRef.current = true
     doctorVideoActiveRef.current = false

@@ -340,8 +340,8 @@ export function PhotorealisticDigitalHuman({
 
       {/* Doctor Live Subtitles (Bottom Center) */}
       {subtitles && (
-        <div className="absolute bottom-6 left-6 right-6 z-20 flex justify-center pointer-events-none">
-          <div className="max-w-2xl px-5 py-3 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 text-white text-center text-xs sm:text-sm font-medium leading-relaxed shadow-2xl animate-fade-in">
+        <div className="absolute bottom-6 left-6 right-6 z-20 flex justify-center pointer-events-none" aria-live="polite" aria-atomic="true">
+          <div className="max-h-20 max-w-4xl overflow-hidden px-5 py-3 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 text-white text-center text-xs sm:text-sm font-medium leading-relaxed shadow-2xl animate-fade-in">
             <span className="text-sky-400 font-bold mr-2">{doctor.name}:</span>
             <span>{subtitles}</span>
           </div>

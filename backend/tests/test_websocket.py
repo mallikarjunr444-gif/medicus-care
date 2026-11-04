@@ -45,6 +45,19 @@ def test_drain_chunks_does_not_emit_a_greeting_as_the_whole_reply():
     assert len(chunks[0]) >= _MIN_FIRST_CHUNK_LEN
 
 
+def test_drain_chunks_groups_short_sentences_for_smoother_tts():
+    """Several tiny TTS requests sound clipped; group them into a speakable phrase."""
+    buf = (
+        "Take a slow breath and sit somewhere comfortable. "
+        "Tell me when the headache began and what makes it better. "
+        "We can go one step at a time."
+    )
+    chunks, rest = _drain_chunks(buf, _SENTENCE_RE, _MIN_SENTENCE_LEN, _MAX_CHUNK_CHARS)
+    assert chunks
+    assert chunks[0].startswith("Take a slow breath")
+    assert "what makes it better" in chunks[0]
+
+
 def test_drain_chunks_never_drops_text():
     """Short leading fragments merge forward rather than being discarded."""
     buf = "Hi, the answer is 42 and that is final."
@@ -263,6 +276,9 @@ async def test_set_language_coerces_unknown():
     assert m.session_data["s1"]["language"] == "en"
     await m.set_language("s1", "fr")
     assert m.session_data["s1"]["language"] == "fr"
+    for code in ["en", "kn", "hi", "te", "ta", "ml", "mr", "bn", "gu"]:
+        await m.set_language("s1", code)
+        assert m.session_data["s1"]["language"] == code
 
 
 @pytest.mark.asyncio

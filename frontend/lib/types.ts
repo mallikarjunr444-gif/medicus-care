@@ -54,7 +54,7 @@ export type WsMessage =
   | { type: 'token'; token: string }
   | { type: 'transcription'; text: string }
   | { type: 'message'; role: 'assistant'; content: string; triage?: 4; is_emergency?: boolean }
-  | { type: 'audio_chunk'; chunk_index: number; mime_type: string; audio_data: string }
+  | { type: 'audio_chunk'; chunk_index: number; mime_type: string; text: string; audio_data: string }
   | { type: 'audio_stream_end' }
   | { type: 'audio_error'; message: string }
   | { type: 'video_chunk_start'; total_chunks: number }

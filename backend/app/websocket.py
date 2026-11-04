@@ -73,7 +73,7 @@ def _write_private_bytes(path: Path, data: bytes) -> None:
 # The opening fragment ships at the first meaningful CLAUSE boundary, so
 # greetings are not spoken as a complete answer. Every chunk after that uses SENTENCE boundaries — fewer TTS
 # calls and smoother prosody for the bulk of the reply.
-_MIN_SENTENCE_LEN = 8
+_MIN_SENTENCE_LEN = 90  # group short sentences so TTS does not sound like disconnected words
 _MIN_FIRST_CHUNK_LEN = 45  # avoid speaking a greeting fragment as the whole reply
 # Force-flush a run-on with no usable punctuation so we never stall waiting
 # for a boundary that may never come.
@@ -788,6 +788,18 @@ class ConnectionManager:
             system_prompt = _compose_system_prompt(
                 data.get("system_prompt"), data.get("memory_summary")
             )
+            selected_language = data.get("language", "en")
+            language_names = {
+                "en": "English", "kn": "Kannada", "hi": "Hindi", "te": "Telugu",
+                "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi", "bn": "Bengali",
+                "gu": "Gujarati",
+            }
+            language_name = language_names.get(selected_language, "English")
+            language_instruction = (
+                f"Current consultation language: {language_name}. Respond entirely in {language_name}. "
+                "The visible answer, subtitles, and spoken answer must all use this language. "
+                "Do not continue in a language from an earlier turn after the patient changes the selector."
+            )
 
             # ── 1. Deterministic Clinical Safety & Emergency Evaluation ─────
             from app.services.safety_service import medical_safety_validator
@@ -870,6 +882,10 @@ class ConnectionManager:
                 for m in rag_matches:
                     rag_block += f"• [{m.title}]: {m.content}\n  ({m.attribution_text})\n"
                 system_prompt = (system_prompt or "") + rag_block
+
+            # Keep the selected-language instruction last so English reference
+            # excerpts cannot override the user's current language choice.
+            system_prompt = f"{system_prompt or ''}\n\n{language_instruction}".strip()
 
             # Persist the user turn before kicking off generation so it's
             # durable even if the model fails partway through.
@@ -1088,6 +1104,7 @@ class ConnectionManager:
                         "type": "audio_chunk",
                         "chunk_index": chunk_index,
                         "mime_type": "audio/wav",
+                        "text": sentence,
                         "audio_data": base64.b64encode(audio_bytes).decode("ascii"),
                     })
                     if synth.fallback and not fallback_announced:
@@ -1192,6 +1209,12 @@ class ConnectionManager:
             "fr",
             "he",
             "hi",
+            "te",
+            "ta",
+            "ml",
+            "mr",
+            "bn",
+            "gu",
             "it",
             "ja",
             "ko",
