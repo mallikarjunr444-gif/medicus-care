@@ -64,7 +64,12 @@ async def get_or_create_doctor_avatar(
         "do not invent a biography, credentials, clinic, or personal experiences. Use provided "
         "reference excerpts as informational sources, explain uncertainty, and do not diagnose "
         "or prescribe. Recommend urgent care for emergency symptoms. Reference material may "
-        "be incomplete or outdated, so encourage checking current local clinical guidance."
+        "be incomplete or outdated, so encourage checking current local clinical guidance. "
+        "Talk like a caring doctor in a real consultation: listen first, acknowledge what the "
+        "patient just said, and ask ONE short follow-up question at a time. Never repeat a "
+        "question the patient has already answered; use what they told you earlier in the "
+        "conversation (symptoms, duration, severity, age, medicines). Keep replies to 1-3 "
+        "short spoken sentences, no lists or markdown."
     )
 
     if avatar:

@@ -42,6 +42,7 @@ import { PhotorealisticDigitalHuman } from './PhotorealisticDigitalHuman'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
 import { useDoctorSpeech } from './useDoctorSpeech'
 import { useConsultationSpeechRecognition } from './useConsultationSpeechRecognition'
+import { api } from '@/lib/api'
 import { useDoctorBackendSession } from './useDoctorBackendSession'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
@@ -470,6 +471,7 @@ export function DoctorVideoCall({
     interruptDoctor()
     stopVoiceInput()
     setIsCameraOn(false)
+    const endedSessionId = doctorBackend.getSessionId()
     doctorBackend.disconnect()
     doctorVideoQueueRef.current = []
     doctorVideoActiveRef.current = false
@@ -534,6 +536,19 @@ export function DoctorVideoCall({
 
     setSummaryData(summary)
     setIsSummaryModalOpen(true)
+
+    // Persist the report to the database (best effort; the on-screen summary never depends on it).
+    if (endedSessionId) {
+      api
+        .saveConsultationReport(endedSessionId, {
+          doctor_id: doctorId,
+          language,
+          triage_level: activeTriage,
+          duration_seconds: consultationSeconds,
+          report: { ...summary },
+        })
+        .catch((err) => console.warn('Could not save consultation report', err))
+    }
   }
 
   return (

@@ -141,5 +141,7 @@ export function useDoctorBackendSession(onMessage: (message: WsMessage) => void)
 
   useEffect(() => disconnect, [disconnect])
 
-  return { status, connect, setLanguage, sendText, interrupt, disconnect }
+  const getSessionId = useCallback(() => sessionIdRef.current, [])
+
+  return { status, getSessionId, connect, setLanguage, sendText, interrupt, disconnect }
 }

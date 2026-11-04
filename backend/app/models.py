@@ -157,3 +157,26 @@ class Conversation(Base):
 
     # Relationships
     session = relationship("Session", back_populates="conversations")
+
+
+class ConsultationReport(Base):
+    """End-of-call consultation summary, one per session (upserted)."""
+
+    __tablename__ = "consultation_reports"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    session_id = Column(
+        String,
+        ForeignKey("sessions.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    doctor_id = Column(String, nullable=True)
+    language = Column(String, nullable=True)
+    triage_level = Column(Integer, nullable=True)
+    duration_seconds = Column(Integer, nullable=True)
+    report = Column(JSON, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

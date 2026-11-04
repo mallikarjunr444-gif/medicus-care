@@ -163,6 +163,20 @@ export const api = {
     return response.data
   },
 
+  saveConsultationReport: async (
+    sessionId: string,
+    payload: {
+      doctor_id?: string
+      language?: string
+      triage_level?: number
+      duration_seconds?: number
+      report: Record<string, unknown>
+    }
+  ) => {
+    const response = await apiClient.put(`/api/v1/consultation-reports/${sessionId}`, payload)
+    return response.data
+  },
+
   getSpecialists: async (district = 'Chikkamagaluru') => {
     const response = await apiClient.get('/api/v1/doctor/specialists', { params: { district } })
     return response.data
