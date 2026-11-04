@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
+import httpx
 
 from fastapi import FastAPI, Query, Request, Response, WebSocket, WebSocketDisconnect, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -258,8 +259,9 @@ async def health_check(response: Response):
     except Exception:
         services["gpu"] = "error"
 
-    # LLM provider readiness — checks client wiring + API-key presence, not
-    # a live network call (which would cost tokens on every /health hit).
+    # LLM provider readiness. For Ollama, /api/tags is a cheap local health
+    # probe that verifies both the daemon and configured model are available;
+    # the previous config-only check labeled a stopped daemon as "ready".
     if settings.LLM_PROVIDER == "anthropic":
         services["llm"] = (
             "ready (anthropic)" if settings.ANTHROPIC_API_KEY else "missing ANTHROPIC_API_KEY"
@@ -271,10 +273,28 @@ async def health_check(response: Response):
         if not settings.OPENAI_API_KEY and health["status"] == "healthy":
             health["status"] = "degraded"  # misconfigured, not down
     elif settings.LLM_PROVIDER == "ollama":
-        # Local OpenAI-compatible server — no API key needed.
-        services["llm"] = (
-            f"ready (ollama @ {settings.OPENAI_BASE_URL or 'http://localhost:11434/v1'})"
-        )
+        base_url = (settings.OPENAI_BASE_URL or "http://localhost:11434/v1").rstrip("/")
+        ollama_root = base_url.removesuffix("/v1")
+        try:
+            async with httpx.AsyncClient(timeout=1.5) as client:
+                response = await client.get(f"{ollama_root}/api/tags")
+                response.raise_for_status()
+                installed = {
+                    model.get("name", "")
+                    for model in response.json().get("models", [])
+                }
+            model_available = settings.LLM_MODEL in installed or f"{settings.LLM_MODEL}:latest" in installed
+            services["llm"] = (
+                f"ready (ollama: {settings.LLM_MODEL})"
+                if model_available
+                else f"model unavailable (ollama: {settings.LLM_MODEL})"
+            )
+            if not model_available and health["status"] == "healthy":
+                health["status"] = "degraded"
+        except Exception:
+            services["llm"] = "unavailable (Ollama is not reachable)"
+            if health["status"] == "healthy":
+                health["status"] = "degraded"
     else:
         services["llm"] = f"unknown provider: {settings.LLM_PROVIDER}"
         if health["status"] == "healthy":

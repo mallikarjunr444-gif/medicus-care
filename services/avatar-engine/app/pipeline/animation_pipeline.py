@@ -22,7 +22,8 @@ class AvatarAnimationPipeline:
     """
 
     def __init__(self):
-        self.profiles_dir = Path("/Users/malikarjunr/medicus-care/services/avatar-engine/app/doctor_profiles")
+        self.project_root = Path(__file__).resolve().parents[4]
+        self.profiles_dir = Path(__file__).resolve().parents[1] / "doctor_profiles"
         self.liveportrait = LivePortraitAdapter()
         self.musetalk = MuseTalkAdapter()
         self.echomimic_v3 = EchoMimicV3Adapter()
@@ -44,12 +45,18 @@ class AvatarAnimationPipeline:
         """Load doctor metadata and reference photo path."""
         profile_path = self.profiles_dir / f"{doctor_id}.json"
         if profile_path.exists():
-            return json.loads(profile_path.read_text(encoding="utf-8"))
+            profile = json.loads(profile_path.read_text(encoding="utf-8"))
+            reference_photo = Path(profile.get("reference_photo", ""))
+            if not reference_photo.is_file():
+                profile["reference_photo"] = str(
+                    self.project_root / "frontend" / "public" / "doctor" / f"{doctor_id}.jpg"
+                )
+            return profile
         # Fallback profile
         return {
             "doctor_id": doctor_id,
             "name": "Dr. Smit, M.D." if doctor_id == "dr_arjun" else "Dr. Ananya, M.D.",
-            "reference_photo": f"/Users/malikarjunr/medicus-care/frontend/public/doctor/{doctor_id}.jpg"
+            "reference_photo": str(self.project_root / "frontend" / "public" / "doctor" / f"{doctor_id}.jpg")
         }
 
     async def render_state_transition(

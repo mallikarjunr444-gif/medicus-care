@@ -65,8 +65,21 @@ async def health_check():
             "models/echomimic_v3/models/Wan2.1-Fun-V1.1-1.3B-InP",
             "models/echomimic_v3/models/transformer/diffusion_pytorch_model.safetensors",
         ],
-        "EchoMimic": ["models/echomimic/pretrained_weights/denoising_unet.pth"],
-        "AniPortrait": ["models/AniPortrait/pretrained_model/denoising_unet.pth"],
+        "EchoMimic": [
+            "models/echomimic/pretrained_weights/denoising_unet.pth",
+            "models/echomimic/pretrained_weights/reference_unet.pth",
+            "models/echomimic/pretrained_weights/motion_module.pth",
+            "models/echomimic/pretrained_weights/face_locator.pth",
+        ],
+        "AniPortrait": [
+            "models/AniPortrait/pretrained_weights/denoising_unet.pth",
+            "models/AniPortrait/pretrained_weights/reference_unet.pth",
+            "models/AniPortrait/pretrained_weights/pose_guider.pth",
+            "models/AniPortrait/pretrained_weights/motion_module.pth",
+            "models/AniPortrait/pretrained_weights/audio2mesh.pt",
+            "models/AniPortrait/pretrained_weights/audio2pose.pt",
+        ],
+        "LiveTalking": ["models/LiveTalking/app.py", "models/LiveTalking/LICENSE"],
     }
     return {
         "status": "degraded",

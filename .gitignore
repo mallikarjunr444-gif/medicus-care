@@ -58,6 +58,8 @@ gfpgan/weights/
 *.onnx
 *.safetensors
 models/
+!services/avatar-engine/app/models/
+!services/avatar-engine/app/models/**
 medicus-ai-data/
 uploads/
 outputs/

@@ -6,6 +6,7 @@ import os
 import re
 import stat
 import tempfile
+import unicodedata
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -83,6 +84,35 @@ _MAX_CHUNK_CHARS = 200
 # (better TTS prosody than trailing a bare clause).
 _SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 _CLAUSE_RE = re.compile(r"(?<=[.!?,;:—])\s+")
+
+_SOCIAL_GREETING_REPLIES = {
+    "hello", "hi", "hey", "good morning", "good afternoon", "good evening",
+    "ಹಲೋ", "ಹಾಯ್", "ನಮಸ್ಕಾರ", "ನಮಸ್ತೆ",
+    "नमस्ते", "नमस्कार", "हैलो", "हाय",
+}
+
+
+def _is_social_greeting(text: str) -> bool:
+    """Skip medical retrieval and Kannada query translation for a greeting."""
+    normalized = unicodedata.normalize("NFC", text.casefold()).strip()
+    normalized = normalized.strip(" \t\r\n.,!?;:।॥")
+    normalized = re.sub(r"\s+", " ", normalized)
+    return normalized in _SOCIAL_GREETING_REPLIES
+
+
+def _social_greeting_response(language: str, doctor_id: Optional[str]) -> str:
+    """Return a short, localized greeting without spending an LLM round trip."""
+    doctor_name = "Dr. Ananya" if doctor_id == "dr_ananya" else "Dr. Smit"
+    language_code = (language or "en").split("-")[0].lower()
+    if language_code == "kn":
+        if doctor_id == "dr_ananya":
+            return "ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಅನನ್ಯ. ಇಂದು ನಿಮ್ಮ ಆರೋಗ್ಯದ ಬಗ್ಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
+        return "ನಮಸ್ಕಾರ! ನಾನು ಡಾ. ಸ್ಮಿತ್. ಇಂದು ನಿಮ್ಮ ಆರೋಗ್ಯದ ಬಗ್ಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
+    if language_code == "hi":
+        if doctor_id == "dr_ananya":
+            return "नमस्ते! मैं डॉ. अनन्या हूं। आज आपकी सेहत के बारे में कैसे मदद कर सकती हूं?"
+        return "नमस्ते! मैं डॉ. स्मित हूं। आज आपकी सेहत के बारे में कैसे मदद कर सकता हूं?"
+    return f"Hello! I'm {doctor_name}. What would you like help with today?"
 
 
 def _drain_chunks(buf: str, sep_re: "re.Pattern[str]", min_len: int, max_len: int):
@@ -786,28 +816,52 @@ class ConnectionManager:
                 await self._animate_from_queue(session_id, emergency_queue)
                 return
 
+            if _is_social_greeting(text):
+                greeting = _social_greeting_response(
+                    data.get("language", "en"), data.get("doctor_id")
+                )
+                await self._persist_message(session_id, "user", text)
+                await self._ensure_conversation_title(session_id, text)
+                await self.send_message(
+                    session_id,
+                    {"type": "message", "content": greeting, "role": "assistant"},
+                )
+                messages.append({"role": "assistant", "content": greeting})
+                data["messages"] = messages
+                latency = (datetime.now(timezone.utc) - started_at).total_seconds()
+                await self._persist_message(session_id, "assistant", greeting, latency=latency)
+
+                greeting_queue: asyncio.Queue[Optional[str]] = asyncio.Queue()
+                await greeting_queue.put(greeting)
+                await greeting_queue.put(None)
+                await self._animate_from_queue(session_id, greeting_queue)
+                return
+
             # ── 2. Shared medical + wellness reference retrieval ───────────
             from app.services.rag_service import rag_service
-            retrieval_query = text
-            # MedQuAD and the counseling references are primarily English.
-            # Translate Kannada search text locally for retrieval, while the
-            # response remains in the patient's selected language.
-            if any("\u0c80" <= char <= "\u0cff" for char in text):
-                try:
-                    expanded_query = await llm_service.generate_response(
-                        [{"role": "user", "content": (
-                            "Translate the following Kannada health question into a short English "
-                            "search query. Return only the query terms, preserving medical names. "
-                            "Do not answer the question.\n\n" + text
-                        )}],
-                        system_prompt="You translate search queries. Return at most 12 English words.",
-                    )
-                    if expanded_query.strip():
-                        retrieval_query = expanded_query.strip()
-                except Exception as exc:
-                    logger.info("Kannada knowledge query translation unavailable: %s", type(exc).__name__)
+            rag_matches = []
+            if not _is_social_greeting(text):
+                retrieval_query = text
+                # MedQuAD and the counseling references are primarily English.
+                # Translate Kannada health questions for retrieval, while the
+                # response remains in the patient's selected language. Avoid a
+                # second model round trip for greetings and social openers.
+                if any("\u0c80" <= char <= "\u0cff" for char in text):
+                    try:
+                        expanded_query = await llm_service.generate_response(
+                            [{"role": "user", "content": (
+                                "Translate the following Kannada health question into a short English "
+                                "search query. Return only the query terms, preserving medical names. "
+                                "Do not answer the question.\n\n" + text
+                            )}],
+                            system_prompt="You translate search queries. Return at most 12 English words.",
+                        )
+                        if expanded_query.strip():
+                            retrieval_query = expanded_query.strip()
+                    except Exception as exc:
+                        logger.info("Kannada knowledge query translation unavailable: %s", type(exc).__name__)
 
-            rag_matches = rag_service.search(retrieval_query, collection="all", top_k=4)
+                rag_matches = rag_service.search(retrieval_query, collection="all", top_k=4)
 
             if rag_matches:
                 rag_block = (
@@ -829,7 +883,11 @@ class ConnectionManager:
             )
 
             # Bounded queue prevents the LLM producer from racing too far ahead
-            sentence_queue: asyncio.Queue[Optional[str]] = asyncio.Queue(maxsize=4)
+            # Keep LLM completion independent of slow local avatar inference.
+            # Answers are bounded by LLM_MAX_TOKENS, so buffering their short
+            # sentence chunks lets the text reach the patient while MuseTalk
+            # renders video in the background.
+            sentence_queue: asyncio.Queue[Optional[str]] = asyncio.Queue()
 
             # Parent span for the whole turn — child spans (llm.stream,
             # tts.synthesize, avatar.animate, storage.upload) nest under it
@@ -953,14 +1011,6 @@ class ConnectionManager:
         # every sentence would be noisy. We reset this in the enclosing turn.
         fallback_announced = False
 
-        await self.send_message(
-            session_id,
-            {
-                "type": "video_chunk_start",
-                "total_chunks": -1,  # streaming mode — total unknown up front
-            },
-        )
-
         while True:
             sentence = await queue.get()
             if sentence is None:
@@ -1031,6 +1081,14 @@ class ConnectionManager:
                     # S3 objects are private — hand the client a URL it can
                     # actually fetch (presigned on S3, /uploads/ locally).
                     video_url = await storage_service.serving_url(video_key)
+
+                if not sent_any:
+                    # Pause the microphone only once a generated clip is
+                    # ready; MPS inference can take much longer than speech.
+                    await self.send_message(
+                        session_id,
+                        {"type": "video_chunk_start", "total_chunks": -1},
+                    )
 
                 await self.send_message(
                     session_id,
