@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, useState } from 'react'
+import Image from 'next/image'
 import {
   Video,
   Volume2,
@@ -331,6 +332,18 @@ export function DoctorPhotorealisticViewport({
           </div>
           <span className="text-xs text-slate-300 block mt-0.5">{doctor.specialty}</span>
         </div>
+      </div>
+
+      {/* MediCare identity stays visible on both the portrait and generated video. */}
+      <div className="absolute bottom-4 right-4 z-20 rounded-xl border border-white/80 bg-white/90 px-2 py-1 shadow-lg backdrop-blur-sm sm:bottom-5 sm:right-5 sm:px-2.5 sm:py-1.5">
+        <Image
+          src="/videos/medicare-logo.png"
+          alt="MediCare"
+          width={1024}
+          height={581}
+          className="h-auto w-[74px] sm:w-[96px]"
+          draggable={false}
+        />
       </div>
 
       {/* ── Synchronized State Indicator Pill (Top Center) ── */}
