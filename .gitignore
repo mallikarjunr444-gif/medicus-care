@@ -114,3 +114,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Local environment backups
+.env.bak-*
