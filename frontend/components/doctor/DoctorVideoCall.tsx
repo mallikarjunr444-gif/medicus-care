@@ -229,6 +229,7 @@ export function DoctorVideoCall({
 
   // Chat conversation history (Only ONE message added per interaction turn)
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([])
+  const patientStatements = chatHistory.filter((entry) => entry.role === 'patient')
 
   const handleDoctorBackendEvent = useCallback((event: WsMessage) => {
     switch (event.type) {
@@ -607,10 +608,6 @@ export function DoctorVideoCall({
     doctorVideoActiveRef.current = false
     setDoctorVideoSrc(null)
 
-    const patientSymptoms = chatHistory
-      .filter((m) => m.role === 'patient')
-      .map((m) => m.text.slice(0, 80))
-
     const summary: ConsultationSummaryData = {
       id: `CONS-CKM-${Date.now()}`,
       consultationDate: new Date().toLocaleDateString('en-IN', {
@@ -624,42 +621,42 @@ export function DoctorVideoCall({
       languageLabel:
         SUPPORTED_LANGUAGES.find((l) => l.code === language)?.label || 'English',
       durationFormatted: formatTimer(consultationSeconds),
-      patientReportedSymptoms:
-        sessionMemoryRef.current.chiefComplaints.length > 0
-          ? sessionMemoryRef.current.chiefComplaints
-          : patientSymptoms.length > 0
-          ? patientSymptoms
-          : ['General preventive health inquiry'],
-      symptomDuration: sessionMemoryRef.current.duration || 'Reported during intake',
-      relevantHistory: 'Chikkamagaluru & Karnataka regional healthcare network',
-      informationDiscussed: [
-        'Chief complaint symptom progression and characterization',
-        'Clinical triage risk evaluation and associated symptoms check',
-        'Guidance on hydration, rest, and home monitoring',
-        'Referral guidelines for District Hospital Chikkamagaluru outpatient department',
-      ],
+      patientReportedSymptoms: patientStatements.length > 0
+        ? patientStatements.map((entry) => entry.text)
+        : ['No symptoms or concerns recorded'],
+      symptomDuration: sessionMemoryRef.current.duration || 'Not mentioned',
+      relevantHistory: 'No medical history recorded in this consultation',
+      informationDiscussed: chatHistory
+        .filter((entry) => entry.role === 'doctor')
+        .map((entry) => entry.text)
+        .filter(Boolean),
       triageLevel: activeTriage,
       triageTitle:
         activeTriage === 4
-          ? 'Emergency Attention Required (Dial 112 / 108)'
+          ? 'Emergency help needed now'
           : activeTriage === 3
-          ? 'Urgent Outpatient Clinical Review Advised'
+          ? 'Prompt medical review may be needed'
           : activeTriage === 2
-          ? 'Non-Urgent Medical Assessment Recommended'
-          : 'General Healthcare Education & Wellness',
+          ? 'Symptoms discussed; continue assessment'
+          : 'General health information',
       warningSignsIdentified:
         sessionMemoryRef.current.associatedSymptoms.length > 0
           ? sessionMemoryRef.current.associatedSymptoms
-          : activeTriage >= 2
-          ? ['Persistent symptoms requiring physician auscultation and review']
           : [],
       recommendedNextSteps: [
-        'Schedule an evaluation with a certified registered physician at District Hospital Chikkamagaluru or local clinic.',
-        'Monitor SpO2 saturation, temperature, and breathing cadence twice daily.',
-        'If emergency red flags occur (chest pain, acute breathing difficulty), call 112 / 108 immediately.',
+        ...(activeTriage === 4
+          ? ['Call your local emergency number now. In India, call 112.']
+          : activeTriage === 3
+            ? ['Arrange a prompt review with a qualified clinician, especially if symptoms worsen.']
+            : ['Continue the conversation if you have more symptoms, history, or questions to add.']),
+        ...(activeTriage < 4 ? ['Seek urgent help if severe chest pain, trouble breathing, fainting, or other sudden severe symptoms occur.'] : []),
       ],
       referralRecommendation:
-        'Consultation with an attending physician is strongly recommended for a physical examination and formal prescription.',
+        activeTriage === 4
+          ? 'Urgent emergency care was advised because a possible emergency warning sign was reported.'
+          : activeTriage === 3
+            ? 'A clinician review may be appropriate based on the symptoms discussed.'
+            : 'No referral was suggested based on the information shared in this conversation.',
       disclaimer:
         'MediCare is an AI virtual medical assistant and is not an autonomous licensed doctor. No clinical diagnosis, prescription, or regulated medical service is provided. In emergencies, call 112 immediately.',
     }
@@ -979,13 +976,41 @@ export function DoctorVideoCall({
             ) : (
               <p className="text-xs text-slate-500">
                 {isListeningSpeech
-                  ? 'Listening. Say what is bothering you, then pause for a reply.'
+                  ? 'Listening. Speak naturally; pause briefly when you want a reply.'
                   : voiceInput.isEnabled
                     ? 'Your microphone will resume after the doctor finishes.'
                     : 'Turn on the microphone to talk, or type a message below.'}
               </p>
             )}
           </div>
+
+          {/* Running consultation note: only patient statements and fields the intake recognizer captured. */}
+          <section className="mx-4 mt-3 rounded-xl border border-teal-100 bg-teal-50/70 p-3" aria-live="polite">
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-teal-950">Consultation notes</h3>
+              <span className="text-[10px] text-teal-800">Updates as you speak</span>
+            </div>
+            {sessionMemoryRef.current.chiefComplaints.length > 0 || sessionMemoryRef.current.duration ? (
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                {sessionMemoryRef.current.chiefComplaints.map((complaint) => (
+                  <span key={complaint} className="rounded-full border border-teal-200 bg-white px-2 py-0.5 text-[11px] text-slate-700">{complaint}</span>
+                ))}
+                {sessionMemoryRef.current.duration && (
+                  <span className="rounded-full border border-teal-200 bg-white px-2 py-0.5 text-[11px] text-slate-700">Duration: {sessionMemoryRef.current.duration}</span>
+                )}
+              </div>
+            ) : null}
+            {patientStatements.length > 0 ? (
+              <ul className="max-h-24 space-y-1 overflow-y-auto text-xs leading-relaxed text-slate-700">
+                {patientStatements.map((statement) => <li key={statement.id}>• {statement.text}</li>)}
+              </ul>
+            ) : (
+              <p className="text-xs text-slate-500">Your spoken and typed details will appear here. Nothing is inferred when you haven’t mentioned it.</p>
+            )}
+            {voiceInput.transcript && (
+              <p className="mt-2 border-t border-teal-100 pt-2 text-xs text-teal-900"><span className="font-semibold">Hearing now: </span>{voiceInput.transcript}</p>
+            )}
+          </section>
 
           {/* Transcript Messages List */}
           <div ref={chatScrollRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm">

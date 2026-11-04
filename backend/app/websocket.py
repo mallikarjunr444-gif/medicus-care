@@ -882,6 +882,16 @@ class ConnectionManager:
                 for m in rag_matches:
                     rag_block += f"• [{m.title}]: {m.content}\n  ({m.attribution_text})\n"
                 system_prompt = (system_prompt or "") + rag_block
+            else:
+                # Emergency signals return above before any external request.
+                # If our approved local index has no relevant result, use a
+                # bounded PubMed lookup and pass source/date metadata to the
+                # same response that is streamed to text, speech, and avatar.
+                from app.services.medical_web_research import format_references, search_pubmed
+
+                web_references = await search_pubmed(retrieval_query)
+                if web_references:
+                    system_prompt = (system_prompt or "") + format_references(web_references)
 
             # Keep the selected-language instruction last so English reference
             # excerpts cannot override the user's current language choice.
