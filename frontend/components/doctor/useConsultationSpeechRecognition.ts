@@ -34,12 +34,6 @@ const LANGUAGE_TAGS: Record<ConsultationLanguage, string> = {
   kn: 'kn-IN',
   en: 'en-IN',
   hi: 'hi-IN',
-  te: 'te-IN',
-  ta: 'ta-IN',
-  ml: 'ml-IN',
-  mr: 'mr-IN',
-  bn: 'bn-IN',
-  gu: 'gu-IN',
 }
 
 /** Browser speech input for hands-free, turn-based consultation. */

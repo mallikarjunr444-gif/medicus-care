@@ -16,12 +16,6 @@ export type ConsultationLanguage =
   | 'en'
   | 'kn'
   | 'hi'
-  | 'te'
-  | 'ta'
-  | 'ml'
-  | 'mr'
-  | 'bn'
-  | 'gu'
 
 export type TriageLevel = 1 | 2 | 3 | 4
 
@@ -94,12 +88,6 @@ export const DOCTORS: Record<DoctorId, DoctorProfile> = {
       { code: 'en', label: 'English', nativeName: 'English' },
       { code: 'kn', label: 'Kannada', nativeName: 'ಕನ್ನಡ' },
       { code: 'hi', label: 'Hindi', nativeName: 'हिन्दी' },
-      { code: 'te', label: 'Telugu', nativeName: 'తెలుగు' },
-      { code: 'ta', label: 'Tamil', nativeName: 'தமிழ்' },
-      { code: 'ml', label: 'Malayalam', nativeName: 'മലയാളം' },
-      { code: 'mr', label: 'Marathi', nativeName: 'मराठी' },
-      { code: 'bn', label: 'Bengali', nativeName: 'বাংলা' },
-      { code: 'gu', label: 'Gujarati', nativeName: 'ગુજરાતી' },
     ],
   },
   dr_ananya: {
@@ -118,12 +106,6 @@ export const DOCTORS: Record<DoctorId, DoctorProfile> = {
       { code: 'en', label: 'English', nativeName: 'English' },
       { code: 'kn', label: 'Kannada', nativeName: 'ಕನ್ನಡ' },
       { code: 'hi', label: 'Hindi', nativeName: 'हिन्दी' },
-      { code: 'te', label: 'Telugu', nativeName: 'తెలుగు' },
-      { code: 'ta', label: 'Tamil', nativeName: 'தமிழ்' },
-      { code: 'ml', label: 'Malayalam', nativeName: 'മലയാളം' },
-      { code: 'mr', label: 'Marathi', nativeName: 'मराठी' },
-      { code: 'bn', label: 'Bengali', nativeName: 'বাংলা' },
-      { code: 'gu', label: 'Gujarati', nativeName: 'ગુજરાતી' },
     ],
   },
 }

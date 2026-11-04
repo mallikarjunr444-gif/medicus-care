@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import type { DoctorId, DoctorState } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
 import {
+  AudioLines,
   RotateCcw,
   WifiOff,
 } from 'lucide-react'
@@ -227,6 +228,13 @@ export function PhotorealisticDigitalHuman({
           <span className="text-sm">
             {hasSeparateTtsAudio ? 'Doctor audio is playing · generating lip-synced video…' : 'Generating lip-synced video…'}
           </span>
+        </div>
+      )}
+
+      {doctorState === 'speaking' && !speakingVideoSrc && !isRenderingLipSync && (
+        <div role="status" className="absolute bottom-5 left-4 z-20 flex items-center gap-2 rounded-xl border border-white/15 bg-slate-950/85 px-3 py-2 text-[11px] font-medium text-slate-200 shadow-lg backdrop-blur sm:left-5">
+          <AudioLines size={14} className="text-teal-300" aria-hidden="true" />
+          Voice response · facial animation unavailable
         </div>
       )}
 

@@ -62,12 +62,6 @@ export function useDoctorSpeech({
       kn: 'kn',
       hi: 'hi',
       en: 'en',
-      te: 'te',
-      ta: 'ta',
-      ml: 'ml',
-      mr: 'mr',
-      bn: 'bn',
-      gu: 'gu',
     }
     const prefix = langMap[language] || 'en'
     const langVoices = voices.filter((v) => v.lang.toLowerCase().startsWith(prefix))
@@ -117,12 +111,6 @@ export function useDoctorSpeech({
         kn: 'kn-IN',
         hi: 'hi-IN',
         en: 'en-IN',
-        te: 'te-IN',
-        ta: 'ta-IN',
-        ml: 'ml-IN',
-        mr: 'mr-IN',
-        bn: 'bn-IN',
-        gu: 'gu-IN',
       }
 
       if (voice) {

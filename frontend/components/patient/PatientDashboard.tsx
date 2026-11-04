@@ -3,12 +3,14 @@
 import {
   ArrowRight,
   History,
+  CalendarDays,
+  FileText,
   ShieldCheck,
   Stethoscope,
   UserRound,
 } from 'lucide-react'
 
-type PatientDestination = 'consultation' | 'history'
+type PatientDestination = 'consultation' | 'history' | 'notes' | 'appointments'
 
 interface PatientDashboardProps {
   displayName: string
@@ -37,6 +39,20 @@ const careActions: {
     description: 'Return to a previous care conversation or review its summary.',
     action: 'View history',
   },
+  {
+    destination: 'notes',
+    icon: FileText,
+    title: 'Personal health notes',
+    description: 'Keep questions and reminders in this browser for your next clinician conversation.',
+    action: 'Open notes',
+  },
+  {
+    destination: 'appointments',
+    icon: CalendarDays,
+    title: 'Specialist appointments',
+    description: 'Review the request process and contact a specialist from the available directory.',
+    action: 'Explore appointments',
+  },
 ]
 
 export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDashboardProps) {
@@ -47,7 +63,7 @@ export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDa
     <section className="mx-auto min-h-[calc(100dvh-4.25rem)] max-w-7xl px-4 py-7 sm:px-6 sm:py-10">
       <div className="grid gap-4 lg:grid-cols-[1.45fr_.75fr]">
         <div className="rounded-[1.75rem] bg-[#123f3a] p-6 text-white sm:p-9">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a9d9c9]">Patient portal</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a9d9c9]">Medicus Labs · Patient portal</p>
           <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-4xl">
             Your care, in one place.
           </h1>
@@ -99,7 +115,7 @@ export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDa
         <p className="mt-1 text-sm text-[#71817b]">Choose a next step whenever you’re ready.</p>
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
         {careActions.map(({ destination, icon: Icon, title, description, action }) => (
           <button
             key={destination}

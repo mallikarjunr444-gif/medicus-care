@@ -45,66 +45,6 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
       dr_ananya: 'नमस्ते! मैं डॉ. अनन्या हूँ। आपकी सेहत और जांच रिपोर्ट की समीक्षा के लिए यहाँ हूँ। आपको क्या समस्या है?',
     },
   },
-  {
-    code: 'te',
-    label: 'Telugu',
-    nativeName: 'తెలుగు',
-    region: 'Andhra Pradesh & Telangana',
-    sampleGreeting: {
-      dr_arjun: 'నమస్కారం! నేను డాక్టర్ స్మిత్. మీ ఆరోగ్య సమస్య గురించి చర్చించడానికి వచ్చాను. ఈ రోజు మీకు ఏ విధమైన సమస్య ఉంది?',
-      dr_ananya: 'నమస్కారం! నేను డాక్టర్ అనన్య. మీ ఆరోగ్య మరియు వెల్‌నెస్ సమీక్షకు నేను ఇక్కడ ఉన్నాను. మీకు ఎలా సహాయపడగలను?',
-    },
-  },
-  {
-    code: 'ta',
-    label: 'Tamil',
-    nativeName: 'தமிழ்',
-    region: 'Tamil Nadu (தமிழ்நாடு)',
-    sampleGreeting: {
-      dr_arjun: 'வணக்கம்! நான் டாக்டர் ஸ்மித். உங்கள் உடல்நலம் பற்றி பேச வந்துள்ளேன். இன்று உங்களுக்கு என்ன பிரச்சனை?',
-      dr_ananya: 'வணக்கம்! நான் டாக்டர் அனன்யா. உங்கள் ஆரோக்கியம் மற்றும் நல்வாழ்வு பற்றி விவாதிக்க வந்துள்ளேன். உங்களுக்கு என்ன உதவி தேவை?',
-    },
-  },
-  {
-    code: 'ml',
-    label: 'Malayalam',
-    nativeName: 'മലയാളം',
-    region: 'Kerala (കേരളം)',
-    sampleGreeting: {
-      dr_arjun: 'നമസ്കാരം! ഞാൻ ഡോ. സ്മിത്ത്. നിങ്ങളുടെ ആരോഗ്യത്തെക്കുറിച്ച് സംസാരിക്കാൻ വന്നതാണ്. ഇന്ന് നിങ്ങൾക്ക് എന്താണ് ബുദ്ധിമുട്ട്?',
-      dr_ananya: 'നമസ്കാരം! ഞാൻ ഡോ. അനന്യ. നിങ്ങളുടെ ആരോഗ്യവും ക്ഷേമവും വിലയിരുത്താൻ ഞാൻ ഇവിടെയുണ്ട്. ഞാൻ എങ്ങനെ സഹായിക്കണം?',
-    },
-  },
-  {
-    code: 'mr',
-    label: 'Marathi',
-    nativeName: 'मराठी',
-    region: 'Maharashtra (महाराष्ट्र)',
-    sampleGreeting: {
-      dr_arjun: 'नमस्कार! मी डॉ. स्मित आहे. आपल्या आरोग्याबद्दल चर्चा करण्यासाठी आलो आहे. आज आपल्याला काय त्रास होत आहे?',
-      dr_ananya: 'नमस्कार! मी डॉ. अनन्या आहे. आपल्या आरोग्याची आणि निरोगीपणाची काळजी घेण्यासाठी मी येथे आहे. मी कशी मदत करू?',
-    },
-  },
-  {
-    code: 'bn',
-    label: 'Bengali',
-    nativeName: 'বাংলা',
-    region: 'West Bengal & Tripura',
-    sampleGreeting: {
-      dr_arjun: 'নমস্কার! আমি ডঃ স্মিত। আপনার স্বাস্থ্য নিয়ে কথা বলতে এসেছি। আজ আপনার কী সমস্যা হচ্ছে?',
-      dr_ananya: 'নমস্কার! আমি ডঃ অনন্যা। আপনার সুস্থতা এবং স্বাস্থ্য পরীক্ষার জন্য আমি এখানে আছি। আমি কীভাবে সাহায্য করতে পারি?',
-    },
-  },
-  {
-    code: 'gu',
-    label: 'Gujarati',
-    nativeName: 'ગુજરાતી',
-    region: 'Gujarat (ગુજરાત)',
-    sampleGreeting: {
-      dr_arjun: 'નમસ્તે! હું ડૉ. સ્મિત છું. તમારા સ્વાસ્થ્ય વિશે વાત કરવા આવ્યો છું. આજે તમને શું તકલીફ છે?',
-      dr_ananya: 'નમસ્તે! હું ડૉ. અનન્યા છું. તમારા આરોગ્ય અને સુખાકારીની સમીક્ષા કરવા માટે હું અહીં છું. હું તમને કેવી રીતે મદદ કરી શકું?',
-    },
-  },
 ]
 
 interface LanguageSelectionModalProps {
@@ -219,7 +159,7 @@ export function LanguageSelectionModal({
             className="mt-0.5 h-4 w-4 flex-shrink-0 accent-teal-700"
           />
           <span>
-            I agree to use the microphone for speech recognition and to send my transcript and the doctor's replies to MediCare for this consultation. The conversation is saved in my consultation history. If local medical references have no match, a search query with common direct identifiers removed may be sent to PubMed; I will avoid sharing identifying details. Camera access is optional and starts only if I turn it on. I understand this is an AI health assistant, not a licensed physician.
+            I agree to use the microphone for speech recognition and to send my transcript and the doctor&apos;s replies to MediCare for this consultation. The conversation is saved in my consultation history. If local medical references have no match, a search query with common direct identifiers removed may be sent to PubMed; I will avoid sharing identifying details. Camera access is optional and starts only if I turn it on. I understand this is an AI health assistant, not a licensed physician.
           </span>
         </label>
 
