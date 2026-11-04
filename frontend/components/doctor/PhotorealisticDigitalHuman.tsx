@@ -176,7 +176,11 @@ export function PhotorealisticDigitalHuman({
       ctx.translate(-width / 2, -height / 2)
 
       // Draw Base Doctor Photorealistic Portrait
-      ctx.drawImage(img, 0, 0, width, height)
+      const scale = Math.max(width / img.naturalWidth, height / img.naturalHeight)
+      const drawWidth = img.naturalWidth * scale
+      const drawHeight = img.naturalHeight * scale
+      // Bias the crop upward so the doctor's hair remains in frame in a wide viewport.
+      ctx.drawImage(img, (width - drawWidth) / 2, (height - drawHeight) * 0.25, drawWidth, drawHeight)
 
       ctx.restore()
     }
@@ -200,7 +204,7 @@ export function PhotorealisticDigitalHuman({
           src={speakingVideoSrc}
           playsInline
           muted={isMuted || hasSeparateTtsAudio}
-          className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
+          className="w-full h-full object-cover object-[center_25%] filter contrast-[1.03] brightness-[1.01]"
           onEnded={() => {
             if (onSpeakingVideoEnded) onSpeakingVideoEnded()
             else onStateChange?.('listening')
@@ -211,9 +215,9 @@ export function PhotorealisticDigitalHuman({
         /* Identity-preserving portrait shown while no generated response clip is active. */
         <canvas
           ref={canvasRef}
-          width={1024}
-          height={768}
-          className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
+          width={1600}
+          height={900}
+          className="w-full h-full object-cover object-[center_25%] filter contrast-[1.03] brightness-[1.01]"
         />
       )}
 

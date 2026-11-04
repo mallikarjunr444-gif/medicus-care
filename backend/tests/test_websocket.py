@@ -14,8 +14,12 @@ make barge-in actually work:
 """
 
 import asyncio
+import base64
+from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
+import app.websocket as websocket_module
 
 from app.websocket import (
     _CLAUSE_RE,
@@ -31,13 +35,14 @@ from app.websocket import (
 # ── chunker (first-frame latency) ───────────────────────────────────────────
 
 
-def test_drain_chunks_emits_at_clause_for_first_fragment():
-    """A clause boundary ships the opening fragment before the sentence ends."""
-    buf = "Sure thing, let me look that up for you right now."
+def test_drain_chunks_does_not_emit_a_greeting_as_the_whole_reply():
+    """Short openers merge into a complete useful phrase before TTS starts."""
+    buf = "Hi there! As Dr. Smit, I can help explain the options. What would you like to know?"
     chunks, rest = _drain_chunks(buf, _CLAUSE_RE, _MIN_FIRST_CHUNK_LEN, _MAX_CHUNK_CHARS)
-    # "Sure thing," is >= 12 chars → emitted at the comma, not the period.
     assert chunks
-    assert chunks[0].startswith("Sure thing,")
+    assert chunks[0] != "Hi there!"
+    assert chunks[0].startswith("Hi there!")
+    assert len(chunks[0]) >= _MIN_FIRST_CHUNK_LEN
 
 
 def test_drain_chunks_never_drops_text():
@@ -120,6 +125,65 @@ async def test_handle_text_input_is_non_blocking():
 
     # cleanup
     await m.interrupt_active_turn("s1")
+
+
+@pytest.mark.asyncio
+async def test_all_audio_chunks_stream_while_lipsync_is_still_rendering(monkeypatch):
+    """A slow avatar must not hold back later speech chunks."""
+    manager = ConnectionManager()
+    ws = _wire_session(manager)
+    manager.session_data["s1"]["doctor_id"] = "dr_arjun"
+    manager.session_data["s1"]["avatar_image_local"] = "/unused/reference.jpg"
+
+    render_started = asyncio.Event()
+    allow_render_to_finish = asyncio.Event()
+    synthesized = []
+
+    async def fake_synthesize(*, text, output_path, **kwargs):
+        Path(output_path).write_bytes(f"wav:{text}".encode())
+        synthesized.append(text)
+        return SimpleNamespace(fallback=False, engine="test", voice_cloned=False)
+
+    async def fake_animate(*, output_path, **kwargs):
+        render_started.set()
+        await allow_render_to_finish.wait()
+        Path(output_path).write_bytes(b"fake-video")
+
+    async def fake_upload(*args, **kwargs):
+        return None
+
+    async def fake_serving_url(key):
+        return f"https://local.test/{key}"
+
+    monkeypatch.setattr(websocket_module.tts_service, "synthesize", fake_synthesize)
+    monkeypatch.setattr(websocket_module.avatar_animator, "animate", fake_animate)
+    monkeypatch.setattr(websocket_module.storage_service, "upload_file", fake_upload)
+    monkeypatch.setattr(websocket_module.storage_service, "serving_url", fake_serving_url)
+
+    queue = asyncio.Queue()
+    await queue.put("First complete sentence.")
+    await queue.put("Second complete sentence.")
+    await queue.put(None)
+    task = asyncio.create_task(manager._animate_from_queue("s1", queue))
+
+    await asyncio.wait_for(render_started.wait(), timeout=1)
+    for _ in range(100):
+        audio_events = [item for item in ws.sent if item["type"] == "audio_chunk"]
+        if len(audio_events) == 2:
+            break
+        await asyncio.sleep(0.01)
+
+    assert synthesized == ["First complete sentence.", "Second complete sentence."]
+    assert [base64.b64decode(item["audio_data"]) for item in audio_events] == [
+        b"wav:First complete sentence.",
+        b"wav:Second complete sentence.",
+    ]
+    assert not any(item["type"] == "video_chunk" for item in ws.sent)
+    assert any(item["type"] == "audio_stream_end" for item in ws.sent)
+
+    allow_render_to_finish.set()
+    await asyncio.wait_for(task, timeout=1)
+    assert len([item for item in ws.sent if item["type"] == "video_chunk"]) == 2
 
 
 @pytest.mark.asyncio

@@ -36,6 +36,8 @@ export type WsMessageType =
   | 'transcription'
   | 'message'
   | 'audio_chunk'
+  | 'audio_stream_end'
+  | 'audio_error'
   | 'video_chunk_start'
   | 'video_chunk'
   | 'video_chunk_end'
@@ -53,6 +55,8 @@ export type WsMessage =
   | { type: 'transcription'; text: string }
   | { type: 'message'; role: 'assistant'; content: string; triage?: 4; is_emergency?: boolean }
   | { type: 'audio_chunk'; chunk_index: number; mime_type: string; audio_data: string }
+  | { type: 'audio_stream_end' }
+  | { type: 'audio_error'; message: string }
   | { type: 'video_chunk_start'; total_chunks: number }
   | { type: 'video_chunk'; chunk_index: number; total_chunks: number; video_url: string; text: string }
   | { type: 'video_chunk_end'; sent_chunks: number }

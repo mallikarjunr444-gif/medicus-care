@@ -70,12 +70,11 @@ def _write_private_bytes(path: Path, data: bytes) -> None:
 
 
 # ── chunking thresholds (first-frame latency vs prosody trade-off) ──────────
-# The opening fragment ships at the first CLAUSE boundary (comma/semicolon/
-# colon/dash) once it's long enough, so audio+video start as early as
-# possible. Every chunk after that uses SENTENCE boundaries — fewer TTS
+# The opening fragment ships at the first meaningful CLAUSE boundary, so
+# greetings are not spoken as a complete answer. Every chunk after that uses SENTENCE boundaries — fewer TTS
 # calls and smoother prosody for the bulk of the reply.
 _MIN_SENTENCE_LEN = 8
-_MIN_FIRST_CHUNK_LEN = 10  # ship the opening clause fast (~2 words)
+_MIN_FIRST_CHUNK_LEN = 45  # avoid speaking a greeting fragment as the whole reply
 # Force-flush a run-on with no usable punctuation so we never stall waiting
 # for a boundary that may never come.
 _MAX_CHUNK_CHARS = 200
@@ -933,10 +932,9 @@ class ConnectionManager:
         Stream LLM tokens, emit `token` events to the frontend, and push
         speakable chunks into the queue as boundaries are reached.
 
-        Latency strategy: the FIRST chunk is split on clause boundaries with
-        a low length bar so TTS+animation can start within the opening few
-        words; every chunk after that uses sentence boundaries for smoother
-        prosody and fewer synthesis calls. Returns the complete response text.
+        Latency strategy: the first chunk uses a meaningful clause boundary
+        rather than emitting greetings such as "Hi there!" alone. Later chunks
+        use sentence boundaries for smoother prosody. Returns full response.
         """
         buf = ""
         full_text = ""
@@ -986,8 +984,8 @@ class ConnectionManager:
         queue: "asyncio.Queue[Optional[str]]",
     ) -> None:
         """
-        Consume sentences from the queue and run TTS + animation for each,
-        streaming video_chunk events to the frontend as they complete.
+        Synthesize and stream every sentence in order without waiting for avatar
+        inference. A separate consumer feeds those exact WAV files to MuseTalk.
         """
         data = self.session_data.get(session_id, {})
         avatar_image = data.get("avatar_image_local")
@@ -995,157 +993,154 @@ class ConnectionManager:
         voice_gender = "male" if data.get("doctor_id") == "dr_arjun" else "female"
         speaker_wav: Optional[str] = data.get("voice_wav")
         language: str = data.get("language", "en")
-
-        # If no avatar image, drain queue silently
-        if not avatar_image:
-            logger.warning(f"No avatar image for session {session_id}")
-            while True:
-                item = await queue.get()
-                if item is None:
-                    break
-            return
-
         chunk_index: int = 0
-        sent_any = False
-        # Only warn about TTS fallback once per turn — repeated warnings on
-        # every sentence would be noisy. We reset this in the enclosing turn.
+        video_state = {"sent_any": False, "sent_count": 0}
+        video_queue: asyncio.Queue[Optional[tuple[int, str, str, str]]] = asyncio.Queue()
         fallback_announced = False
 
-        while True:
-            sentence = await queue.get()
-            if sentence is None:
-                break
+        async def render_video_queue() -> None:
+            if not avatar_image:
+                logger.warning("No avatar image for session %s", session_id)
+            while True:
+                item = await video_queue.get()
+                if item is None:
+                    break
+                index, sentence, audio_path, video_path = item
+                audio_file, video_file = Path(audio_path), Path(video_path)
+                try:
+                    if not avatar_image or session_id not in self.active_connections:
+                        continue
+                    await self.send_message(session_id, {
+                        "type": "status", "message": "Animating…", "stage": "animation"
+                    })
+                    with span("avatar.animate", **{"chunk": index}):
+                        await avatar_animator.animate(
+                            avatar_image_path=avatar_image,
+                            audio_path=audio_path,
+                            output_path=video_path,
+                            require_lipsync=require_lipsync,
+                        )
 
-            if session_id not in self.active_connections:
-                break  # client disconnected mid-stream
+                    ts = int(datetime.now(timezone.utc).timestamp() * 1000)
+                    video_key = f"videos/{session_id}/{ts}_c{index}.mp4"
+                    with span("storage.upload", **{"chunk": index}):
+                        await storage_service.upload_file(
+                            await asyncio.to_thread(video_file.read_bytes),
+                            video_key,
+                            content_type="video/mp4",
+                        )
+                        video_url = await storage_service.serving_url(video_key)
 
-            job_id = uuid.uuid4().hex[:12]
-            session_dir = _private_session_dir(session_id)
-            tmp_audio = session_dir / f"{job_id}_audio.wav"
-            tmp_video = session_dir / f"{job_id}_video.mp4"
+                    if not video_state["sent_any"]:
+                        await self.send_message(session_id, {
+                            "type": "video_chunk_start", "total_chunks": -1
+                        })
+                        video_state["sent_any"] = True
+                    await self.send_message(session_id, {
+                        "type": "video_chunk",
+                        "chunk_index": index,
+                        "total_chunks": -1,
+                        "video_url": video_url,
+                        "text": sentence,
+                    })
+                    video_state["sent_count"] += 1
+                    logger.info("Lip-sync clip %s ready [%s]", index, session_id)
+                except asyncio.CancelledError:
+                    raise
+                except Exception as e:
+                    logger.error("Video chunk %s failed [%s]: %s", index, session_id, e)
+                    if require_lipsync:
+                        await self.send_message(session_id, {
+                            "type": "video_error",
+                            "message": "The doctor's lip-synced video is still unavailable; the spoken reply can continue.",
+                        })
+                finally:
+                    audio_file.unlink(missing_ok=True)
+                    video_file.unlink(missing_ok=True)
 
-            try:
-                await self.send_message(
-                    session_id,
-                    {
-                        "type": "status",
-                        "message": "Animating…",
-                        "stage": "animation",
-                    },
-                )
+        video_task = asyncio.create_task(render_video_queue())
+        try:
+            while True:
+                sentence = await queue.get()
+                if sentence is None:
+                    break
+                if session_id not in self.active_connections:
+                    break
 
-                with span(
-                    "tts.synthesize",
-                    **{"chars": len(sentence), "lang": language, "cloned": bool(speaker_wav)},
-                ):
-                    synth = await tts_service.synthesize(
-                        text=sentence,
-                        output_path=str(tmp_audio),
-                        speaker_wav=speaker_wav,
-                        language=language,
-                        voice_gender=voice_gender,
-                    )
+                job_id = uuid.uuid4().hex[:12]
+                session_dir = _private_session_dir(session_id)
+                tmp_audio = session_dir / f"{job_id}_audio.wav"
+                tmp_video = session_dir / f"{job_id}_video.mp4"
+                try:
+                    with span("tts.synthesize", **{
+                        "chars": len(sentence), "lang": language, "cloned": bool(speaker_wav)
+                    }):
+                        synth = await tts_service.synthesize(
+                            text=sentence,
+                            output_path=str(tmp_audio),
+                            speaker_wav=speaker_wav,
+                            language=language,
+                            voice_gender=voice_gender,
+                        )
 
-                # Deliver the gender-matched voice as soon as TTS finishes.
-                # On Apple MPS, MuseTalk may take minutes to render the
-                # synchronized video, so audio must not wait for inference.
-                audio_bytes = await asyncio.to_thread(tmp_audio.read_bytes)
-                await self.send_message(
-                    session_id,
-                    {
+                    audio_bytes = await asyncio.to_thread(tmp_audio.read_bytes)
+                    await self.send_message(session_id, {
                         "type": "audio_chunk",
                         "chunk_index": chunk_index,
                         "mime_type": "audio/wav",
                         "audio_data": base64.b64encode(audio_bytes).decode("ascii"),
-                    },
-                )
-
-                # Notify the client exactly once if Chatterbox bailed and
-                # we ended up serving the un-cloned gTTS voice instead.
-                if synth.fallback and not fallback_announced:
-                    fallback_announced = True
-                    await self.send_message(
-                        session_id,
-                        {
+                    })
+                    if synth.fallback and not fallback_announced:
+                        fallback_announced = True
+                        await self.send_message(session_id, {
                             "type": "tts_fallback",
                             "engine": synth.engine,
                             "voice_cloned": synth.voice_cloned,
                             "message": (
                                 "Cloned voice unavailable — using default voice for this reply."
-                                if speaker_wav
-                                else f"Voice engine fell back to {synth.engine} for this reply."
+                                if speaker_wav else f"Voice engine fell back to {synth.engine} for this reply."
                             ),
-                        },
-                    )
+                        })
 
-                with span("avatar.animate", **{"chunk": chunk_index}):
-                    await avatar_animator.animate(
-                        avatar_image_path=avatar_image,
-                        audio_path=str(tmp_audio),
-                        output_path=str(tmp_video),
-                        require_lipsync=data.get("doctor_id") in {"dr_ananya", "dr_arjun"},
-                    )
+                    if avatar_image:
+                        await video_queue.put((chunk_index, sentence, str(tmp_audio), str(tmp_video)))
+                    else:
+                        tmp_audio.unlink(missing_ok=True)
+                    chunk_index += 1
+                except asyncio.CancelledError:
+                    raise
+                except Exception as e:
+                    logger.error("TTS chunk %s failed [%s]: %s", chunk_index, session_id, e)
+                    await self.send_message(session_id, {
+                        "type": "audio_error",
+                        "message": "One part of the spoken reply could not be synthesized.",
+                    })
+                    tmp_audio.unlink(missing_ok=True)
+                    tmp_video.unlink(missing_ok=True)
 
-                ts = int(datetime.now(timezone.utc).timestamp() * 1000)
-                video_key = f"videos/{session_id}/{ts}_c{chunk_index}.mp4"
-                with span("storage.upload", **{"chunk": chunk_index}):
-                    await storage_service.upload_file(
-                        tmp_video.read_bytes(), video_key, content_type="video/mp4"
-                    )
-                    # S3 objects are private — hand the client a URL it can
-                    # actually fetch (presigned on S3, /uploads/ locally).
-                    video_url = await storage_service.serving_url(video_key)
+            # The browser can finish the ordered audio queue independently of
+            # the much slower video worker.
+            await self.send_message(session_id, {"type": "audio_stream_end"})
+            await video_queue.put(None)
+            await video_task
 
-                if not sent_any:
-                    # Pause the microphone only once a generated clip is
-                    # ready; MPS inference can take much longer than speech.
-                    await self.send_message(
-                        session_id,
-                        {"type": "video_chunk_start", "total_chunks": -1},
-                    )
-
-                await self.send_message(
-                    session_id,
-                    {
-                        "type": "video_chunk",
-                        "chunk_index": chunk_index,
-                        "total_chunks": -1,
-                        "video_url": video_url,
-                        "text": sentence,
-                    },
-                )
-                chunk_index = chunk_index + 1
-                sent_any = True
-                logger.info(f"Chunk {chunk_index} ready [{session_id}]")
-
-            except Exception as e:
-                logger.error(f"Chunk {chunk_index} failed [{session_id}]: {e}")
-                if require_lipsync:
-                    await self.send_message(
-                        session_id,
-                        {
-                            "type": "video_error",
-                            "message": "The doctor's synchronized video could not be generated for this response.",
-                        },
-                    )
-
-            finally:
-                tmp_audio.unlink(missing_ok=True)
-                tmp_video.unlink(missing_ok=True)
-
-        await self.send_message(
-            session_id,
-            {
-                "type": "video_chunk_end",
-                "sent_chunks": chunk_index,
-            },
-        )
-
-        if not sent_any and not require_lipsync:
-            await self.send_message(
-                session_id,
-                {"type": "error", "message": "Avatar animation failed for all sentences."},
-            )
+            await self.send_message(session_id, {
+                "type": "video_chunk_end", "sent_chunks": video_state["sent_count"]
+            })
+            if not video_state["sent_any"] and not require_lipsync and avatar_image:
+                await self.send_message(session_id, {
+                    "type": "video_error", "message": "Avatar animation failed for this response."
+                })
+        finally:
+            if not video_task.done():
+                video_task.cancel()
+                await asyncio.gather(video_task, return_exceptions=True)
+            while not video_queue.empty():
+                item = video_queue.get_nowait()
+                if item is not None:
+                    _, _, audio_path, video_path = item
+                    Path(audio_path).unlink(missing_ok=True)
+                    Path(video_path).unlink(missing_ok=True)
 
     # ── helpers ───────────────────────────────────────────────────────────────
 
