@@ -16,7 +16,8 @@ import httpx
 logger = logging.getLogger("medicus_care.medical_web_research")
 
 _BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
-_TIMEOUT = httpx.Timeout(2.5, connect=1.0)
+_TIMEOUT = httpx.Timeout(2.0, connect=0.6)
+_TOTAL_TIMEOUT_SECONDS = 3.6
 _LOOKUP_LIMIT = asyncio.Semaphore(4)
 
 
@@ -35,7 +36,8 @@ def _deidentify_query(query: str) -> str:
     value = re.sub(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b", " ", value)
     value = re.sub(r"(?<!\w)(?:\+?\d[\d ()-]{7,}\d)(?!\w)", " ", value)
     value = re.sub(r"\b(?:my address is|i live at)\s+[^,.!?;]+", " ", value, flags=re.IGNORECASE)
-    value = re.sub(r"\s+", " ", value).strip()
+    value = re.sub(r"\b(?:email|call|text) me at\b.*$", " ", value, flags=re.IGNORECASE)
+    value = re.sub(r"\s+", " ", value).strip(" ,.;:\t\r\n")
     return value[:300]
 
 
@@ -79,27 +81,28 @@ async def search_pubmed(query: str) -> list[MedicalWebReference]:
     async with _LOOKUP_LIMIT:
         try:
             async with httpx.AsyncClient(timeout=_TIMEOUT, follow_redirects=True) as client:
-                search = await client.get(
-                    f"{_BASE_URL}/esearch.fcgi",
-                    params={
-                        "db": "pubmed",
-                        "term": safe_query,
-                        "sort": "relevance",
-                        "retmax": "3",
-                        "retmode": "json",
-                    },
-                )
-                search.raise_for_status()
-                ids = search.json().get("esearchresult", {}).get("idlist", [])
-                if not ids:
-                    return []
-                details = await client.get(
-                    f"{_BASE_URL}/efetch.fcgi",
-                    params={"db": "pubmed", "id": ",".join(ids), "retmode": "xml"},
-                )
-                details.raise_for_status()
-                return _extract_references(details.text)
-        except (httpx.HTTPError, ValueError, ET.ParseError) as exc:
+                async with asyncio.timeout(_TOTAL_TIMEOUT_SECONDS):
+                    search = await client.get(
+                        f"{_BASE_URL}/esearch.fcgi",
+                        params={
+                            "db": "pubmed",
+                            "term": safe_query,
+                            "sort": "relevance",
+                            "retmax": "3",
+                            "retmode": "json",
+                        },
+                    )
+                    search.raise_for_status()
+                    ids = search.json().get("esearchresult", {}).get("idlist", [])
+                    if not ids:
+                        return []
+                    details = await client.get(
+                        f"{_BASE_URL}/efetch.fcgi",
+                        params={"db": "pubmed", "id": ",".join(ids), "retmode": "xml"},
+                    )
+                    details.raise_for_status()
+                    return _extract_references(details.text)
+        except (httpx.HTTPError, ValueError, ET.ParseError, TimeoutError) as exc:
             # Do not log the patient-derived search string or response payload.
             logger.info("PubMed lookup unavailable (%s)", type(exc).__name__)
             return []
