@@ -130,6 +130,9 @@ export function DoctorVideoCall({
   const doctorVideoFailureRef = useRef(false)
 
   // Conversational Session Memory (Prevents repetitive questions & tracks symptoms across turns)
+  const [sessionMemorySnapshot, setSessionMemorySnapshot] = useState<ClinicalSessionMemory>(
+    () => createInitialSessionMemory('kn', initialDoctorId)
+  )
   const sessionMemoryRef = useRef<ClinicalSessionMemory>(
     createInitialSessionMemory('kn', initialDoctorId)
   )
@@ -149,49 +152,6 @@ export function DoctorVideoCall({
   } = voiceInput
   const isListeningSpeech = voiceInput.isListening
   const chatScrollRef = useRef<HTMLDivElement>(null)
-
-  startNextAudioRef.current = () => {
-    if (audioRef.current) return
-    const queuedAudio = audioQueueRef.current.shift()
-    if (!queuedAudio) {
-      if (audioStreamEndedRef.current) {
-        if (!doctorVideoActiveRef.current) {
-          setDoctorState('listening')
-          resumeVoiceInput()
-        }
-      } else if (!doctorVideoActiveRef.current) {
-        setDoctorState('thinking')
-      }
-      return
-    }
-
-    const { url: objectUrl, text } = queuedAudio
-    const audio = new Audio(objectUrl)
-    audio.muted = isMuted
-    audioRef.current = audio
-    audioObjectUrlRef.current = objectUrl
-    audio.onplay = () => {
-      pauseVoiceInput()
-      setDoctorState('speaking')
-      setSubtitles(text)
-    }
-    const finishAudio = () => {
-      if (audioRef.current !== audio) return
-      audioRef.current = null
-      if (audioObjectUrlRef.current === objectUrl) audioObjectUrlRef.current = null
-      URL.revokeObjectURL(objectUrl)
-      startNextAudioRef.current()
-    }
-    audio.onended = finishAudio
-    audio.onerror = () => {
-      toast.error('A part of the doctor’s spoken reply could not be played.')
-      finishAudio()
-    }
-    void audio.play().catch(() => {
-      toast.error('Audio playback was blocked. Tap the page and try again.')
-      finishAudio()
-    })
-  }
 
   const clearDoctorAudio = useCallback(() => {
     audioRef.current?.pause()
@@ -227,6 +187,52 @@ export function DoctorVideoCall({
     language,
     onStateChange: onDoctorSpeechStateChange,
   })
+
+  useEffect(() => {
+    startNextAudioRef.current = () => {
+      if (audioRef.current) return
+      const queuedAudio = audioQueueRef.current.shift()
+      if (!queuedAudio) {
+        if (audioStreamEndedRef.current) {
+          if (!doctorVideoActiveRef.current) {
+            setDoctorState('listening')
+            resumeVoiceInput()
+          }
+        } else if (!doctorVideoActiveRef.current) {
+          setDoctorState('thinking')
+        }
+        return
+      }
+
+      const { url: objectUrl, text } = queuedAudio
+      const audio = new Audio(objectUrl)
+      audio.muted = isMuted
+      audioRef.current = audio
+      audioObjectUrlRef.current = objectUrl
+      audio.onplay = () => {
+        pauseVoiceInput()
+        setDoctorState('speaking')
+        setSubtitles(text)
+      }
+      const finishAudio = () => {
+        if (audioRef.current !== audio) return
+        audioRef.current = null
+        if (audioObjectUrlRef.current === objectUrl) audioObjectUrlRef.current = null
+        URL.revokeObjectURL(objectUrl)
+        startNextAudioRef.current()
+      }
+      audio.onended = finishAudio
+      audio.onerror = () => {
+        toast.error('A part of the doctor’s spoken reply could not be played.')
+        finishAudio()
+      }
+      void audio.play().catch(() => {
+        toast.error('Audio playback was blocked. Tap the page and try again.')
+        finishAudio()
+      })
+    }
+    return () => { startNextAudioRef.current = () => {} }
+  }, [isMuted, pauseVoiceInput, resumeVoiceInput, setSubtitles])
 
   // Chat conversation history (Only ONE message added per interaction turn)
   const [chatHistory, setChatHistory] = useState<ChatEntry[]>([])
@@ -353,7 +359,7 @@ export function DoctorVideoCall({
       case 'pong':
         break
     }
-  }, [doctorId, doctorVideoSrc, isMuted, hasSeparateTtsAudio, setSubtitles, pauseVoiceInput, resumeVoiceInput, clearDoctorAudio])
+  }, [doctorId, doctorVideoSrc, hasSeparateTtsAudio, setSubtitles, pauseVoiceInput, resumeVoiceInput, clearDoctorAudio])
 
   const doctorBackend = useDoctorBackendSession(handleDoctorBackendEvent)
   const {
@@ -519,6 +525,7 @@ export function DoctorVideoCall({
       // Process through Context-Aware Medical Consultation Engine with Conversational Memory
       const result = analyzePatientInput(msg, sessionMemoryRef.current)
       sessionMemoryRef.current = result.updatedMemory
+      setSessionMemorySnapshot(result.updatedMemory)
       setActiveTriage(result.triage)
       pendingClinicalMetaRef.current = {
         triage: result.triage,
@@ -535,7 +542,7 @@ export function DoctorVideoCall({
         toast.error(`${doctor.name} is not connected to the AI backend. Reconnect and try again.`, { id: 'consultation-backend-error' })
       }
     },
-    [inputText, isSpeaking, interrupt, doctor.name, doctorState, isRenderingLipSync, sendTextToBackend, interruptBackend, resumeVoiceInput, clearDoctorAudio]
+    [inputText, isSpeaking, interrupt, doctor.name, doctorState, isRenderingLipSync, sendTextToBackend, interruptBackend, resumeVoiceInput, clearDoctorAudio, setSubtitles]
   )
 
   useEffect(() => {
@@ -557,7 +564,9 @@ export function DoctorVideoCall({
     })
 
     // Initialize session memory with selected language
-    sessionMemoryRef.current = createInitialSessionMemory(selectedLang, doctorId)
+    const newSessionMemory = createInitialSessionMemory(selectedLang, doctorId)
+    sessionMemoryRef.current = newSessionMemory
+    setSessionMemorySnapshot(newSessionMemory)
 
     setChatHistory([])
     const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === selectedLang) || SUPPORTED_LANGUAGES[0]
@@ -583,10 +592,12 @@ export function DoctorVideoCall({
     setLanguage(newLang)
 
     // Update session memory language while preserving symptoms & context
-    sessionMemoryRef.current = {
+    const nextMemory = {
       ...sessionMemoryRef.current,
       language: newLang,
     }
+    sessionMemoryRef.current = nextMemory
+    setSessionMemorySnapshot(nextMemory)
 
     const langConfig =
       SUPPORTED_LANGUAGES.find((l) => l.code === newLang) || SUPPORTED_LANGUAGES[0]
@@ -992,13 +1003,13 @@ export function DoctorVideoCall({
               <h3 className="text-xs font-semibold text-teal-950">Consultation notes</h3>
               <span className="text-[10px] text-teal-800">Updates as you speak</span>
             </div>
-            {sessionMemoryRef.current.chiefComplaints.length > 0 || sessionMemoryRef.current.duration ? (
+            {sessionMemorySnapshot.chiefComplaints.length > 0 || sessionMemorySnapshot.duration ? (
               <div className="mb-2 flex flex-wrap gap-1.5">
-                {sessionMemoryRef.current.chiefComplaints.map((complaint) => (
+                {sessionMemorySnapshot.chiefComplaints.map((complaint) => (
                   <span key={complaint} className="rounded-full border border-teal-200 bg-white px-2 py-0.5 text-[11px] text-slate-700">{complaint}</span>
                 ))}
-                {sessionMemoryRef.current.duration && (
-                  <span className="rounded-full border border-teal-200 bg-white px-2 py-0.5 text-[11px] text-slate-700">Duration: {sessionMemoryRef.current.duration}</span>
+                {sessionMemorySnapshot.duration && (
+                  <span className="rounded-full border border-teal-200 bg-white px-2 py-0.5 text-[11px] text-slate-700">Duration: {sessionMemorySnapshot.duration}</span>
                 )}
               </div>
             ) : null}
