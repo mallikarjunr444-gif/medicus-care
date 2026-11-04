@@ -19,12 +19,14 @@ import {
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  UserRound,
   X,
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { AvatarUpload } from '@/components/AvatarUpload'
 import { AvatarList } from '@/components/AvatarList'
 import { api } from '@/lib/api'
+import { PatientDashboard } from '@/components/patient/PatientDashboard'
 import type { DoctorId } from '@/lib/doctorTypes'
 import { useStore } from '@/store/useStore'
 
@@ -82,9 +84,10 @@ function PanelLoader({ label }: { label: string }) {
   )
 }
 
-type View = 'home' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings' | 'admin' | 'tools'
+type View = 'home' | 'patient' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings' | 'admin' | 'tools'
 
 const navItems: { id: View; icon: typeof HeartPulse; label: string }[] = [
+  { id: 'patient', icon: UserRound, label: 'Patient' },
   { id: 'home', icon: HeartPulse, label: 'Home' },
   { id: 'consultation', icon: Stethoscope, label: 'Consultation' },
   { id: 'avatars', icon: Activity, label: 'Avatar studio' },
@@ -95,10 +98,10 @@ const navItems: { id: View; icon: typeof HeartPulse; label: string }[] = [
   { id: 'admin', icon: ShieldCheck, label: 'Knowledge' },
 ]
 
-const mobileMoreItems = navItems.filter(({ id }) => ['avatars', 'tools', 'voice', 'settings', 'admin'].includes(id))
+const mobileMoreItems = navItems.filter(({ id }) => ['home', 'avatars', 'tools', 'voice', 'settings', 'admin'].includes(id))
 
 export default function Home() {
-  const { isAuthenticated, setAuth } = useStore()
+  const { isAuthenticated, setAuth, user } = useStore()
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorId>('dr_arjun')
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
   const [resumeSessionId, setResumeSessionId] = useState<string | null>(null)
@@ -212,8 +215,20 @@ export default function Home() {
       <main id="main-content" className={view === 'consultation' ? 'min-h-[100dvh]' : 'min-h-[calc(100dvh-4.25rem)]'}>
         {view === 'consultation' && (
           <div className="min-h-[calc(100dvh-4.25rem)] animate-fade-in">
-            <DoctorVideoCall initialDoctorId={selectedDoctor} onEndConsultation={() => navigate('home')} />
+            <DoctorVideoCall
+              initialDoctorId={selectedDoctor}
+              onEndConsultation={() => navigate('home')}
+              onOpenPatient={() => navigate('patient')}
+            />
           </div>
+        )}
+
+        {view === 'patient' && (
+          <PatientDashboard
+            displayName={user?.full_name || user?.username || 'Patient'}
+            isGuest={Boolean(user?.is_guest)}
+            onNavigate={navigate}
+          />
         )}
 
         {view === 'home' && (
@@ -381,7 +396,7 @@ export default function Home() {
           <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-40 border-t border-[#dfe8e2] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_24px_rgba(33,64,52,.06)] backdrop-blur-xl lg:hidden">
             <div className="mx-auto grid max-w-xl grid-cols-4 px-2 pt-1.5">
               {[
-                { id: 'home' as View, icon: HeartPulse, label: 'Home' },
+                { id: 'patient' as View, icon: UserRound, label: 'Patient' },
                 { id: 'consultation' as View, icon: Stethoscope, label: 'Doctor' },
                 { id: 'history' as View, icon: History, label: 'History' },
               ].map(({ id, icon: Icon, label }) => (

@@ -27,6 +27,7 @@ import {
   Minimize2,
   PhoneCall,
   HeartPulse,
+  UserRound,
   Brain,
   Stethoscope,
   Calendar,
@@ -86,11 +87,13 @@ type PendingClinicalMeta = Pick<ChatEntry, 'triage' | 'warningSign' | 'actionCar
 interface DoctorVideoCallProps {
   initialDoctorId?: DoctorId
   onEndConsultation?: () => void
+  onOpenPatient?: () => void
 }
 
 export function DoctorVideoCall({
   initialDoctorId = 'dr_arjun',
   onEndConsultation,
+  onOpenPatient,
 }: DoctorVideoCallProps) {
   // Doctor & Session State
   const [doctorId] = useState<DoctorId>(initialDoctorId)
@@ -607,16 +610,16 @@ export function DoctorVideoCall({
 
       {/* ── TOP NAVIGATION BAR ── */}
       <header className="h-16 border-b border-slate-200 bg-white px-4 sm:px-6 flex items-center justify-between gap-3 z-30 flex-shrink-0 shadow-sm">
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <div className="w-10 h-10 rounded-2xl bg-[#123d55] flex items-center justify-center text-white shadow-sm">
             <HeartPulse size={19} />
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm tracking-tight text-slate-900">
                 Medi<span className="text-teal-700">Care</span>
               </span>
-              <span className="hidden sm:inline text-[10px] uppercase px-2 py-1 rounded-full bg-teal-50 text-teal-800 border border-teal-100 font-semibold">
+              <span className="hidden xl:inline text-[10px] uppercase px-2 py-1 rounded-full bg-teal-50 text-teal-800 border border-teal-100 font-semibold">
                 Care consultation
               </span>
             </div>
@@ -640,6 +643,16 @@ export function DoctorVideoCall({
 
         {/* Right Controls: Language Selector Dropdown & End Call */}
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenPatient}
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-teal-100 bg-teal-50 px-2.5 text-xs font-semibold text-teal-800 transition hover:bg-teal-100 sm:px-3"
+            aria-label="Open patient portal"
+          >
+            <UserRound size={15} aria-hidden="true" />
+            <span>Patient</span>
+          </button>
+
           {/* Active Language Pill & Switcher */}
           <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 text-xs shadow-sm">
             <Globe size={14} className="text-teal-700 ml-1.5 mr-0.5" />
