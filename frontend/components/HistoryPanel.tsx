@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  Clock, MessageCircle, Trash2, Play, RefreshCw, Search, Loader2,
+  Clock, History, MessageCircle, Trash2, Play, RefreshCw, Search, Loader2,
   Download, Pencil, Check, X, Sparkles,
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { api } from '@/lib/api'
 import type { ChatMessage, SessionSummary, Avatar } from '@/lib/types'
+import { ClinicalBadge, ClinicalCard } from '@/components/ui/clinical-primitives'
 
 interface HistoryPanelProps {
   /** Called when the user clicks "Open" — receives the avatar to resume against. */
@@ -203,13 +204,14 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
   }, [refetch])
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 animate-fade-in">
-      <div className="mb-8 flex items-start justify-between gap-4 flex-wrap">
+    <div className="mx-auto max-w-6xl px-4 py-7 animate-fade-in sm:px-6 sm:py-10">
+      <div className="mb-7 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 mb-2">Conversation History</h1>
-          <p className="text-gray-500">Re-open, review, export, and clean up your past sessions.</p>
+          <ClinicalBadge><History size={13} /> Your care</ClinicalBadge>
+          <h1 className="mt-3 text-3xl font-semibold tracking-[-.04em] text-[#183a34] sm:text-4xl">Conversation history</h1>
+          <p className="mt-2 text-sm text-[#6c7d76]">Review, continue, export, or delete a previous conversation.</p>
         </div>
-        <button onClick={() => refetch()} className="btn-icon" title="Refresh" aria-label="Refresh">
+        <button onClick={() => refetch()} className="btn-icon" title="Refresh" aria-label="Refresh conversations">
           <RefreshCw size={15} />
         </button>
       </div>
@@ -231,7 +233,7 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
           <Loader2 size={28} className="animate-spin text-primary-400" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="card flex flex-col items-center justify-center py-16 gap-4 text-center">
+        <ClinicalCard className="flex flex-col items-center justify-center gap-4 py-16 text-center">
           <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center border border-gray-200">
             <MessageCircle size={28} className="text-gray-500" />
           </div>
@@ -241,7 +243,7 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
               {query ? 'Nothing matches that search.' : 'Start a chat with an avatar to see it here.'}
             </p>
           </div>
-        </div>
+        </ClinicalCard>
       ) : (
         <div className="space-y-3">
           {filtered.map((s) => {
@@ -253,8 +255,8 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
             const isBusy = busy === s.id
             const title = convo?.title || av?.name || 'Untitled conversation'
             return (
-              <div key={s.id} className="card rounded-2xl overflow-hidden border border-gray-200">
-                <div className="flex items-center gap-4 px-5 py-4">
+              <ClinicalCard key={s.id} className="overflow-hidden">
+                <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-5">
                   <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 flex items-center justify-center">
                     {av?.thumbnail_url || av?.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -320,7 +322,7 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
                       <span className="font-mono">{s.id.slice(0, 8)}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:flex-shrink-0">
                     {convo && !isRenaming && (
                       <button
                         onClick={() => handleStartRename(convo.id, s.id, convo.title)}
@@ -404,9 +406,9 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
                       <div className="space-y-2 max-h-72 overflow-y-auto messages-scroll">
                         {msgs.map((m) => (
                           <div key={m.id} className="flex gap-2 text-sm">
-                            <span className={`font-mono text-xs px-1.5 py-0.5 rounded ${
- m.role === 'user' ? 'bg-primary-700/40 text-primary-200' : 'bg-primary-700/40 text-primary-200'
- }`}>
+                            <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded ${
+  m.role === 'user' ? 'bg-primary-50 text-primary-800' : 'bg-gray-100 text-gray-600'
+  }`}>
                               {m.role === 'user' ? 'YOU' : 'AI'}
                             </span>
                             <span className="text-gray-800 flex-1 leading-relaxed whitespace-pre-wrap">{m.content}</span>
@@ -416,7 +418,7 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
                     )}
                   </div>
                 )}
-              </div>
+              </ClinicalCard>
             )
           })}
         </div>

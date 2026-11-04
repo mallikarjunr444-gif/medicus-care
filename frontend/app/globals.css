@@ -154,6 +154,14 @@
            focus:border-primary-300 focus:outline-none focus:ring-4 focus:ring-primary-50;
   }
 
+  /* Shared form control used in history, settings, and voice tools. */
+  .input-field {
+    @apply w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5
+           text-sm text-gray-800 shadow-xs placeholder:text-gray-400
+           transition-colors focus:border-primary-400 focus:outline-none
+           focus:ring-4 focus:ring-primary-100;
+  }
+
   .label {
     @apply mb-1.5 block text-sm font-medium text-gray-700;
   }
@@ -166,6 +174,7 @@
   .badge-gray   { @apply badge bg-gray-100 text-gray-700    ring-1 ring-inset ring-gray-500/[.12]; }
   .badge-green  { @apply badge bg-success-50 text-success-700 ring-1 ring-inset ring-success-600/[.12]; }
   .badge-yellow { @apply badge bg-warning-50 text-warning-700 ring-1 ring-inset ring-warning-700/[.12]; }
+  .badge-amber  { @apply badge bg-warning-50 text-warning-700 ring-1 ring-inset ring-warning-700/[.12]; }
   .badge-red    { @apply badge bg-error-50 text-error-700     ring-1 ring-inset ring-error-700/[.12]; }
   .badge-brand  { @apply badge bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-600/[.12]; }
 
