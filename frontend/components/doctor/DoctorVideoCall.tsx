@@ -269,8 +269,8 @@ export function DoctorVideoCall({
         doctorVideoQueueRef.current = []
         doctorVideoActiveRef.current = false
         setDoctorVideoSrc(null)
-        setIsRenderingLipSync(false)
         setDoctorState('listening')
+        setIsRenderingLipSync(false)
         resumeVoiceInput()
         toast.error(event.message, { id: 'consultation-video-warning' })
         break
@@ -318,6 +318,12 @@ export function DoctorVideoCall({
   } = doctorBackend
 
   const interruptDoctor = useCallback(() => {
+    audioRef.current?.pause()
+    audioRef.current = null
+    if (audioObjectUrlRef.current) URL.revokeObjectURL(audioObjectUrlRef.current)
+    audioObjectUrlRef.current = null
+    setHasSeparateTtsAudio(false)
+    setIsRenderingLipSync(false)
     interrupt()
     if (doctorVideoActiveRef.current || doctorState === 'thinking') {
       interruptBackend()
@@ -335,7 +341,7 @@ export function DoctorVideoCall({
     : doctorBackend.status === 'disconnected'
       ? 'Disconnected'
       : doctorState === 'thinking'
-        ? 'Thinking'
+        ? isRenderingLipSync ? 'Preparing lip-sync' : 'Thinking'
         : doctorState === 'speaking'
           ? 'Speaking'
           : doctorState === 'disconnected'
@@ -351,6 +357,15 @@ export function DoctorVideoCall({
   useEffect(() => {
     if (isListeningSpeech && doctorState === 'idle') setDoctorState('listening')
   }, [isListeningSpeech, doctorState])
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.muted = isMuted
+  }, [isMuted])
+
+  useEffect(() => () => {
+    audioRef.current?.pause()
+    if (audioObjectUrlRef.current) URL.revokeObjectURL(audioObjectUrlRef.current)
+  }, [])
 
   const handleDoctorVideoEnded = useCallback(() => {
     const next = doctorVideoQueueRef.current.shift()
@@ -429,15 +444,21 @@ export function DoctorVideoCall({
       const msg = (customText || inputText).trim()
       if (!msg) return
 
-      // Pause recognition during the response so it cannot transcribe the doctor's audio.
-      pauseVoiceInput()
+      // Let the patient interrupt while the model is thinking/rendering. Pause only
+      // when audible doctor speech starts so it is not transcribed as patient speech.
+      audioRef.current?.pause()
+      audioRef.current = null
+      if (audioObjectUrlRef.current) URL.revokeObjectURL(audioObjectUrlRef.current)
+      audioObjectUrlRef.current = null
       if (isSpeaking) interrupt()
-      if (doctorVideoActiveRef.current || doctorState === 'thinking') {
+      if (doctorVideoActiveRef.current || doctorState === 'thinking' || doctorState === 'speaking' || isRenderingLipSync) {
         interruptBackend()
         doctorVideoQueueRef.current = []
         doctorVideoTurnEndedRef.current = true
         doctorVideoActiveRef.current = false
         setDoctorVideoSrc(null)
+        setIsRenderingLipSync(false)
+        setHasSeparateTtsAudio(false)
         setDoctorState('listening')
       }
 
@@ -473,7 +494,7 @@ export function DoctorVideoCall({
         toast.error(`${doctor.name} is not connected to the AI backend. Reconnect and try again.`, { id: 'consultation-backend-error' })
       }
     },
-    [inputText, isSpeaking, interrupt, doctor.name, doctorState, sendTextToBackend, interruptBackend, pauseVoiceInput, resumeVoiceInput]
+    [inputText, isSpeaking, interrupt, doctor.name, doctorState, isRenderingLipSync, sendTextToBackend, interruptBackend, resumeVoiceInput]
   )
 
   useEffect(() => {
@@ -748,6 +769,8 @@ export function DoctorVideoCall({
               doctorId={doctorId}
               doctorState={doctorState}
               isMuted={isMuted}
+              hasSeparateTtsAudio={hasSeparateTtsAudio}
+              isRenderingLipSync={isRenderingLipSync}
               subtitles={subtitles}
               speakingVideoSrc={doctorVideoSrc}
               onSpeakingVideoEnded={handleDoctorVideoEnded}

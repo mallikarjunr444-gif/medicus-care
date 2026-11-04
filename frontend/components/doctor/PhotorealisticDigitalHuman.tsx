@@ -12,6 +12,8 @@ interface PhotorealisticDigitalHumanProps {
   doctorId: DoctorId
   doctorState: DoctorState
   isMuted?: boolean
+  isRenderingLipSync?: boolean
+  hasSeparateTtsAudio?: boolean
   subtitles?: string
   speakingVideoSrc?: string | null
   onSpeakingVideoEnded?: () => void
@@ -25,6 +27,8 @@ export function PhotorealisticDigitalHuman({
   doctorId,
   doctorState,
   isMuted = false,
+  isRenderingLipSync = false,
+  hasSeparateTtsAudio = false,
   subtitles = '',
   speakingVideoSrc = null,
   onSpeakingVideoEnded,
@@ -195,7 +199,7 @@ export function PhotorealisticDigitalHuman({
           ref={videoRef}
           src={speakingVideoSrc}
           playsInline
-          muted={isMuted}
+          muted={isMuted || hasSeparateTtsAudio}
           className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
           onEnded={() => {
             if (onSpeakingVideoEnded) onSpeakingVideoEnded()
@@ -211,6 +215,15 @@ export function PhotorealisticDigitalHuman({
           height={768}
           className="w-full h-full object-contain filter contrast-[1.03] brightness-[1.01]"
         />
+      )}
+
+      {isRenderingLipSync && !speakingVideoSrc && (
+        <div className="absolute inset-x-4 bottom-20 z-20 mx-auto flex max-w-lg items-center justify-center gap-3 rounded-2xl border border-white/15 bg-slate-950/90 px-4 py-3 text-white shadow-xl backdrop-blur">
+          <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-teal-300 border-t-transparent" />
+          <span className="text-sm">
+            {hasSeparateTtsAudio ? 'Doctor audio is playing · generating lip-synced video…' : 'Generating lip-synced video…'}
+          </span>
+        </div>
       )}
 
       {playbackBlocked && speakingVideoSrc && doctorState === 'speaking' && (

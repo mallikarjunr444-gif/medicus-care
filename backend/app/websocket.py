@@ -1124,7 +1124,7 @@ class ConnectionManager:
                     await self.send_message(
                         session_id,
                         {
-                            "type": "error",
+                            "type": "video_error",
                             "message": "The doctor's synchronized video could not be generated for this response.",
                         },
                     )
@@ -1141,7 +1141,7 @@ class ConnectionManager:
             },
         )
 
-        if not sent_any:
+        if not sent_any and not require_lipsync:
             await self.send_message(
                 session_id,
                 {"type": "error", "message": "Avatar animation failed for all sentences."},

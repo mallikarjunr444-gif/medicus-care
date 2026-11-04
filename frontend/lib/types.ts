@@ -43,6 +43,7 @@ export type WsMessageType =
   | 'error'
   | 'pong'
   | 'tts_fallback'
+  | 'video_error'
   | 'interrupted'
 
 // Discriminated union — each WS event has a well-typed payload so the handler
@@ -59,6 +60,7 @@ export type WsMessage =
   | { type: 'error'; message: string }
   | { type: 'pong' }
   | { type: 'tts_fallback'; engine: string; voice_cloned: boolean; message: string }
+  | { type: 'video_error'; message: string }
   | { type: 'interrupted'; message: string }
 
 export interface VoiceApiResponse {
