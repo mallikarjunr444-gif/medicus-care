@@ -18,7 +18,20 @@ logger = logging.getLogger("medicus_care.medical_web_research")
 _BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 _TIMEOUT = httpx.Timeout(2.0, connect=0.6)
 _TOTAL_TIMEOUT_SECONDS = 3.6
-_LOOKUP_LIMIT = asyncio.Semaphore(4)
+_LOOKUP_LIMIT = asyncio.Semaphore(1)
+_NCBI_REQUEST_LOCK = asyncio.Lock()
+_LAST_NCBI_REQUEST_AT = 0.0
+
+
+async def _pace_ncbi_request() -> None:
+    """Keep this process below NCBI's published request rate limit."""
+    global _LAST_NCBI_REQUEST_AT
+    async with _NCBI_REQUEST_LOCK:
+        loop = asyncio.get_running_loop()
+        delay = 0.34 - (loop.time() - _LAST_NCBI_REQUEST_AT)
+        if delay > 0:
+            await asyncio.sleep(delay)
+        _LAST_NCBI_REQUEST_AT = loop.time()
 
 
 @dataclass(frozen=True)
@@ -82,6 +95,7 @@ async def search_pubmed(query: str) -> list[MedicalWebReference]:
         try:
             async with httpx.AsyncClient(timeout=_TIMEOUT, follow_redirects=True) as client:
                 async with asyncio.timeout(_TOTAL_TIMEOUT_SECONDS):
+                    await _pace_ncbi_request()
                     search = await client.get(
                         f"{_BASE_URL}/esearch.fcgi",
                         params={
@@ -90,15 +104,22 @@ async def search_pubmed(query: str) -> list[MedicalWebReference]:
                             "sort": "relevance",
                             "retmax": "3",
                             "retmode": "json",
+                            "tool": "MediCareConsultation",
                         },
                     )
                     search.raise_for_status()
                     ids = search.json().get("esearchresult", {}).get("idlist", [])
                     if not ids:
                         return []
+                    await _pace_ncbi_request()
                     details = await client.get(
                         f"{_BASE_URL}/efetch.fcgi",
-                        params={"db": "pubmed", "id": ",".join(ids), "retmode": "xml"},
+                        params={
+                            "db": "pubmed",
+                            "id": ",".join(ids),
+                            "retmode": "xml",
+                            "tool": "MediCareConsultation",
+                        },
                     )
                     details.raise_for_status()
                     return _extract_references(details.text)

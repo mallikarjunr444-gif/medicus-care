@@ -1059,6 +1059,10 @@ export function DoctorVideoCall({
                           </li>
                         ))}
                       </ul>
+                      <p className="mt-2 text-[10px] leading-relaxed text-slate-500">
+                        PubMed records are provided by the U.S. National Library of Medicine. Their inclusion is not an endorsement; article abstracts may be copyrighted by their publishers or authors.{' '}
+                        <a href="https://www.ncbi.nlm.nih.gov/home/about/policies/" target="_blank" rel="noreferrer" className="underline underline-offset-2">NCBI policies</a>.
+                      </p>
                     </div>
                   )}
 
