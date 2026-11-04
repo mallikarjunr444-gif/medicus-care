@@ -230,7 +230,7 @@ export function DoctorVideoCall({
         setDoctorVideoSrc(null)
         setDoctorState('error')
         resumeVoiceInput()
-        toast.error(event.message)
+        toast.error(event.message, { id: 'consultation-backend-error' })
         break
       case 'tts_fallback':
         toast(event.message, { icon: '⚠️', duration: 5000 })
@@ -405,7 +405,7 @@ export function DoctorVideoCall({
         pendingClinicalMetaRef.current = null
         setDoctorState('disconnected')
         resumeVoiceInput()
-        toast.error(`${doctor.name} is not connected to the AI backend. Reconnect and try again.`)
+        toast.error(`${doctor.name} is not connected to the AI backend. Reconnect and try again.`, { id: 'consultation-backend-error' })
       }
     },
     [inputText, isSpeaking, interrupt, doctor.name, doctorState, sendTextToBackend, interruptBackend, pauseVoiceInput, resumeVoiceInput]
@@ -426,7 +426,7 @@ export function DoctorVideoCall({
       else toast('This browser does not support voice input. You can type during the consultation.', { icon: '🎙️' })
     }).catch((error) => {
       setDoctorState('disconnected')
-      toast.error(error instanceof Error ? error.message : 'Could not connect to the AI consultation backend.')
+      toast.error(error instanceof Error ? error.message : 'Could not connect to the AI consultation backend.', { id: 'consultation-backend-error' })
     })
 
     // Initialize session memory with selected language
@@ -691,7 +691,7 @@ export function DoctorVideoCall({
               onReconnect={() => {
                 void doctorBackend.connect(doctorId, language).then(() => setDoctorState('listening')).catch((error) => {
                   setDoctorState('disconnected')
-                  toast.error(error instanceof Error ? error.message : 'Could not reconnect to the consultation backend.')
+                  toast.error(error instanceof Error ? error.message : 'Could not reconnect to the consultation backend.', { id: 'consultation-backend-error' })
                 })
               }}
               className="w-full h-full"

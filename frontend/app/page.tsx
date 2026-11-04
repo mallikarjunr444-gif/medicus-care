@@ -6,8 +6,6 @@ import {
   Activity,
   ArrowRight,
   AudioLines,
-  BadgeCheck,
-  BookOpenCheck,
   ChevronRight,
   Globe2,
   HeartPulse,
@@ -22,10 +20,6 @@ import {
   UserRound,
   X,
 } from 'lucide-react'
-import { toast } from 'react-hot-toast'
-import { AvatarUpload } from '@/components/AvatarUpload'
-import { AvatarList } from '@/components/AvatarList'
-import { api } from '@/lib/api'
 import { PatientDashboard } from '@/components/patient/PatientDashboard'
 import type { DoctorId } from '@/lib/doctorTypes'
 import { useStore } from '@/store/useStore'
@@ -34,22 +28,6 @@ const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
   { ssr: false, loading: () => <PanelLoader label="Preparing doctor profiles" /> },
 )
-const AnatomyViewer3D = dynamic(
-  () => import('@/components/3d/AnatomyViewer3D').then((m) => m.AnatomyViewer3D),
-  { ssr: false, loading: () => <PanelLoader label="Loading anatomy explorer" /> },
-)
-const TriageSimulator = dynamic(
-  () => import('@/components/interactive/TriageSimulator').then((m) => m.TriageSimulator),
-  { ssr: false, loading: () => <PanelLoader label="Loading care guidance" /> },
-)
-const LabReportScanner3D = dynamic(
-  () => import('@/components/interactive/LabReportScanner3D').then((m) => m.LabReportScanner3D),
-  { ssr: false, loading: () => <PanelLoader label="Loading report tools" /> },
-)
-const MedicalSafetyRadar = dynamic(
-  () => import('@/components/interactive/MedicalSafetyRadar').then((m) => m.MedicalSafetyRadar),
-  { ssr: false, loading: () => <PanelLoader label="Loading safety information" /> },
-)
 const DoctorVideoCall = dynamic(
   () => import('@/components/doctor/DoctorVideoCall').then((m) => m.DoctorVideoCall),
   { ssr: false, loading: () => <PanelLoader label="Preparing your consultation" /> },
@@ -57,10 +35,6 @@ const DoctorVideoCall = dynamic(
 const ChatInterface = dynamic(
   () => import('@/components/ChatInterface').then((m) => m.ChatInterface),
   { ssr: false, loading: () => <PanelLoader label="Connecting" /> },
-)
-const VoicePanel = dynamic(
-  () => import('@/components/VoicePanel').then((m) => m.VoicePanel),
-  { ssr: false, loading: () => <PanelLoader label="Loading voice settings" /> },
 )
 const HistoryPanel = dynamic(
   () => import('@/components/HistoryPanel').then((m) => m.HistoryPanel),
@@ -84,28 +58,25 @@ function PanelLoader({ label }: { label: string }) {
   )
 }
 
-type View = 'home' | 'patient' | 'consultation' | 'avatars' | 'chat' | 'voice' | 'history' | 'settings' | 'admin' | 'tools'
+type View = 'home' | 'patient' | 'consultation' | 'chat' | 'history' | 'settings' | 'admin'
 
 const navItems: { id: View; icon: typeof HeartPulse; label: string }[] = [
   { id: 'patient', icon: UserRound, label: 'Patient' },
   { id: 'home', icon: HeartPulse, label: 'Home' },
   { id: 'consultation', icon: Stethoscope, label: 'Consultation' },
-  { id: 'avatars', icon: Activity, label: 'Avatar studio' },
-  { id: 'tools', icon: BookOpenCheck, label: 'Care tools' },
-  { id: 'voice', icon: Mic2, label: 'Voice' },
   { id: 'history', icon: History, label: 'History' },
   { id: 'settings', icon: Settings, label: 'Settings' },
   { id: 'admin', icon: ShieldCheck, label: 'Knowledge' },
 ]
 
-const mobileMoreItems = navItems.filter(({ id }) => ['home', 'avatars', 'tools', 'voice', 'settings', 'admin'].includes(id))
+const mobileMoreItems = navItems.filter(({ id }) => ['home', 'settings', 'admin'].includes(id))
 
 export default function Home() {
   const { isAuthenticated, setAuth, user } = useStore()
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorId>('dr_arjun')
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
   const [resumeSessionId, setResumeSessionId] = useState<string | null>(null)
-  const [view, setView] = useState<View>('home')
+  const [view, setView] = useState<View>('patient')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -129,31 +100,6 @@ export default function Home() {
   const handleStartDoctorConsultation = (doctorId: DoctorId) => {
     setSelectedDoctor(doctorId)
     navigate('consultation')
-  }
-
-  const handleVoiceSelect = async (voiceId: string) => {
-    if (!selectedAvatar) {
-      toast('Choose an avatar before assigning a voice', { icon: '💡' })
-      return
-    }
-    try {
-      await api.setAvatarVoice(selectedAvatar, voiceId)
-      toast.success('Voice assigned to avatar')
-    } catch {
-      toast.error('Could not assign this voice')
-    }
-  }
-
-  const handleSelectAvatar = (id: string) => {
-    setSelectedAvatar(id)
-    setResumeSessionId(null)
-  }
-
-  const handleStartChat = () => {
-    if (selectedAvatar) {
-      setResumeSessionId(null)
-      navigate('chat')
-    }
   }
 
   const handleResumeFromHistory = (avatarId: string, sessionId: string) => {
@@ -218,7 +164,7 @@ export default function Home() {
             <DoctorVideoCall
               initialDoctorId={selectedDoctor}
               onEndConsultation={() => navigate('home')}
-              onOpenPatient={() => navigate('patient')}
+              onOpenPatient={() => window.location.assign('/')}
             />
           </div>
         )}
@@ -251,9 +197,6 @@ export default function Home() {
                     <a href="#doctor-selection" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#0f6257] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b5149] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#acd5c9]">
                       Choose your doctor <ChevronRight size={17} aria-hidden="true" />
                     </a>
-                    <button type="button" onClick={() => navigate('tools')} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#cddcd3] bg-white px-5 text-sm font-semibold text-[#244b44] transition hover:bg-[#f8fbf9]">
-                      Explore care tools <ArrowRight size={15} aria-hidden="true" />
-                    </button>
                   </div>
                   <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-[#5c716b]">
                     <span className="inline-flex items-center gap-1.5"><ShieldCheck size={15} className="text-[#0f7565]" /> Your conversation is private</span>
@@ -316,32 +259,6 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d8179]">More ways to explore</p>
-                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Helpful tools, in one place</h2>
-                </div>
-                <button type="button" onClick={() => navigate('tools')} className="inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-[#d7e2dc] bg-white px-4 text-sm font-semibold text-[#25564d] transition hover:bg-[#f3f8f5]">
-                  View care tools <ArrowRight size={15} aria-hidden="true" />
-                </button>
-              </div>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {[
-                  { icon: BookOpenCheck, title: 'Health education', body: 'Explore anatomy and general health topics.' },
-                  { icon: Activity, title: 'Triage guidance', body: 'Learn what steps may be appropriate next.' },
-                  { icon: BadgeCheck, title: 'Report review', body: 'Share report text for preliminary explanation.' },
-                  { icon: ShieldCheck, title: 'Safety information', body: 'Understand how care guidance is reviewed.' },
-                ].map(({ icon: Icon, title, body }) => (
-                  <button key={title} type="button" onClick={() => navigate('tools')} className="group rounded-2xl border border-[#e1e9e4] bg-white p-5 text-left shadow-[0_2px_8px_rgba(34,71,56,.03)] transition hover:-translate-y-0.5 hover:border-[#b9d4c7] hover:shadow-md">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eff6f2] text-[#0f7565] transition group-hover:bg-[#0f6257] group-hover:text-white"><Icon size={18} aria-hidden="true" /></span>
-                    <span className="mt-4 block text-sm font-semibold text-[#25423b]">{title}</span>
-                    <span className="mt-1 block text-xs leading-5 text-[#6c7d76]">{body}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-
             <footer className="border-t border-[#e2eae6] bg-white px-4 py-7 text-center sm:px-6">
               <p className="mx-auto max-w-3xl text-xs leading-5 text-[#71817b]">
                 MediCare offers AI health education and preliminary triage guidance, not medical diagnosis or prescriptions. For urgent or life-threatening symptoms, call your local emergency number. In India, call 112.
@@ -351,28 +268,6 @@ export default function Home() {
           </div>
         )}
 
-        {view === 'tools' && (
-          <div className="animate-fade-in bg-[#102e2c]">
-            <div className="mx-auto max-w-7xl px-4 pb-8 pt-10 text-white sm:px-6 sm:pt-14">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200">Explore MediCare</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Care and health tools</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/75">Educational tools for learning about health and preparing questions for a qualified clinician.</p>
-            </div>
-            <section className="border-t border-white/10 bg-[#0b2423]"><AnatomyViewer3D /></section>
-            <section className="border-t border-white/10 bg-[#102e2c]"><TriageSimulator onStartConsultation={handleStartDoctorConsultation} /></section>
-            <section className="border-t border-white/10 bg-[#0b2423]"><LabReportScanner3D /></section>
-            <section className="border-t border-white/10 bg-[#102e2c]"><MedicalSafetyRadar /></section>
-          </div>
-        )}
-
-        {view === 'avatars' && (
-          <PageFrame eyebrow="Personalize" title="Avatar studio" description="Manage your custom avatar and start a text or voice conversation.">
-            <div className="grid gap-5 lg:grid-cols-2"><AvatarUpload /><AvatarList selectedAvatar={selectedAvatar} onSelectAvatar={handleSelectAvatar} /></div>
-            {selectedAvatar && <div className="mt-6 flex justify-end"><button onClick={handleStartChat} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#0f6257] px-5 text-sm font-semibold text-white hover:bg-[#0b5149]"><span>Start conversation</span><ArrowRight size={16} /></button></div>}
-          </PageFrame>
-        )}
-
-        {view === 'voice' && <PageFrame eyebrow="Preferences" title="Voice settings" description="Choose the voice experience for your avatar."><VoicePanel onVoiceSelect={handleVoiceSelect} /></PageFrame>}
         {view === 'chat' && selectedAvatar && <PageFrame eyebrow="Conversation" title="Live conversation" description="Continue your text and voice session."><ChatInterface key={`${selectedAvatar}:${resumeSessionId ?? 'new'}`} avatarId={selectedAvatar} resumeSessionId={resumeSessionId ?? undefined} onSessionCreated={() => undefined} /></PageFrame>}
         {view === 'history' && <PageFrame eyebrow="Your care" title="Conversation history" description="Return to a previous conversation."><HistoryPanel onResume={handleResumeFromHistory} /></PageFrame>}
         {view === 'settings' && <PageFrame eyebrow="Preferences" title="Settings" description="Manage your account and app preferences."><SettingsPanel /></PageFrame>}

@@ -41,7 +41,10 @@ export function useDoctorBackendSession(onMessage: (message: WsMessage) => void)
     socket.onerror = () => setStatus('disconnected')
     socket.onclose = (event) => {
       setStatus('disconnected')
-      if (intentionalCloseRef.current || event.code === 4401 || reconnectAttemptsRef.current >= 5) return
+      // Keep retrying transient network/backend failures. The delay is capped
+      // below, so a sleeping tab won't create a tight reconnect loop. Auth
+      // failures and deliberate disconnects still stop immediately.
+      if (intentionalCloseRef.current || event.code === 4401) return
       const delay = Math.min(1000 * 2 ** reconnectAttemptsRef.current, 15000)
       reconnectAttemptsRef.current += 1
       reconnectTimerRef.current = setTimeout(() => openSocket(sessionId), delay)

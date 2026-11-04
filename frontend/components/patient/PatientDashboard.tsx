@@ -2,14 +2,13 @@
 
 import {
   ArrowRight,
-  ClipboardList,
   History,
   ShieldCheck,
   Stethoscope,
   UserRound,
 } from 'lucide-react'
 
-type PatientDestination = 'consultation' | 'history' | 'tools'
+type PatientDestination = 'consultation' | 'history'
 
 interface PatientDashboardProps {
   displayName: string
@@ -38,13 +37,6 @@ const careActions: {
     description: 'Return to a previous care conversation or review its summary.',
     action: 'View history',
   },
-  {
-    destination: 'tools',
-    icon: ClipboardList,
-    title: 'Health guidance',
-    description: 'Explore health education and tools to help prepare for care.',
-    action: 'Explore guidance',
-  },
 ]
 
 export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDashboardProps) {
@@ -60,7 +52,7 @@ export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDa
             Your care, in one place.
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-[#d1e6df] sm:text-base">
-            Start a conversation, pick up where you left off, or explore clear health guidance.
+            Start a conversation or pick up where you left off.
           </p>
           <button
             type="button"
@@ -107,7 +99,7 @@ export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDa
         <p className="mt-1 text-sm text-[#71817b]">Choose a next step whenever you’re ready.</p>
       </div>
 
-      <div className="mt-5 grid gap-4 md:grid-cols-3">
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
         {careActions.map(({ destination, icon: Icon, title, description, action }) => (
           <button
             key={destination}
@@ -137,13 +129,6 @@ export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDa
             MediCare offers AI health information and preliminary guidance. It does not replace a qualified clinician or emergency care.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => onNavigate('tools')}
-          className="sm:ml-auto inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-[#c9ddd1] bg-white px-3.5 text-sm font-semibold text-[#25564d] transition hover:bg-[#f8fbf9]"
-        >
-          Care tools <ArrowRight size={15} aria-hidden="true" />
-        </button>
       </div>
     </section>
   )
