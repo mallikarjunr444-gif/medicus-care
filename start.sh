@@ -184,6 +184,22 @@ if [[ "${AVATAR_ENGINE:-musetalk}" == "musetalk" ]]; then
   fi
 fi
 
+# MLX uses Apple's Metal framework and must run in the native macOS process;
+# Docker Desktop does not expose Metal to this Linux container.
+if [[ "${AVATAR_ENGINE:-musetalk}" == "mlx" ]]; then
+  if [[ "$MODE" != "dev" ]]; then
+    warn "FasterLivePortrait-MLX requires native Apple Metal; Docker mode cannot run it. Use ./start.sh --dev."
+  else
+    _mlx_dir="${MLX_AVATAR_PATH:-models/FasterLivePortrait-MLX}"
+    [[ "$_mlx_dir" != /* ]] && _mlx_dir="backend/$_mlx_dir"
+    if [[ -x "$_mlx_dir/.venv/bin/python" ]]; then
+      success "FasterLivePortrait-MLX environment found"
+    else
+      warn "FasterLivePortrait-MLX is not installed. Run: bash scripts/setup_fasterliveportrait_mlx.sh"
+    fi
+  fi
+fi
+
 # =============================================================================
 #  DOCKER MODE  (default)
 # =============================================================================

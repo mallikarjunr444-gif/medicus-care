@@ -1,8 +1,12 @@
 # Doctor portrait animation: CPU-only evaluation
 
+## Apple-Silicon follow-up (2026-11-05)
+
+The earlier CPU-only decision is not the full picture for the target Mac: an M5 has an integrated Apple GPU that MLX can use through Metal, even though it has no NVIDIA/CUDA GPU. FasterLivePortrait-MLX with JoyVASA has since generated offline speaking clips for both doctor portraits, and an opt-in backend worker is now available. This does **not** establish real-time suitability: full warm per-chunk throughput, first-video latency, A/V drift, and sustained memory use still need to be measured on the integrated path. See [FASTERLIVEPORTRAIT_MLX.md](FASTERLIVEPORTRAIT_MLX.md).
+
 ## Decision
 
-There is no honest, production-ready photorealistic real-time option among these six for a machine with **no dedicated GPU** and no paid API. Do not select a model by extrapolating its GPU FPS to CPU. The current avatar service has metadata-only adapters; it does not run neural inference. Its `/health` endpoint reports `inference_available: false`, and `/animate` returns 503. The present web call therefore must not describe the still photo plus voice as a neural talking doctor.
+There is not yet evidence for a production-ready real-time path on the M5 without a paid API. Do not infer live performance from offline clips or GPU FPS claims. The separate `services/avatar-engine` readiness API still has metadata-only adapters (`/health` reports `inference_available: false`, `/animate` returns 503); the tested integration is the consultation backend's `AVATAR_ENGINE=mlx` worker, not that API. The live call must not describe an offline or still-photo path as real-time neural animation.
 
 For a future GPU-enabled deployment, **MuseTalk** is the closest fit for speech-driven mouth sync and streaming, with **LiveTalking** as the serving/streaming wrapper rather than an animation model. MuseTalk's documented throughput is on NVIDIA hardware (30+ fps on V100); the project does not publish CPU timings. This is not a valid CPU benchmark and should not be represented as one. LivePortrait is useful for motion transfer/idle motion, not by itself a reliable audio-viseme solution. SadTalker is the most plausible occasional CPU experiment, but its own project materials characterize CPU rendering as slow; it is not suitable for immediate first-chunk playback.
 

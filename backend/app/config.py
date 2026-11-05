@@ -91,8 +91,19 @@ class Settings(BaseSettings):
     #                and unbounded clip length, but needs 48 GB VRAM with FP8 /
     #                80 GB without, and its inference script loads the 14B model
     #                per invocation. See LIVEAVATAR_PATH below.
+    #   mlx        — FasterLivePortrait-MLX + JoyVASA on Apple Silicon. Experimental,
+    #                offline per audio chunk; use only after installing its separate
+    #                Python environment and weights. Does not promise live FPS.
     #   simple     — ffmpeg static image + audio, no lip-sync. CPU, instant.
-    AVATAR_ENGINE: str = "musetalk"  # musetalk, liveavatar, simple
+    AVATAR_ENGINE: str = "musetalk"  # musetalk, mlx, liveavatar, simple
+
+    # FasterLivePortrait-MLX. Its MLX/Python stack is deliberately isolated from
+    # the backend's PyTorch environment; setup is in scripts/setup_fasterliveportrait_mlx.sh.
+    MLX_AVATAR_PATH: str = "models/FasterLivePortrait-MLX"
+    MLX_AVATAR_PYTHON: str = ""  # defaults to <MLX_AVATAR_PATH>/.venv/bin/python
+    MLX_AVATAR_PROFILE: str = "ultra"  # quality, speed, turbo, ultra
+    MLX_AVATAR_STARTUP_TIMEOUT_SECS: int = 900  # first start may fetch model weights
+    MLX_AVATAR_INFER_TIMEOUT_SECS: int = 600
 
     # LiveAvatar. Only consulted when AVATAR_ENGINE=liveavatar.
     #

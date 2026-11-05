@@ -10,5 +10,11 @@
     "status": "ready",
     "title": "Local M5 pipeline for animating each doctor photo in sync with locally generated speech",
     "objectPath": ".buddy/objects/v1/mermaid/01M6P38BSV5YRCTSF7NX9FEFRJ"
+  },
+  "01M6P833R9YDMX9NQCE07GGT2D": {
+    "kind": "media-presentation",
+    "status": "ready",
+    "title": "Media presentation",
+    "objectPath": ".buddy/objects/v1/media-presentation/01M6P833R9YDMX9NQCE07GGT2D"
   }
 }

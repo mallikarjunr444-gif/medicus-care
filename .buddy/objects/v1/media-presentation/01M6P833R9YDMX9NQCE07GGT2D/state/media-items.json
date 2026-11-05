@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "id": "media_item_1",
+      "inputPath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-ananya-mlx/dr_ananya.jpg-dr_ananya.jpg-dr_ananya_en_greeting.wav.pkl-org-web-audio.mp4",
+      "absolutePath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-ananya-mlx/dr_ananya.jpg-dr_ananya.jpg-dr_ananya_en_greeting.wav.pkl-org-web-audio.mp4",
+      "displayPath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-ananya-mlx/dr_ananya.jpg-dr_ananya.jpg-dr_ananya_en_greeting.wav.pkl-org-web-audio.mp4",
+      "workspacePath": null,
+      "fileName": "dr_ananya.jpg-dr_ananya.jpg-dr_ananya_en_greeting.wav.pkl-org-web-audio.mp4",
+      "mediaKind": "video",
+      "renderMode": "video",
+      "mimeType": "video/mp4",
+      "sizeBytes": 1980142,
+      "modifiedAt": "2026-11-05T15:29:41.297Z",
+      "rawUrl": "/api/objects/media-presentation/01M6P833R9YDMX9NQCE07GGT2D/raw/media_item_1?directory=%2FUsers%2Fmalikarjunr%2Fmedicus-care&fileName=dr_ananya.jpg-dr_ananya.jpg-dr_ananya_en_greeting.wav.pkl-org-web-audio.mp4",
+      "actionCapabilities": {
+        "canOpenDefaultApp": true,
+        "canRevealInFileManager": true,
+        "canOpenInWorkspacePanel": false
+      },
+      "availability": {
+        "status": "available",
+        "message": null
+      }
+    },
+    {
+      "id": "media_item_2",
+      "inputPath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-arjun-mlx/dr_arjun.jpg-dr_arjun.jpg-medicus-arjun-male-driver.wav.pkl-org-web-audio.mp4",
+      "absolutePath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-arjun-mlx/dr_arjun.jpg-dr_arjun.jpg-medicus-arjun-male-driver.wav.pkl-org-web-audio.mp4",
+      "displayPath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-arjun-mlx/dr_arjun.jpg-dr_arjun.jpg-medicus-arjun-male-driver.wav.pkl-org-web-audio.mp4",
+      "workspacePath": null,
+      "fileName": "dr_arjun.jpg-dr_arjun.jpg-medicus-arjun-male-driver.wav.pkl-org-web-audio.mp4",
+      "mediaKind": "video",
+      "renderMode": "video",
+      "mimeType": "video/mp4",
+      "sizeBytes": 5079484,
+      "modifiedAt": "2026-11-05T15:42:05.159Z",
+      "rawUrl": "/api/objects/media-presentation/01M6P833R9YDMX9NQCE07GGT2D/raw/media_item_2?directory=%2FUsers%2Fmalikarjunr%2Fmedicus-care&fileName=dr_arjun.jpg-dr_arjun.jpg-medicus-arjun-male-driver.wav.pkl-org-web-audio.mp4",
+      "actionCapabilities": {
+        "canOpenDefaultApp": true,
+        "canRevealInFileManager": true,
+        "canOpenInWorkspacePanel": false
+      },
+      "availability": {
+        "status": "available",
+        "message": null
+      }
+    }
+  ]
+}

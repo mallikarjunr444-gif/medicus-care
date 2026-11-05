@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "kind": "media-presentation",
+  "objectID": "01M6P833R9YDMX9NQCE07GGT2D",
+  "title": "Media presentation",
+  "status": "ready",
+  "lifecycle": "external-reference",
+  "createdAt": "2026-11-05T16:18:54.347Z",
+  "updatedAt": "2026-11-05T16:18:54.347Z",
+  "sourceRefs": [
+    {
+      "role": "external",
+      "path": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-ananya-mlx/dr_ananya.jpg-dr_ananya.jpg-dr_ananya_en_greeting.wav.pkl-org-web-audio.mp4",
+      "displayPath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-ananya-mlx/dr_ananya.jpg-dr_ananya.jpg-dr_ananya_en_greeting.wav.pkl-org-web-audio.mp4",
+      "workspacePath": null,
+      "mutable": false,
+      "copied": false,
+      "availability": "available",
+      "exists": true,
+      "sizeBytes": 1980142,
+      "modifiedAt": "2026-11-05T15:29:41.297Z"
+    },
+    {
+      "role": "external",
+      "path": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-arjun-mlx/dr_arjun.jpg-dr_arjun.jpg-medicus-arjun-male-driver.wav.pkl-org-web-audio.mp4",
+      "displayPath": "/private/var/folders/y_/ktksgxnj2gjgq3xjw2_0m8d00000gn/T/buddy/opencode/fasterliveportrait-mlx/results/medicus-arjun-mlx/dr_arjun.jpg-dr_arjun.jpg-medicus-arjun-male-driver.wav.pkl-org-web-audio.mp4",
+      "workspacePath": null,
+      "mutable": false,
+      "copied": false,
+      "availability": "available",
+      "exists": true,
+      "sizeBytes": 5079484,
+      "modifiedAt": "2026-11-05T15:42:05.159Z"
+    }
+  ],
+  "views": [
+    {
+      "viewID": "gallery",
+      "label": "Media",
+      "surfaces": [
+        "inline",
+        "bench",
+        "library"
+      ],
+      "availability": {
+        "status": "available"
+      },
+      "inline": {
+        "renderer": "media-gallery",
+        "params": {
+          "renderer": "media-gallery",
+          "layout": "strip"
+        }
+      },
+      "bench": {
+        "resolver": "object-view"
+      },
+      "library": {
+        "section": "media"
+      }
+    }
+  ],
+  "summary": {
+    "kind": "media-presentation",
+    "layout": "strip",
+    "itemCount": 2
+  }
+}

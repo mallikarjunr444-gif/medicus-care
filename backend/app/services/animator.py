@@ -3,6 +3,8 @@ import hashlib
 import json
 import logging
 import os
+import platform
+import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -22,6 +24,8 @@ class AvatarAnimator:
     Avatar Animation Service.
     Supported engines (set AVATAR_ENGINE in .env):
       - musetalk   : MuseTalk V1.5 — persistent worker (models loaded once)
+      - mlx        : FasterLivePortrait-MLX — persistent Apple Metal worker,
+                     offline per-chunk generation (not guaranteed real-time)
       - liveavatar : Alibaba LiveAvatar — higher fidelity, 48 GB+ VRAM, and a
                      full 14B model load per turn (see _animate_liveavatar)
       - simple     : ffmpeg static image + audio, no lip-sync
@@ -43,12 +47,18 @@ class AvatarAnimator:
         self._initialised = False
         self._musetalk_dir: Optional[Path] = None
         self._liveavatar_dir: Optional[Path] = None
+        self._mlx_dir: Optional[Path] = None
+        self._mlx_python: Optional[Path] = None
 
         # Persistent worker handles
         self._worker_proc: Optional[asyncio.subprocess.Process] = None
         self._worker_lock = asyncio.Lock()
         self._worker_env: dict = {}
         self._worker_stderr_path: Optional[Path] = None
+        self._mlx_worker_proc: Optional[asyncio.subprocess.Process] = None
+        self._mlx_worker_lock = asyncio.Lock()
+        self._mlx_worker_env: dict = {}
+        self._mlx_worker_stderr_path: Optional[Path] = None
 
         if self.device == "cuda":
             gpu_name = torch.cuda.get_device_name(0)
@@ -90,6 +100,50 @@ class AvatarAnimator:
                 if self.device == "mps":
                     self._worker_env["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
+        elif self.engine == "mlx":
+            if platform.system() != "Darwin" or platform.machine().lower() not in ("arm64", "aarch64"):
+                logger.warning("FasterLivePortrait-MLX requires Apple Silicon macOS; falling back to simple animation.")
+                self.engine = "simple"
+            else:
+                self._mlx_dir = self._find_dir(
+                    settings.MLX_AVATAR_PATH,
+                    "src/pipelines/gradio_live_portrait_pipeline.py",
+                )
+                if self._mlx_dir is None:
+                    logger.warning(
+                        "FasterLivePortrait-MLX was not found at '%s'. Run "
+                        "scripts/setup_fasterliveportrait_mlx.sh; falling back to simple animation.",
+                        settings.MLX_AVATAR_PATH,
+                    )
+                    self.engine = "simple"
+                else:
+                    if settings.MLX_AVATAR_PYTHON:
+                        configured_python = Path(settings.MLX_AVATAR_PYTHON).expanduser()
+                        resolved_python = (
+                            configured_python if configured_python.is_file()
+                            else Path(shutil.which(settings.MLX_AVATAR_PYTHON) or "")
+                        )
+                    else:
+                        resolved_python = self._mlx_dir / ".venv" / "bin" / "python"
+                    if not str(resolved_python) or not resolved_python.is_file():
+                        logger.warning(
+                            "FasterLivePortrait-MLX Python environment was not found at '%s'; "
+                            "falling back to simple animation.",
+                            resolved_python,
+                        )
+                        self.engine = "simple"
+                    else:
+                        # Preserve the venv's executable symlink: resolving it
+                        # points at the base interpreter and skips the MLX
+                        # virtualenv's site-packages on process startup.
+                        self._mlx_python = resolved_python.absolute()
+                        self._mlx_worker_env = os.environ.copy()
+                        logger.info(
+                            "FasterLivePortrait-MLX ready at %s (profile=%s)",
+                            self._mlx_dir,
+                            settings.MLX_AVATAR_PROFILE,
+                        )
+
         elif self.engine == "liveavatar":
             self._liveavatar_dir = self._find_dir(
                 settings.LIVEAVATAR_PATH, "minimal_inference/s2v_streaming_interact.py"
@@ -111,7 +165,7 @@ class AvatarAnimator:
                     )
                     self.engine = "simple"
 
-        elif self.engine not in ("simple",):
+        elif self.engine not in ("simple", "mlx"):
             logger.warning(f"Unknown engine '{self.engine}', using simple animation.")
             self.engine = "simple"
 
@@ -313,6 +367,131 @@ class AvatarAnimator:
 
             return output_path
 
+    def _resolve_mlx_worker_script(self) -> Path:
+        """Return the tracked JSON-lines worker that adapts the isolated MLX repo."""
+        worker = Path(__file__).resolve().parents[2] / "fasterliveportrait_mlx_worker.py"
+        if not worker.is_file():
+            raise FileNotFoundError(f"FasterLivePortrait-MLX worker is missing: {worker}")
+        return worker
+
+    async def _ensure_mlx_worker(self) -> asyncio.subprocess.Process:
+        """Start one isolated MLX process and load its weights once."""
+        if self._mlx_worker_proc is not None and self._mlx_worker_proc.returncode is None:
+            return self._mlx_worker_proc
+        if self._mlx_dir is None or self._mlx_python is None:
+            raise RuntimeError("FasterLivePortrait-MLX is not configured")
+
+        worker_script = self._resolve_mlx_worker_script()
+        logger.info("Starting persistent FasterLivePortrait-MLX worker (loading MLX weights)…")
+        self._mlx_worker_stderr_path = self._mlx_dir / "medicus_worker_stderr.log"
+        stderr_file = open(self._mlx_worker_stderr_path, "ab")
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                str(self._mlx_python),
+                str(worker_script),
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=stderr_file,
+                cwd=str(self._mlx_dir),
+                env=self._mlx_worker_env,
+            )
+        finally:
+            stderr_file.close()
+
+        init_msg = json.dumps(
+            {
+                "repo_dir": str(self._mlx_dir),
+                "profile": settings.MLX_AVATAR_PROFILE,
+            }
+        ) + "\n"
+        try:
+            proc.stdin.write(init_msg.encode())
+            await proc.stdin.drain()
+            ready_line = await asyncio.wait_for(
+                proc.stdout.readline(), timeout=settings.MLX_AVATAR_STARTUP_TIMEOUT_SECS
+            )
+        except asyncio.CancelledError:
+            proc.kill()
+            await proc.wait()
+            raise
+        except (BrokenPipeError, ConnectionResetError, OSError, asyncio.TimeoutError) as exc:
+            proc.kill()
+            await proc.wait()
+            detail = self._mlx_worker_stderr_path.read_text(errors="replace")[-4000:]
+            raise RuntimeError(f"FasterLivePortrait-MLX worker failed to start: {exc}\n{detail}") from exc
+
+        if not ready_line or ready_line.decode(errors="replace").strip() != "READY":
+            proc.kill()
+            await proc.wait()
+            detail = self._mlx_worker_stderr_path.read_text(errors="replace")[-4000:]
+            startup_message = ready_line.decode(errors="replace").strip() if ready_line else "worker exited"
+            raise RuntimeError(
+                f"FasterLivePortrait-MLX worker failed to initialize: {startup_message}\n{detail}"
+            )
+
+        self._mlx_worker_proc = proc
+        logger.info("FasterLivePortrait-MLX worker ready")
+        return proc
+
+    async def _mlx_worker_infer(self, image_path: str, audio_path: str, output_path: str) -> str:
+        """Submit a sentence WAV to the persistent MLX worker."""
+        async with self._mlx_worker_lock:
+            proc = await self._ensure_mlx_worker()
+            job = json.dumps(
+                {
+                    "image": str(Path(image_path).resolve()),
+                    "audio": str(Path(audio_path).resolve()),
+                    "output": str(Path(output_path).resolve()),
+                }
+            ) + "\n"
+            try:
+                proc.stdin.write(job.encode())
+                await proc.stdin.drain()
+            except (BrokenPipeError, ConnectionResetError, OSError) as exc:
+                proc.kill()
+                await proc.wait()
+                self._mlx_worker_proc = None
+                raise RuntimeError(f"FasterLivePortrait-MLX worker pipe is dead: {exc}") from exc
+
+            try:
+                result_line = await asyncio.wait_for(
+                    proc.stdout.readline(), timeout=settings.MLX_AVATAR_INFER_TIMEOUT_SECS
+                )
+            except asyncio.CancelledError:
+                # The line-oriented protocol cannot safely reuse a result from
+                # a cancelled turn as the next sentence's result.
+                proc.kill()
+                await proc.wait()
+                self._mlx_worker_proc = None
+                raise
+            except asyncio.TimeoutError as exc:
+                proc.kill()
+                await proc.wait()
+                self._mlx_worker_proc = None
+                raise RuntimeError(
+                    f"FasterLivePortrait-MLX inference timed out after "
+                    f"{settings.MLX_AVATAR_INFER_TIMEOUT_SECS}s"
+                ) from exc
+
+            if not result_line:
+                proc.kill()
+                await proc.wait()
+                self._mlx_worker_proc = None
+                raise RuntimeError("FasterLivePortrait-MLX worker exited before returning a result")
+
+            try:
+                result = json.loads(result_line.decode().strip())
+            except json.JSONDecodeError as exc:
+                self._mlx_worker_proc = None
+                raise RuntimeError("FasterLivePortrait-MLX worker returned invalid JSON") from exc
+            if result.get("status") != "ok":
+                raise RuntimeError(result.get("msg", "FasterLivePortrait-MLX inference failed"))
+            if not Path(output_path).is_file():
+                raise RuntimeError(
+                    f"FasterLivePortrait-MLX reported success but produced no file at {output_path}"
+                )
+            return output_path
+
     # ── public API ────────────────────────────────────────────────────────────
 
     async def animate(
@@ -333,7 +512,7 @@ class AvatarAnimator:
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         logger.info(f"Animating [{self.engine}] image={avatar_image_path} audio={audio_path}")
 
-        if require_lipsync and self.engine != "musetalk":
+        if require_lipsync and self.engine not in {"musetalk", "mlx"}:
             raise RuntimeError(
                 f"Synchronized animation is required, but the configured engine is {self.engine!r}."
             )
@@ -341,6 +520,8 @@ class AvatarAnimator:
         try:
             if self.engine == "musetalk":
                 return await self._animate_musetalk(avatar_image_path, audio_path, output_path)
+            elif self.engine == "mlx":
+                return await self._animate_mlx(avatar_image_path, audio_path, output_path)
             elif self.engine == "liveavatar":
                 return await self._animate_liveavatar(avatar_image_path, audio_path, output_path)
             else:
@@ -351,6 +532,12 @@ class AvatarAnimator:
                 raise RuntimeError("Audio-driven avatar animation failed; no unsynchronized fallback was served.") from e
             logger.error(f"Animation failed ({self.engine}): {e}. Falling back to simple.")
             return await self._animate_simple(avatar_image_path, audio_path, output_path)
+
+    async def _animate_mlx(self, avatar_path: str, audio_path: str, output_path: str) -> str:
+        """Generate an audio-driven portrait clip through the isolated MLX worker."""
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        logger.info("Animating [mlx] image=%s audio=%s", avatar_path, audio_path)
+        return await self._mlx_worker_infer(avatar_path, audio_path, output_path)
 
     # ── MuseTalk ──────────────────────────────────────────────────────────────
 
