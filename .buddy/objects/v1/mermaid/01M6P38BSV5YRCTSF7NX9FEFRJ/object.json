@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "kind": "mermaid",
+  "objectID": "01M6P38BSV5YRCTSF7NX9FEFRJ",
+  "title": "Local M5 pipeline for animating each doctor photo in sync with locally generated speech",
+  "status": "ready",
+  "lifecycle": "revisioned",
+  "currentRevisionID": "01M6P38BSVS2HA12HESVMH4GNS",
+  "createdAt": "2026-11-05T14:54:23.524Z",
+  "updatedAt": "2026-11-05T14:55:27.971Z",
+  "origin": {
+    "kind": "tool",
+    "sessionID": "ses_e57f15b99ffeAaeACO4C1GwZVP",
+    "messageID": "msg_1ac32121d0014d5ZRTBYTvJPIP",
+    "callID": "call_62dceed639bc4fbcae104dd4b34fa06e"
+  },
+  "sourceRefs": [
+    {
+      "role": "payload",
+      "path": ".buddy/objects/v1/mermaid/01M6P38BSV5YRCTSF7NX9FEFRJ/revisions/01M6P38BSVS2HA12HESVMH4GNS/source.mmd",
+      "displayPath": ".buddy/objects/v1/mermaid/01M6P38BSV5YRCTSF7NX9FEFRJ/revisions/01M6P38BSVS2HA12HESVMH4GNS/source.mmd",
+      "workspacePath": null,
+      "mutable": false,
+      "copied": false,
+      "availability": "available",
+      "exists": true,
+      "contentHash": "147d7fc7e9f1c57ad0d56006be1c786d2458d08cd2341c8e2a5d1c69e95d2096"
+    }
+  ],
+  "views": [
+    {
+      "viewID": "rendered",
+      "label": "Diagram",
+      "surfaces": [
+        "inline",
+        "bench",
+        "library"
+      ],
+      "availability": {
+        "status": "available"
+      },
+      "inline": {
+        "renderer": "mermaid",
+        "params": {
+          "renderer": "mermaid",
+          "diagramType": "flowchart"
+        }
+      },
+      "bench": {
+        "resolver": "object-view"
+      },
+      "library": {
+        "section": "diagrams"
+      }
+    }
+  ],
+  "summary": {
+    "kind": "mermaid",
+    "alt": "Local M5 pipeline for animating each doctor photo in sync with locally generated speech",
+    "caption": null,
+    "diagramType": "flowchart",
+    "renderStatus": "ready",
+    "repairOfObjectID": null,
+    "supersedesRevisionID": null,
+    "replacementRevisionID": null
+  }
+}

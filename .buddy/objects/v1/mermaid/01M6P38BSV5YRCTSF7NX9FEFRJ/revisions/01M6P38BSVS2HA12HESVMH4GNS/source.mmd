@@ -1,0 +1,11 @@
+flowchart LR
+    A[Doctor photo] --> B[Cache face crop and landmarks]
+    C[Existing TTS audio chunk] --> D[JoyVASA MLX audio-to-motion]
+    B --> E[LivePortrait MLX renderer]
+    D --> E
+    E --> F[Talking face frames: lips, blinks, expression, small head motion]
+    C --> G[Play speech immediately]
+    F --> H[Stream matching video frames to browser]
+    G --> H
+    I[Apple M5 GPU via MLX] --> D
+    I --> E

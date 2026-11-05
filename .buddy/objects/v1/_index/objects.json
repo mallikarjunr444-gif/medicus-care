@@ -4,5 +4,11 @@
     "status": "ready",
     "title": "Three implementation paths for natural doctor-avatar animation, with a no-GPU recommendation",
     "objectPath": ".buddy/objects/v1/mermaid/01M6P2E9HNT877FQ51NXJ55EGF"
+  },
+  "01M6P38BSV5YRCTSF7NX9FEFRJ": {
+    "kind": "mermaid",
+    "status": "ready",
+    "title": "Local M5 pipeline for animating each doctor photo in sync with locally generated speech",
+    "objectPath": ".buddy/objects/v1/mermaid/01M6P38BSV5YRCTSF7NX9FEFRJ"
   }
 }
