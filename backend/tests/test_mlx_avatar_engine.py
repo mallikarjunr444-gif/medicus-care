@@ -59,12 +59,38 @@ async def test_mlx_uses_isolated_python_environment(monkeypatch, tmp_path):
     assert animator._mlx_python == python.absolute()
 
 
-async def test_mlx_worker_script_is_shipped():
+def test_mlx_worker_script_is_shipped():
     animator = AvatarAnimator()
     script = animator._resolve_mlx_worker_script()
 
     assert script.name == "fasterliveportrait_mlx_worker.py"
     assert script.is_file()
+
+
+async def test_shutdown_closes_the_mlx_worker():
+    animator = AvatarAnimator()
+
+    class _Stdin:
+        closed = False
+
+        def close(self):
+            self.closed = True
+
+    class _Process:
+        returncode = None
+        stdin = _Stdin()
+
+        async def wait(self):
+            self.returncode = 0
+            return 0
+
+    proc = _Process()
+    animator._mlx_worker_proc = proc
+
+    await animator.cleanup()
+
+    assert proc.stdin.closed is True
+    assert animator._mlx_worker_proc is None
 
 
 async def test_optional_mlx_failure_falls_back_to_simple(monkeypatch, tmp_path):

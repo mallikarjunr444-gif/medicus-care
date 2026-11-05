@@ -138,6 +138,10 @@ class AvatarAnimator:
                         # virtualenv's site-packages on process startup.
                         self._mlx_python = resolved_python.absolute()
                         self._mlx_worker_env = os.environ.copy()
+                        if settings.MLX_AVATAR_WEIGHTS_REVISION:
+                            self._mlx_worker_env["FLIP_MLX_WEIGHTS_REVISION"] = (
+                                settings.MLX_AVATAR_WEIGHTS_REVISION
+                            )
                         logger.info(
                             "FasterLivePortrait-MLX ready at %s (profile=%s)",
                             self._mlx_dir,
@@ -483,6 +487,9 @@ class AvatarAnimator:
                 result = json.loads(result_line.decode().strip())
             except json.JSONDecodeError as exc:
                 self._mlx_worker_proc = None
+                if proc.returncode is None:
+                    proc.kill()
+                    await proc.wait()
                 raise RuntimeError("FasterLivePortrait-MLX worker returned invalid JSON") from exc
             if result.get("status") != "ok":
                 raise RuntimeError(result.get("msg", "FasterLivePortrait-MLX inference failed"))
@@ -490,7 +497,26 @@ class AvatarAnimator:
                 raise RuntimeError(
                     f"FasterLivePortrait-MLX reported success but produced no file at {output_path}"
                 )
+            logger.info(
+                "FasterLivePortrait-MLX chunk rendered in %ss",
+                result.get("render_seconds", "unknown"),
+            )
             return output_path
+
+    async def cleanup(self) -> None:
+        """Stop the optional MLX worker cleanly when the backend shuts down."""
+        proc = self._mlx_worker_proc
+        self._mlx_worker_proc = None
+        if proc is None or proc.returncode is not None:
+            return
+
+        if proc.stdin is not None:
+            proc.stdin.close()
+        try:
+            await asyncio.wait_for(proc.wait(), timeout=5)
+        except asyncio.TimeoutError:
+            proc.kill()
+            await proc.wait()
 
     # ── public API ────────────────────────────────────────────────────────────
 

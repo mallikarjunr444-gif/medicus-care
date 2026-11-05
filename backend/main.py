@@ -105,6 +105,12 @@ async def lifespan(app: FastAPI):
     # Cleanup
     logger.info("Shutting down AI Avatar System...")
     await websocket_manager.stop_cleanup_task()
+    try:
+        from app.services.animator import avatar_animator
+
+        await avatar_animator.cleanup()
+    except Exception as e:
+        logger.warning(f"Avatar worker cleanup failed: {e}")
     await storage_service.cleanup()
     await cache_service.cleanup()
     logger.info("Shutdown complete")

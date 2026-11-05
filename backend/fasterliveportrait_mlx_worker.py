@@ -81,8 +81,11 @@ def _run_job(pipeline, repo_dir: Path, job: dict) -> dict:
             # Publish atomically: the backend must never upload a half-written
             # file if a worker is interrupted while copying the final MP4.
             partial = output_path.with_name(output_path.name + ".partial")
-            shutil.copyfile(generated, partial)
-            os.replace(partial, output_path)
+            try:
+                shutil.copyfile(generated, partial)
+                os.replace(partial, output_path)
+            finally:
+                partial.unlink(missing_ok=True)
 
             # Retain loaded weights for subsequent sentence chunks, but clear
             # per-generation MLX caches to reduce unified-memory pressure.

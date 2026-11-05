@@ -11,7 +11,7 @@ brew install uv ffmpeg
 bash scripts/setup_fasterliveportrait_mlx.sh
 ```
 
-The setup clones the upstream code into the ignored `backend/models/FasterLivePortrait-MLX` directory, creates an isolated `.venv`, and downloads converted runtime weights from Hugging Face. The backend's PyTorch environment is not modified. Model files are not checked into Git.
+The setup clones the upstream code at the prototype-tested commit `d5361f4`, creates an isolated `.venv`, and downloads converted runtime weights at revision `2cc2ac9`. The backend's PyTorch environment is not modified. Model files are not checked into Git.
 
 Opt in through `.env`:
 
