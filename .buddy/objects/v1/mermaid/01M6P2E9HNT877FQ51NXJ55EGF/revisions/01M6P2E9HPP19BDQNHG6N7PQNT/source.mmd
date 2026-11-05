@@ -1,0 +1,9 @@
+flowchart TD
+    A[Goal: realistic, responsive doctor avatar] --> B{Must use the existing photo likeness?}
+    B -->|Yes, arbitrary live replies| C[Photo-to-video lip-sync model]
+    C --> D[Needs GPU locally or hosted GPU/API]
+    B -->|No, can use a designed avatar| E[Local rigged 2D/3D avatar]
+    E --> F[Visemes driven by speech + timed blinks]
+    F --> G[Best fit without API or dedicated GPU; clearly stylized]
+    B -->|Can use recorded doctor footage| H[Record real idle/listening clips]
+    H --> I[Authentic presence, but not synchronized to arbitrary spoken replies]

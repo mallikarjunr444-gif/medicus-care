@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "kind": "mermaid",
+  "objectID": "01M6P2E9HNT877FQ51NXJ55EGF",
+  "title": "Three implementation paths for natural doctor-avatar animation, with a no-GPU recommendation",
+  "status": "ready",
+  "lifecycle": "revisioned",
+  "currentRevisionID": "01M6P2E9HPP19BDQNHG6N7PQNT",
+  "createdAt": "2026-11-05T14:40:09.266Z",
+  "updatedAt": "2026-11-05T14:43:45.809Z",
+  "origin": {
+    "kind": "tool",
+    "sessionID": "ses_e57f15b99ffeAaeACO4C1GwZVP",
+    "messageID": "msg_1ac267464001yb2gZqkVOV3OI5",
+    "callID": "call_29d7403a11e340d398bf934772a8216b"
+  },
+  "sourceRefs": [
+    {
+      "role": "payload",
+      "path": ".buddy/objects/v1/mermaid/01M6P2E9HNT877FQ51NXJ55EGF/revisions/01M6P2E9HPP19BDQNHG6N7PQNT/source.mmd",
+      "displayPath": ".buddy/objects/v1/mermaid/01M6P2E9HNT877FQ51NXJ55EGF/revisions/01M6P2E9HPP19BDQNHG6N7PQNT/source.mmd",
+      "workspacePath": null,
+      "mutable": false,
+      "copied": false,
+      "availability": "available",
+      "exists": true,
+      "contentHash": "f228e0a8ab8e10b358fa53f432ea65d28a0a91a3f166bcf70da9e39026946d07"
+    }
+  ],
+  "views": [
+    {
+      "viewID": "rendered",
+      "label": "Diagram",
+      "surfaces": [
+        "inline",
+        "bench",
+        "library"
+      ],
+      "availability": {
+        "status": "available"
+      },
+      "inline": {
+        "renderer": "mermaid",
+        "params": {
+          "renderer": "mermaid",
+          "diagramType": "flowchart"
+        }
+      },
+      "bench": {
+        "resolver": "object-view"
+      },
+      "library": {
+        "section": "diagrams"
+      }
+    }
+  ],
+  "summary": {
+    "kind": "mermaid",
+    "alt": "Three implementation paths for natural doctor-avatar animation, with a no-GPU recommendation",
+    "caption": null,
+    "diagramType": "flowchart",
+    "renderStatus": "ready",
+    "repairOfObjectID": null,
+    "supersedesRevisionID": null,
+    "replacementRevisionID": null
+  }
+}
