@@ -4,7 +4,6 @@ import React, { useRef, useEffect, useState } from 'react'
 import type { DoctorId, DoctorState } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
 import {
-  AudioLines,
   RotateCcw,
   WifiOff,
 } from 'lucide-react'
@@ -13,10 +12,11 @@ interface PhotorealisticDigitalHumanProps {
   doctorId: DoctorId
   doctorState: DoctorState
   isMuted?: boolean
-  isRenderingLipSync?: boolean
   hasSeparateTtsAudio?: boolean
   subtitles?: string
   speakingVideoSrc?: string | null
+  speakingVideoStartAt?: number
+  getSpeakingAudioTime?: () => number | null
   onSpeakingVideoEnded?: () => void
   onSpeakingVideoError?: () => void
   onStateChange?: (state: DoctorState) => void
@@ -24,14 +24,20 @@ interface PhotorealisticDigitalHumanProps {
   className?: string
 }
 
+const FACE_ANCHORS = {
+  dr_ananya: { eyes: [{ x: 0.459, y: 0.193 }, { x: 0.539, y: 0.183 }], mouth: { x: 0.502, y: 0.294 }, eyeWidth: 0.025, mouthWidth: 0.032 },
+  dr_arjun: { eyes: [{ x: 0.489, y: 0.198 }, { x: 0.548, y: 0.189 }], mouth: { x: 0.522, y: 0.296 }, eyeWidth: 0.022, mouthWidth: 0.028 },
+} as const
+
 export function PhotorealisticDigitalHuman({
   doctorId,
   doctorState,
   isMuted = false,
-  isRenderingLipSync = false,
   hasSeparateTtsAudio = false,
   subtitles = '',
   speakingVideoSrc = null,
+  speakingVideoStartAt = 0,
+  getSpeakingAudioTime,
   onSpeakingVideoEnded,
   onSpeakingVideoError,
   onStateChange,
@@ -44,10 +50,14 @@ export function PhotorealisticDigitalHuman({
   const imageRef = useRef<HTMLImageElement | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
   const [playbackBlocked, setPlaybackBlocked] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
 
   // Physiological Simulation state refs (avoid React re-render lag)
   const simRef = useRef({
     startTime: 0,
+    lastFrameTime: 0,
+    nextBlinkAt: 2.4,
+    blinkStartedAt: -1,
     breathing: 0,
     head: { pitch: 0, yaw: 0, roll: 0, targetPitch: 0, targetYaw: 0, targetRoll: 0 },
     brows: { lift: 0, furrow: 0 },
@@ -55,6 +65,9 @@ export function PhotorealisticDigitalHuman({
 
   const doctor = DOCTORS[doctorId] || DOCTORS.dr_arjun
   const photoSrc = doctorId === 'dr_ananya' ? '/doctor/dr_ananya.jpg' : '/doctor/dr_arjun.jpg'
+  // Normalized landmark estimates for the two bundled portraits. This keeps
+  // the fallback animation local and inexpensive; no cloud model or GPU needed.
+  const face = FACE_ANCHORS[doctorId]
 
   // Preload Doctor High-Res Photograph
   useEffect(() => {
@@ -70,17 +83,39 @@ export function PhotorealisticDigitalHuman({
 
   // Synchronized Video playback for speaking animation
   useEffect(() => {
-    if (videoRef.current) {
-      if (doctorState === 'speaking' && speakingVideoSrc) {
-        videoRef.current.currentTime = 0
-        setPlaybackBlocked(false)
-        videoRef.current.play().catch(() => setPlaybackBlocked(true))
-      } else {
-        videoRef.current.pause()
-        setPlaybackBlocked(false)
-      }
+    const video = videoRef.current
+    if (!video) {
+      setPlaybackBlocked(false)
+      setVideoReady(false)
+      return
     }
-  }, [doctorState, speakingVideoSrc])
+    video.pause()
+    setPlaybackBlocked(false)
+    setVideoReady(false)
+    if (doctorState !== 'speaking' || !speakingVideoSrc) return
+
+    let cancelled = false
+    const startFromMatchingAudioTime = () => {
+      if (cancelled) return
+      const audioTime = getSpeakingAudioTime?.()
+      if (getSpeakingAudioTime && audioTime === null) return
+      const startAt = audioTime ?? speakingVideoStartAt
+      const latestSafeTime = Number.isFinite(video.duration) ? Math.max(0, video.duration - 0.04) : startAt
+      video.currentTime = Math.min(Math.max(0, startAt), latestSafeTime)
+      video.play().catch(() => setPlaybackBlocked(true))
+    }
+
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      startFromMatchingAudioTime()
+    } else {
+      video.addEventListener('loadedmetadata', startFromMatchingAudioTime, { once: true })
+    }
+
+    return () => {
+      cancelled = true
+      video.removeEventListener('loadedmetadata', startFromMatchingAudioTime)
+    }
+  }, [doctorState, speakingVideoSrc, speakingVideoStartAt, getSpeakingAudioTime])
 
   // Subtle idle/listening movement while the real response video is prepared.
   useEffect(() => {
@@ -95,8 +130,22 @@ export function PhotorealisticDigitalHuman({
     const render = (now: number) => {
       animFrameRef.current = requestAnimationFrame(render)
 
+      // A still portrait needs only gentle motion; cap work to ~24fps for
+      // laptops without a discrete GPU instead of repainting at display rate.
+      if (now - simRef.current.lastFrameTime < 1000 / 24) return
+      simRef.current.lastFrameTime = now
+
       const t = (now - simRef.current.startTime) / 1000
       const sim = simRef.current
+
+      if (t >= sim.nextBlinkAt) {
+        sim.blinkStartedAt = t
+        sim.nextBlinkAt = t + 2.8 + Math.random() * 2.6
+      }
+      const blinkAge = t - sim.blinkStartedAt
+      const blink = blinkAge >= 0 && blinkAge < 0.22
+        ? Math.sin((blinkAge / 0.22) * Math.PI)
+        : 0
 
       // ─────────────────────────────────────────────────────────────
       // 1. Subtle idle breathing
@@ -183,6 +232,54 @@ export function PhotorealisticDigitalHuman({
       // Bias the crop upward so the doctor's hair remains in frame in a wide viewport.
       ctx.drawImage(img, (width - drawWidth) / 2, (height - drawHeight) * 0.25, drawWidth, drawHeight)
 
+      // Lightweight eyelid and jaw cues over the real portrait. These are
+      // deliberately subtle: a single photograph cannot produce true 3-D
+      // facial motion, but small local cues make the speaking/listening state
+      // visible without delaying audio for a generated video.
+      const drawX = (width - drawWidth) / 2
+      const drawY = (height - drawHeight) * 0.25
+      const eyeW = drawWidth * face.eyeWidth
+      const eyeH = Math.max(3, drawHeight * 0.009)
+      const skinTone = doctorId === 'dr_ananya' ? '#e8b69d' : '#d8a17e'
+      if (blink > 0.04) {
+        face.eyes.forEach(({ x, y }) => {
+          const ex = drawX + drawWidth * x
+          const ey = drawY + drawHeight * y
+          ctx.save()
+          ctx.globalAlpha = Math.min(0.9, blink * 0.92)
+          ctx.fillStyle = skinTone
+          ctx.beginPath()
+          ctx.ellipse(ex, ey, eyeW * 0.58, eyeH * (0.25 + blink * 0.8), 0, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.strokeStyle = 'rgba(82, 50, 43, 0.72)'
+          ctx.lineWidth = Math.max(1, drawWidth * 0.0012)
+          ctx.beginPath()
+          ctx.moveTo(ex - eyeW * 0.53, ey + eyeH * blink * 0.35)
+          ctx.quadraticCurveTo(ex, ey + eyeH * blink * 0.95, ex + eyeW * 0.53, ey + eyeH * blink * 0.35)
+          ctx.stroke()
+          ctx.restore()
+        })
+      }
+
+      if (doctorState === 'speaking' && (!speakingVideoSrc || !videoReady)) {
+        // Vary the opening at conversational cadence while audio is playing.
+        const syllable = Math.abs(Math.sin(t * 8.2) * Math.sin(t * 3.1 + 0.6))
+        const opening = 1.5 + syllable * drawHeight * 0.009
+        const mx = drawX + drawWidth * face.mouth.x
+        const my = drawY + drawHeight * face.mouth.y
+        ctx.save()
+        ctx.fillStyle = 'rgba(69, 28, 31, 0.82)'
+        ctx.beginPath()
+        ctx.ellipse(mx, my, drawWidth * face.mouthWidth * 0.42, opening, 0, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(123, 62, 66, 0.72)'
+        ctx.lineWidth = Math.max(1, drawWidth * 0.001)
+        ctx.beginPath()
+        ctx.ellipse(mx, my, drawWidth * face.mouthWidth * 0.46, opening + 1, 0, Math.PI * 0.08, Math.PI * 0.92)
+        ctx.stroke()
+        ctx.restore()
+      }
+
       ctx.restore()
     }
 
@@ -191,7 +288,7 @@ export function PhotorealisticDigitalHuman({
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
     }
-  }, [imageLoaded, doctorId, doctorState])
+  }, [imageLoaded, doctorId, doctorState, speakingVideoSrc, videoReady, face])
 
   return (
     <div className={`relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden select-none ${className}`}>
@@ -199,43 +296,30 @@ export function PhotorealisticDigitalHuman({
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-950/10 to-slate-950/70 pointer-events-none z-10" />
 
       {/* When Doctor is speaking with neural generated video, show synchronized video stream */}
-      {speakingVideoSrc && doctorState === 'speaking' ? (
+      <canvas
+        ref={canvasRef}
+        width={1600}
+        height={900}
+        className="absolute inset-0 h-full w-full object-cover object-[center_25%] filter contrast-[1.03] brightness-[1.01]"
+      />
+
+      {speakingVideoSrc && doctorState === 'speaking' && (
         <video
+          key={speakingVideoSrc}
           ref={videoRef}
           src={speakingVideoSrc}
           playsInline
           muted={isMuted || hasSeparateTtsAudio}
-          className="w-full h-full object-cover object-[center_25%] filter contrast-[1.03] brightness-[1.01]"
+          className={`absolute inset-0 h-full w-full object-cover object-[center_25%] filter contrast-[1.03] brightness-[1.01] transition-opacity duration-150 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
+          onPlaying={() => setVideoReady(true)}
+          onWaiting={() => setVideoReady(false)}
           onEnded={() => {
+            setVideoReady(false)
             if (onSpeakingVideoEnded) onSpeakingVideoEnded()
             else onStateChange?.('listening')
           }}
           onError={() => onSpeakingVideoError?.()}
         />
-      ) : (
-        /* Identity-preserving portrait shown while no generated response clip is active. */
-        <canvas
-          ref={canvasRef}
-          width={1600}
-          height={900}
-          className="w-full h-full object-cover object-[center_25%] filter contrast-[1.03] brightness-[1.01]"
-        />
-      )}
-
-      {isRenderingLipSync && !speakingVideoSrc && (
-        <div className="absolute inset-x-4 bottom-20 z-20 mx-auto flex max-w-lg items-center justify-center gap-3 rounded-2xl border border-white/15 bg-slate-950/90 px-4 py-3 text-white shadow-xl backdrop-blur">
-          <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-teal-300 border-t-transparent" />
-          <span className="text-sm">
-            {hasSeparateTtsAudio ? 'Doctor audio is playing · generating lip-synced video…' : 'Generating lip-synced video…'}
-          </span>
-        </div>
-      )}
-
-      {doctorState === 'speaking' && !speakingVideoSrc && !isRenderingLipSync && (
-        <div role="status" className="absolute bottom-5 left-4 z-20 flex items-center gap-2 rounded-xl border border-white/15 bg-slate-950/85 px-3 py-2 text-[11px] font-medium text-slate-200 shadow-lg backdrop-blur sm:left-5">
-          <AudioLines size={14} className="text-teal-300" aria-hidden="true" />
-          Voice response · facial animation unavailable
-        </div>
       )}
 
       {playbackBlocked && speakingVideoSrc && doctorState === 'speaking' && (
