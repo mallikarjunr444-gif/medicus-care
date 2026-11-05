@@ -102,6 +102,7 @@ class Settings(BaseSettings):
     MLX_AVATAR_PATH: str = "models/FasterLivePortrait-MLX"
     MLX_AVATAR_PYTHON: str = ""  # defaults to <MLX_AVATAR_PATH>/.venv/bin/python
     MLX_AVATAR_PROFILE: str = "ultra"  # quality, speed, turbo, ultra
+    MLX_AVATAR_WEIGHTS_REVISION: str = "2cc2ac92c9fe65ca4fb68cb1a1556ead285e7391"
     MLX_AVATAR_STARTUP_TIMEOUT_SECS: int = 900  # first start may fetch model weights
     MLX_AVATAR_INFER_TIMEOUT_SECS: int = 600
 
