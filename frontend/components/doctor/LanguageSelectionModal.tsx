@@ -128,7 +128,7 @@ export function LanguageSelectionModal({
 
                 <div>
                   <span className="text-xs font-medium text-slate-800 block">{lang.label}</span>
-                  <span className="text-[10px] text-slate-500">{lang.region}</span>
+                  <span className="text-[10px] text-slate-600">{lang.region}</span>
                 </div>
               </button>
             )

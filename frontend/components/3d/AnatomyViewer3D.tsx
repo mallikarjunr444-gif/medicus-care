@@ -85,7 +85,7 @@ const SYSTEMS: OrganSystem[] = [
     subtitle: 'Hematology, CBC & Immunological Receptors',
     icon: Dna,
     color: 0x10b981,
-    hexColor: '#10b981',
+    hexColor: '#a9c6ee',
     description:
       'Cellular receptor affinity modeling, erythrocyte indices, lipid transport fractions, and immune leukocyte distribution profiles.',
     clinicalMetrics: [
