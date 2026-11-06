@@ -366,50 +366,17 @@
   z-index: 0;
 }
 
-/* iPhone-Duo-style starting fold: the cover half swings open on load. */
-@keyframes fold-open {
-  0%   { transform: rotateY(-180deg); }
-  55%  { transform: rotateY(-18deg); }
-  75%  { transform: rotateY(6deg); }
-  100% { transform: rotateY(0deg); }
+/* Apple-style starting reveal: the screen content blurs + darkens, then sharpens. */
+@keyframes screen-reveal {
+  0%   { filter: blur(14px) brightness(0.5); opacity: 0.85; }
+  55%  { filter: blur(4px) brightness(0.8); opacity: 1; }
+  100% { filter: blur(0px) brightness(1); opacity: 1; }
 }
-@keyframes fold-shade {
-  0%   { opacity: 0.9; }
-  45%  { opacity: 0.55; }
-  70%  { opacity: 0.15; }
-  100% { opacity: 0; }
+.screen-reveal {
+  animation: screen-reveal 2.2s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-@keyframes fold-blur {
-  0%   { filter: blur(7px); }
-  60%  { filter: blur(2px); }
-  100% { filter: blur(0px); }
-}
-@keyframes chat-fade {
-  0%   { opacity: 1; }
-  55%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-@keyframes device-in {
-  0%   { opacity: 0; transform: translateX(calc(-0.5 * min(300px, 42vw))) translateY(10px) scale(0.96); }
-  100% { opacity: 1; transform: translateX(0) translateY(0) scale(1); }
-}
-.fold-cover {
-  animation:
-    fold-open 1.8s cubic-bezier(0.22, 1, 0.36, 1) both,
-    fold-blur 1.8s ease-out both;
-  transform-origin: right center;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-.fold-shade { animation: fold-shade 1.8s ease-out both; }
-.chat-fade { animation: chat-fade 1.8s ease-in-out both; }
-.animate-device-in { animation: device-in 1.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
-
 @media (prefers-reduced-motion: reduce) {
-  .fold-cover { animation: none; transform: none; }
-  .fold-shade { animation: none; opacity: 0; }
-  .chat-fade { animation: none; opacity: 0; }
-  .animate-device-in { animation: none; opacity: 1; transform: none; }
+  .screen-reveal { animation: none; }
 }
 
 /* React Bits-style shiny text: a sheen that sweeps across the glyphs. */
