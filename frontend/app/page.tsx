@@ -29,6 +29,7 @@ import { Reveal } from '@/components/ui/reveal'
 import MeadowRiseFooter from '@/components/ui/meadow-rise-footer'
 import { MedicalInfoSection } from '@/components/interactive/MedicalInfoSection'
 import { StatsSection } from '@/components/interactive/StatsSection'
+import { LiquidNavbar } from '@/components/ui/liquid-glass-navbar'
 
 const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
@@ -142,25 +143,20 @@ export default function Home() {
             </div>
           </button>
 
-          {/* Desktop Nav Items */}
-          <nav aria-label="Main navigation" className="hidden items-center gap-1 xl:gap-1.5 lg:flex shrink-0">
-            {navItems.map(({ id, icon: Icon, label }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => navigate(id)}
-                aria-current={view === id ? 'page' : undefined}
-                className={`inline-flex min-h-9 items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold transition-all duration-200 xl:px-3 xl:text-[13px] ${
-                  view === id
-                    ? 'bg-[#e8f3ef] text-[#0e6257] shadow-sm'
-                    : 'text-[#60736e] hover:bg-[#f1f6f3] hover:text-[#183331]'
-                }`}
-              >
-                <Icon size={15} strokeWidth={view === id ? 2.2 : 1.8} aria-hidden="true" />
-                <span>{label}</span>
-              </button>
-            ))}
-          </nav>
+          {/* Desktop Nav Items — 21st.dev Liquid Glass Navbar */}
+          <div className="hidden lg:flex shrink-0">
+            <LiquidNavbar
+              items={navItems.map(({ id, icon: Icon, label }) => ({
+                label,
+                icon: (active: boolean) => <Icon size={14} strokeWidth={active ? 2.2 : 1.8} aria-hidden="true" />,
+                fx: 'glow',
+                onClick: () => navigate(id),
+              }))}
+              active={Math.max(0, navItems.findIndex((item) => item.id === view))}
+              onChange={(idx) => navigate(navItems[idx].id)}
+              tone="light"
+            />
+          </div>
 
           {/* Right Action Controls */}
           <div className="flex shrink-0 items-center gap-2.5">
