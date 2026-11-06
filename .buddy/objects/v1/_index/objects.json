@@ -16,5 +16,11 @@
     "status": "ready",
     "title": "Media presentation",
     "objectPath": ".buddy/objects/v1/media-presentation/01M6P833R9YDMX9NQCE07GGT2D"
+  },
+  "01M6QTH74FZ2M8WJY9RQGCJ7R7": {
+    "kind": "media-presentation",
+    "status": "ready",
+    "title": "medicus-mlx-integrated.mp4",
+    "objectPath": ".buddy/objects/v1/media-presentation/01M6QTH74FZ2M8WJY9RQGCJ7R7"
   }
 }

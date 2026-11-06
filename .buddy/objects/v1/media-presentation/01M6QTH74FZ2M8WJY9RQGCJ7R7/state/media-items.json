@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "id": "media_item_1",
+      "inputPath": "/private/tmp/medicus-mlx-integrated.mp4",
+      "absolutePath": "/private/tmp/medicus-mlx-integrated.mp4",
+      "displayPath": "/private/tmp/medicus-mlx-integrated.mp4",
+      "workspacePath": null,
+      "fileName": "medicus-mlx-integrated.mp4",
+      "mediaKind": "video",
+      "renderMode": "video",
+      "mimeType": "video/mp4",
+      "sizeBytes": 753411,
+      "modifiedAt": "2026-11-06T06:28:03.144Z",
+      "rawUrl": "/api/objects/media-presentation/01M6QTH74FZ2M8WJY9RQGCJ7R7/raw/media_item_1?directory=%2FUsers%2Fmalikarjunr%2Fmedicus-care&fileName=medicus-mlx-integrated.mp4",
+      "actionCapabilities": {
+        "canOpenDefaultApp": true,
+        "canRevealInFileManager": true,
+        "canOpenInWorkspacePanel": false
+      },
+      "availability": {
+        "status": "available",
+        "message": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "kind": "media-presentation",
+  "objectID": "01M6QTH74FZ2M8WJY9RQGCJ7R7",
+  "title": "medicus-mlx-integrated.mp4",
+  "status": "ready",
+  "lifecycle": "external-reference",
+  "createdAt": "2026-11-06T07:00:25.360Z",
+  "updatedAt": "2026-11-06T07:00:25.360Z",
+  "sourceRefs": [
+    {
+      "role": "external",
+      "path": "/private/tmp/medicus-mlx-integrated.mp4",
+      "displayPath": "/private/tmp/medicus-mlx-integrated.mp4",
+      "workspacePath": null,
+      "mutable": false,
+      "copied": false,
+      "availability": "available",
+      "exists": true,
+      "sizeBytes": 753411,
+      "modifiedAt": "2026-11-06T06:28:03.144Z"
+    }
+  ],
+  "views": [
+    {
+      "viewID": "gallery",
+      "label": "Media",
+      "surfaces": [
+        "inline",
+        "bench",
+        "library"
+      ],
+      "availability": {
+        "status": "available"
+      },
+      "inline": {
+        "renderer": "media-gallery",
+        "params": {
+          "renderer": "media-gallery",
+          "layout": "single"
+        }
+      },
+      "bench": {
+        "resolver": "object-view"
+      },
+      "library": {
+        "section": "media"
+      }
+    }
+  ],
+  "summary": {
+    "kind": "media-presentation",
+    "layout": "single",
+    "itemCount": 1
+  }
+}

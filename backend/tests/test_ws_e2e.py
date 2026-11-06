@@ -81,7 +81,7 @@ async def test_ws_full_turn_streams_events(monkeypatch):
     async def fake_resolve_image(avatar):
         return "/tmp/fake-avatar.jpg"
 
-    async def fake_tts(text, output_path, speaker_wav=None, language="en"):
+    async def fake_tts(text, output_path, speaker_wav=None, language="en", voice_gender="female"):
         from pathlib import Path
 
         Path(output_path).write_bytes(b"wav")
@@ -89,7 +89,7 @@ async def test_ws_full_turn_streams_events(monkeypatch):
             output_path=output_path, engine="chatterbox", fallback=False, voice_cloned=False
         )
 
-    async def fake_animate(avatar_image_path, audio_path, output_path):
+    async def fake_animate(avatar_image_path, audio_path, output_path, require_lipsync=False):
         from pathlib import Path
 
         Path(output_path).write_bytes(b"mp4")
@@ -108,7 +108,7 @@ async def test_ws_full_turn_streams_events(monkeypatch):
     # TestClient drives the ASGI app (lifespan + portal) on a worker thread.
     with TestClient(main.app) as tc:
         with tc.websocket_connect(f"/ws/session/{session_id}?token={token}") as ws:
-            ws.send_json({"type": "text", "text": "hi"})
+            ws.send_json({"type": "text", "text": "Please explain common cold symptoms."})
 
             types: list[str] = []
             # Collect until the turn ends or we hit a safety cap.
@@ -185,7 +185,7 @@ async def test_llm_failure_reaches_the_client_typed(monkeypatch, exc_name, expec
     token = create_access_token(data={"sub": "u1"})
     with TestClient(main.app) as tc:
         with tc.websocket_connect(f"/ws/session/{session_id}?token={token}") as ws:
-            ws.send_json({"type": "text", "text": "hi"})
+            ws.send_json({"type": "text", "text": "Please explain common cold symptoms."})
             for _ in range(60):
                 msg = ws.receive_json()
                 if msg["type"] == "error":
