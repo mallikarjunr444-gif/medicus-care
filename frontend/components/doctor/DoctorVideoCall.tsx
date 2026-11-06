@@ -48,6 +48,8 @@ import { useConsultationSpeechRecognition } from './useConsultationSpeechRecogni
 import { api } from '@/lib/api'
 import { useDoctorBackendSession } from './useDoctorBackendSession'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
+import { AudioFrequencyVisualizer } from '@/components/ui/audio-frequency-visualizer'
+import { StatusBadge } from '@/components/ui/status-badge'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
 import { SpecialistBookingModal, type Specialist } from './SpecialistBookingModal'
 import { LanguageSelectionModal, SUPPORTED_LANGUAGES } from './LanguageSelectionModal'
@@ -849,10 +851,20 @@ export function DoctorVideoCall({
             <span>{formatTimer(consultationSeconds)}</span>
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-700">
-            <span className={`w-2 h-2 rounded-full ${consultationStatus === 'Listening' ? 'bg-emerald-500' : consultationStatus === 'Speaking' ? 'bg-teal-600' : consultationStatus === 'Error' || consultationStatus === 'Disconnected' ? 'bg-rose-500' : consultationStatus === 'Thinking' || consultationStatus === 'Connecting' ? 'bg-amber-500' : 'bg-slate-400'}`} />
-            <span className="font-medium">{consultationStatus}</span>
-          </div>
+          <StatusBadge
+            status={
+              consultationStatus === 'Listening'
+                ? 'live'
+                : consultationStatus === 'Speaking'
+                ? 'active'
+                : consultationStatus === 'Thinking' || consultationStatus === 'Connecting'
+                ? 'warning'
+                : consultationStatus === 'Error' || consultationStatus === 'Disconnected'
+                ? 'error'
+                : 'idle'
+            }
+            label={consultationStatus}
+          />
         </div>
 
         {/* Right Controls: Language Selector Dropdown & End Call */}
@@ -954,9 +966,22 @@ export function DoctorVideoCall({
 
           {/* ── BOTTOM CONSULTATION CONTROLS (Zero dead black space) ── */}
           <div className="min-h-[76px] border-t border-slate-700/70 bg-white px-3 sm:px-5 flex items-center justify-between gap-2 z-20 flex-shrink-0">
-            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 min-w-[130px]">
-              <span className={`w-2 h-2 rounded-full ${isListeningSpeech ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-              <span>{isListeningSpeech ? 'Listening to you' : voiceInput.isEnabled ? 'Mic paused for reply' : 'Voice off'}</span>
+            <div className="hidden sm:flex items-center gap-2">
+              <AudioFrequencyVisualizer
+                state={
+                  doctorState === 'speaking'
+                    ? 'speaking'
+                    : isListeningSpeech
+                    ? 'listening'
+                    : doctorState === 'thinking'
+                    ? 'thinking'
+                    : 'idle'
+                }
+                audioLevel={audioLevel}
+                barCount={14}
+                showBadge={true}
+                className="bg-slate-100/90 border-slate-200/80 !shadow-none"
+              />
             </div>
 
             {/* Center: Essential Telemedicine Actions */}

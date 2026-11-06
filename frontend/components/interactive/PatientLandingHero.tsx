@@ -1,9 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import { ArrowDown, ArrowUpRight, AudioLines, Languages, MessageCircle, ShieldCheck } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, AudioLines, Languages, MessageCircle, ShieldCheck, Sparkles } from 'lucide-react'
 import type { DoctorId } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
+import { GlowEffect } from '@/components/ui/glow-effect'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 const featuredAssistants: { id: DoctorId; image: string; alt: string; focus: string }[] = [
   {
@@ -67,39 +69,55 @@ export function PatientLandingHero({ onSelectDoctor }: { onSelectDoctor: (id: Do
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {featuredAssistants.map(({ id, image, alt, focus }) => {
               const assistant = DOCTORS[id]
+              const glowColors =
+                id === 'dr_ananya'
+                  ? ['#7c3aed', '#2563eb', '#06b6d4']
+                  : ['#0f766e', '#0284c7', '#10b981']
+
               return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => onSelectDoctor(id)}
-                  className="group relative isolate flex min-h-52 flex-col justify-end overflow-hidden rounded-2xl bg-[#24453d] text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#acd5c9] sm:min-h-64"
-                  aria-label={`Start an AI care conversation with ${assistant.name}`}
-                >
-                  <Image
-                    src={image}
-                    alt={alt}
-                    fill
-                    sizes="(max-width: 640px) 46vw, (max-width: 1024px) 40vw, 26vw"
-                    className="-z-10 object-cover object-[50%_25%] transition duration-500 group-hover:scale-[1.04]"
-                    priority={id === 'dr_arjun'}
+                <div key={id} className="group relative rounded-2xl">
+                  <GlowEffect
+                    colors={glowColors}
+                    mode="rotate"
+                    blur="medium"
+                    duration={7}
+                    className="rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   />
-                  <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#102e29]/95 via-[#102e29]/10 to-transparent" />
-                  <span className="absolute left-3 top-3 rounded-full border border-white/65 bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-[#2e5147] shadow-sm sm:left-4 sm:top-4">
-                    AI assistant
-                  </span>
-                  <span className="flex items-end justify-between gap-2 p-3 text-white sm:p-4">
-                    <span>
-                      <span className="block text-sm font-semibold sm:text-base">{assistant.name}</span>
-                      <span className="mt-0.5 block text-[11px] text-white/80 sm:text-xs">{focus}</span>
+                  <button
+                    type="button"
+                    onClick={() => onSelectDoctor(id)}
+                    className="relative isolate flex min-h-52 w-full flex-col justify-end overflow-hidden rounded-2xl bg-[#24453d] text-left transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#acd5c9] sm:min-h-64"
+                    aria-label={`Start an AI care conversation with ${assistant.name}`}
+                  >
+                    <Image
+                      src={image}
+                      alt={alt}
+                      fill
+                      sizes="(max-width: 640px) 46vw, (max-width: 1024px) 40vw, 26vw"
+                      className="-z-10 object-cover object-[50%_25%] transition duration-700 group-hover:scale-[1.05]"
+                      priority={id === 'dr_arjun'}
+                    />
+                    <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#102e29]/95 via-[#102e29]/30 to-transparent" />
+                    <div className="absolute left-3 top-3 right-3 flex items-center justify-between sm:left-4 sm:top-4 sm:right-4">
+                      <span className="rounded-full border border-white/65 bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-[#2e5147] shadow-sm">
+                        AI Doctor
+                      </span>
+                      <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    </div>
+                    <span className="flex items-end justify-between gap-2 p-3 text-white sm:p-4">
+                      <span>
+                        <span className="block text-sm font-bold tracking-tight sm:text-base">{assistant.name}</span>
+                        <span className="mt-0.5 block text-[11px] text-white/90 sm:text-xs font-medium">{focus}</span>
+                      </span>
+                      <span className="mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 backdrop-blur-md ring-1 ring-white/30 transition-all duration-300 group-hover:bg-white group-hover:text-[#164d43] group-hover:scale-110">
+                        <ArrowUpRight size={16} aria-hidden="true" />
+                      </span>
                     </span>
-                    <span className="mb-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/30 transition group-hover:bg-white group-hover:text-[#164d43]">
-                      <ArrowUpRight size={16} aria-hidden="true" />
-                    </span>
-                  </span>
-                </button>
+                  </button>
+                </div>
               )
             })}
           </div>

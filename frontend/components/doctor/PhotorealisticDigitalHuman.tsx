@@ -10,6 +10,8 @@ import {
   RotateCcw,
   WifiOff,
 } from 'lucide-react'
+import { GlowEffect } from '@/components/ui/glow-effect'
+import { AudioFrequencyVisualizer } from '@/components/ui/audio-frequency-visualizer'
 
 interface PhotorealisticDigitalHumanProps {
   doctorId: DoctorId
@@ -354,82 +356,64 @@ export function PhotorealisticDigitalHuman({
         </div>
       )}
 
-      {/* Doctor identity */}
-      <div className="absolute top-4 left-4 z-20 flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-slate-900/85 backdrop-blur-xl border border-slate-700/80 shadow-2xl text-white">
-        <div className="relative">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
-            {doctorId === 'dr_ananya' ? 'An' : 'Ar'}
-          </div>
-          <span
-            className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
-              doctorState === 'speaking'
-                ? 'bg-sky-400 animate-ping'
-                : doctorState === 'listening'
-                ? 'bg-emerald-400 animate-pulse'
-                : doctorState === 'thinking'
-                ? 'bg-amber-400 animate-pulse'
-                : 'bg-emerald-500'
-            }`}
-          />
-        </div>
+      {/* Doctor identity with 21st.dev GlowEffect */}
+      <div className="absolute top-4 left-4 z-20 group">
+        <GlowEffect
+          colors={doctorId === 'dr_ananya' ? ['#7c3aed', '#2563eb', '#06b6d4'] : ['#0284c7', '#0d9488', '#10b981']}
+          mode="rotate"
+          blur="strong"
+          duration={8}
+          className="rounded-2xl"
+        >
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/15 shadow-2xl text-white">
+            <div className="relative">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-teal-500 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
+                {doctorId === 'dr_ananya' ? 'An' : 'Sm'}
+              </div>
+              <span
+                className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
+                  doctorState === 'speaking'
+                    ? 'bg-sky-400 animate-ping'
+                    : doctorState === 'listening'
+                    ? 'bg-emerald-400 animate-pulse'
+                    : doctorState === 'thinking'
+                    ? 'bg-amber-400 animate-pulse'
+                    : 'bg-emerald-500'
+                }`}
+              />
+            </div>
 
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white tracking-tight leading-none">
-              {doctor.formalTitle}
-            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-white tracking-tight leading-none">
+                  {doctor.formalTitle}
+                </span>
+              </div>
+              <span className="text-xs text-teal-300/90 block mt-0.5 font-medium">{doctor.specialty}</span>
+            </div>
           </div>
-          <span className="text-xs text-slate-300 block mt-0.5">{doctor.specialty}</span>
-        </div>
+        </GlowEffect>
       </div>
 
-      {/* Real-Time Doctor State Pill (Top Center) */}
+      {/* Real-Time Doctor Audio Visualizer & State Pill (Top Center) */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-        <div
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono backdrop-blur-xl border transition-all duration-300 shadow-xl ${
+        <AudioFrequencyVisualizer
+          state={
             doctorState === 'speaking'
-              ? 'bg-sky-500/20 border-sky-500/40 text-sky-200'
+              ? 'speaking'
               : doctorState === 'listening'
-              ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-200'
+              ? 'listening'
               : doctorState === 'thinking'
-              ? 'bg-amber-500/20 border-amber-500/40 text-amber-200'
-              : doctorState === 'error' || doctorState === 'disconnected'
-                ? 'bg-red-500/20 border-red-500/40 text-red-200'
-                : 'bg-slate-900/80 border-slate-700 text-slate-300'
-          }`}
-        >
-          {doctorState === 'speaking' && (
-            <>
-              <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
-              <span>{doctor.name} is speaking…</span>
-            </>
-          )}
-          {doctorState === 'listening' && (
-            <>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Listening to patient…</span>
-            </>
-          )}
-          {doctorState === 'thinking' && (
-            <>
-              <div className="w-2 h-2 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
-              <span>Thinking…</span>
-            </>
-          )}
-          {doctorState === 'error' && <span>Error</span>}
-          {doctorState === 'interrupted' && (
-            <>
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Listening to patient…</span>
-            </>
-          )}
-          {doctorState === 'idle' && (
-            <>
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Listening to patient…</span>
-            </>
-          )}
-        </div>
+              ? 'thinking'
+              : doctorState === 'interrupted'
+              ? 'interrupted'
+              : 'idle'
+          }
+          audioLevel={fallbackSpeechLevel}
+          barCount={16}
+          showBadge={true}
+          className="shadow-2xl border-white/15 bg-slate-950/85"
+        />
       </div>
 
       {/* Doctor Live Subtitles (Bottom Center) */}
