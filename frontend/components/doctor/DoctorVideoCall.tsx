@@ -40,6 +40,7 @@ import {
   AlertOctagon,
 } from 'lucide-react'
 import { PhotorealisticDigitalHuman } from './PhotorealisticDigitalHuman'
+import { attachAudioAnalyser, setAudioOutputMuted } from '@/lib/audioEnergy'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
 import { useDoctorSpeech } from './useDoctorSpeech'
 import { useConsultationSpeechRecognition } from './useConsultationSpeechRecognition'
@@ -214,7 +215,7 @@ export function DoctorVideoCall({
 
       const { url: objectUrl, text, chunkIndex } = queuedAudio
       const audio = new Audio(objectUrl)
-      audio.muted = isMuted
+      attachAudioAnalyser(audio, isMuted)
       audioRef.current = audio
       audioObjectUrlRef.current = objectUrl
       currentAudioChunkIndexRef.current = chunkIndex
@@ -463,7 +464,7 @@ export function DoctorVideoCall({
   }, [isListeningSpeech, doctorState])
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.muted = isMuted
+    setAudioOutputMuted(isMuted, audioRef.current)
   }, [isMuted])
 
   useEffect(() => () => {
@@ -899,6 +900,7 @@ export function DoctorVideoCall({
               isMuted={isMuted}
               hasSeparateTtsAudio={hasSeparateTtsAudio}
               subtitles={subtitles}
+              fallbackSpeechLevel={audioLevel}
               speakingVideoSrc={doctorVideoSrc}
               speakingVideoStartAt={speakingVideoStartAt}
               getSpeakingAudioTime={getCurrentSpokenAudioTime}
