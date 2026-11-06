@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { BrandLogo } from '@/components/ui/BrandLogo'
 import {
   Mic,
   MicOff,
@@ -826,13 +827,11 @@ export function DoctorVideoCall({
       {/* ── TOP NAVIGATION BAR ── */}
       <header className="h-16 border-b border-slate-200 bg-white px-4 sm:px-6 flex items-center justify-between gap-3 z-30 flex-shrink-0 shadow-sm">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#4f6580] flex items-center justify-center text-white shadow-sm">
-            <HeartPulse size={19} />
-          </div>
+          <BrandLogo className="h-8 w-[112px] sm:h-9 sm:w-[132px]" priority />
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm tracking-tight text-slate-900">
-                Medicus Labs <span className="font-medium text-teal-700">· MediCare</span>
+                Medicus Labs
               </span>
               <span className="hidden xl:inline text-[10px] uppercase px-2 py-1 rounded-full bg-teal-50 text-teal-800 border border-teal-100 font-semibold">
                 Care consultation

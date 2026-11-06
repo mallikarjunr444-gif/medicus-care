@@ -21,6 +21,7 @@ import { PatientDashboard } from '@/components/patient/PatientDashboard'
 import { PatientNotesPanel } from '@/components/patient/PatientNotesPanel'
 import { AppointmentWorkspace } from '@/components/patient/AppointmentWorkspace'
 import { PatientLandingHero } from '@/components/interactive/PatientLandingHero'
+import { BrandLogo } from '@/components/ui/BrandLogo'
 import { SpecialistBookingModal, type AppointmentRequestResult } from '@/components/doctor/SpecialistBookingModal'
 import type { DoctorId } from '@/lib/doctorTypes'
 import { useStore } from '@/store/useStore'
@@ -121,12 +122,10 @@ export default function Home() {
       <header className={`sticky top-0 z-50 border-b border-[#e1e9e4] bg-white/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl ${view === 'consultation' ? 'hidden' : ''}`}>
         <div className="mx-auto flex min-h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
           <button type="button" onClick={() => navigate('home')} className="group flex min-w-0 items-center gap-2.5 text-left">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#0f6257] text-white shadow-sm transition-transform group-hover:-rotate-3">
-              <HeartPulse size={20} aria-hidden="true" />
-            </span>
+            <BrandLogo className="h-9 w-[132px] sm:w-[150px]" priority />
             <span className="min-w-0">
-              <span className="block text-[15px] font-bold leading-5 tracking-[-0.04em] text-[#183331]">Medicus Labs</span>
-              <span className="hidden text-[11px] leading-4 text-[#657773] sm:block">MediCare · Care, clarity, conversation</span>
+              <span className="block text-[13px] font-semibold leading-5 tracking-[-0.02em] text-[#183331]">Medicus Labs</span>
+              <span className="hidden text-[11px] leading-4 text-[#657773] sm:block">Care, clarity, conversation</span>
             </span>
           </button>
 
@@ -268,7 +267,10 @@ export default function Home() {
             <footer className="border-t border-[#e1e9e4] bg-white px-4 py-10 sm:px-6">
               <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-[1.2fr_1fr_1fr]">
                 <div>
-                  <p className="flex items-center gap-2 text-base font-bold text-[#183331]"><HeartPulse size={18} className="text-[#0f7565]" aria-hidden="true" /> MediCare</p>
+                  <div className="flex flex-col items-start gap-1.5">
+                    <BrandLogo className="h-8 w-[116px]" />
+                    <span className="text-xs font-medium text-[#71817b]">by Medicus Labs</span>
+                  </div>
                   <p className="mt-2 max-w-sm text-xs leading-5 text-[#71817b]">AI health information and preliminary triage guidance, not medical diagnosis or prescriptions. For urgent or life-threatening symptoms, call your local emergency number. In India, call 112.</p>
                 </div>
                 <nav aria-label="Footer product links">

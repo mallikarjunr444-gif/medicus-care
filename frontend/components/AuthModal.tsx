@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { HeartPulse, Loader2, Eye, EyeOff, UserPlus, LogIn, User, X, Sparkles } from 'lucide-react'
+import { Loader2, Eye, EyeOff, UserPlus, LogIn, User, X, Sparkles } from 'lucide-react'
+import { BrandLogo } from '@/components/ui/BrandLogo'
 import { toast } from 'react-hot-toast'
 import { api } from '@/lib/api'
 import { useStore } from '@/store/useStore'
@@ -121,11 +122,10 @@ export function AuthModal({ onClose }: AuthModalProps) {
 
         {/* Branding Logo */}
         <div className="flex flex-col items-center gap-2 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
-            <HeartPulse size={24} className="animate-pulse" />
+          <div className="rounded-xl bg-white px-3 py-1 shadow-sm">
+            <BrandLogo className="h-9 w-[132px]" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-extrabold text-white">Medi<span className="text-sky-400">Care</span></h1>
             <p className="text-xs text-sky-400 font-medium">Your AI Doctor • 100% Free Access</p>
           </div>
         </div>

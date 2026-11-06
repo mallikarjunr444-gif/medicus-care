@@ -337,7 +337,7 @@ export function DoctorPhotorealisticViewport({
       {/* MediCare identity stays visible on both the portrait and generated video. */}
       <div className="absolute bottom-4 right-4 z-20 rounded-xl border border-white/80 bg-white/90 px-2 py-1 shadow-lg backdrop-blur-sm sm:bottom-5 sm:right-5 sm:px-2.5 sm:py-1.5">
         <Image
-          src="/videos/medicare-logo.png"
+          src="/logo.png"
           alt="MediCare"
           width={1024}
           height={581}
