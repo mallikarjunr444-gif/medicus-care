@@ -65,14 +65,14 @@ function PanelLoader({ label }: { label: string }) {
 type View = 'home' | 'patient' | 'consultation' | 'chat' | 'notes' | 'appointments' | 'history' | 'settings' | 'admin'
 
 const navItems: { id: View; icon: typeof HeartPulse; label: string }[] = [
-  { id: 'patient', icon: UserRound, label: 'Patient' },
   { id: 'home', icon: HeartPulse, label: 'Home' },
   { id: 'consultation', icon: Stethoscope, label: 'Consultation' },
   { id: 'notes', icon: NotebookPen, label: 'Notes' },
   { id: 'appointments', icon: CalendarDays, label: 'Appointments' },
   { id: 'history', icon: History, label: 'History' },
-  { id: 'settings', icon: Settings, label: 'Settings' },
+  { id: 'patient', icon: UserRound, label: 'Patient' },
   { id: 'admin', icon: ShieldCheck, label: 'Knowledge' },
+  { id: 'settings', icon: Settings, label: 'Settings' },
 ]
 
 const mobileMoreItems = navItems.filter(({ id }) => ['home', 'notes', 'appointments', 'settings', 'admin'].includes(id))
@@ -121,46 +121,62 @@ export default function Home() {
   return (
     <div className={`min-h-screen overflow-x-clip bg-[#f5f8f6] text-[#183331] ${showMobileNavigation ? 'pb-20 lg:pb-0' : ''}`}>
       <header className={`sticky top-0 z-50 border-b border-[#e1e9e4] bg-white/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl ${view === 'consultation' ? 'hidden' : ''}`}>
-        <div className="mx-auto flex min-h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
-          <button type="button" onClick={() => navigate('home')} className="group flex min-w-0 items-center gap-2.5 text-left">
-            <BrandLogo className="h-9 w-[132px] sm:w-[150px]" priority />
-            <span className="min-w-0">
-              <span className="block text-[13px] font-semibold leading-5 tracking-[-0.02em] text-[#183331]">Medicus Labs</span>
-              <span className="hidden text-[11px] leading-4 text-[#657773] sm:block">Care, clarity, conversation</span>
-            </span>
+        <div className="mx-auto flex min-h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+          {/* Brand Logo & Tag */}
+          <button
+            type="button"
+            onClick={() => navigate('home')}
+            className="group flex shrink-0 items-center gap-2.5 text-left focus:outline-none"
+            aria-label="Medicus Labs Home"
+          >
+            <BrandLogo className="h-9 w-[128px] sm:w-[140px]" priority />
+            <div className="hidden border-l border-slate-200 pl-2.5 xl:block">
+              <span className="block text-xs font-semibold leading-tight tracking-tight text-[#183331]">Medicus Labs</span>
+              <span className="block text-[10px] leading-tight text-[#657773] mt-0.5">Care &amp; AI Telemedicine</span>
+            </div>
           </button>
 
-          <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
-                {navItems.map(({ id, icon: Icon, label }) => (
+          {/* Desktop Nav Items */}
+          <nav aria-label="Main navigation" className="hidden items-center gap-1 xl:gap-1.5 lg:flex shrink-0">
+            {navItems.map(({ id, icon: Icon, label }) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => navigate(id)}
                 aria-current={view === id ? 'page' : undefined}
-                className={`inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-[13px] font-medium transition-colors ${view === id ? 'bg-[#e8f3ef] text-[#0e6257]' : 'text-[#60736e] hover:bg-[#f1f6f3] hover:text-[#183331]'}`}
+                className={`inline-flex min-h-9 items-center gap-1.5 rounded-xl px-2.5 text-xs font-semibold transition-all duration-200 xl:px-3 xl:text-[13px] ${
+                  view === id
+                    ? 'bg-[#e8f3ef] text-[#0e6257] shadow-sm'
+                    : 'text-[#60736e] hover:bg-[#f1f6f3] hover:text-[#183331]'
+                }`}
               >
-                <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
-                <span className="hidden lg:inline">{label}</span>
+                <Icon size={15} strokeWidth={view === id ? 2.2 : 1.8} aria-hidden="true" />
+                <span>{label}</span>
               </button>
             ))}
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-2 sm:flex">
-                <span className="hidden items-center gap-1.5 text-xs text-[#5f726e] xl:flex">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+          {/* Right Action Controls */}
+          <div className="flex shrink-0 items-center gap-2.5">
+            <span className="hidden items-center gap-1.5 text-xs font-medium text-[#5f726e] 2xl:flex">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               Private, secure conversations
             </span>
             {view !== 'consultation' && (
-              <button type="button" onClick={() => navigate('consultation')} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#0f6257] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b5149]">
-                Talk to a doctor <ArrowRight size={15} aria-hidden="true" />
+              <button
+                type="button"
+                onClick={() => navigate('consultation')}
+                className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-gradient-to-r from-[#0f6257] to-[#147a6b] px-4 text-xs font-semibold text-white shadow-sm transition-all hover:brightness-105 sm:text-sm"
+              >
+                <span>Talk to a doctor</span>
+                <ArrowRight size={15} aria-hidden="true" />
               </button>
             )}
+            <span className="flex items-center gap-1.5 rounded-full border border-[#dce8e2] bg-[#f5f9f6] px-2.5 py-1 text-[11px] font-medium text-[#45645d] sm:hidden">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Online
+            </span>
           </div>
-
-          <span className="flex items-center gap-1.5 rounded-full border border-[#dce8e2] bg-[#f5f9f6] px-2.5 py-1.5 text-[11px] font-medium text-[#45645d] sm:hidden">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Online care
-          </span>
         </div>
       </header>
 
