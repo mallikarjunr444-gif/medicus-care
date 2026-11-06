@@ -101,7 +101,7 @@ export default function RootLayout({
         </a>
         <QueryProvider>
           <ErrorBoundary>
-            <div id="main-content">{children}</div>
+            <div id="app-content">{children}</div>
           </ErrorBoundary>
           <Toaster
             position="bottom-center"
