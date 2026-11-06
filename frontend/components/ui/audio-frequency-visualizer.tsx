@@ -122,3 +122,4 @@ export function AudioFrequencyVisualizer({
     </div>
   )
 }
+
