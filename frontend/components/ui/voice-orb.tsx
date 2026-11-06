@@ -37,7 +37,7 @@ export type VoiceOrbProps = Omit<
   onError?: (error: Error) => void;
 };
 
-const DEFAULT_COLORS = ["#0e6257", "#5eead4", "#064e3b"] as const;
+const DEFAULT_COLORS = ["#e8754d", "#ffe0ac", "#346b52"] as const;
 const level = (value: number) =>
   Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
 
@@ -195,4 +195,5 @@ export function VoiceOrb({
     </div>
   );
 }
+
 export default VoiceOrb;
