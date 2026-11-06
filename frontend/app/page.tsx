@@ -26,6 +26,7 @@ import { SpecialistBookingModal, type AppointmentRequestResult } from '@/compone
 import type { DoctorId } from '@/lib/doctorTypes'
 import { useStore } from '@/store/useStore'
 import { Reveal } from '@/components/ui/reveal'
+import MeadowRiseFooter from '@/components/ui/meadow-rise-footer'
 
 const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
@@ -264,33 +265,46 @@ export default function Home() {
               </div>
             </section>
 
-            <footer className="border-t border-[#e1e9e4] bg-white px-4 py-10 sm:px-6">
-              <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-[1.2fr_1fr_1fr]">
-                <div>
-                  <div className="flex flex-col items-start gap-1.5">
-                    <BrandLogo className="h-8 w-[116px]" />
-                    <span className="text-xs font-medium text-[#71817b]">by Medicus Labs</span>
-                  </div>
-                  <p className="mt-2 max-w-sm text-xs leading-5 text-[#71817b]">AI health information and preliminary triage guidance, not medical diagnosis or prescriptions. For urgent or life-threatening symptoms, call your local emergency number. In India, call 112.</p>
-                </div>
-                <nav aria-label="Footer product links">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#71817b]">Product</p>
-                  <ul className="mt-3 space-y-2 text-sm text-[#36564d]">
-                    <li><button type="button" onClick={() => navigate('consultation')} className="hover:text-[#0f7565]">Talk to a doctor</button></li>
-                    <li><button type="button" onClick={() => navigate('appointments')} className="hover:text-[#0f7565]">Appointments</button></li>
-                    <li><button type="button" onClick={() => navigate('history')} className="hover:text-[#0f7565]">History</button></li>
-                  </ul>
-                </nav>
-                <nav aria-label="Footer account links">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#71817b]">Account</p>
-                  <ul className="mt-3 space-y-2 text-sm text-[#36564d]">
-                    <li><button type="button" onClick={() => navigate('settings')} className="hover:text-[#0f7565]">Settings</button></li>
-                    <li><a href="#trust" className="hover:text-[#0f7565]">Safety and privacy</a></li>
-                  </ul>
-                </nav>
-              </div>
-              <p className="mx-auto mt-8 max-w-7xl border-t border-[#e1e9e4] pt-5 text-[11px] font-medium text-[#71817b]">© {new Date().getFullYear()} Medicus Care</p>
-            </footer>
+            <MeadowRiseFooter
+              name="Medicus Labs"
+              brandHref="/"
+              heading={"Care begins when you feel\n*heard with Medicus.*"}
+              subheading="Speak naturally with our photorealistic AI doctors in Kannada, English, or Hindi."
+              cta={{ label: "Start Free Consultation", href: "#doctor-selection" }}
+              tagline="Empowering patients with real-time AI clinical intelligence and compassionate healthcare guidance."
+              preset="meadow"
+              columns={[
+                {
+                  title: "Consultation",
+                  links: [
+                    { label: "Dr. Smit (General Physician)", href: "#doctor-selection" },
+                    { label: "Dr. Ananya (Wellness & Diagnostics)", href: "#doctor-selection" },
+                    { label: "Triage & Symptoms", href: "#doctor-selection" },
+                  ],
+                },
+                {
+                  title: "Patient Care",
+                  links: [
+                    { label: "Consultation History", href: "#" },
+                    { label: "Clinical Notes", href: "#" },
+                    { label: "Specialist Referrals", href: "#" },
+                  ],
+                },
+                {
+                  title: "Trust & Safety",
+                  links: [
+                    { label: "Clinical Safety Protocol", href: "#" },
+                    { label: "Emergency Guidance (112)", href: "tel:112" },
+                    { label: "Privacy Policy", href: "#" },
+                  ],
+                },
+              ]}
+              legal={[
+                { label: "Medical Disclaimer", href: "#" },
+                { label: "Privacy Policy", href: "#" },
+                { label: "Terms of Consultation", href: "#" },
+              ]}
+            />
           </div>
         )}
 
