@@ -81,3 +81,30 @@ def test_external_wellness_records_are_pending_review_and_idempotent(tmp_path):
     reloaded = UnifiedRAGService(data_root=tmp_path, storage_dir=tmp_path / "index")
     assert reloaded.ingest_mental_wellness_qa([record], **options) == 0
     assert len(reloaded.mental_wellness_store) == 1
+
+
+def test_doctor_search_routes_ananya_to_wellness_collection(tmp_path):
+    service = UnifiedRAGService(data_root=tmp_path, storage_dir=tmp_path / "index")
+    service.medical_store["med"] = KnowledgeChunk(
+        chunk_id="med",
+        collection="medical",
+        category="general_health_education",
+        title="Anxiety and health",
+        content="Anxiety can accompany some health conditions.",
+        source_name="Medical source",
+        license="CC BY 4.0",
+    )
+    service.mental_wellness_store["well"] = KnowledgeChunk(
+        chunk_id="well",
+        collection="mental_wellness",
+        category="emotional_support",
+        title="Anxiety support",
+        content="A supportive conversation can help explore anxiety triggers.",
+        source_name="Wellness source",
+        license="MIT",
+    )
+
+    ananya_results = service.search_for_doctor("anxiety", "dr_ananya", threshold=0)
+    physician_results = service.search_for_doctor("anxiety", "dr_arjun", threshold=0)
+    assert {result.collection for result in ananya_results} == {"mental_wellness"}
+    assert {result.collection for result in physician_results} == {"medical", "mental_wellness"}

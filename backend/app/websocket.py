@@ -873,12 +873,16 @@ class ConnectionManager:
                     except Exception as exc:
                         logger.info("Kannada knowledge query translation unavailable: %s", type(exc).__name__)
 
-                rag_matches = rag_service.search(retrieval_query, collection="all", top_k=4)
+                rag_matches = rag_service.search_for_doctor(
+                    retrieval_query, data.get("doctor_id"), top_k=4
+                )
 
             if rag_matches:
                 rag_block = (
-                    "\n\nRetrieved reference excerpts (use only when relevant; do not treat as "
-                    "patient-specific diagnosis; preserve source attribution and mention uncertainty):\n"
+                    "\n\nRetrieved reference excerpts (use only when relevant; mental-wellness "
+                    "dialogues are examples of supportive communication, not clinical directives; "
+                    "do not treat as a patient-specific diagnosis; preserve source attribution and "
+                    "mention uncertainty):\n"
                 )
                 for m in rag_matches:
                     rag_block += f"• [{m.title}]: {m.content}\n  ({m.attribution_text})\n"

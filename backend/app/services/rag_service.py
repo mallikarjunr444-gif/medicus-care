@@ -531,6 +531,23 @@ class UnifiedRAGService:
 
         return final_results
 
+    def search_for_doctor(
+        self,
+        query: str,
+        doctor_id: Optional[str],
+        *,
+        top_k: int = 4,
+        threshold: float = 0.35,
+    ) -> List[RetrievalResult]:
+        """Route Dr. Ananya to wellness-only knowledge; other doctors search both."""
+        collection = "mental_wellness" if doctor_id == "dr_ananya" else "all"
+        return self.search(
+            query,
+            collection=collection,
+            top_k=top_k,
+            threshold=threshold,
+        )
+
     def get_stats(self) -> Dict[str, Any]:
         return {
             "total_chunks": len(self.medical_store) + len(self.mental_wellness_store),

@@ -14,6 +14,9 @@ settings; they do not select separate medical knowledge collections.
   with source attribution in the model context. Kannada search text is
   translated locally for retrieval when possible; the reply stays in the
   patient's selected language.
+- Dr. Ananya is routed to the mental-wellness collection; the general
+  physician can search both collections. Mental-wellness dialogue is framed
+  to the model as supportive examples, not clinical directives.
 - Retrieval currently uses lexical matching. No embedding model or model
   fine-tuning is active. This is retrieval-augmented generation (RAG), not
   training a medical model.

@@ -45,10 +45,10 @@ SOURCES = {
 }
 
 QUESTION_FIELDS = (
-    "context", "question", "input", "prompt", "query", "user_message", "user"
+    "context", "question", "question_text", "questionText", "input", "prompt", "query", "user_message", "user"
 )
 ANSWER_FIELDS = (
-    "response", "answer", "output", "reply", "assistant_message", "therapist_response", "assistant"
+    "response", "answer", "answer_text", "answerText", "output", "reply", "assistant_message", "therapist_response", "assistant"
 )
 ID_FIELDS = ("id", "record_id", "_id", "uid", "question_id")
 
