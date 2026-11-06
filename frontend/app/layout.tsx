@@ -1,3 +1,5 @@
+import '@fontsource-variable/inter'
+import '@fontsource-variable/urbanist'
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'react-hot-toast'
@@ -17,7 +19,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#f5f8f6',
+  themeColor: '#f4f8fc',
 }
 
 export const metadata: Metadata = {
@@ -102,7 +104,8 @@ export default function RootLayout({
             <div id="main-content">{children}</div>
           </ErrorBoundary>
           <Toaster
-            position="top-right"
+            position="bottom-center"
+            containerStyle={{ bottom: 88 }}
             toastOptions={{
               className: ' ',
             }}

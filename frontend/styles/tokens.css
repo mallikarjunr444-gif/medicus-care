@@ -1,0 +1,80 @@
+/*
+ * MediCare design tokens.
+ *
+ * Structure (spacing scale, section rhythm, radii, type scale, tracking) is adapted from the
+ * "professional" design system in nexu-io/open-design (Apache-2.0,
+ * https://github.com/nexu-io/open-design). Colour values are MediCare's own medical blue.
+ * See docs/THIRD_PARTY_NOTICES.md.
+ */
+:root {
+  /* Surfaces and ink */
+  --bg: #f4f8fc;
+  --surface: #ffffff;
+  --surface-tint: #eaf2fd;
+  --fg: #0f2742;
+  --fg-2: #2b4668;
+  --muted: #4f6580;          /* 5.9:1 on --bg, passes WCAG AA for body text */
+  --border: #d9e4f1;
+  --border-soft: #e6eef7;
+
+  /* Brand */
+  --accent: #0b63ce;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 10%);
+  --accent-active: color-mix(in oklab, var(--accent), black 18%);
+
+  /* Status */
+  --success: #16a34a;
+  --warn: #d97706;
+  --danger: #dc2626;
+
+  /* Type scale */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 36px;
+  --text-3xl: 54px;
+  --leading-body: 1.55;
+  --leading-tight: 1.1;
+  --tracking-display: -0.025em;
+
+  /* 4pt spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Section rhythm */
+  --section-y-desktop: 96px;
+  --section-y-tablet: 68px;
+  --section-y-phone: 48px;
+
+  /* Radii and elevation */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --shadow-card: 0 1px 2px rgba(11, 45, 100, 0.05), 0 8px 24px -12px rgba(11, 45, 100, 0.12);
+}
+
+/* Shared section rhythm utility used by the landing page. */
+.section-y {
+  padding-block: var(--section-y-phone);
+}
+@media (min-width: 768px) {
+  .section-y { padding-block: var(--section-y-tablet); }
+}
+@media (min-width: 1024px) {
+  .section-y { padding-block: var(--section-y-desktop); }
+}
+
+/* Reveal-on-scroll: motion confirms structure, and is removed entirely for reduced-motion users. */
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .5s cubic-bezier(.16,1,.3,1); }
+.reveal[data-in='true'] { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}

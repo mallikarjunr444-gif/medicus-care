@@ -1,3 +1,4 @@
+@import '../styles/tokens.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,11 +13,11 @@
 @layer base {
   :root {
     color-scheme: light;
-    --medicare-ink: #183331;
-    --medicare-canvas: #f5f8f6;
-    --medicare-accent: #0f7565;
-    --medicare-accent-dark: #0b5149;
-    --medicare-border: #e1e9e4;
+    --medicare-ink: #0f2742;
+    --medicare-canvas: #f4f8fc;
+    --medicare-accent: #0b63ce;
+    --medicare-accent-dark: #08428f;
+    --medicare-border: #dce6f2;
   }
 
   html {

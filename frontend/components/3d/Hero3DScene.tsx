@@ -53,7 +53,7 @@ const BIOMARKERS: BiomarkerData[] = [
     category: 'Triage Engine',
     description: 'Deterministic 4-tier clinical risk screening with instant 112 emergency escalation.',
     color: 0x34d399,
-    hexColor: '#34d399',
+    hexColor: '#a9c6ee',
   },
   {
     id: 'respiratory',
@@ -63,7 +63,7 @@ const BIOMARKERS: BiomarkerData[] = [
     category: 'Pulmonary Dynamics',
     description: 'Natural respiratory cycle monitoring and acoustic speech cadence analysis.',
     color: 0x2dd4bf,
-    hexColor: '#2dd4bf',
+    hexColor: '#a9c6ee',
   },
   {
     id: 'metabolic',

@@ -43,15 +43,15 @@ export function BackgroundBeams({ className }: { className?: string }) {
             <feGaussianBlur stdDeviation="3" />
           </filter>
           <linearGradient id="beamGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#38BDF8" stopOpacity="0" />
-            <stop offset="45%" stopColor="#38BDF8" stopOpacity="0.8" />
-            <stop offset="75%" stopColor="#818CF8" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#818CF8" stopOpacity="0" />
+            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
+            <stop offset="45%" stopColor="#38bdf8" stopOpacity="0.8" />
+            <stop offset="75%" stopColor="#818cf8" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#818cf8" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="beamGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#818CF8" stopOpacity="0" />
-            <stop offset="50%" stopColor="#06B6D4" stopOpacity="0.75" />
-            <stop offset="100%" stopColor="#38BDF8" stopOpacity="0" />
+            <stop offset="0%" stopColor="#818cf8" stopOpacity="0" />
+            <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>

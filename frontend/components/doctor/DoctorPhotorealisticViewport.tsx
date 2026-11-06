@@ -271,7 +271,7 @@ export function DoctorPhotorealisticViewport({
                   height: `${6 + visemeShape.open * 16}px`,
                   transform: 'translate(-50%, -50%)',
                   background:
-                    'radial-gradient(ellipse at center, #260D08 40%, #5C1E14 75%, transparent 100%)',
+                    'radial-gradient(ellipse at center, #260d08 40%, #5c1e14 75%, transparent 100%)',
                   boxShadow: '0 0 5px rgba(38, 13, 8, 0.65)',
                   opacity: Math.min(0.92, 0.38 + visemeShape.open * 0.62),
                 }}

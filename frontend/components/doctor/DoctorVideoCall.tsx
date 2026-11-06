@@ -40,6 +40,7 @@ import {
   AlertOctagon,
 } from 'lucide-react'
 import { PhotorealisticDigitalHuman } from './PhotorealisticDigitalHuman'
+import { attachAudioAnalyser, setAudioOutputMuted } from '@/lib/audioEnergy'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
 import { useDoctorSpeech } from './useDoctorSpeech'
 import { useConsultationSpeechRecognition } from './useConsultationSpeechRecognition'
@@ -214,7 +215,7 @@ export function DoctorVideoCall({
 
       const { url: objectUrl, text, chunkIndex } = queuedAudio
       const audio = new Audio(objectUrl)
-      audio.muted = isMuted
+      attachAudioAnalyser(audio, isMuted)
       audioRef.current = audio
       audioObjectUrlRef.current = objectUrl
       currentAudioChunkIndexRef.current = chunkIndex
@@ -463,7 +464,7 @@ export function DoctorVideoCall({
   }, [isListeningSpeech, doctorState])
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.muted = isMuted
+    setAudioOutputMuted(isMuted, audioRef.current)
   }, [isMuted])
 
   useEffect(() => () => {
@@ -769,7 +770,7 @@ export function DoctorVideoCall({
   }
 
   return (
-    <div className="relative w-full min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] flex flex-col bg-[#f5f8f6] text-slate-900 overflow-x-hidden font-sans">
+    <div className="relative w-full min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] flex flex-col bg-[#f3f7fc] text-slate-900 overflow-x-hidden font-sans">
       {/* ── 1. PRE-CONSULTATION LANGUAGE SELECTION GATE MODAL ── */}
       <LanguageSelectionModal
         isOpen={isLanguageModalOpen}
@@ -825,7 +826,7 @@ export function DoctorVideoCall({
       {/* ── TOP NAVIGATION BAR ── */}
       <header className="h-16 border-b border-slate-200 bg-white px-4 sm:px-6 flex items-center justify-between gap-3 z-30 flex-shrink-0 shadow-sm">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#14685d] flex items-center justify-center text-white shadow-sm">
+          <div className="w-10 h-10 rounded-2xl bg-[#4f6580] flex items-center justify-center text-white shadow-sm">
             <HeartPulse size={19} />
           </div>
           <div className="min-w-0">
@@ -899,6 +900,7 @@ export function DoctorVideoCall({
               isMuted={isMuted}
               hasSeparateTtsAudio={hasSeparateTtsAudio}
               subtitles={subtitles}
+              fallbackSpeechLevel={audioLevel}
               speakingVideoSrc={doctorVideoSrc}
               speakingVideoStartAt={speakingVideoStartAt}
               getSpeakingAudioTime={getCurrentSpokenAudioTime}
@@ -1056,7 +1058,7 @@ export function DoctorVideoCall({
               </div>
           </div>
 
-          <div className="px-4 py-3 border-b border-slate-100 bg-[#f7fafb]" aria-live="polite" role="status">
+          <div className="px-4 py-3 border-b border-slate-100 bg-[#f6f9fd]" aria-live="polite" role="status">
             {voiceInput.error ? (
               <p className="text-xs leading-relaxed text-rose-700">{voiceInput.error}</p>
             ) : voiceInput.transcript ? (
@@ -1104,7 +1106,7 @@ export function DoctorVideoCall({
           </section>
 
           {/* Transcript Messages List */}
-          <div ref={chatScrollRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm">
+          <div ref={chatScrollRef} tabIndex={0} role="log" aria-label="Conversation transcript" className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm">
             {chatHistory.length === 0 && (
               <div className="h-full min-h-[120px] flex flex-col items-center justify-center text-center px-5">
                 <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-800 flex items-center justify-center mb-3">
@@ -1121,7 +1123,7 @@ export function DoctorVideoCall({
                   item.role === 'patient' ? 'items-end' : 'items-start'
                 } animate-fade-in`}
               >
-                <div className="flex items-center gap-1.5 mb-1.5 text-[10px] text-slate-400">
+                <div className="flex items-center gap-1.5 mb-1.5 text-[10px] text-slate-600">
                   <span className="font-semibold text-slate-600">{item.speakerName}</span>
                   <span>•</span>
                   <span>{item.time}</span>
@@ -1131,7 +1133,7 @@ export function DoctorVideoCall({
                     className={`max-w-[94%] p-3.5 rounded-2xl text-sm leading-relaxed ${
                     item.role === 'patient'
                       ? 'bg-[#123d55] text-white rounded-br-md shadow-sm'
-                      : 'bg-[#f2f7f7] text-slate-800 border border-slate-100 rounded-bl-md'
+                      : 'bg-[#f1f6fc] text-slate-800 border border-slate-100 rounded-bl-md'
                   }`}
                 >
                   <p>{item.text}</p>
@@ -1251,7 +1253,7 @@ export function DoctorVideoCall({
               </button>
             </form>
 
-            <div className="flex items-center justify-between gap-2 text-[10px] text-slate-400 mt-2 px-1">
+            <div className="flex items-center justify-between gap-2 text-[10px] text-slate-600 mt-2 px-1">
               <span>Health information only</span>
               <a href="tel:112" className="text-rose-700 font-medium hover:underline">Emergency: 112</a>
             </div>

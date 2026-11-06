@@ -1,8 +1,11 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useMemo, useState } from 'react'
 import type { DoctorId, DoctorState } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
+import { DOCTOR_FACE_DATA } from '@/lib/doctorFaceData'
+import { PortraitWarp } from '@/lib/portraitWarp'
+import { readVoiceDrive } from '@/lib/audioEnergy'
 import {
   RotateCcw,
   WifiOff,
@@ -14,6 +17,8 @@ interface PhotorealisticDigitalHumanProps {
   isMuted?: boolean
   hasSeparateTtsAudio?: boolean
   subtitles?: string
+  /** 0..1 level for speech that has no audio element (browser speech synthesis fallback). */
+  fallbackSpeechLevel?: number
   speakingVideoSrc?: string | null
   speakingVideoStartAt?: number
   getSpeakingAudioTime?: () => number | null
@@ -35,6 +40,7 @@ export function PhotorealisticDigitalHuman({
   isMuted = false,
   hasSeparateTtsAudio = false,
   subtitles = '',
+  fallbackSpeechLevel = 0,
   speakingVideoSrc = null,
   speakingVideoStartAt = 0,
   getSpeakingAudioTime,
@@ -61,13 +67,21 @@ export function PhotorealisticDigitalHuman({
     breathing: 0,
     head: { pitch: 0, yaw: 0, roll: 0, targetPitch: 0, targetYaw: 0, targetRoll: 0 },
     brows: { lift: 0, furrow: 0 },
+    mouth: { open: 0, wide: 1 },
+    browLift: 0,
+    doubleBlink: false,
   })
+  const fallbackLevelRef = useRef(fallbackSpeechLevel)
+  useEffect(() => {
+    fallbackLevelRef.current = fallbackSpeechLevel
+  }, [fallbackSpeechLevel])
 
   const doctor = DOCTORS[doctorId] || DOCTORS.dr_arjun
   const photoSrc = doctorId === 'dr_ananya' ? '/doctor/dr_ananya.jpg' : '/doctor/dr_arjun.jpg'
   // Normalized landmark estimates for the two bundled portraits. This keeps
   // the fallback animation local and inexpensive; no cloud model or GPU needed.
   const face = FACE_ANCHORS[doctorId]
+  const warp = useMemo(() => new PortraitWarp(DOCTOR_FACE_DATA[doctorId === 'dr_ananya' ? 'dr_ananya' : 'dr_arjun']), [doctorId])
 
   // Preload Doctor High-Res Photograph
   useEffect(() => {
@@ -140,12 +154,14 @@ export function PhotorealisticDigitalHuman({
 
       if (t >= sim.nextBlinkAt) {
         sim.blinkStartedAt = t
-        sim.nextBlinkAt = t + 2.8 + Math.random() * 2.6
+        // Mostly single blinks every 2.5-6 s, sometimes a quick double blink, as people do.
+        sim.doubleBlink = Math.random() < 0.18
+        sim.nextBlinkAt = t + (sim.doubleBlink ? 0.55 : 2.5 + Math.random() * 3.5)
       }
-      const blinkAge = t - sim.blinkStartedAt
-      const blink = blinkAge >= 0 && blinkAge < 0.22
-        ? Math.sin((blinkAge / 0.22) * Math.PI)
-        : 0
+      const blinkCurve = (age: number) =>
+        age < 0 ? 0 : age < 0.08 ? age / 0.08 : age < 0.26 ? 1 - (age - 0.08) / 0.18 : 0
+      let blink = blinkCurve(t - sim.blinkStartedAt)
+      if (sim.doubleBlink) blink = Math.max(blink, blinkCurve(t - sim.blinkStartedAt - 0.3))
 
       // ─────────────────────────────────────────────────────────────
       // 1. Subtle idle breathing
@@ -176,7 +192,7 @@ export function PhotorealisticDigitalHuman({
           break
 
         case 'speaking':
-          sim.head.targetPitch = 0
+          sim.head.targetPitch = sim.mouth.open * 0.9 - 0.2
           sim.head.targetYaw = 0
           sim.head.targetRoll = 0
           sim.brows.lift = 0
@@ -232,53 +248,39 @@ export function PhotorealisticDigitalHuman({
       // Bias the crop upward so the doctor's hair remains in frame in a wide viewport.
       ctx.drawImage(img, (width - drawWidth) / 2, (height - drawHeight) * 0.25, drawWidth, drawHeight)
 
-      // Lightweight eyelid and jaw cues over the real portrait. These are
-      // deliberately subtle: a single photograph cannot produce true 3-D
-      // facial motion, but small local cues make the speaking/listening state
-      // visible without delaying audio for a generated video.
+      // Animate the real photograph: eyelids, jaw/lips (driven by the voice that is playing), brows.
       const drawX = (width - drawWidth) / 2
       const drawY = (height - drawHeight) * 0.25
-      const eyeW = drawWidth * face.eyeWidth
-      const eyeH = Math.max(3, drawHeight * 0.009)
-      const skinTone = doctorId === 'dr_ananya' ? '#e8b69d' : '#d8a17e'
-      if (blink > 0.04) {
-        face.eyes.forEach(({ x, y }) => {
-          const ex = drawX + drawWidth * x
-          const ey = drawY + drawHeight * y
-          ctx.save()
-          ctx.globalAlpha = Math.min(0.9, blink * 0.92)
-          ctx.fillStyle = skinTone
-          ctx.beginPath()
-          ctx.ellipse(ex, ey, eyeW * 0.58, eyeH * (0.25 + blink * 0.8), 0, 0, Math.PI * 2)
-          ctx.fill()
-          ctx.strokeStyle = 'rgba(82, 50, 43, 0.72)'
-          ctx.lineWidth = Math.max(1, drawWidth * 0.0012)
-          ctx.beginPath()
-          ctx.moveTo(ex - eyeW * 0.53, ey + eyeH * blink * 0.35)
-          ctx.quadraticCurveTo(ex, ey + eyeH * blink * 0.95, ex + eyeW * 0.53, ey + eyeH * blink * 0.35)
-          ctx.stroke()
-          ctx.restore()
-        })
+      const forceVoice = process.env.NODE_ENV !== 'production' && typeof window !== 'undefined' && (window as unknown as { __portraitForceVoice?: boolean }).__portraitForceVoice
+      const voice = doctorState === 'speaking' || forceVoice ? readVoiceDrive() : null
+      let openTarget = 0
+      let wideTarget = 1
+      if (voice) {
+        openTarget = Math.min(1, Math.max(0, voice.level * 1.4 - 0.05))
+        wideTarget = 0.97 + voice.bright * 0.1
+      } else if (doctorState === 'speaking' && fallbackLevelRef.current > 0) {
+        openTarget = Math.min(1, fallbackLevelRef.current * 0.8)
+        wideTarget = 1 + (openTarget - 0.4) * 0.1
       }
+      const mouth = sim.mouth
+      mouth.open += (openTarget - mouth.open) * (openTarget > mouth.open ? 0.6 : 0.3)
+      mouth.wide += (wideTarget - mouth.wide) * 0.3
+      if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') (window as unknown as { __portraitMouth?: number }).__portraitMouth = mouth.open
+      sim.browLift += (Math.min(1, mouth.open * 1.4) * 0.6 - sim.browLift) * 0.1
 
-      if (doctorState === 'speaking' && (!speakingVideoSrc || !videoReady)) {
-        // Vary the opening at conversational cadence while audio is playing.
-        const syllable = Math.abs(Math.sin(t * 8.2) * Math.sin(t * 3.1 + 0.6))
-        const opening = 1.5 + syllable * drawHeight * 0.009
-        const mx = drawX + drawWidth * face.mouth.x
-        const my = drawY + drawHeight * face.mouth.y
-        ctx.save()
-        ctx.fillStyle = 'rgba(69, 28, 31, 0.82)'
-        ctx.beginPath()
-        ctx.ellipse(mx, my, drawWidth * face.mouthWidth * 0.42, opening, 0, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.strokeStyle = 'rgba(123, 62, 66, 0.72)'
-        ctx.lineWidth = Math.max(1, drawWidth * 0.001)
-        ctx.beginPath()
-        ctx.ellipse(mx, my, drawWidth * face.mouthWidth * 0.46, opening + 1, 0, Math.PI * 0.08, Math.PI * 0.92)
-        ctx.stroke()
-        ctx.restore()
-      }
+      const debug = typeof window !== 'undefined' && process.env.NODE_ENV !== 'production'
+        ? (window as unknown as { __portraitPose?: Partial<{ blink: number; open: number; wide: number; brow: number }> }).__portraitPose
+        : undefined
+      ctx.save()
+      ctx.translate(drawX, drawY)
+      ctx.scale(drawWidth / img.naturalWidth, drawHeight / img.naturalHeight)
+      warp.draw(ctx, img, {
+        blink: debug?.blink ?? blink,
+        open: debug?.open ?? mouth.open,
+        wide: debug?.wide ?? mouth.wide,
+        brow: debug?.brow ?? sim.browLift,
+      })
+      ctx.restore()
 
       ctx.restore()
     }
@@ -288,7 +290,7 @@ export function PhotorealisticDigitalHuman({
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
     }
-  }, [imageLoaded, doctorId, doctorState, speakingVideoSrc, videoReady, face])
+  }, [imageLoaded, doctorId, doctorState, speakingVideoSrc, videoReady, warp])
 
   return (
     <div className={`relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden select-none ${className}`}>

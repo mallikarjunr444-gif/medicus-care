@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 //
-// MediCare's palette uses warm neutral surfaces, deep botanical text, and a
-// restrained evergreen accent. Keep interaction states high-contrast.
+// MediCare's palette uses cool white surfaces, deep navy text, and a
+// restrained medical-blue accent. Keep interaction states high-contrast.
 module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -13,7 +13,7 @@ module.exports = {
     extend: {
       colors: {
         // Deep green-tinged ink is used for high-contrast text and hero panels.
-        ink: '#153b35',
+        ink: '#0f2742',
         gray: {
           25: '#f5f8f6', // page canvas
           50: '#f8fbf9',
@@ -28,17 +28,20 @@ module.exports = {
           900: '#101828',
         },
         primary: {
-          50: '#eff7f2',
-          100: '#dceee3',
-          200: '#c5e2d1',
-          300: '#9dceb7',
-          400: '#6fb296',
-          500: '#378c73',
-          600: '#0f7565', // the brand accent
-          700: '#0e6257',
-          800: '#124d46',
-          900: '#163b37',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#5aa2f5',
+          500: '#2a82e4',
+          600: '#0b63ce', // the brand accent: medical blue
+          700: '#0a56b8',
+          800: '#08428f',
+          900: '#0d2a4a',
         },
+        // Legacy teal/emerald utilities resolve to the brand blue so the whole product shares one identity.
+        teal: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#5aa2f5', 500: '#2a82e4', 600: '#0b63ce', 700: '#0a56b8', 800: '#08428f', 900: '#0d2a4a', 950: '#081c33' },
+        emerald: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#5aa2f5', 500: '#2a82e4', 600: '#0b63ce', 700: '#0a56b8', 800: '#08428f', 900: '#0d2a4a', 950: '#081c33' },
         success: { 50: '#ecfdf3', 500: '#12b76a', 600: '#039855', 700: '#027a48' },
         warning: { 50: '#fffaeb', 500: '#f79009', 600: '#dc6803', 700: '#b54708' },
         error: { 50: '#fef3f2', 400: '#f97066', 500: '#f04438', 600: '#d92d20', 700: '#b42318' },
@@ -47,11 +50,11 @@ module.exports = {
       fontFamily: {
         // var(--font-*) are injected by next/font in app/layout.tsx; the
         // literal names are the fallback if a face fails to load.
-        sans: ['var(--font-inter)', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['var(--font-urbanist)', 'Urbanist', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-jetbrains)', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        sans: ['Inter Variable', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Urbanist Variable', 'Urbanist', 'Inter', 'system-ui', 'sans-serif'],
+        mono: [ 'ui-monospace', 'monospace'],
         // A gentle editorial accent for occasional headings.
-        accent: ['var(--font-playfair)', '"Playfair Display"', 'Georgia', 'serif'],
+        accent: ['Georgia', 'serif'],
       },
 
       fontSize: {
@@ -81,7 +84,7 @@ module.exports = {
         md: '0 4px 8px -2px rgba(16,24,40,.1), 0 2px 4px -2px rgba(16,24,40,.06)',
         lg: '0 12px 16px -4px rgba(16,24,40,.08), 0 4px 6px -2px rgba(16,24,40,.03)',
         xl: '0 20px 24px -4px rgba(16,24,40,.08), 0 8px 8px -4px rgba(16,24,40,.03)',
-        ring: '0 0 0 4px rgba(68,76,231,.12)',
+        ring: '0 0 0 4px rgba(11,99,206,.15)',
       },
 
       letterSpacing: {
