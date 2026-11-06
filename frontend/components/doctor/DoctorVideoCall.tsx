@@ -965,24 +965,8 @@ export function DoctorVideoCall({
           </div>
 
           {/* ── BOTTOM CONSULTATION CONTROLS (Zero dead black space) ── */}
-          <div className="min-h-[76px] border-t border-slate-700/70 bg-white px-3 sm:px-5 flex items-center justify-between gap-2 z-20 flex-shrink-0">
-            <div className="hidden sm:flex items-center gap-2">
-              <AudioFrequencyVisualizer
-                state={
-                  doctorState === 'speaking'
-                    ? 'speaking'
-                    : isListeningSpeech
-                    ? 'listening'
-                    : doctorState === 'thinking'
-                    ? 'thinking'
-                    : 'idle'
-                }
-                audioLevel={audioLevel}
-                barCount={14}
-                showBadge={true}
-                className="bg-slate-100/90 border-slate-200/80 !shadow-none"
-              />
-            </div>
+          <div className="min-h-[76px] border-t border-slate-700/70 bg-white px-3 sm:px-5 flex items-center justify-center sm:justify-between gap-2 z-20 flex-shrink-0">
+            <div className="hidden sm:block w-24 shrink-0" />
 
             {/* Center: Essential Telemedicine Actions */}
             <div className="flex items-center gap-2 sm:gap-3">
