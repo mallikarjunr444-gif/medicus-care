@@ -348,6 +348,24 @@
   mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
 }
 
+/* 1px gradient border used by the featured bento tile. */
+.gradient-ring {
+  position: relative;
+}
+.gradient-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(130deg, rgba(15, 117, 101, 0.55), rgba(10, 134, 181, 0.3) 45%, rgba(18, 183, 106, 0.55));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
 @keyframes metallic-button-ripple {
   0% {
     transform: translate(-50%, -50%) scale(0);

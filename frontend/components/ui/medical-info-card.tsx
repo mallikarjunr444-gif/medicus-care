@@ -3,7 +3,7 @@
 import * as React from 'react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { SpotlightCard } from '@/components/ui/spotlight-card'
+import { BentoCard } from '@/components/ui/bento-grid'
 
 export interface MedicalInfoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Lucide icon rendered inside the accent medallion. */
@@ -15,23 +15,13 @@ export interface MedicalInfoCardProps extends React.HTMLAttributes<HTMLDivElemen
 }
 
 /**
- * Medical information card — a reusable surface for services, conditions,
- * guidance and triage facts, with a cursor-following spotlight. Light
- * botanical register, matching `clinical-primitives` and the landing page.
+ * Medical information card — a bento tile for services, guidance and triage
+ * facts. Light botanical register with the cursor-following spotlight.
  */
 const MedicalInfoCard = React.forwardRef<HTMLDivElement, MedicalInfoCardProps>(
   ({ icon: Icon, title, body, tag, className, ...props }, ref) => {
     return (
-      <SpotlightCard
-        ref={ref}
-        className={cn(
-          'rounded-2xl border border-[#e1e9e4] bg-white p-6',
-          'shadow-[0_4px_18px_rgba(27,65,52,.045)]',
-          'transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(27,65,52,.09)] hover:border-[#cfe0d6]',
-          className,
-        )}
-        {...props}
-      >
+      <BentoCard ref={ref} className={cn('p-6', className)} {...props}>
         <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#edf6f1] text-[#0f7565]">
           <Icon size={22} strokeWidth={1.9} aria-hidden="true" />
         </span>
@@ -40,7 +30,7 @@ const MedicalInfoCard = React.forwardRef<HTMLDivElement, MedicalInfoCardProps>(
         ) : null}
         <h3 className={cn('font-semibold text-[#25423b]', tag ? 'mt-1 text-base' : 'mt-4 text-base')}>{title}</h3>
         <p className="mt-1.5 text-sm leading-6 text-[#687b74]">{body}</p>
-      </SpotlightCard>
+      </BentoCard>
     )
   },
 )

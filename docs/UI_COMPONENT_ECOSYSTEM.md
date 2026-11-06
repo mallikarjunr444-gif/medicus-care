@@ -165,3 +165,26 @@ Each installed file must then be re-mapped to the palette in section 5 before it
 | Particle UI | **unconfirmed** | verify first |
 
 Copied components retain their own licence notice; Medicus Care itself is licensed under the repo's `LICENSE`.
+
+---
+
+## 8. 21st.dev — component catalog (2026 upgrade)
+
+- **What:** community catalog of 12,000+ hand-crafted React + Tailwind + TypeScript components, templates and
+  libraries. shadcn/ui-compatible; live previews and copyable TSX.
+- **Licence:** each component is published by its author under that author's licence — check the component page.
+  The 21st platform itself is a hosted product.
+- **Pricing:** free tier = **2 component code retrievals / copies / installs per day** plus unlimited catalog
+  search. Unlimited installs need a paid Builder plan. Search is always free. ([pricing](https://21st.dev/pricing))
+- **MCP:** endpoint `https://21st.dev/api/mcp`, authenticated with an `x-api-key` header (create a key at
+  https://21st.dev/mcp). Wired in `.mcp.json` as `21st`, reading `TWENTY_FIRST_API_KEY` from the environment.
+- **CLI:** `npx @21st-dev/cli@latest init --client <cursor|claude|codex|vscode|devin>` (add `--write` to write the
+  client config; `windsurf` is an alias for `devin`).
+- **Agent skills:** 8 skills (`21st-ui-build`, `21st-ui-explore`, `21st-ui-review`, `21st-design-sync`,
+  `21st-cli-use`, `21st-registry`, `21st-ai`, `21st-video`) indexed at
+  `https://21st.dev/.well-known/skills/index.json`.
+- **Setup:** add `TWENTY_FIRST_API_KEY=...` to `.env.local`, restart the MCP client, then ask the agent to search
+  the catalog and install a component. Every installed file must be re-mapped to the MediCare palette (section 5).
+
+Because 21st's free tier caps retrievals, the **unlimited** source-based workflow stays shadcn / Spectrum / Intelli;
+21st is the discovery layer and a good source for hero/bento/effect patterns.

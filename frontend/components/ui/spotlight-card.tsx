@@ -34,7 +34,7 @@ const SpotlightCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
             opacity: spot.o,
           }}
         />
-        <div className="relative z-10">{children}</div>
+        <div className="relative z-10 flex-1">{children}</div>
       </div>
     )
   },
