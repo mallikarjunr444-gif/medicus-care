@@ -23,12 +23,12 @@ export function AppointmentWorkspace({ onRequestAppointment, latestRequest }: Ap
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(270px,.65fr)]">
         <ClinicalCard className="overflow-hidden">
-          <div className="flex items-center justify-between gap-4 border-b border-[#eef4fc] px-5 py-4 sm:px-6">
+          <div className="flex items-center justify-between gap-4 border-b border-[#edf1ee] px-5 py-4 sm:px-6">
             <div>
               <h2 className="text-sm font-semibold text-[#4f6580]">Your appointment requests</h2>
               <p className="mt-1 text-xs text-[#4f6580]">Requests submitted during this visit appear here.</p>
             </div>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eef4fc] text-[#4f6580]"><Stethoscope size={18} /></span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#edf5f0] text-[#4d7b69]"><Stethoscope size={18} /></span>
           </div>
 
           {latestRequest ? (
@@ -48,7 +48,7 @@ export function AppointmentWorkspace({ onRequestAppointment, latestRequest }: Ap
             </div>
           ) : (
             <div className="flex min-h-64 flex-col items-center justify-center px-6 py-10 text-center">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef4fc] text-[#4f6580]"><CalendarDays size={21} /></span>
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#edf5f0] text-[#4d7b69]"><CalendarDays size={21} /></span>
               <h3 className="mt-4 text-base font-semibold text-[#4f6580]">No appointment request yet</h3>
               <p className="mt-2 max-w-sm text-sm leading-6 text-[#4f6580]">Browse the available specialists and submit a preferred date and time for the clinic to review.</p>
               <ClinicalButton className="mt-5" variant="secondary" onClick={onRequestAppointment}>Browse specialists</ClinicalButton>
@@ -66,7 +66,7 @@ export function AppointmentWorkspace({ onRequestAppointment, latestRequest }: Ap
                 ['03', 'Wait for clinic confirmation', 'The clinic confirms availability directly.'],
               ].map(([number, title, description]) => (
                 <li key={number} className="flex gap-3">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#eef4fc] text-[11px] font-bold text-[#4f6580]">{number}</span>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#edf5f0] text-[11px] font-bold text-[#397160]">{number}</span>
                   <span><span className="block text-sm font-semibold text-[#4f6580]">{title}</span><span className="mt-0.5 block text-xs leading-5 text-[#4f6580]">{description}</span></span>
                 </li>
               ))}
