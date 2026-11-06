@@ -366,7 +366,53 @@
   z-index: 0;
 }
 
-/* Apple-style starting reveal: the screen content blurs + darkens, then sharpens. */
+/* Apple-style starting reveal: the left screen blurs + darkens, then sharpens. */
+@keyframes left-reveal {
+  0%   { filter: blur(12px) brightness(0.6); }
+  55%  { filter: blur(4px) brightness(0.82); }
+  100% { filter: blur(0px) brightness(1); }
+}
+.left-reveal {
+  animation: left-reveal 2.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .left-reveal { animation: none; }
+}
+
+/* iPhone-Duo-style real unfold: closed back cover opens into the device. */
+@keyframes duo-open {
+  0%   { transform: rotateY(-180deg); }
+  45%  { transform: rotateY(-72deg); }
+  75%  { transform: rotateY(-16deg); }
+  100% { transform: rotateY(0deg); }
+}
+@keyframes duo-shift {
+  0%   { transform: translateX(calc(-0.5 * min(300px, 40vw))); }
+  100% { transform: translateX(0); }
+}
+@keyframes duo-deblur {
+  0%   { filter: blur(10px) brightness(0.6); }
+  60%  { filter: blur(3px) brightness(0.85); }
+  100% { filter: blur(0px) brightness(1); }
+}
+.duo-stage {
+  animation: duo-shift 2.6s cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+.duo-cover {
+  animation: duo-open 2.6s cubic-bezier(0.5, 0, 0.2, 1) both;
+  transform-origin: right center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+.duo-deblur {
+  animation: duo-deblur 2.6s cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .duo-stage, .duo-cover, .duo-deblur { animation: none; }
+  .duo-stage, .duo-cover { transform: none; }
+}
+
+/* Kept for other hero variants that reveal the whole screen. */
 @keyframes screen-reveal {
   0%   { filter: blur(14px) brightness(0.5); opacity: 0.85; }
   55%  { filter: blur(4px) brightness(0.8); opacity: 1; }
@@ -374,9 +420,6 @@
 }
 .screen-reveal {
   animation: screen-reveal 2.2s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .screen-reveal { animation: none; }
 }
 
 /* React Bits-style shiny text: a sheen that sweeps across the glyphs. */
