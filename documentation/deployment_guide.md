@@ -143,13 +143,10 @@ print('Ingestion Complete:', rag_service.get_stats())
 
 3. **Verify GPU Passthrough & Container Health**:
    ```bash
-   docker exec -it avatar-backend python -c "
-   import torch
-   print('CUDA Available:', torch.cuda.is_available())
-   print('GPU Device:', torch.cuda.get_device_name(0))
-   print('VRAM:', round(torch.cuda.get_device_properties(0).total_memory/1024**3, 1), 'GB')
-    "
-    ```
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml \
+     exec backend python -c "import torch; print('CUDA Available:', torch.cuda.is_available()); print('GPU Device:', torch.cuda.get_device_name(0)); print('VRAM:', round(torch.cuda.get_device_properties(0).total_memory/1024**3, 1), 'GB')"
+   ```
 
 4. **Verify real lip-sync for both bundled doctors before opening traffic**.
    Stop the resident GPU workers so the one-off test does not load a second
