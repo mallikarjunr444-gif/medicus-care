@@ -149,22 +149,25 @@ export function EditorialHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorI
 
 function SceneHalf({ side }: { side: 'left' | 'right' }) {
   return (
-    <div
-      className="relative h-full w-full overflow-hidden"
-      style={{
-        background:
-          'linear-gradient(180deg, #a9cbe6 0%, #cfe2ee 46%, #e3ecd8 55%, #7f9e48 57%, #5b7a31 100%)',
-      }}
-    >
+    <div className="relative h-full w-full overflow-hidden bg-[#3d5a2f]">
+      {/* Photo: Unsplash (photo-1508672019048-805c876b67e2) — calm lake meditation. */}
+      {/* The full photo is drawn at 2× the half-width; each half reveals its own side. */}
+      <div
+        className="absolute top-0 h-full"
+        style={{ width: '200%', left: side === 'left' ? '0%' : '-100%' }}
+      >
+        <Image
+          src="/landing/calm-lake.jpg"
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, 640px"
+          className="object-cover object-center"
+        />
+      </div>
+
       <div
         aria-hidden="true"
-        className="absolute right-[14%] top-[14%] h-16 w-16 rounded-full bg-[#fff4d0] opacity-80 blur-md sm:h-20 sm:w-20"
-      />
-      <div aria-hidden="true" className="absolute inset-x-0 top-[48%] h-10 bg-white/40 blur-xl" />
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[42%] opacity-40"
-        style={{ background: 'repeating-linear-gradient(100deg, transparent 0 10px, rgba(255,255,255,.08) 10px 11px)' }}
+        className="absolute inset-0 bg-gradient-to-t from-[#07130c]/80 via-[#07130c]/15 to-transparent"
       />
 
       {side === 'left' ? (
