@@ -340,7 +340,7 @@ export default function Home() {
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#4f6580]">Product</p>
                   <ul className="mt-3 space-y-2 text-sm text-[#1b3a5c]">
                     <li><button type="button" onClick={() => navigate('consultation')} className="hover:text-[#0b63ce]">Talk to a doctor</button></li>
-                    <li><button type="button" onClick={() => navigate('tools')} className="hover:text-[#0b63ce]">Care tools</button></li>
+                    <li><button type="button" onClick={() => navigate('appointments')} className="hover:text-[#0b63ce]">Appointments</button></li>
                     <li><button type="button" onClick={() => navigate('history')} className="hover:text-[#0b63ce]">History</button></li>
                   </ul>
                 </nav>
