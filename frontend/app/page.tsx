@@ -29,6 +29,7 @@ import { Reveal } from '@/components/ui/reveal'
 import MeadowRiseFooter from '@/components/ui/meadow-rise-footer'
 import { MedicalInfoSection } from '@/components/interactive/MedicalInfoSection'
 import { StatsSection } from '@/components/interactive/StatsSection'
+import { BorderGlow } from '@/components/ui/border-glow'
 import { LiquidNavbar } from '@/components/ui/liquid-glass-navbar'
 
 const DoctorShowcaseSection = dynamic(
@@ -272,15 +273,17 @@ export default function Home() {
             </section>
 
             <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20">
-              <div className="flex flex-col items-start justify-between gap-5 rounded-3xl bg-[#123f3a] p-7 text-white sm:flex-row sm:items-center sm:p-10">
-                <div>
-                  <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Ready when you are</h2>
-                  <p className="mt-2 max-w-xl text-sm leading-6 text-[#d1e6df]">Start a consultation in your language. It begins only when you choose.</p>
+              <BorderGlow className="rounded-3xl">
+                <div className="flex flex-col items-start justify-between gap-5 rounded-3xl bg-[#123f3a] p-7 text-white sm:flex-row sm:items-center sm:p-10">
+                  <div>
+                    <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Ready when you are</h2>
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-[#d1e6df]">Start a consultation in your language. It begins only when you choose.</p>
+                  </div>
+                  <button type="button" onClick={() => navigate('consultation')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-[#124b43] transition hover:bg-[#eaf4ef]">
+                    Talk to a doctor <ArrowRight size={15} aria-hidden="true" />
+                  </button>
                 </div>
-                <button type="button" onClick={() => navigate('consultation')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-[#124b43] transition hover:bg-[#eaf4ef]">
-                  Talk to a doctor <ArrowRight size={15} aria-hidden="true" />
-                </button>
-              </div>
+              </BorderGlow>
             </section>
 
             <MeadowRiseFooter

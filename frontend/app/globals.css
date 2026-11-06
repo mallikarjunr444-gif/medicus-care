@@ -366,6 +366,20 @@
   z-index: 0;
 }
 
+/* React Bits-style shiny text: a sheen that sweeps across the glyphs. */
+.shiny-text {
+  background-image: linear-gradient(110deg, #326357 0%, #326357 35%, #8fe0cc 50%, #326357 65%, #326357 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: medicare-shiny var(--shiny-duration, 4s) linear infinite;
+}
+@keyframes medicare-shiny {
+  to { background-position: 220% center; }
+}
+
 @keyframes metallic-button-ripple {
   0% {
     transform: translate(-50%, -50%) scale(0);

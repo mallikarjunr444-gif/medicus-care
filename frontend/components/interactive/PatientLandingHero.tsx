@@ -8,6 +8,7 @@ import { GlowEffect } from '@/components/ui/glow-effect'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { AuroraBackground } from '@/components/ui/aurora-background'
 import { GradientText } from '@/components/ui/gradient-text'
+import { ShinyText } from '@/components/ui/shiny-text'
 
 const featuredAssistants: { id: DoctorId; image: string; alt: string; focus: string }[] = [
   {
@@ -32,7 +33,8 @@ export function PatientLandingHero({ onSelectDoctor }: { onSelectDoctor: (id: Do
       <div className="mx-auto grid max-w-7xl items-center gap-9 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[.95fr_1.05fr] lg:gap-14 lg:py-[4.5rem]">
         <div className="max-w-2xl">
           <span className="inline-flex items-center gap-2 rounded-full border border-[#d5e4da] bg-white/85 px-3 py-1.5 text-xs font-semibold text-[#326357] shadow-sm">
-            <MessageCircle size={14} aria-hidden="true" /> Thoughtful care, one conversation at a time
+            <MessageCircle size={14} aria-hidden="true" />{' '}
+            <ShinyText>Thoughtful care, one conversation at a time</ShinyText>
           </span>
           <h1 className="mt-5 text-[2.75rem] font-semibold leading-[1.02] tracking-[-.055em] text-[#173a35] sm:text-6xl lg:text-[4.4rem]">
             Care begins when you feel <GradientText className="font-accent font-normal italic">heard.</GradientText>
