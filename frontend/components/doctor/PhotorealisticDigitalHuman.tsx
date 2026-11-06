@@ -192,7 +192,7 @@ export function PhotorealisticDigitalHuman({
           break
 
         case 'speaking':
-          sim.head.targetPitch = 0
+          sim.head.targetPitch = sim.mouth.open * 0.9 - 0.2
           sim.head.targetYaw = 0
           sim.head.targetRoll = 0
           sim.brows.lift = 0
@@ -256,8 +256,8 @@ export function PhotorealisticDigitalHuman({
       let openTarget = 0
       let wideTarget = 1
       if (voice) {
-        openTarget = Math.min(0.9, Math.max(0, voice.level * 1.3 - 0.05))
-        wideTarget = 0.94 + voice.bright * 0.2
+        openTarget = Math.min(1, Math.max(0, voice.level * 1.4 - 0.05))
+        wideTarget = 0.97 + voice.bright * 0.1
       } else if (doctorState === 'speaking' && fallbackLevelRef.current > 0) {
         openTarget = Math.min(1, fallbackLevelRef.current * 0.8)
         wideTarget = 1 + (openTarget - 0.4) * 0.1
