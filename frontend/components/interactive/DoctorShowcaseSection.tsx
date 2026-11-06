@@ -15,7 +15,7 @@ const doctorCards: Array<{
   image: string
   imageAlt: string
   focus: string
-  accent: 'green' | 'blue'
+  accent: 'green' | 'sand'
 }> = [
   {
     id: 'dr_arjun',
@@ -29,7 +29,7 @@ const doctorCards: Array<{
     image: '/doctor/dr_ananya.jpg',
     imageAlt: 'Dr. Ananya in her white coat with a blue stethoscope',
     focus: 'Wellness and report support',
-    accent: 'blue',
+    accent: 'sand',
   },
 ]
 
@@ -51,60 +51,60 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
         </div>
 
         <Reveal className="mx-auto max-w-5xl">
-        <div className="grid gap-4 sm:gap-5 lg:grid-cols-2">
-          {doctorCards.map((card) => {
-            const doctor = DOCTORS[card.id]
-            const colors = card.accent === 'green'
-              ? 'bg-[#e9f4ee] text-[#216052] border-[#d8e9df]'
-              : 'bg-[#f3f1e9] text-[#75613c] border-[#eae3d2]'
+          <div className="grid gap-4 sm:gap-5 lg:grid-cols-2">
+            {doctorCards.map((card) => {
+              const doctor = DOCTORS[card.id]
+              const colors = card.accent === 'green'
+                ? 'bg-[#e9f4ee] text-[#216052] border-[#d8e9df]'
+                : 'bg-[#f3f1e9] text-[#75613c] border-[#eae3d2]'
 
-            return (
-              <article key={card.id} className="group overflow-hidden rounded-[1.5rem] border border-[#dfe8e2] bg-white shadow-[0_3px_14px_rgba(31,71,54,.045)] transition duration-200 hover:-translate-y-0.5 hover:border-[#c3d9cc] hover:shadow-[0_16px_36px_-20px_rgba(31,71,54,.24)]">
-                <div className="relative aspect-[16/9] overflow-hidden bg-[#e9eeeb] sm:aspect-[1.9/1]">
-                  <Image
-                    src={card.image}
-                    alt={card.imageAlt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover object-[50%_28%] transition duration-500 group-hover:scale-[1.025]"
-                    priority={card.id === 'dr_arjun'}
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#122a27]/55 to-transparent" aria-hidden="true" />
-                  <span className="absolute bottom-4 left-4 rounded-full border border-white/75 bg-white/95 px-3 py-1.5 text-xs font-semibold text-[#243e37] shadow-sm sm:left-5">
-                    {doctor.name}
-                  </span>
-                </div>
-
-                <div className="p-4 sm:p-5">
-                  <div className="flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold tracking-tight text-[#203e37]">{doctor.name}</h3>
-                      <p className="mt-1 text-sm text-[#687a73]">{card.focus}</p>
-                    </div>
-                    <span className={`inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold ${colors}`}>
-                      AI care assistant
+              return (
+                <article key={card.id} className="group overflow-hidden rounded-[1.5rem] border border-[#dfe8e2] bg-white shadow-[0_3px_14px_rgba(31,71,54,.045)] transition duration-200 hover:-translate-y-0.5 hover:border-[#c3d9cc] hover:shadow-[0_16px_36px_-20px_rgba(31,71,54,.24)]">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-[#e9eeeb] sm:aspect-[1.9/1]">
+                    <Image
+                      src={card.image}
+                      alt={card.imageAlt}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover object-[50%_28%] transition duration-500 group-hover:scale-[1.025]"
+                      priority={card.id === 'dr_arjun'}
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#122a27]/55 to-transparent" aria-hidden="true" />
+                    <span className="absolute bottom-4 left-4 rounded-full border border-white/75 bg-white/95 px-3 py-1.5 text-xs font-semibold text-[#243e37] shadow-sm sm:left-5">
+                      {doctor.name}
                     </span>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#6d7d77]">
-                    <span className="inline-flex items-center gap-1.5"><Mic2 size={14} className="text-[#0f7565]" aria-hidden="true" /> Voice and text</span>
-                    <span className="inline-flex items-center gap-1.5"><Languages size={14} className="text-[#0f7565]" aria-hidden="true" /> Kannada, English, Hindi</span>
-                    <span className="inline-flex items-center gap-1.5">{doctor.gender === 'male' ? 'Male voice' : 'Female voice'}</span>
-                  </div>
+                  <div className="p-4 sm:p-5">
+                    <div className="flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold tracking-tight text-[#203e37]">{doctor.name}</h3>
+                        <p className="mt-1 text-sm text-[#687a73]">{card.focus}</p>
+                      </div>
+                      <span className={`inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold ${colors}`}>
+                        AI care assistant
+                      </span>
+                    </div>
 
-                  <button
-                    type="button"
-                    onClick={() => onSelectDoctor(card.id)}
-                    className="mt-5 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-[#0f6257] px-4 text-sm font-semibold text-white transition hover:bg-[#0b5149] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#b9dacf]"
-                  >
-                    <span>Start with {doctor.name}</span>
-                    <ArrowUpRight size={17} aria-hidden="true" />
-                  </button>
-                </div>
-              </article>
-            )
-          })}
-        </div>
+                    <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#6d7d77]">
+                      <span className="inline-flex items-center gap-1.5"><Mic2 size={14} className="text-[#0f7565]" aria-hidden="true" /> Voice and text</span>
+                      <span className="inline-flex items-center gap-1.5"><Languages size={14} className="text-[#0f7565]" aria-hidden="true" /> Kannada, English, Hindi</span>
+                      <span className="inline-flex items-center gap-1.5">{doctor.gender === 'male' ? 'Male voice' : 'Female voice'}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => onSelectDoctor(card.id)}
+                      className="mt-5 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-[#0f6257] px-4 text-sm font-semibold text-white transition hover:bg-[#0b5149] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#b9dacf]"
+                    >
+                      <span>Start with {doctor.name}</span>
+                      <ArrowUpRight size={17} aria-hidden="true" />
+                    </button>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
         </Reveal>
       </div>
     </section>
