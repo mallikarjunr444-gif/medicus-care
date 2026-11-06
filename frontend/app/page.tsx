@@ -20,16 +20,17 @@ import {
 import { PatientDashboard } from '@/components/patient/PatientDashboard'
 import { PatientNotesPanel } from '@/components/patient/PatientNotesPanel'
 import { AppointmentWorkspace } from '@/components/patient/AppointmentWorkspace'
-import { PatientLandingHero } from '@/components/interactive/PatientLandingHero'
+import { EditorialHero } from '@/components/landing/EditorialHero'
 import { BrandLogo } from '@/components/ui/BrandLogo'
 import { SpecialistBookingModal, type AppointmentRequestResult } from '@/components/doctor/SpecialistBookingModal'
 import type { DoctorId } from '@/lib/doctorTypes'
 import { useStore } from '@/store/useStore'
-import { Reveal } from '@/components/ui/reveal'
 import MeadowRiseFooter from '@/components/ui/meadow-rise-footer'
 import { MedicalInfoSection } from '@/components/interactive/MedicalInfoSection'
-import { StatsSection } from '@/components/interactive/StatsSection'
-import { BorderGlow } from '@/components/ui/border-glow'
+import { StatBand } from '@/components/landing/StatBand'
+import { WhyRelySection } from '@/components/landing/WhyRelySection'
+import { StepsSection } from '@/components/landing/StepsSection'
+import { CtaBanner } from '@/components/landing/CtaBanner'
 import { LiquidNavbar } from '@/components/ui/liquid-glass-navbar'
 
 const DoctorShowcaseSection = dynamic(
@@ -123,7 +124,7 @@ export default function Home() {
   const showMobileNavigation = view !== 'consultation'
 
   return (
-    <div className={`min-h-screen overflow-x-clip bg-[#f5f8f6] text-[#183331] ${showMobileNavigation ? 'pb-20 lg:pb-0' : ''}`}>
+    <div className={`min-h-screen overflow-x-clip bg-[#F6F5EF] text-[#0F150A] ${showMobileNavigation ? 'pb-20 lg:pb-0' : ''}`}>
       <header className={`sticky top-0 z-50 border-b border-[#e1e9e4] bg-white/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl ${view === 'consultation' ? 'hidden' : ''}`}>
         <div className="mx-auto flex min-h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Brand Logo & Tag */}
@@ -165,7 +166,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => navigate('consultation')}
-                className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-gradient-to-r from-[#0f6257] to-[#147a6b] px-4 text-xs font-semibold text-white shadow-sm transition-all hover:brightness-105 sm:text-sm"
+                className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#6B8F3E] px-4 text-xs font-semibold text-white shadow-sm transition-all hover:bg-[#5f7d38] sm:text-sm"
               >
                 <span>Talk to a doctor</span>
                 <ArrowRight size={15} aria-hidden="true" />
@@ -209,9 +210,11 @@ export default function Home() {
 
         {view === 'home' && (
           <div className="animate-fade-in">
-            <PatientLandingHero onSelectDoctor={handleStartDoctorConsultation} />
+            <EditorialHero onSelectDoctor={handleStartDoctorConsultation} />
 
-            <StatsSection />
+            <WhyRelySection />
+
+            <StatBand />
 
             <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
 
@@ -225,35 +228,19 @@ export default function Home() {
                   { icon: Globe2, title: 'Made for conversation', body: 'Voice and text interactions support regional language choices.' },
                 ].map(({ icon: Icon, title, body }) => (
                   <div key={title} className="flex gap-3.5">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#edf6f1] text-[#0f7565]"><Icon size={18} aria-hidden="true" /></span>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#edf6f1] text-[#6B8F3E]"><Icon size={18} aria-hidden="true" /></span>
                     <div><h3 className="text-sm font-semibold text-[#1b3a5c]">{title}</h3><p className="mt-1 text-xs leading-5 text-[#4f6580]">{body}</p></div>
                   </div>
                 ))}
               </div>
             </section>
 
-            <section id="how-it-works" className="section-y mx-auto max-w-7xl px-4 sm:px-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0f7565]">How it works</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Three steps to a consultation</h2>
-              <Reveal className="mt-8"><ol className="grid gap-4 md:grid-cols-3">
-                {[
-                  { n: '1', title: 'Pick a doctor and language', body: 'Choose Dr. Smit or Dr. Ananya, then Kannada, English or Hindi. Other languages appear in the language list when available.' },
-                  { n: '2', title: 'Describe how you feel', body: 'Speak with your microphone or type. The doctor listens, asks one question at a time and remembers what you already said.' },
-                  { n: '3', title: 'Review your summary', body: 'When you end the call you get a consultation summary with triage guidance, saved to your session.' },
-                ].map((step) => (
-                  <li key={step.n} className="rounded-2xl border border-[#e1e9e4] bg-white p-6 shadow-sm">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0f6257] text-sm font-semibold text-white" aria-hidden="true">{step.n}</span>
-                    <h3 className="mt-4 text-base font-semibold text-[#25423b]">{step.title}</h3>
-                    <p className="mt-1.5 text-sm leading-6 text-[#687b74]">{step.body}</p>
-                  </li>
-                ))}
-              </ol></Reveal>
-            </section>
+            <StepsSection />
 
             <section id="trust" className="border-y border-[#e1e9e4] bg-white">
               <div className="section-y mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0f7565]">Safety and privacy</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">Safety and privacy</p>
                   <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Honest about what this is</h2>
                   <p className="mt-3 text-sm leading-6 text-[#687b74]">MediCare gives health information and preliminary guidance. It does not diagnose, prescribe, or replace a qualified clinician.</p>
                 </div>
@@ -265,26 +252,14 @@ export default function Home() {
                     'Your consultation summary is saved only to your own session.',
                   ].map((item) => (
                     <li key={item} className="flex gap-2.5 rounded-xl border border-[#e1e9e4] bg-[#f7faf8] p-4 text-sm leading-5 text-[#36564d]">
-                      <ShieldCheck size={17} className="mt-0.5 shrink-0 text-[#0f7565]" aria-hidden="true" />{item}
+                      <ShieldCheck size={17} className="mt-0.5 shrink-0 text-[#6B8F3E]" aria-hidden="true" />{item}
                     </li>
                   ))}
                 </ul>
               </div>
             </section>
 
-            <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20">
-              <BorderGlow className="rounded-3xl">
-                <div className="flex flex-col items-start justify-between gap-5 rounded-3xl bg-[#123f3a] p-7 text-white sm:flex-row sm:items-center sm:p-10">
-                  <div>
-                    <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Ready when you are</h2>
-                    <p className="mt-2 max-w-xl text-sm leading-6 text-[#d1e6df]">Start a consultation in your language. It begins only when you choose.</p>
-                  </div>
-                  <button type="button" onClick={() => navigate('consultation')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-[#124b43] transition hover:bg-[#eaf4ef]">
-                    Talk to a doctor <ArrowRight size={15} aria-hidden="true" />
-                  </button>
-                </div>
-              </BorderGlow>
-            </section>
+            <CtaBanner onStart={() => navigate('consultation')} />
 
             <MeadowRiseFooter
               name="Medicus Labs"
@@ -356,11 +331,11 @@ export default function Home() {
                 { id: 'consultation' as View, icon: Stethoscope, label: 'Doctor' },
                 { id: 'history' as View, icon: History, label: 'History' },
               ].map(({ id, icon: Icon, label }) => (
-                <button key={id} type="button" onClick={() => navigate(id)} aria-current={view === id ? 'page' : undefined} className={`flex min-h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-medium ${view === id ? 'text-[#0f7565]' : 'text-[#71817b]'}`}>
+                <button key={id} type="button" onClick={() => navigate(id)} aria-current={view === id ? 'page' : undefined} className={`flex min-h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-medium ${view === id ? 'text-[#6B8F3E]' : 'text-[#71817b]'}`}>
                   <Icon size={19} strokeWidth={view === id ? 2.4 : 1.8} aria-hidden="true" />{label}
                 </button>
               ))}
-              <button type="button" onClick={() => setMobileMenuOpen((open) => !open)} aria-expanded={mobileMenuOpen} aria-label={mobileMenuOpen ? 'Close more options' : 'Open more options'} className={`flex min-h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-medium ${mobileMenuOpen ? 'text-[#0f7565]' : 'text-[#71817b]'}`}>
+              <button type="button" onClick={() => setMobileMenuOpen((open) => !open)} aria-expanded={mobileMenuOpen} aria-label={mobileMenuOpen ? 'Close more options' : 'Open more options'} className={`flex min-h-[3.25rem] flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-medium ${mobileMenuOpen ? 'text-[#6B8F3E]' : 'text-[#71817b]'}`}>
                 {mobileMenuOpen ? <X size={19} aria-hidden="true" /> : <MoreHorizontal size={19} aria-hidden="true" />}More
               </button>
             </div>
@@ -381,7 +356,7 @@ function PageFrame({ children, eyebrow, title, description }: { children: React.
   return (
     <section className="mx-auto min-h-[calc(100dvh-4.25rem)] max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
       <div className="mb-7 max-w-2xl sm:mb-9">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0f7565]">{eyebrow}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">{eyebrow}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1c3c36] sm:text-4xl">{title}</h1>
         <p className="mt-2 text-sm leading-6 text-[#687b74]">{description}</p>
       </div>

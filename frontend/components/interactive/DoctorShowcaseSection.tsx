@@ -41,7 +41,7 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
       <div className="mx-auto max-w-7xl">
         <div className="mb-7 flex flex-col gap-3 sm:mb-9 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#0f7565]">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#6B8F3E]">
               <Stethoscope size={15} aria-hidden="true" /> Choose your consultation
             </span>
             <h2 id="doctor-selection-title" className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Choose an AI care assistant</h2>
@@ -106,15 +106,15 @@ export function DoctorShowcaseSection({ onSelectDoctor }: DoctorShowcaseSectionP
                       </div>
 
                       <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#6d7d77]">
-                        <span className="inline-flex items-center gap-1.5"><Mic2 size={14} className="text-[#0f7565]" aria-hidden="true" /> Real-time voice &amp; text</span>
-                        <span className="inline-flex items-center gap-1.5"><Languages size={14} className="text-[#0f7565]" aria-hidden="true" /> Kannada, English, Hindi</span>
+                        <span className="inline-flex items-center gap-1.5"><Mic2 size={14} className="text-[#6B8F3E]" aria-hidden="true" /> Real-time voice &amp; text</span>
+                        <span className="inline-flex items-center gap-1.5"><Languages size={14} className="text-[#6B8F3E]" aria-hidden="true" /> Kannada, English, Hindi</span>
                         <span className="inline-flex items-center gap-1.5 font-medium">{doctor.gender === 'male' ? 'Natural male voice' : 'Natural female voice'}</span>
                       </div>
 
                       <button
                         type="button"
                         onClick={() => onSelectDoctor(card.id)}
-                        className="mt-5 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-gradient-to-r from-[#0f6257] to-[#127d6e] px-5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-lg hover:brightness-105 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#b9dacf]"
+                        className="mt-5 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-[#6B8F3E] px-5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-[#5f7d38] hover:shadow-lg active:scale-[0.99] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#C9D2BD]"
                       >
                         <span>Start consultation with {doctor.name}</span>
                         <ArrowUpRight size={18} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
