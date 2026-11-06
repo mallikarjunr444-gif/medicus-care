@@ -2,19 +2,19 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ArrowRight, Mic, RotateCcw, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Camera, Flashlight, Mic, RotateCcw, ShieldCheck, Wifi } from 'lucide-react'
 import type { DoctorId } from '@/lib/doctorTypes'
 
 const W = 'min(300px, 40vw)'
 const H = 'min(440px, 58vw)'
 
 /**
- * iPhone Duo-style real unfold.
- *
- * Starts with the phone's back (camera bar) closed in one hand, then the left
- * cover swings open on its hinge to reveal a two-pane MediCare consultation
- * screen (Dr. Ananya chat + session summary). The left screen deblurs as it
- * opens, matching the Apple starting animation.
+ * iPhone Duo-style hero sequence:
+ *   1. closed phone back (camera bar)
+ *   2. cover swings open (seamless screen — no middle seam)
+ *   3. lock screen (9:41 · desert)
+ *   4. lock screen swipes up
+ *   5. the MediCare consultation UI is revealed
  */
 export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId) => void }) {
   const [replay, setReplay] = useState(0)
@@ -33,24 +33,26 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
             className="duo-stage relative"
             style={{ width: `calc(2 * ${W})`, height: H, transformStyle: 'preserve-3d' }}
           >
-            {/* Right half — rear panel (rear screen) */}
+            {/* Right half — rear panel */}
             <div
-              className="absolute left-1/2 top-0 overflow-hidden rounded-[1.9rem] border-[6px] border-[#1b1b1d] bg-[#f7f5ef] shadow-[0_40px_80px_-30px_rgba(0,0,0,.35)]"
+              className="absolute left-1/2 top-0 overflow-hidden rounded-r-[1.9rem] border-y-[6px] border-r-[6px] border-[#1b1b1d] bg-[#f7f5ef] shadow-[0_40px_80px_-30px_rgba(0,0,0,.35)]"
               style={{ width: W, height: H }}
             >
               <RightScreen onStart={() => onSelectDoctor('dr_ananya')} />
+              <LockScreenHalf side="right" />
             </div>
 
             {/* Left half — cover: back (closed) → front (screen) */}
             <div className="duo-cover absolute right-1/2 top-0" style={{ width: W, height: H }}>
-              {/* Front: MediCare screen */}
+              {/* Front: screen (project UI + lock screen) */}
               <div
-                className="absolute inset-0 overflow-hidden rounded-[1.9rem] border-[6px] border-[#1b1b1d] bg-white"
+                className="absolute inset-0 overflow-hidden rounded-l-[1.9rem] border-y-[6px] border-l-[6px] border-[#1b1b1d] bg-white"
                 style={{ backfaceVisibility: 'hidden' }}
               >
                 <div className="duo-deblur h-full w-full">
                   <LeftScreen />
                 </div>
+                <LockScreenHalf side="left" />
               </div>
 
               {/* Back: phone cover with camera bar */}
@@ -61,12 +63,6 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
                 <PhoneBack />
               </div>
             </div>
-
-            {/* Hinge */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-0 h-full w-[3px] -translate-x-1/2 bg-gradient-to-b from-black/5 via-black/25 to-black/5"
-            />
           </div>
         </div>
 
@@ -96,6 +92,49 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
         </div>
       </div>
     </section>
+  )
+}
+
+/* ── lock screen (spans the full open device) ─────────────── */
+
+function LockScreenHalf({ side }: { side: 'left' | 'right' }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute top-0 h-full" style={{ width: '200%', left: side === 'left' ? 0 : '-100%' }}>
+        <div className="lock-screen relative h-full w-full overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(180deg, #cfe0ef 0%, #e9e2d2 46%, #ddc8a8 54%, #c9ae86 100%)' }}
+          />
+          <div
+            className="absolute inset-x-0 top-[36%] h-[20%] opacity-50"
+            style={{
+              background: '#a98f68',
+              clipPath: 'polygon(0 100%, 10% 60%, 24% 82%, 40% 44%, 55% 72%, 70% 48%, 84% 78%, 100% 58%, 100% 100%)',
+            }}
+          />
+          <div className="absolute inset-x-0 top-[52%] h-10 bg-white/30 blur-xl" />
+
+          <div className="absolute inset-x-0 top-[8%] text-center text-white">
+            <p className="text-[clamp(8px,1vw,13px)] font-semibold tracking-wide">Wed Apr 1</p>
+            <p className="mt-0.5 font-sans text-[clamp(38px,6vw,84px)] font-semibold leading-none tracking-tight drop-shadow">9:41</p>
+          </div>
+
+          <Wifi className="absolute right-[6%] top-[6%] h-4 w-4 text-white/90" aria-hidden="true" />
+
+          <div className="absolute bottom-[14%] right-[5%] flex flex-col gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur">
+              <Flashlight size={13} aria-hidden="true" />
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur">
+              <Camera size={13} aria-hidden="true" />
+            </span>
+          </div>
+
+          <div className="absolute inset-x-[42%] bottom-[4%] h-1 rounded-full bg-white/80" />
+        </div>
+      </div>
+    </div>
   )
 }
 
