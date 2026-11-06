@@ -125,7 +125,7 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen overflow-x-clip bg-[#F6F5EF] text-[#0F150A] ${showMobileNavigation ? 'pb-20 lg:pb-0' : ''}`}>
-      <header className={`sticky top-0 z-50 border-b border-[#e1e9e4] bg-white/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl ${view === 'consultation' ? 'hidden' : ''}`}>
+      <header className={`sticky top-0 z-50 border-b pt-[env(safe-area-inset-top)] backdrop-blur-xl ${view === 'consultation' ? 'hidden' : ''} ${view === 'home' ? 'border-[#E3BD9C] bg-[#F3D7BE]/90' : 'border-[#e1e9e4] bg-white/95'}`}>
         <div className="mx-auto flex min-h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Brand Logo & Tag */}
           <button
