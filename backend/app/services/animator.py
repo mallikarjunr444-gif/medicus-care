@@ -520,6 +520,20 @@ class AvatarAnimator:
 
     # ── public API ────────────────────────────────────────────────────────────
 
+    async def warmup(self) -> None:
+        """Load the persistent lip-sync model before accepting production traffic."""
+        if not self._initialised:
+            await self.initialize()
+
+        if self.engine == "musetalk":
+            await self._ensure_worker()
+        elif self.engine == "mlx":
+            await self._ensure_mlx_worker()
+        else:
+            raise RuntimeError(
+                f"Avatar warmup requires a persistent lip-sync engine; got {self.engine!r}."
+            )
+
     async def animate(
         self,
         avatar_image_path: str,

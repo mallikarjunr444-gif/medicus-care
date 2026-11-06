@@ -96,6 +96,9 @@ class Settings(BaseSettings):
     #                Python environment and weights. Does not promise live FPS.
     #   simple     — ffmpeg static image + audio, no lip-sync. CPU, instant.
     AVATAR_ENGINE: str = "musetalk"  # musetalk, mlx, liveavatar, simple
+    # In production, load the persistent lip-sync worker before the instance is
+    # marked ready so the first patient's reply does not pay the model-load cost.
+    AVATAR_WARMUP_ON_STARTUP: bool = False
 
     # FasterLivePortrait-MLX. Its MLX/Python stack is deliberately isolated from
     # the backend's PyTorch environment; setup is in scripts/setup_fasterliveportrait_mlx.sh.

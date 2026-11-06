@@ -40,19 +40,45 @@ run on every patient's phone or laptop.
    The installer downloads about 8.8 GB of weights into
    `backend/models/MuseTalk`, which stays outside Git and is mounted into the
    GPU containers.
-4. Build and start the production stack:
+4. Build and start the production services without the public HTTPS gateway:
 
    ```sh
    docker compose --env-file .env.prod \
-     -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+     -f docker-compose.yml -f docker-compose.prod.yml \
+     up -d --build postgres redis ollama backend frontend celery-worker
    ```
 
 5. Download the configured local LLM once:
    `docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml exec ollama ollama pull qwen2.5:3b`.
-6. Check `https://$DOMAIN/health` for API and database status. Then run a real
-   English and Kannada consultation from an HTTPS browser, confirming the
-   actual generated reply, voice, and model-produced video before sharing the
-   link.
+6. Run the smoke test with the public gateway and resident GPU workers stopped.
+   This avoids testing with a second MuseTalk model competing for GPU memory.
+   The test uses short, non-patient phrases for both bundled doctors, checks
+   their configured gendered TTS paths and audio/video streams, and fails on a
+   static fallback or rendering slower than the speech. If it fails, keep the
+   gateway off and fix the reported issue.
+
+   ```sh
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml stop caddy backend celery-worker
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml \
+     run --rm --no-deps --name avatar-lipsync-smoke \
+     --entrypoint python backend smoke_test_doctor_lipsync.py
+   ```
+
+7. Only after both doctor cases pass, restart the API/GPU worker and open the
+   gateway. Caddy waits for the API and frontend health checks before serving:
+
+   ```sh
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml up -d backend celery-worker
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml up -d caddy
+   ```
+
+   Then check `https://$DOMAIN/health` and run English and Kannada consultations
+   from an HTTPS browser, confirming generated speech and synchronized video
+   for both doctors before sharing the link.
 
 The production profile builds a CUDA-enabled backend image, runs Ollama and
 MuseTalk on the server GPU, uses Edge neural TTS with the existing male/female
@@ -62,8 +88,10 @@ Only Caddy publishes ports 80 and 443.
 
 ## Model and data notes
 
-The current live synchronized animation engine is MuseTalk. The other cloned
-research checkouts are not automatically chained into consultations. Model
+The website uses the CUDA-capable MuseTalk engine on the server; it does not
+depend on a patient's Mac, browser GPU, or the local-only MLX experiment. The
+API is intentionally started with one Uvicorn worker because each process owns
+its own persistent CUDA model. Model
 weights are large, have their own licenses, and are excluded from GitHub; the
 GPU host must provision the selected model's weights. The public site can load
 on any modern device, but real-time video generation happens on the server.

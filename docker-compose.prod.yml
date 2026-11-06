@@ -34,6 +34,10 @@ services:
     environment:
       - MEDICARE_RAG_STORE=/app/database/rag_store
       - MUSETALK_PATH=/app/backend/models/MuseTalk
+      # Each Uvicorn process creates its own resident GPU model worker.
+      - UVICORN_WORKERS=1
+    healthcheck:
+      start_period: 240s  # allow one cold CUDA model load before readiness checks
     depends_on:
       ollama:
         condition: service_healthy
@@ -63,6 +67,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile.gpu
     restart: always
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=1
     env_file: .env.prod
     volumes: !override
       - avatar_cache:/tmp/avatars

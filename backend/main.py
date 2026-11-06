@@ -97,6 +97,16 @@ async def lifespan(app: FastAPI):
         app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
         logger.info(f"Serving local uploads from {uploads_dir}")
 
+    if settings.AVATAR_WARMUP_ON_STARTUP:
+        from app.services.animator import avatar_animator
+
+        logger.info("Warming up the configured synchronized-avatar engine before serving traffic")
+        try:
+            await avatar_animator.warmup()
+        except Exception:
+            logger.exception("Avatar engine warmup failed; refusing to start an unready instance")
+            raise
+
     websocket_manager.start_cleanup_task()
     logger.info("AI Avatar System started successfully")
 

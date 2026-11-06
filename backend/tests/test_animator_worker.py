@@ -9,6 +9,9 @@ backend/musetalk_worker.py and resolve to it when the clone lacks the script.
 """
 
 from pathlib import Path
+from unittest.mock import AsyncMock
+
+import pytest
 
 from app.services.animator import AvatarAnimator
 
@@ -37,3 +40,26 @@ def test_resolve_worker_prefers_clone_then_falls_back(tmp_path):
     assert resolved.is_file()
     # It's the tracked backend copy, not anything under the empty clone.
     assert "EmptyClone" not in str(resolved)
+
+
+@pytest.mark.asyncio
+async def test_warmup_loads_the_persistent_gpu_worker(monkeypatch):
+    animator = AvatarAnimator()
+    animator._initialised = True
+    animator.engine = "musetalk"
+    ensure_worker = AsyncMock()
+    monkeypatch.setattr(animator, "_ensure_worker", ensure_worker)
+
+    await animator.warmup()
+
+    ensure_worker.assert_awaited_once_with()
+
+
+@pytest.mark.asyncio
+async def test_warmup_rejects_an_engine_without_persistent_lipsync():
+    animator = AvatarAnimator()
+    animator._initialised = True
+    animator.engine = "simple"
+
+    with pytest.raises(RuntimeError, match="requires a persistent lip-sync engine"):
+        await animator.warmup()

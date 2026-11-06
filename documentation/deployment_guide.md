@@ -45,7 +45,8 @@ FRONTEND_URL=https://care.medicuslabs.app
 BACKEND_URL=https://care.medicuslabs.app/api
 
 # Database & Cache (Isolated from parent Medicus Labs DB)
-DATABASE_URL=postgresql+asyncpg://care_admin:SecurePass2026!@postgres:5432/medicus_care_db
+DATABASE_URL=postgresql+asyncpg://care_admin:URL_ENCODED_PASSWORD@postgres:5432/medicus_care_db
+DATABASE_PASSWORD=GENERATE_A_UNIQUE_RANDOM_PASSWORD
 REDIS_URL=redis://redis:6379/0
 
 # LLM Inference (Local Ollama / vLLM / Claude)
@@ -60,6 +61,8 @@ TTS_PROVIDER=edge-tts
 
 # Avatar Engine
 AVATAR_ENGINE=musetalk
+AVATAR_WARMUP_ON_STARTUP=true
+UVICORN_WORKERS=1
 AVATAR_RESOLUTION=512
 AVATAR_FPS=25
 MUSETALK_PATH=models/MuseTalk
@@ -71,6 +74,10 @@ JWT_SECRET_KEY=<generate_with_python_secrets_token_hex_32>
 AUTH_COOKIE_SECURE=true
 CORS_ORIGINS=https://care.medicuslabs.app,https://medicuslabs.app
 ```
+
+Use the same generated password in both database settings and URL-encode it in
+`DATABASE_URL` if it contains reserved URL characters. Never deploy the sample
+values as credentials.
 
 ---
 
@@ -129,7 +136,9 @@ print('Ingestion Complete:', rag_service.get_stats())
 
 2. **Or Launch with Docker Compose**:
    ```bash
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml \
+     up -d --build postgres redis ollama backend frontend celery-worker
    ```
 
 3. **Verify GPU Passthrough & Container Health**:
@@ -139,7 +148,30 @@ print('Ingestion Complete:', rag_service.get_stats())
    print('CUDA Available:', torch.cuda.is_available())
    print('GPU Device:', torch.cuda.get_device_name(0))
    print('VRAM:', round(torch.cuda.get_device_properties(0).total_memory/1024**3, 1), 'GB')
-   "
+    "
+    ```
+
+4. **Verify real lip-sync for both bundled doctors before opening traffic**.
+   Stop the resident GPU workers so the one-off test does not load a second
+   MuseTalk model alongside the API:
+   ```bash
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml stop caddy backend celery-worker
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml \
+     run --rm --no-deps --name avatar-lipsync-smoke \
+     --entrypoint python backend smoke_test_doctor_lipsync.py
+   ```
+   This uses short, non-patient test phrases, both doctor portraits, and the
+   required-lip-sync path. It fails if a static fallback is used, A/V stream
+   durations differ materially, or the GPU cannot render at least as fast as
+   the speech. Do not expose the site until both profiles pass on the chosen
+   GPU instance. After a pass, restart the services and gateway:
+   ```bash
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml up -d backend celery-worker
+   docker compose --env-file .env.prod \
+     -f docker-compose.yml -f docker-compose.prod.yml up -d caddy
    ```
 
 ---

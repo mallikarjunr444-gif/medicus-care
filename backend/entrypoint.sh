@@ -84,6 +84,6 @@ echo "[startup] Starting uvicorn..."
 exec uvicorn main:app \
     --host 0.0.0.0 \
     --port 8000 \
-    --workers "${UVICORN_WORKERS:-4}" \
+    --workers "${UVICORN_WORKERS:-1}" \
     --proxy-headers \
     --forwarded-allow-ips "${FORWARDED_ALLOW_IPS:-*}"
