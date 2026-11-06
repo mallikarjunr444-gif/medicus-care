@@ -188,3 +188,41 @@ Copied components retain their own licence notice; Medicus Care itself is licens
 
 Because 21st's free tier caps retrievals, the **unlimited** source-based workflow stays shadcn / Spectrum / Intelli;
 21st is the discovery layer and a good source for hero/bento/effect patterns.
+
+---
+
+## 9. React Bits / React Bits Pro
+
+### Free — https://reactbits.dev (open source)
+- 130+ animated pieces: text animations, backgrounds, animations, UI components and micro-interactions.
+- Every component ships in four variants: JS/TS × CSS/Tailwind.
+- **Install** (no key, source lands in the repo): `npx shadcn@latest add @react-bits/<Component>-TS-TW`
+  (e.g. `SplitText-TS-TW`), or the full URL `https://reactbits.dev/r/<Component>-<LANG>-<STYLE>`.
+- **Licence:** free and open source — see the `DavidHDev/react-bits` repository LICENSE for the exact terms.
+
+### Pro — https://pro.reactbits.dev (paid, license-gated)
+- 230 animated components, 300 page blocks, 300 application-UI blocks, 15 templates and a 20-item Agent Kit.
+- **Pricing:** Starter $129 · Pro $249 · Ultimate $349 (one-time, lifetime updates). One licence = one developer,
+  unlimited commercial projects; no repackaging as a competing library.
+- **Env:** `REACTBITS_LICENSE_KEY=...` in `frontend/.env.local`.
+- **Registry** (already configured in `frontend/components.json`):
+  ```json
+  {
+    "registries": {
+      "@reactbits-starter": {
+        "url": "https://pro.reactbits.dev/api/r/starter/{name}.json",
+        "headers": { "Authorization": "Bearer ${REACTBITS_LICENSE_KEY}" }
+      }
+    }
+  }
+  ```
+- **Install:** `npx shadcn@latest add @reactbits-starter/<name>` (e.g. `mono-waves-tw`).
+- **Agent docs:** MCP — https://pro.reactbits.dev/docs/mcp · setup skill —
+  https://pro.reactbits.dev/docs/agent-kit/agent-skill
+
+### Implemented in this repo
+- `components/ui/border-glow.tsx` — gradient halo (a light-touch React Bits "Border Glow") around the closing CTA.
+- `components/ui/shiny-text.tsx` — sweeping sheen (a React Bits "Shiny Text" take) on the hero badge.
+
+**Caveat:** Pro components cannot be fetched without a purchased key (the registry returns HTTP 401), so the
+visible upgrades above are hand-built in the MediCare palette; add the key to pull the real Pro source.
