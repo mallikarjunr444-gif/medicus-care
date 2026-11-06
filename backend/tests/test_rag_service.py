@@ -54,3 +54,30 @@ def test_search_all_returns_both_approved_collections(tmp_path):
     results = service.search("diabetes stress", collection="all", top_k=5)
     assert {result.collection for result in results} == {"medical", "mental_wellness"}
     assert results[0].collection == "mental_wellness"
+
+
+def test_external_wellness_records_are_pending_review_and_idempotent(tmp_path):
+    service = UnifiedRAGService(data_root=tmp_path, storage_dir=tmp_path / "index")
+    record = {
+        "question": "I feel overwhelmed by work lately.",
+        "answer": "It may help to identify one manageable next step and take a short break.",
+        "record_id": "row-1",
+        "source_file": "conversations.csv",
+    }
+
+    options = {
+        "source_name": "Example conversations",
+        "license_name": "MIT",
+        "origin_url": "https://example.org/dataset",
+        "dataset_id": "example/mental-wellness",
+    }
+    assert service.ingest_mental_wellness_qa([record], **options) == 1
+    chunk = next(iter(service.mental_wellness_store.values()))
+    assert chunk.approved_by_admin is False
+    assert chunk.metadata["review_required"] is True
+    assert chunk.metadata["record_id"] == "row-1"
+    assert service.search("overwhelmed work", collection="mental_wellness") == []
+
+    reloaded = UnifiedRAGService(data_root=tmp_path, storage_dir=tmp_path / "index")
+    assert reloaded.ingest_mental_wellness_qa([record], **options) == 0
+    assert len(reloaded.mental_wellness_store) == 1

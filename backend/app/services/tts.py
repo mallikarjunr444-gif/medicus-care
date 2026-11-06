@@ -4,9 +4,10 @@ Text-to-Speech service backed by Chatterbox Multilingual (Resemble AI).
 Replaces the deprecated Coqui XTTS v2. Voice profile WAVs in `voice_profiles/`
 remain compatible — Chatterbox accepts any WAV reference for zero-shot cloning.
 
-Fallback chain when Chatterbox can't load or fails mid-synthesis:
+Hindi/Kannada route only to the self-hosted Indic-Speak worker. For other
+languages the configured provider/fallback chain is:
 
-    chatterbox (cloned voice, GPU) → edge-tts (neural, free, no GPU) → gTTS
+    configured provider / chatterbox → edge-tts → gTTS
 
 Edge TTS uses Microsoft's neural voices — dramatically better prosody than
 gTTS — and needs no API key or GPU, so the degraded experience stays good.
@@ -17,11 +18,14 @@ notify the user when voice cloning was silently dropped during fallback.
 """
 
 import asyncio
+import io
 import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+import httpx
+import soundfile
 import torch
 import torchaudio
 
@@ -33,7 +37,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SynthResult:
     output_path: str
-    engine: str  # "chatterbox" or "gtts"
+    engine: str  # e.g. "indic-speak", "chatterbox", "gnani", "edge-tts", or "gtts"
     fallback: bool  # True if the caller's preferred path was not taken
     voice_cloned: bool  # True if a speaker WAV was actually applied
 
@@ -158,9 +162,19 @@ class TTSService:
         """
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
-        # The configured Gnani language defaults are female for English and
-        # Kannada. Keep Dr. Smit male by selecting a documented free neural
-        # voice for those languages rather than silently using that default.
+        # Hindi and Kannada must never silently go through an English or
+        # network fallback. The local Indic-Speak worker returns the exact WAV
+        # that is then streamed to the browser and passed to the avatar.
+        language_code = (language or "en").split("-")[0].lower()
+        if language_code in {"hi", "kn"}:
+            return await self._indic_speak(
+                text=text,
+                output_path=output_path,
+                language=language_code,
+                voice_gender=voice_gender,
+            )
+
+        # Preserve the existing English/other-language male voice path.
         if voice_gender == "male":
             await self._edge_fallback(text, output_path, language, voice_gender)
             return SynthResult(
@@ -172,6 +186,7 @@ class TTSService:
 
         if self.provider == "gnani":
             from app.services.gnani_service import gnani_service
+
             try:
                 await gnani_service.synthesize(text, output_path, language=language)
                 return SynthResult(
@@ -238,6 +253,7 @@ class TTSService:
 
             # Try Gnani.ai first if configured (native Indian neural voice)
             from app.services.gnani_service import gnani_service
+
             if gnani_service.is_configured():
                 try:
                     await gnani_service.synthesize(text, output_path, language=language)
@@ -266,6 +282,73 @@ class TTSService:
                 fallback=True,
                 voice_cloned=False,
             )
+
+    async def _indic_speak(
+        self,
+        text: str,
+        output_path: str,
+        language: str,
+        voice_gender: Optional[str],
+    ) -> SynthResult:
+        """Call the self-hosted Indic-Speak worker for Hindi or Kannada only."""
+        if "\ufffd" in text:
+            raise ValueError(f"Refusing corrupted Unicode text for Indic-Speak ({language}).")
+
+        base_url = settings.INDIC_SPEAK_URL.rstrip("/")
+        timeout = httpx.Timeout(settings.INDIC_SPEAK_TIMEOUT_SECONDS, connect=5.0)
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                response = await client.post(
+                    f"{base_url}/synthesize",
+                    json={
+                        "text": text,
+                        "language": language,
+                        "voice_gender": voice_gender or "female",
+                    },
+                )
+        except httpx.HTTPError as exc:
+            logger.error("Local Indic-Speak worker request failed [%s]: %s", language, exc)
+            raise RuntimeError(
+                "The local Indic-Speak service is unavailable. Start the Indic-Speak worker "
+                "on the configured INDIC_SPEAK_URL; no external or English voice fallback was used."
+            ) from exc
+
+        if response.status_code != 200:
+            logger.error(
+                "Local Indic-Speak worker returned HTTP %s [%s]",
+                response.status_code,
+                language,
+            )
+            raise RuntimeError(
+                f"Local Indic-Speak synthesis failed for {language} (HTTP {response.status_code}); "
+                "no external or English voice fallback was used."
+            )
+
+        audio_bytes = response.content
+        try:
+            info = soundfile.info(io.BytesIO(audio_bytes))
+        except Exception as exc:
+            raise ValueError("Indic-Speak returned an invalid WAV file.") from exc
+
+        if (
+            info.format != "WAV"
+            or info.samplerate != 24000
+            or info.channels != 1
+            or info.frames <= 0
+        ):
+            raise ValueError(
+                "Indic-Speak must return non-empty mono WAV audio at 24 kHz; "
+                f"received format={info.format}, rate={info.samplerate}, "
+                f"channels={info.channels}, frames={info.frames}."
+            )
+
+        await asyncio.to_thread(Path(output_path).write_bytes, audio_bytes)
+        return SynthResult(
+            output_path=output_path,
+            engine="indic-speak",
+            fallback=False,
+            voice_cloned=False,
+        )
 
     async def _edge_fallback(
         self,

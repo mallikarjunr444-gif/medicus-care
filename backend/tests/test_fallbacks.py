@@ -11,6 +11,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from app.services.gnani_service import gnani_service
 from app.services.tts import TTSService
 
 pytestmark = pytest.mark.asyncio
@@ -27,10 +28,12 @@ def test_legacy_coqui_provider_aliases_to_chatterbox(monkeypatch):
 
 async def test_tts_falls_back_to_edge_when_chatterbox_unavailable(monkeypatch, tmp_path):
     service = TTSService()
+    service.provider = "chatterbox"
     out = str(tmp_path / "out.wav")
 
     monkeypatch.setattr(service, "initialize", AsyncMock(side_effect=RuntimeError("no chatterbox")))
     monkeypatch.setattr(service, "_edge_fallback", AsyncMock(return_value=out))
+    monkeypatch.setattr(gnani_service, "is_configured", lambda: False)
     gtts = AsyncMock()
     monkeypatch.setattr(service, "_gtts_fallback", gtts)
 
@@ -44,11 +47,13 @@ async def test_tts_falls_back_to_edge_when_chatterbox_unavailable(monkeypatch, t
 
 async def test_tts_falls_back_to_gtts_when_edge_also_fails(monkeypatch, tmp_path):
     service = TTSService()
+    service.provider = "chatterbox"
     out = str(tmp_path / "out.wav")
 
     monkeypatch.setattr(service, "initialize", AsyncMock(side_effect=RuntimeError("no chatterbox")))
     monkeypatch.setattr(service, "_edge_fallback", AsyncMock(side_effect=RuntimeError("edge down")))
     monkeypatch.setattr(service, "_gtts_fallback", AsyncMock(return_value=out))
+    monkeypatch.setattr(gnani_service, "is_configured", lambda: False)
 
     result = await service.synthesize("Hello world", out, speaker_wav=None, language="en")
 

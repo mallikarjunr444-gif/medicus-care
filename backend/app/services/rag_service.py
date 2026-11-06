@@ -16,7 +16,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 logger = logging.getLogger("medicus_care.rag")
 
@@ -335,6 +335,83 @@ class UnifiedRAGService:
                 except Exception:
                     continue
 
+        self.persist()
+        return ingested
+
+    def ingest_mental_wellness_qa(
+        self,
+        records: Iterable[Dict[str, Any]],
+        *,
+        source_name: str,
+        license_name: str,
+        origin_url: str,
+        dataset_id: str,
+        max_records: int = 2_000,
+    ) -> int:
+        """Stage external mental-wellness Q&A records for admin review.
+
+        These records are deliberately not patient-visible until an admin
+        explicitly approves them. Stable IDs and content hashes make repeated
+        imports safe and idempotent.
+        """
+        if max_records < 1:
+            raise ValueError("max_records must be at least 1")
+
+        dataset_slug = re.sub(r"[^a-z0-9]+", "-", dataset_id.lower()).strip("-")[:40]
+        ingested = 0
+        for record in records:
+            if ingested >= max_records:
+                break
+            if not isinstance(record, dict):
+                continue
+
+            question = str(record.get("question") or "").strip()
+            answer = str(record.get("answer") or "").strip()
+            if len(question) < 8 or len(answer) < 20:
+                continue
+
+            content = f"Question: {question}\n\nReference response (unreviewed): {answer}"
+            if len(content) > 15_000:
+                continue
+
+            content_hash = self._hash_text(content)
+            if content_hash in self.content_hashes:
+                self.ingestion_stats["duplicates_filtered"] += 1
+                continue
+
+            stable_key = hashlib.sha256(
+                f"{dataset_id}\n{content}".encode("utf-8")
+            ).hexdigest()[:20]
+            chunk_id = f"EXT-{dataset_slug}-{stable_key}"
+            chunk = KnowledgeChunk(
+                chunk_id=chunk_id,
+                collection="mental_wellness",
+                category="emotional_support",
+                title=f"Unreviewed mental-wellness example: {question[:100]}",
+                content=content,
+                source_name=source_name,
+                license=license_name,
+                origin_url=origin_url,
+                approved_by_admin=False,
+                metadata={
+                    "dataset_id": dataset_id,
+                    "record_id": str(record.get("record_id") or ""),
+                    "source_file": str(record.get("source_file") or ""),
+                    "review_required": True,
+                    "review_note": (
+                        "External dialogue example; not verified as clinical guidance. "
+                        "Review for safety, privacy, provenance, and licensing before approval."
+                    ),
+                },
+            )
+            self.mental_wellness_store[chunk_id] = chunk
+            self.content_hashes.add(content_hash)
+            ingested += 1
+
+        self.ingestion_stats["mental_wellness_chunks_count"] = len(self.mental_wellness_store)
+        self.ingestion_stats["total_chunks_indexed"] = (
+            len(self.medical_store) + len(self.mental_wellness_store)
+        )
         self.persist()
         return ingested
 

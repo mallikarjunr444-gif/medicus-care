@@ -1,0 +1,11 @@
+# Keep Indic-Speak in its own Python environment: its Transformers 5 stack
+# conflicts with backend/requirements.txt and the MuseTalk/Torch 2.2 stack.
+# These are the dependencies documented by Bodhan AI plus the local HTTP worker.
+torch>=2.6
+transformers>=5,<6
+snac
+numpy
+soundfile
+huggingface_hub
+fastapi
+uvicorn[standard]

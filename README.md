@@ -65,7 +65,7 @@ Deterministic 4-level clinical triage screener running inline on every patient t
 
 * **Supported Languages**: English, Kannada (ಕನ್ನಡ), and Hindi (हिन्दी).
 * **Speech-to-Text (STT)**: `faster-whisper` (`large-v3-turbo`) with CTranslate2 for ultra-fast medical transcription, with `AI4Bharat IndicConformer` for vernacular Indian dialects.
-* **Text-to-Speech (TTS)**: Flow-matching `AI4Bharat IndicF5` and Edge-TTS for warm, reassuring regional pronunciation with zero per-minute SaaS fees.
+* **Text-to-Speech (TTS)**: English keeps the existing configured voice path. Hindi and Kannada route to a separately self-hosted AI4Bharat/Bodhan Indic-Speak worker (`Amit`/`Kavya`; `Adarsh`/`Deepika`) and never silently fall back to an English or hosted voice. See [`documentation/indic_speak_local_setup.md`](documentation/indic_speak_local_setup.md).
 * **Voice Activity Detection (VAD)**: Real-time neural speech boundary detection using local ONNX `silero-vad` (5-10ms latency) supporting instant barge-in interruption.
 
 ---
@@ -115,6 +115,12 @@ npm install
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 3. Hindi/Kannada TTS (local worker required for those languages)
+
+Follow [`documentation/indic_speak_local_setup.md`](documentation/indic_speak_local_setup.md)
+to run the gated Indic-Speak weights in an isolated Python environment. The
+main backend's Torch/Transformers environment is intentionally unchanged.
 
 ---
 

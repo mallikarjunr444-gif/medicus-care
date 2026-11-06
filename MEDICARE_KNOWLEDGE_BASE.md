@@ -32,6 +32,30 @@ The wellness collection retains the existing ESConv and CACTUS materials for
 supportive communication patterns. They are not treated as authoritative
 clinical guidance. Uploaded documents remain unapproved until reviewed.
 
+## Importing additional mental-wellness datasets
+
+The app's retrieval knowledge base is a JSON RAG index, not the PostgreSQL
+application database. New dialogue examples can be staged with
+`backend/scripts/ingest_mental_wellness.py`; every imported chunk is marked
+`approved_by_admin=false`, so it cannot enter patient retrieval until reviewed
+and approved in the Admin Knowledge Console. The importer accepts downloaded
+Kaggle ZIPs or extracted folders and defaults to inspecting at most 2,000 rows.
+
+```bash
+python backend/scripts/ingest_mental_wellness.py \
+  --source kaggle-mental-health --path ~/Downloads/mental-health.zip
+python backend/scripts/ingest_mental_wellness.py \
+  --source kaggle-counseling --path /path/to/mental-health-counseling.zip
+```
+
+The two Kaggle sources above declare CC BY 4.0 and MIT, respectively. Imported
+Q&A must still be checked for provenance, privacy, unsafe advice, and quality.
+`samhog/psychology-10k` is not imported because its Hugging Face metadata does
+not declare a license. `li-lab/MentalHealthBenchX` is also excluded from RAG:
+its own card says it is evaluation-only and must not be used for training; use
+it only in an isolated benchmark workflow. Do not use benchmark answers as
+retrieval context.
+
 ## Safety and limits
 
 These references can be incomplete or out of date and do not replace current

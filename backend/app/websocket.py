@@ -1151,10 +1151,23 @@ class ConnectionManager:
                     raise
                 except Exception as e:
                     logger.error("TTS chunk %s failed [%s]: %s", chunk_index, session_id, e)
-                    await self.send_message(session_id, {
-                        "type": "audio_error",
-                        "message": "One part of the spoken reply could not be synthesized.",
-                    })
+                    if language in {"hi", "kn"}:
+                        language_label = "Hindi" if language == "hi" else "Kannada"
+                        audio_error_message = (
+                            f"Local {language_label} voice could not be generated. "
+                            "Check that the Indic-Speak worker is running and has model access."
+                        )
+                    else:
+                        audio_error_message = (
+                            "One part of the spoken reply could not be synthesized."
+                        )
+                    await self.send_message(
+                        session_id,
+                        {
+                            "type": "audio_error",
+                            "message": audio_error_message,
+                        },
+                    )
                     tmp_audio.unlink(missing_ok=True)
                     tmp_video.unlink(missing_ok=True)
 

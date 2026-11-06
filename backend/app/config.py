@@ -141,6 +141,10 @@ class Settings(BaseSettings):
     # TTS Configuration
     # chatterbox: Resemble AI's open-source SOTA TTS (default, voice cloning + 23 langs)
     TTS_PROVIDER: str = "chatterbox"
+    # Hindi and Kannada use the isolated, local Indic-Speak worker. Keep its
+    # Transformers 5 / newer Torch stack out of the MuseTalk backend venv.
+    INDIC_SPEAK_URL: str = "http://127.0.0.1:8001"
+    INDIC_SPEAK_TIMEOUT_SECONDS: float = 300.0
 
     # Security
     # Union[..., str] lets pydantic-settings keep a non-JSON env value as a
