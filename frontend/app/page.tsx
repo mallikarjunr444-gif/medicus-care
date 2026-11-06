@@ -27,6 +27,7 @@ import type { DoctorId } from '@/lib/doctorTypes'
 import { useStore } from '@/store/useStore'
 import { Reveal } from '@/components/ui/reveal'
 import MeadowRiseFooter from '@/components/ui/meadow-rise-footer'
+import { MedicalInfoSection } from '@/components/interactive/MedicalInfoSection'
 
 const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
@@ -213,6 +214,8 @@ export default function Home() {
             <PatientLandingHero onSelectDoctor={handleStartDoctorConsultation} />
 
             <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
+
+            <MedicalInfoSection />
 
             <section className="border-y border-[#e1e9e4] bg-white">
               <div className="mx-auto grid max-w-7xl gap-6 px-4 py-9 sm:grid-cols-3 sm:px-6 sm:py-11">
