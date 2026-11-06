@@ -35,10 +35,6 @@ const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
   { ssr: false, loading: () => <PanelLoader label="Preparing doctor profiles" /> },
 )
-const LiquidGlassLogoReveal = dynamic(
-  () => import('@/components/ui/liquid-glass-logo-reveal').then((m) => m.LiquidGlassLogoReveal),
-  { ssr: false, loading: () => <div className="h-80 w-full animate-pulse rounded-3xl bg-slate-100" /> },
-)
 const DoctorVideoCall = dynamic(
   () => import('@/components/doctor/DoctorVideoCall').then((m) => m.DoctorVideoCall),
   { ssr: false, loading: () => <PanelLoader label="Preparing your consultation" /> },
@@ -284,29 +280,6 @@ export default function Home() {
                 <button type="button" onClick={() => navigate('consultation')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-[#124b43] transition hover:bg-[#eaf4ef]">
                   Talk to a doctor <ArrowRight size={15} aria-hidden="true" />
                 </button>
-              </div>
-            </section>
-
-            <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20">
-              <div className="flex flex-col items-center justify-center text-center rounded-3xl border border-[#dce8e0] bg-white/70 p-6 sm:p-10 shadow-sm backdrop-blur-sm">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#d5e4da] bg-white px-3 py-1 text-xs font-semibold text-[#0f7565] shadow-xs mb-3">
-                  Interactive Brand Reveal
-                </span>
-                <h2 className="text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">
-                  Optics, physics, and care in motion
-                </h2>
-                <p className="mt-2 text-sm text-[#5f746d] max-w-lg">
-                  A water droplet condenses and spreads into a liquid-glass tile with real Snell refraction and chromatic dispersion. Click anywhere on the tile to replay.
-                </p>
-                <div className="mt-6 w-full max-w-xl rounded-2xl border border-[#e1ece5] bg-[#f5f8f6] p-2 sm:p-4 shadow-inner">
-                  <LiquidGlassLogoReveal
-                    src="/medicare-logo.jpg"
-                    alt="MediCare Logo Reveal"
-                    height={300}
-                    className="w-full"
-                    theme="light"
-                  />
-                </div>
               </div>
             </section>
 
