@@ -10,8 +10,6 @@ import {
   RotateCcw,
   WifiOff,
 } from 'lucide-react'
-import { GlowEffect } from '@/components/ui/glow-effect'
-import { AudioFrequencyVisualizer } from '@/components/ui/audio-frequency-visualizer'
 import { VoiceOrb } from '@/components/ui/voice-orb'
 
 interface PhotorealisticDigitalHumanProps {
@@ -356,66 +354,6 @@ export function PhotorealisticDigitalHuman({
           </button>
         </div>
       )}
-
-      {/* Doctor identity with 21st.dev GlowEffect */}
-      <div className="absolute top-4 left-4 z-20 group">
-        <GlowEffect
-          colors={doctorId === 'dr_ananya' ? ['#7c3aed', '#2563eb', '#06b6d4'] : ['#0284c7', '#0d9488', '#10b981']}
-          mode="rotate"
-          blur="strong"
-          duration={8}
-          className="rounded-2xl"
-        >
-          <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/15 shadow-2xl text-white">
-            <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-teal-500 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
-                {doctorId === 'dr_ananya' ? 'An' : 'Sm'}
-              </div>
-              <span
-                className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900 ${
-                  doctorState === 'speaking'
-                    ? 'bg-sky-400 animate-ping'
-                    : doctorState === 'listening'
-                    ? 'bg-emerald-400 animate-pulse'
-                    : doctorState === 'thinking'
-                    ? 'bg-amber-400 animate-pulse'
-                    : 'bg-emerald-500'
-                }`}
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-white tracking-tight leading-none">
-                  {doctor.formalTitle}
-                </span>
-              </div>
-              <span className="text-xs text-teal-300/90 block mt-0.5 font-medium">{doctor.specialty}</span>
-            </div>
-          </div>
-        </GlowEffect>
-      </div>
-
-      {/* Real-Time Doctor Audio Visualizer & State Pill (Top Center) */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-        <AudioFrequencyVisualizer
-          state={
-            doctorState === 'speaking'
-              ? 'speaking'
-              : doctorState === 'listening'
-              ? 'listening'
-              : doctorState === 'thinking'
-              ? 'thinking'
-              : doctorState === 'interrupted'
-              ? 'interrupted'
-              : 'idle'
-          }
-          audioLevel={fallbackSpeechLevel}
-          barCount={16}
-          showBadge={true}
-          className="shadow-2xl border-white/15 bg-slate-950/85"
-        />
-      </div>
 
       {/* VoiceOrb Visual Feedback when Doctor is Attentively Listening */}
       {doctorState === 'listening' && (
