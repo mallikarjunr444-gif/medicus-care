@@ -36,7 +36,8 @@ uv sync --project "$MLX_DIR"
 
 echo "Downloading the converted MLX runtime weights from Hugging Face..."
 FLIP_MLX_WEIGHTS_REVISION="$MLX_WEIGHTS_REVISION" \
-  uv run --project "$MLX_DIR" python scripts/download_mlx_weights.py --revision "$MLX_WEIGHTS_REVISION"
+  uv run --project "$MLX_DIR" python "$MLX_DIR/scripts/download_mlx_weights.py" \
+    --revision "$MLX_WEIGHTS_REVISION"
 
 echo "Verifying the isolated runtime..."
 "$MLX_DIR/.venv/bin/python" -c 'import mlx.core as mx; print("MLX available; Metal backend:", mx.default_device())'
