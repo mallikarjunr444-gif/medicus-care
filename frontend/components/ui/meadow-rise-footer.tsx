@@ -1963,3 +1963,4 @@ export default function MeadowRiseFooter({
     </footer>
   )
 }
+
