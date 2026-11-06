@@ -6,6 +6,8 @@ import type { DoctorId } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
 import { GlowEffect } from '@/components/ui/glow-effect'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { AuroraBackground } from '@/components/ui/aurora-background'
+import { GradientText } from '@/components/ui/gradient-text'
 
 const featuredAssistants: { id: DoctorId; image: string; alt: string; focus: string }[] = [
   {
@@ -25,8 +27,7 @@ const featuredAssistants: { id: DoctorId; image: string; alt: string; focus: str
 export function PatientLandingHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId) => void }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-[#e1e9e4] bg-[#edf5f0]">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-36 -z-10 h-[30rem] w-[30rem] rounded-full bg-[#dcece2] blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-40 left-[28%] -z-10 h-80 w-80 rounded-full bg-white/80 blur-3xl" />
+      <AuroraBackground />
 
       <div className="mx-auto grid max-w-7xl items-center gap-9 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[.95fr_1.05fr] lg:gap-14 lg:py-[4.5rem]">
         <div className="max-w-2xl">
@@ -34,7 +35,7 @@ export function PatientLandingHero({ onSelectDoctor }: { onSelectDoctor: (id: Do
             <MessageCircle size={14} aria-hidden="true" /> Thoughtful care, one conversation at a time
           </span>
           <h1 className="mt-5 text-[2.75rem] font-semibold leading-[1.02] tracking-[-.055em] text-[#173a35] sm:text-6xl lg:text-[4.4rem]">
-            Care begins when you feel <span className="font-accent font-normal italic text-[#0f7565]">heard.</span>
+            Care begins when you feel <GradientText className="font-accent font-normal italic">heard.</GradientText>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-[#536a63] sm:text-lg sm:leading-8">
             Talk or type about what is on your mind. Choose an AI care assistant and continue in Kannada, English, or Hindi.

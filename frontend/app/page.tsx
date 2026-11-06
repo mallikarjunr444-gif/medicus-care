@@ -28,6 +28,7 @@ import { useStore } from '@/store/useStore'
 import { Reveal } from '@/components/ui/reveal'
 import MeadowRiseFooter from '@/components/ui/meadow-rise-footer'
 import { MedicalInfoSection } from '@/components/interactive/MedicalInfoSection'
+import { StatsSection } from '@/components/interactive/StatsSection'
 
 const DoctorShowcaseSection = dynamic(
   () => import('@/components/interactive/DoctorShowcaseSection').then((m) => m.DoctorShowcaseSection),
@@ -212,6 +213,8 @@ export default function Home() {
         {view === 'home' && (
           <div className="animate-fade-in">
             <PatientLandingHero onSelectDoctor={handleStartDoctorConsultation} />
+
+            <StatsSection />
 
             <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
 
