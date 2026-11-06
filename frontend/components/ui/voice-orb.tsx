@@ -136,7 +136,10 @@ export function VoiceOrb({
             if (sample) {
               current.analyser.getByteTimeDomainData(sample);
               let sum = 0;
-              for (const byte of sample) sum += ((byte - 128) / 128) ** 2;
+              for (let i = 0; i < sample.length; i++) {
+                const byte = sample[i];
+                sum += ((byte - 128) / 128) ** 2;
+              }
               target.set(level(Math.sqrt(sum / sample.length) * 3));
             }
           }

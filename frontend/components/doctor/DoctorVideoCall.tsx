@@ -43,6 +43,7 @@ import {
 import { PhotorealisticDigitalHuman } from './PhotorealisticDigitalHuman'
 import { attachAudioAnalyser, setAudioOutputMuted } from '@/lib/audioEnergy'
 import { PatientWebcamPiP } from '../video/PatientWebcamPiP'
+import { VoiceOrb } from '@/components/ui/voice-orb'
 import { useDoctorSpeech } from './useDoctorSpeech'
 import { useConsultationSpeechRecognition } from './useConsultationSpeechRecognition'
 import { api } from '@/lib/api'
@@ -998,7 +999,16 @@ export function DoctorVideoCall({
                 }`}
                 title="Speak naturally. Pause when you finish and the doctor will reply."
               >
-                {voiceInput.isEnabled ? <Mic size={17} /> : <MicOff size={17} />}
+                {voiceInput.isEnabled ? (
+                  <VoiceOrb
+                    activity={Math.min(1, Math.max(0.2, audioLevel * 2))}
+                    colors={['#0e6257', '#5eead4', '#064e3b']}
+                    className="w-5 h-5 shrink-0"
+                    speed={1.5}
+                  />
+                ) : (
+                  <MicOff size={17} />
+                )}
                 <span className="hidden sm:inline">{voiceInput.isEnabled ? (isListeningSpeech ? 'Listening' : 'Mic on') : 'Start speaking'}</span>
               </button>
 

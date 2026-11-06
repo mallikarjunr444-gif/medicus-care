@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { GlowEffect } from '@/components/ui/glow-effect'
 import { AudioFrequencyVisualizer } from '@/components/ui/audio-frequency-visualizer'
+import { VoiceOrb } from '@/components/ui/voice-orb'
 
 interface PhotorealisticDigitalHumanProps {
   doctorId: DoctorId
@@ -415,6 +416,23 @@ export function PhotorealisticDigitalHuman({
           className="shadow-2xl border-white/15 bg-slate-950/85"
         />
       </div>
+
+      {/* VoiceOrb Visual Feedback when Doctor is Attentively Listening */}
+      {doctorState === 'listening' && (
+        <div className="absolute bottom-6 right-6 z-20 flex flex-col items-center gap-1.5 pointer-events-none transition-all duration-300">
+          <div className="relative flex items-center justify-center p-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-emerald-500/30 shadow-xl shadow-emerald-950/50">
+            <VoiceOrb
+              activity={Math.min(1, Math.max(0.18, fallbackSpeechLevel * 1.5))}
+              colors={doctorId === 'dr_ananya' ? ['#0d9488', '#99f6e4', '#042f2e'] : ['#0e6257', '#5eead4', '#064e3b']}
+              className="w-16 h-16 sm:w-20 sm:h-20"
+              speed={1.2}
+            />
+          </div>
+          <span className="text-[11px] font-semibold text-emerald-300 tracking-wide bg-slate-950/85 px-2.5 py-0.5 rounded-full border border-emerald-500/20 backdrop-blur-sm shadow-md">
+            Doctor listening…
+          </span>
+        </div>
+      )}
 
       {/* Doctor Live Subtitles (Bottom Center) */}
       {subtitles && (
