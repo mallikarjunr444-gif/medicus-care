@@ -49,7 +49,6 @@ import { useConsultationSpeechRecognition } from './useConsultationSpeechRecogni
 import { api } from '@/lib/api'
 import { useDoctorBackendSession } from './useDoctorBackendSession'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
-import { AudioFrequencyVisualizer } from '@/components/ui/audio-frequency-visualizer'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
 import { SpecialistBookingModal, type Specialist } from './SpecialistBookingModal'
