@@ -4,8 +4,8 @@ Text-to-Speech service backed by Chatterbox Multilingual (Resemble AI).
 Replaces the deprecated Coqui XTTS v2. Voice profile WAVs in `voice_profiles/`
 remain compatible — Chatterbox accepts any WAV reference for zero-shot cloning.
 
-Hindi/Kannada route only to the self-hosted Indic-Speak worker. For other
-languages the configured provider/fallback chain is:
+Hindi/Kannada try the self-hosted Indic-Speak worker first, then fall back to
+language-correct Edge neural voices and gTTS. For other languages the chain is:
 
     configured provider / chatterbox → edge-tts → gTTS
 
@@ -75,6 +75,7 @@ _EDGE_VOICES = {
 _EDGE_VOICES_BY_GENDER = {
     "en": {"female": "en-IN-NeerjaNeural", "male": "en-IN-PrabhatNeural"},
     "kn": {"female": "kn-IN-SapnaNeural", "male": "kn-IN-GaganNeural"},
+    "hi": {"female": "hi-IN-SwaraNeural", "male": "hi-IN-MadhurNeural"},
 }
 
 # Older configs may still say "coqui"/"xtts" (the engine Chatterbox replaced).
@@ -162,17 +163,35 @@ class TTSService:
         """
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
-        # Hindi and Kannada must never silently go through an English or
-        # network fallback. The local Indic-Speak worker returns the exact WAV
-        # that is then streamed to the browser and passed to the avatar.
+        # Hindi and Kannada: prefer the self-hosted Indic-Speak worker when it is running, but
+        # never leave the patient in silence when it is not (it needs a GPU machine). The
+        # fallbacks below are free and always speak the *correct* language: Microsoft neural
+        # Hindi/Kannada voices (male/female per doctor), then Google TTS. An English voice is
+        # never substituted.
         language_code = (language or "en").split("-")[0].lower()
         if language_code in {"hi", "kn"}:
-            return await self._indic_speak(
-                text=text,
-                output_path=output_path,
-                language=language_code,
-                voice_gender=voice_gender,
-            )
+            try:
+                return await self._indic_speak(
+                    text=text,
+                    output_path=output_path,
+                    language=language_code,
+                    voice_gender=voice_gender,
+                )
+            except ValueError:
+                raise  # corrupted/invalid text must never be spoken by a fallback
+            except Exception as indic_err:
+                logger.warning(
+                    "Indic-Speak unavailable for %s (%s); using free neural-voice fallback",
+                    language_code,
+                    indic_err,
+                )
+            try:
+                await self._edge_fallback(text, output_path, language_code, voice_gender)
+                return SynthResult(output_path, "edge-tts", True, False)
+            except Exception as edge_err:
+                logger.warning("Edge TTS failed for %s (%s); trying gTTS", language_code, edge_err)
+            await self._gtts_fallback(text, output_path, language_code)
+            return SynthResult(output_path, "gtts", True, False)
 
         # Preserve the existing English/other-language male voice path.
         if voice_gender == "male":
