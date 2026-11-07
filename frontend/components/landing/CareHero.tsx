@@ -45,6 +45,23 @@ export function CareHero({ onSelectDoctor }: Readonly<CareHeroProps>) {
             </div>
           </div>
         </div>
+        <div className="relative mt-14 overflow-hidden bg-[#101611] shadow-[0_24px_70px_rgba(17,20,13,.14)] sm:mt-20">
+          <video
+            className="aspect-video w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label="A calm visual introduction to Medicus Care"
+          >
+            <source src="/landing/care-hero.mp4" type="video/mp4" />
+          </video>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#101611]/35 via-transparent to-white/5" />
+          <div className="pointer-events-none absolute bottom-4 left-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75 sm:bottom-6 sm:left-6">
+            Care that starts with listening
+          </div>
+        </div>
         <div className="mt-14 grid border-y border-[#dfe5dc] sm:grid-cols-3">
           {features.map(([title, description], index) => (
             <div key={title} className={`py-5 sm:px-5 ${index > 0 ? 'border-t border-[#dfe5dc] sm:border-l sm:border-t-0' : ''}`}>
