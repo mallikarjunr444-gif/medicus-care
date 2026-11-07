@@ -426,13 +426,13 @@
 
 /* iPhone Duo with two hands: V-fold opening, Neuro Pulse scene inside. */
 @keyframes duo-v-left {
-  0%   { transform: rotateY(-36deg); }
-  60%  { transform: rotateY(-10deg); }
+  0%   { transform: rotateY(-48deg); }
+  60%  { transform: rotateY(-14deg); }
   100% { transform: rotateY(0deg); }
 }
 @keyframes duo-v-right {
-  0%   { transform: rotateY(36deg); }
-  60%  { transform: rotateY(10deg); }
+  0%   { transform: rotateY(48deg); }
+  60%  { transform: rotateY(14deg); }
   100% { transform: rotateY(0deg); }
 }
 @keyframes duo-v-stage {
@@ -453,15 +453,33 @@
   transform-style: preserve-3d;
 }
 .duo-v-right {
-  animation: duo-v-right 2.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation:
+    duo-v-right 2.3s cubic-bezier(0.22, 1, 0.36, 1) both,
+    duo-v-blur 2.3s cubic-bezier(0.22, 1, 0.36, 1) both;
   transform-origin: left center;
   transform-style: preserve-3d;
 }
 .duo-v-stage {
   animation: duo-v-stage 2.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+.duo-v-hinge {
+  position: absolute;
+  z-index: 2;
+  top: 2%;
+  bottom: 3%;
+  left: 50.9%;
+  width: 12px;
+  pointer-events: none;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(21, 27, 23, 0.22) 48%, rgba(255, 255, 255, 0.22) 58%, transparent);
+  animation: duo-v-hinge 2.3s ease-out both;
+}
+@keyframes duo-v-hinge {
+  0%, 25% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .duo-v-left, .duo-v-right, .duo-v-stage { animation: none; transform: none; }
+  .duo-v-left, .duo-v-right, .duo-v-stage, .duo-v-hinge { animation: none; transform: none; }
 }
 
 /* Kept for other hero variants that reveal the whole screen. */
