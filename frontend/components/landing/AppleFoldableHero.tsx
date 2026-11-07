@@ -74,6 +74,37 @@ export function AppleFoldableHero({
             />
           </div>
           <div className="duo-v-hinge" aria-hidden="true" />
+          <div className="duo-v-top-frame" aria-hidden="true">
+            <svg viewBox="0 0 664 370" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="duo-top-frame-metal" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#b9bdc0" />
+                  <stop offset="20%" stopColor="#55595d" />
+                  <stop offset="78%" stopColor="#222427" />
+                  <stop offset="100%" stopColor="#909498" />
+                </linearGradient>
+                <linearGradient id="duo-top-frame-glass" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#303235" />
+                  <stop offset="100%" stopColor="#111214" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M122 22 C122 8 131 1 144 2 L315 25 Q332 27 349 25 L520 2 C533 1 542 8 542 22 L541 34 C541 21 534 13 521 14 L350 38 Q332 40 314 38 L143 14 C130 13 123 21 123 34 Z"
+                fill="url(#duo-top-frame-metal)"
+              />
+              <path
+                d="M126 22 C126 12 133 5 144 6 L315 29 Q332 31 349 29 L520 6 C531 5 538 12 538 22 L537 29 C537 21 531 16 520 17 L350 35 Q332 37 314 35 L144 17 C133 16 127 21 127 29 Z"
+                fill="url(#duo-top-frame-glass)"
+              />
+              <path
+                d="M133 8 C137 4 141 3 148 4 L315 26 Q332 28 349 26 L516 4 C523 3 527 4 531 8"
+                fill="none"
+                stroke="rgba(255,255,255,0.72)"
+                strokeLinecap="round"
+                strokeWidth="1.5"
+              />
+            </svg>
+          </div>
           <div className="duo-v-device-cta">
             <span className="duo-device-cta-copy">
               <strong>Free to start · ₹0</strong>
