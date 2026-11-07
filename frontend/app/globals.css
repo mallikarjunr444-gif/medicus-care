@@ -366,8 +366,6 @@
   z-index: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-
 /* React Bits-style shiny text: a sheen that sweeps across the glyphs. */
 .shiny-text {
   background-image: linear-gradient(110deg, #326357 0%, #326357 35%, #8fe0cc 50%, #326357 65%, #326357 100%);
