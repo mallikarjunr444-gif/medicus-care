@@ -4,7 +4,7 @@ import Image from 'next/image'
 /** Image-led closing invitation, using the supplied reference artwork. */
 export function CtaBanner({ onStart }: Readonly<{ onStart: () => void }>) {
   return (
-    <section className="relative isolate min-h-[30rem] overflow-hidden bg-[#0f150a] text-white sm:min-h-[36rem]">
+    <section className="relative isolate min-h-[calc(100svh-4rem)] overflow-hidden bg-[#0f150a] text-white sm:min-h-[calc(100svh-4.5rem)]">
       <picture className="absolute inset-0 -z-10 block">
         <source media="(max-width: 640px)" srcSet="/landing/care-cta-mobile.webp" />
         <Image
@@ -16,7 +16,7 @@ export function CtaBanner({ onStart }: Readonly<{ onStart: () => void }>) {
         />
       </picture>
       <div className="absolute inset-0 -z-[5] bg-[linear-gradient(90deg,rgba(8,12,9,.9)_0%,rgba(8,12,9,.62)_42%,rgba(8,12,9,.12)_100%)]" />
-      <div className="relative mx-auto flex min-h-[30rem] max-w-7xl flex-col justify-end px-4 py-12 sm:min-h-[36rem] sm:px-6 sm:py-16 lg:justify-center lg:py-20">
+      <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl flex-col justify-end px-4 py-12 sm:min-h-[calc(100svh-4.5rem)] sm:px-6 sm:py-16 lg:justify-end lg:py-20">
         <div className="max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#b8d39a]">A starting point, not a diagnosis</p>
           <h2 className="mt-4 max-w-lg font-display text-4xl font-medium leading-[.96] tracking-[-.045em] text-white sm:text-6xl">
