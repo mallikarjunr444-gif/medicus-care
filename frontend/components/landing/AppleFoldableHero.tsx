@@ -75,14 +75,26 @@ export function AppleFoldableHero({
           </div>
           <div className="duo-v-hinge" aria-hidden="true" />
           <div className="duo-v-top-frame" aria-hidden="true">
-            <Image
-              src="/landing/apple-duo-device-transparent.png"
-              alt=""
-              fill
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-contain"
-              priority
-            />
+            <svg viewBox="0 0 664 370" preserveAspectRatio="none">
+              <path
+                d="M123 21 C123 11 132 5 144 6 L315 28 Q332 30 349 28 L520 6 C532 5 541 11 541 21 L540 29 C540 20 533 14 521 15 L350 35 Q332 37 314 35 L143 15 C131 14 124 20 124 29 Z"
+                fill="#25282a"
+              />
+              <path
+                d="M130 18 C133 12 138 9 145 10 L315 31 Q332 33 349 31 L519 10 C526 9 531 12 534 18"
+                fill="none"
+                stroke="#b8bdc0"
+                strokeLinecap="round"
+                strokeWidth="2"
+              />
+              <path
+                d="M132 22 C135 18 139 16 145 17 L315 37 Q332 39 349 37 L519 17 C525 16 529 18 532 22"
+                fill="none"
+                stroke="#111315"
+                strokeLinecap="round"
+                strokeWidth="3"
+              />
+            </svg>
           </div>
           <div className="duo-v-device-cta">
             <span className="duo-device-cta-copy">
