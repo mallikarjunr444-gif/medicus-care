@@ -47,19 +47,19 @@ export function AppleFoldableHero({
 
         <div
           key={replay}
-          role="group"
-          aria-label="A foldable phone held open by two hands, displaying Medicus Care."
+          role="img"
+          aria-label="A complete foldable phone frame held open by two hands, showing Medicus Care."
           className="duo-v-stage relative mx-auto mt-6 w-full sm:mt-8"
-          style={{ aspectRatio: '664 / 370', perspective: '1500px' }}
+          style={{ aspectRatio: '664 / 300', perspective: '1500px' }}
         >
           {/* left half (left hand + left screen) */}
           <div className="duo-v-left absolute left-0 top-0 h-full w-[50.9%]">
             <Image
-              src="/landing/apple-duo-left-transparent.png"
+              src="/landing/duo-base.png"
               alt=""
               fill
               sizes="(max-width: 1024px) 51vw, 460px"
-              className="object-contain"
+              className="object-cover object-left"
               priority
             />
             <div className="duo-v-screen duo-v-screen-left" aria-hidden="true">
@@ -81,11 +81,11 @@ export function AppleFoldableHero({
           {/* right half (right hand + right screen) */}
           <div className="duo-v-right absolute left-[50.9%] top-0 h-full w-[49.1%]">
             <Image
-              src="/landing/apple-duo-right-transparent.png"
+              src="/landing/duo-base.png"
               alt=""
               fill
               sizes="(max-width: 1024px) 49vw, 440px"
-              className="object-contain"
+              className="object-cover object-right"
               priority
             />
             <div className="duo-v-screen duo-v-screen-right" aria-hidden="true">
@@ -102,22 +102,23 @@ export function AppleFoldableHero({
             </div>
           </div>
           <div className="duo-v-hinge" aria-hidden="true" />
-          <div className="duo-v-device-cta">
-            <span className="duo-device-cta-copy">
-              <strong>Free to start · ₹0</strong>
-              <small>Private Medicus AI care</small>
-            </span>
+        </div>
+
+        <div className="mt-3 flex flex-col items-center gap-2.5">
+          <div className="flex w-fit items-center gap-5 rounded-full border border-[#d2d2d7]/80 bg-[#f5f5f7]/90 py-2 pl-5 pr-2 shadow-[0_4px_24px_rgba(0,0,0,0.06)] backdrop-blur-xl">
+            <div className="text-left">
+              <p className="text-[12px] font-semibold tracking-tight text-[#1d1d1f]">Free to start · ₹0</p>
+              <p className="text-[11px] text-[#86868b]">AI care in Kannada, Hindi &amp; English</p>
+            </div>
             <button
               type="button"
               onClick={() => onSelectDoctor('dr_ananya')}
-              className="duo-device-cta-button"
+              className="rounded-full bg-[#6B8F3E] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_10px_rgba(68,104,48,0.2)] transition-all hover:bg-[#5f7d38] active:scale-95"
             >
               Start free
             </button>
           </div>
-        </div>
 
-        <div className="mt-2 flex justify-center">
           <button
             type="button"
             onClick={() => setReplay((r) => r + 1)}
