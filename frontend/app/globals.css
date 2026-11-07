@@ -504,6 +504,10 @@
   transform-origin: left center;
   transform-style: preserve-3d;
 }
+.duo-v-left,
+.duo-v-right {
+  overflow: hidden;
+}
 .duo-v-stage {
   animation: duo-v-stage 2.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
