@@ -84,17 +84,17 @@
      Rule 4: no gradients. Depth comes from a hairline border and the
      lightest shadow, never from a colour ramp. */
   .card {
-    @apply rounded-xl border border-gray-200 bg-white shadow-xs;
+    @apply rounded-2xl border border-[#dfe8e2] bg-white/95 shadow-[0_8px_30px_-18px_rgba(15,76,61,.38)] backdrop-blur-sm;
   }
 
   /* The 2% black tint the system uses instead of a tinted background. */
   .card-tint {
-    @apply rounded-xl border border-gray-200 shadow-xs;
-    background: rgba(0, 0, 0, .02);
+    @apply rounded-2xl border border-[#dfe8e2] shadow-[0_8px_30px_-18px_rgba(15,76,61,.24)];
+    background: rgba(237, 245, 240, .7);
   }
 
   .card-hover {
-    @apply transition-shadow duration-200 hover:shadow-sm;
+    @apply transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#b9d4c7] hover:shadow-[0_18px_40px_-22px_rgba(15,76,61,.5)];
   }
 
   .page-surface {
@@ -120,17 +120,17 @@
 
   /* ── Controls — 8px radius per rule 5 ─────────────────────────────────── */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5
-           text-sm font-medium transition-colors duration-150
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-semibold transition-[background-color,box-shadow,transform] duration-200
            disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn bg-primary-600 text-white shadow-xs hover:bg-primary-700;
+    @apply btn bg-[#0f6257] text-white shadow-[0_8px_18px_-10px_rgba(15,98,87,.8)] hover:-translate-y-0.5 hover:bg-[#0b5149] hover:shadow-[0_14px_24px_-12px_rgba(15,98,87,.8)];
   }
 
   .btn-secondary {
-    @apply btn border border-gray-300 bg-white text-gray-700 shadow-xs hover:bg-gray-50;
+    @apply btn border border-[#d8e5dc] bg-white text-[#45645d] shadow-sm hover:-translate-y-0.5 hover:border-[#b9d4c7] hover:bg-[#f5faf7];
   }
 
   .btn-ghost {
@@ -142,9 +142,9 @@
   }
 
   .btn-icon {
-    @apply inline-flex h-10 w-10 items-center justify-center rounded-md
-           border border-gray-300 bg-white text-gray-600 shadow-xs
-           transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900
+      @apply inline-flex h-10 w-10 items-center justify-center rounded-xl
+        border border-[#d8e5dc] bg-white text-gray-600 shadow-sm
+        transition-[background-color,border-color,color,transform] duration-150 hover:-translate-y-0.5 hover:border-[#b9d4c7] hover:bg-[#f5faf7] hover:text-gray-900
            disabled:cursor-not-allowed disabled:opacity-50;
   }
 
@@ -157,10 +157,10 @@
 
   /* Shared form control used in history, settings, and voice tools. */
   .input-field {
-    @apply w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5
-           text-sm text-gray-800 shadow-xs placeholder:text-gray-400
-           transition-colors focus:border-primary-400 focus:outline-none
-           focus:ring-4 focus:ring-primary-100;
+      @apply w-full rounded-xl border border-[#d8e5dc] bg-white px-3.5 py-2.5
+        text-sm text-gray-800 shadow-[0_2px_8px_rgba(15,76,61,.03)] placeholder:text-gray-400
+        transition-[border-color,box-shadow] focus:border-[#7ab39f] focus:outline-none
+        focus:ring-4 focus:ring-[#dff1e8];
   }
 
   .label {

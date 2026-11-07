@@ -57,11 +57,11 @@ const AdminKnowledgeDashboard = dynamic(
   { ssr: false, loading: () => <PanelLoader label="Loading knowledge console" /> },
 )
 
-function PanelLoader({ label }: { label: string }) {
+function PanelLoader({ label }: Readonly<{ label: string }>) {
   return (
-    <div className="flex min-h-56 flex-col items-center justify-center gap-3 text-sm text-slate-500">
-      <span className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-100 border-t-emerald-700" />
-      <span>{label}…</span>
+    <div className="flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-[#dfe8e2] bg-white/80 text-sm text-[#60736e] shadow-[0_8px_30px_-18px_rgba(15,76,61,.38)]">
+      <span className="h-9 w-9 animate-spin rounded-full border-2 border-[#d9eee4] border-t-[#0f6257]" />
+      <span className="font-medium">{label}…</span>
     </div>
   )
 }
@@ -381,12 +381,12 @@ export default function Home() {
   )
 }
 
-function PageFrame({ children, eyebrow, title, description }: { children: React.ReactNode; eyebrow: string; title: string; description: string }) {
+function PageFrame({ children, eyebrow, title, description }: Readonly<{ children: React.ReactNode; eyebrow: string; title: string; description: string }>) {
   return (
     <section className="mx-auto min-h-[calc(100dvh-4.25rem)] max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
       <div className="mb-7 max-w-2xl sm:mb-9">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">{eyebrow}</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1c3c36] sm:text-4xl">{title}</h1>
+        <p className="inline-flex rounded-full border border-[#d8e5dc] bg-[#edf6f1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f6257]">{eyebrow}</p>
+        <h1 className="mt-4 font-display text-4xl font-medium tracking-[-.035em] text-[#183331] sm:text-5xl">{title}</h1>
         <p className="mt-2 text-sm leading-6 text-[#687b74]">{description}</p>
       </div>
       {children}
