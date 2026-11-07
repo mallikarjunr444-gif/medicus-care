@@ -509,8 +509,8 @@
 }
 .duo-v-screen {
   position: absolute;
-  top: 4.5%;
-  bottom: 24%;
+  top: 3.2%;
+  bottom: 8.5%;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -779,6 +779,14 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .duo-v-left, .duo-v-right, .duo-v-stage, .duo-v-hinge { animation: none; transform: none; }
+  .duo-brand-word > span,
+  .duo-brand-accent > span { animation: none; transform: none; clip-path: none; filter: none; opacity: 1; }
+  .duo-screen-brand-reveal,
+  .duo-screen-brand-reveal::before,
+  .duo-screen-brand-reveal::after,
+  .duo-glass-mark,
+  .duo-glass-mark::after,
+  .duo-glass-mark svg { animation: none; }
 }
 
 /* Kept for other hero variants that reveal the whole screen. */
