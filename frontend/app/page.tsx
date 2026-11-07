@@ -28,7 +28,6 @@ import { useStore } from '@/store/useStore'
 import MeadowRiseFooter from '@/components/ui/meadow-rise-footer'
 import { MedicalInfoSection } from '@/components/interactive/MedicalInfoSection'
 import { StatBand } from '@/components/landing/StatBand'
-import { WhyRelySection } from '@/components/landing/WhyRelySection'
 import { StepsSection } from '@/components/landing/StepsSection'
 import { CtaBanner } from '@/components/landing/CtaBanner'
 import { LiquidNavbar } from '@/components/ui/liquid-glass-navbar'
@@ -219,11 +218,9 @@ export default function Home() {
           <div className="animate-fade-in">
             <CareHero onSelectDoctor={handleStartDoctorConsultation} />
 
-            <WhyRelySection />
-
             <StatBand />
 
-            <div id="doctor-selection"><DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} /></div>
+            <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
 
             <MedicalInfoSection />
 
