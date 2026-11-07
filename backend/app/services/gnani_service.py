@@ -51,6 +51,14 @@ LANGUAGE_VOICE_MAP: Dict[str, str] = {
     "pa": "Jwala",    # Punjabi specialist
 }
 
+# Voice choices documented for the two built-in consultation doctors.  Keeping
+# these here means the API route remains language-native while still preserving
+# the male/female distinction used by the avatar profiles.
+LANGUAGE_VOICE_BY_GENDER: Dict[str, Dict[str, str]] = {
+    "hi": {"male": "Deepak", "female": "Shivani"},
+    "kn": {"male": "Roopesh", "female": "Nayana"},
+}
+
 # Supported Gnani voices catalog
 GNANI_VOICES = {
     "Nalini", "Bhavna", "Yashvi", "Urmila", "Jwala", "Chitra", "Ambuja",
@@ -63,7 +71,7 @@ GNANI_VOICES = {
     "Lehara", "Lavanya", "Yukti", "Varuni", "Saanvi", "Kavin", "Hansika",
     "Reshma", "Riyaan", "Zahira", "Ishaan", "Kirra", "Dhruva", "Damini",
     "Urvashi", "Falak", "Veera", "Lalita", "Nayana", "Gaurav", "Harshit",
-    "Mehuli", "Zayan", "Poorvi",
+    "Mehuli", "Zayan", "Poorvi", "Shivani",
 }
 
 
@@ -83,10 +91,18 @@ class GnaniVoiceService:
     def is_configured(self) -> bool:
         return bool(self.api_key)
 
-    def select_voice(self, language: str = "en", preferred_voice: Optional[str] = None) -> str:
+    def select_voice(
+        self,
+        language: str = "en",
+        preferred_voice: Optional[str] = None,
+        voice_gender: Optional[str] = None,
+    ) -> str:
         """Select a validated voice based on voice preference or language."""
         if preferred_voice and preferred_voice in GNANI_VOICES:
             return preferred_voice
+        gender_voice = LANGUAGE_VOICE_BY_GENDER.get(language[:2].lower(), {}).get(voice_gender or "")
+        if gender_voice:
+            return gender_voice
         return LANGUAGE_VOICE_MAP.get(language[:2].lower(), self.default_voice)
 
     async def synthesize(
@@ -96,6 +112,7 @@ class GnaniVoiceService:
         voice: Optional[str] = None,
         language: str = "en",
         speed: float = 1.0,
+        voice_gender: Optional[str] = None,
     ) -> str:
         """
         Synthesize text into WAV audio using Gnani Timbre TTS.
@@ -113,7 +130,7 @@ class GnaniVoiceService:
         if not self.is_configured():
             raise ValueError("Gnani API key is not configured (GNANI_API_KEY is empty)")
 
-        chosen_voice = self.select_voice(language, voice)
+        chosen_voice = self.select_voice(language, voice, voice_gender)
         payload = {
             "text": text,
             "voice": chosen_voice,
@@ -264,4 +281,10 @@ class GnaniVoiceService:
 
 
 gnani_service = GnaniVoiceService()
-__all__ = ["GnaniVoiceService", "gnani_service", "GNANI_VOICES", "LANGUAGE_VOICE_MAP"]
+__all__ = [
+    "GnaniVoiceService",
+    "gnani_service",
+    "GNANI_VOICES",
+    "LANGUAGE_VOICE_MAP",
+    "LANGUAGE_VOICE_BY_GENDER",
+]

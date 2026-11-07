@@ -70,6 +70,15 @@ class UnifiedRAGService:
         self.mental_wellness_store: Dict[str, KnowledgeChunk] = {}
         self.content_hashes: set[str] = set()
 
+        # Search is lexical, so the expensive part is building the normalized
+        # title/content token sets and document-frequency counts.  Keep those
+        # derived structures in memory instead of rebuilding them for every
+        # patient turn.  The persisted store is still the source of truth.
+        self._search_candidates: Dict[str, List[Tuple[KnowledgeChunk, set[str], set[str]]]] = {}
+        self._search_document_frequency: Dict[str, Counter[str]] = {}
+        self._search_document_counts: Dict[str, int] = {}
+        self._search_index_size = -1
+
         # Quality & Ingestion Tracking
         self.ingestion_stats = {
             "total_documents_parsed": 0,
@@ -81,10 +90,89 @@ class UnifiedRAGService:
         }
 
         self._load_local_store()
+        self._rebuild_search_index()
 
     def _hash_text(self, text: str) -> str:
         clean = re.sub(r"\s+", " ", text.lower().strip())
         return hashlib.sha256(clean.encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def _normalize_search_token(token: str) -> str:
+        """Normalize the small amount of morphology used by lexical search."""
+        if token == "anxious":
+            return "anxiety"
+        if token == "worried":
+            return "worry"
+        if token.endswith("ies") and len(token) > 4:
+            return token[:-3] + "y"
+        if token.endswith("ing") and len(token) > 5:
+            token = token[:-3]
+            if len(token) > 2 and token[-1] == token[-2]:
+                token = token[:-1]
+            return token
+        if token.endswith("ed") and len(token) > 4:
+            return token[:-2]
+        if token.endswith("s") and len(token) > 4:
+            return token[:-1]
+        return token
+
+    @classmethod
+    def _search_tokens(cls, text: str) -> set[str]:
+        stopwords = {
+            "what", "when", "where", "which", "about", "have", "with", "from",
+            "that", "this", "does", "your", "you", "are", "for", "the", "and",
+            "how", "can", "tell", "please",
+        }
+        return {
+            cls._normalize_search_token(token)
+            for token in re.findall(r"\w+", text.lower())
+            if len(token) > 2 and token not in stopwords
+        }
+
+    def _rebuild_search_index(self) -> None:
+        """Build the in-memory lexical index once per store change."""
+        candidates: Dict[str, List[Tuple[KnowledgeChunk, set[str], set[str]]]] = {
+            "medical": [],
+            "mental_wellness": [],
+            "all": [],
+        }
+        document_frequency: Dict[str, Counter[str]] = {
+            "medical": Counter(),
+            "mental_wellness": Counter(),
+            "all": Counter(),
+        }
+
+        for collection, store in (
+            ("medical", self.medical_store),
+            ("mental_wellness", self.mental_wellness_store),
+        ):
+            for chunk in store.values():
+                if not chunk.approved_by_admin:
+                    continue
+                entry = (
+                    chunk,
+                    self._search_tokens(chunk.title),
+                    self._search_tokens(chunk.content),
+                )
+                candidates[collection].append(entry)
+                candidates["all"].append(entry)
+                matched_terms = entry[1] | entry[2]
+                document_frequency[collection].update(matched_terms)
+                document_frequency["all"].update(matched_terms)
+
+        self._search_candidates = candidates
+        self._search_document_frequency = document_frequency
+        self._search_document_counts = {
+            scope: len(entries) for scope, entries in candidates.items()
+        }
+        self._search_index_size = len(self.medical_store) + len(self.mental_wellness_store)
+
+    def _ensure_search_index(self) -> None:
+        # The admin path rebuilds on persist().  This size check also keeps the
+        # service correct for callers/tests that add a chunk directly.
+        current_size = len(self.medical_store) + len(self.mental_wellness_store)
+        if current_size != self._search_index_size:
+            self._rebuild_search_index()
 
     def _load_local_store(self):
         """Load persisted indexed chunks if present."""
@@ -131,6 +219,7 @@ class UnifiedRAGService:
             json.dump([asdict(c) for c in self.mental_wellness_store.values()], f, indent=2)
 
         self.ingestion_stats["last_indexed_at"] = datetime.utcnow().isoformat()
+        self._rebuild_search_index()
         logger.info(
             f"RAG store persisted: {len(self.medical_store)} medical chunks, "
             f"{len(self.mental_wellness_store)} mental wellness chunks."
@@ -429,65 +518,32 @@ class UnifiedRAGService:
         Query the targeted collection using lexical relevance scoring.
         Appends mandatory source attribution and license metadata.
         """
-        if collection == "medical":
-            target_stores = [self.medical_store]
-        elif collection == "mental_wellness":
-            target_stores = [self.mental_wellness_store]
-        elif collection in {"all", "both"}:
-            target_stores = [self.medical_store, self.mental_wellness_store]
-        else:
+        if collection == "both":
+            collection = "all"
+        if collection not in {"medical", "mental_wellness", "all"}:
             raise ValueError(f"Unknown knowledge collection: {collection}")
-
-        stopwords = {
-            "what", "when", "where", "which", "about", "have", "with", "from",
-            "that", "this", "does", "your", "you", "are", "for", "the", "and",
-            "how", "can", "tell", "please",
-        }
-
-        def normalize(token: str) -> str:
-            if token == "anxious":
-                return "anxiety"
-            if token == "worried":
-                return "worry"
-            if token.endswith("ies") and len(token) > 4:
-                return token[:-3] + "y"
-            if token.endswith("ing") and len(token) > 5:
-                token = token[:-3]
-                if len(token) > 2 and token[-1] == token[-2]:
-                    token = token[:-1]
-                return token
-            if token.endswith("ed") and len(token) > 4:
-                return token[:-2]
-            if token.endswith("s") and len(token) > 4:
-                return token[:-1]
-            return token
-
-        query_terms = {
-            normalize(token)
-            for token in re.findall(r"\w+", query.lower())
-            if len(token) > 2 and token not in stopwords
-        }
+        self._ensure_search_index()
+        query_terms = self._search_tokens(query)
         mental_intent = bool(
             query_terms
             & {"stress", "anxiety", "worry", "sadness", "depression", "lonely", "mindful", "overwhelm"}
         )
-        candidates: List[Tuple[KnowledgeChunk, set[str], set[str]]] = []
-        for target_store in target_stores:
-            for chunk in target_store.values():
-                if not chunk.approved_by_admin:
-                    continue
-                if category and chunk.category != category:
-                    continue
+        indexed_candidates = self._search_candidates[collection]
+        candidates = (
+            [entry for entry in indexed_candidates if entry[0].category == category]
+            if category
+            else indexed_candidates
+        )
 
-                title_words = {normalize(t) for t in re.findall(r"\w+", chunk.title.lower())}
-                content_words = {normalize(t) for t in re.findall(r"\w+", chunk.content.lower())}
-                candidates.append((chunk, title_words, content_words))
+        if category:
+            document_frequency: Counter[str] = Counter()
+            for _, title_words, content_words in candidates:
+                document_frequency.update(query_terms.intersection(title_words | content_words))
+            document_count = max(1, len(candidates))
+        else:
+            document_frequency = self._search_document_frequency[collection]
+            document_count = max(1, self._search_document_counts[collection])
 
-        document_frequency: Counter[str] = Counter()
-        for _, title_words, content_words in candidates:
-            document_frequency.update(query_terms.intersection(title_words | content_words))
-
-        document_count = max(1, len(candidates))
         term_weights = {
             term: 1.0 + (document_count / (1 + document_frequency[term])) ** 0.5
             for term in query_terms

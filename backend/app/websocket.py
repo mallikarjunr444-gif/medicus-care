@@ -71,13 +71,14 @@ def _write_private_bytes(path: Path, data: bytes) -> None:
 
 # ── chunking thresholds (first-frame latency vs prosody trade-off) ──────────
 # The opening fragment ships at the first meaningful CLAUSE boundary, so
-# greetings are not spoken as a complete answer. Every chunk after that uses SENTENCE boundaries — fewer TTS
-# calls and smoother prosody for the bulk of the reply.
-_MIN_SENTENCE_LEN = 90  # group short sentences so TTS does not sound like disconnected words
-_MIN_FIRST_CHUNK_LEN = 45  # avoid speaking a greeting fragment as the whole reply
+# greetings are not spoken as a complete answer. Keep these bars modest: the
+# network TTS path is already the slowest stage, and holding a whole paragraph
+# here makes subtitles/audio feel disconnected from the streamed LLM text.
+_MIN_SENTENCE_LEN = 60  # group tiny sentences without holding a full paragraph
+_MIN_FIRST_CHUNK_LEN = 32  # start after a useful phrase, not only after a greeting
 # Force-flush a run-on with no usable punctuation so we never stall waiting
 # for a boundary that may never come.
-_MAX_CHUNK_CHARS = 200
+_MAX_CHUNK_CHARS = 160
 
 # Boundary regexes. Lookbehind keeps the punctuation attached to the chunk
 # (better TTS prosody than trailing a bare clause).
@@ -186,6 +187,47 @@ def _llm_error_message(exc: LLMError) -> str:
 # How the carried summary is introduced to the model. Framed as context rather
 # than instruction so it informs the reply without the model narrating it back.
 _MEMORY_PREAMBLE = "Earlier in this same conversation (summarised):"
+
+_LANGUAGE_NAMES = {
+    "en": "English",
+    "kn": "Kannada",
+    "hi": "Hindi",
+    "te": "Telugu",
+    "ta": "Tamil",
+    "ml": "Malayalam",
+    "mr": "Marathi",
+    "bn": "Bengali",
+    "gu": "Gujarati",
+}
+
+
+def _normalize_language_code(language: Optional[str]) -> str:
+    """Accept either a short code or a BCP-47 language tag."""
+    return (language or "en").replace("_", "-").split("-")[0].lower()
+
+
+def _language_instruction(language: Optional[str]) -> str:
+    """Return a strong, low-token instruction for multilingual speech output."""
+    code = _normalize_language_code(language)
+    name = _LANGUAGE_NAMES.get(code, "English")
+    if code == "kn":
+        script_rule = (
+            "Write in Kannada script (ಕನ್ನಡ). Do not transliterate Kannada into Latin letters, "
+            "Hindi, or English; keep only unavoidable medical names and units in their standard form."
+        )
+    elif code == "hi":
+        script_rule = (
+            "Write in Devanagari script (हिन्दी). Do not transliterate Hindi into Latin letters, "
+            "Kannada, or English; keep only unavoidable medical names and units in their standard form."
+        )
+    else:
+        script_rule = "Use the normal written script for the selected language."
+    return (
+        f"Current consultation language: {name}. Respond entirely in {name}. {script_rule} "
+        "The visible answer, subtitles, and spoken answer must all use this language. "
+        "Use 1–2 short spoken sentences, no Markdown or lists, and do not switch languages "
+        "because the reference material or an earlier turn is in English."
+    )
 
 
 def _compose_system_prompt(base: Optional[str], summary: Optional[str]) -> Optional[str]:
@@ -788,18 +830,8 @@ class ConnectionManager:
             system_prompt = _compose_system_prompt(
                 data.get("system_prompt"), data.get("memory_summary")
             )
-            selected_language = data.get("language", "en")
-            language_names = {
-                "en": "English", "kn": "Kannada", "hi": "Hindi", "te": "Telugu",
-                "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi", "bn": "Bengali",
-                "gu": "Gujarati",
-            }
-            language_name = language_names.get(selected_language, "English")
-            language_instruction = (
-                f"Current consultation language: {language_name}. Respond entirely in {language_name}. "
-                "The visible answer, subtitles, and spoken answer must all use this language. "
-                "Do not continue in a language from an earlier turn after the patient changes the selector."
-            )
+            selected_language = _normalize_language_code(data.get("language", "en"))
+            language_instruction = _language_instruction(selected_language)
 
             # ── 1. Deterministic Clinical Safety & Emergency Evaluation ─────
             from app.services.safety_service import medical_safety_validator
@@ -1273,7 +1305,7 @@ class ConnectionManager:
             # to English before both TTS voice selection and STT.
             "kn",
         }
-        lang = (language or "en").lower()
+        lang = _normalize_language_code(language)
         if lang not in allowed:
             lang = "en"
         if session_id in self.session_data:

@@ -127,6 +127,10 @@ export function DoctorVideoCall({
   const audioObjectUrlRef = useRef<string | null>(null)
   const audioQueueRef = useRef<Array<{ url: string; text: string; chunkIndex: number }>>([])
   const audioStreamEndedRef = useRef(false)
+  // Tokens are useful live subtitles until the first generated audio starts.
+  // After that point, keep subtitles on the exact audio chunk being played so
+  // the caption does not run ahead of the doctor's voice.
+  const responseAudioStartedRef = useRef(false)
   const startNextAudioRef = useRef<() => void>(() => {})
   const currentAudioChunkIndexRef = useRef<number | null>(null)
   const currentVideoChunkIndexRef = useRef<number | null>(null)
@@ -171,6 +175,7 @@ export function DoctorVideoCall({
     audioQueueRef.current.forEach(({ url }) => URL.revokeObjectURL(url))
     audioQueueRef.current = []
     audioStreamEndedRef.current = false
+    responseAudioStartedRef.current = false
     currentVideoChunkIndexRef.current = null
     setHasSeparateTtsAudio(false)
   }, [])
@@ -223,6 +228,7 @@ export function DoctorVideoCall({
       audioObjectUrlRef.current = objectUrl
       currentAudioChunkIndexRef.current = chunkIndex
       audio.onplay = () => {
+        responseAudioStartedRef.current = true
         pauseVoiceInput()
         setDoctorState('speaking')
         setSubtitles(text)
@@ -262,7 +268,9 @@ export function DoctorVideoCall({
     switch (event.type) {
       case 'token':
         if (!audioRef.current && !doctorVideoActiveRef.current) setDoctorState('thinking')
-        setSubtitles((current) => appendLiveCaption(current, event.token))
+        if (!responseAudioStartedRef.current) {
+          setSubtitles((current) => appendLiveCaption(current, event.token))
+        }
         streamedDoctorTextRef.current += event.token
         if (!streamedDoctorMessageIdRef.current) {
           streamedDoctorMessageIdRef.current = `doc-stream-${Date.now()}`
