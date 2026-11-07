@@ -84,19 +84,37 @@ _MAX_CHUNK_CHARS = 200
 _SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 _CLAUSE_RE = re.compile(r"(?<=[.!?,;:—])\s+")
 
-_SOCIAL_GREETING_REPLIES = {
-    "hello", "hi", "hey", "good morning", "good afternoon", "good evening",
-    "ಹಲೋ", "ಹಾಯ್", "ನಮಸ್ಕಾರ", "ನಮಸ್ತೆ",
-    "नमस्ते", "नमस्कार", "हैलो", "हाय",
+# Words that make a message a pure greeting. A message counts as a greeting only if EVERY word
+# is in one of these sets and at least one is in _GREETING_WORDS, so "hello hello hello",
+# "ಹಾಯ್ ಹಲೋ" or "हाय हेलो डॉक्टर" are greetings but "hello I have a headache" is not.
+_GREETING_WORDS = {
+    "hello", "hi", "hii", "hiii", "hey", "helo", "hallo", "hullo", "namaste", "namaskar",
+    "namaskara", "morning", "afternoon", "evening",
+    "ಹಲೋ", "ಹಲ್ಲೋ", "ಹಾಯ್", "ಹೈ", "ಹೇ", "ನಮಸ್ಕಾರ", "ನಮಸ್ತೆ", "ಶುಭೋದಯ", "ಶುಭ",
+    "नमस्ते", "नमस्कार", "हैलो", "हेलो", "हलो", "हेल्लो", "हाय", "हाइ", "सुप्रभात",
 }
+_GREETING_FILLER = {
+    "good", "there", "doctor", "dr", "ji", "sir", "madam", "mam", "ma'am",
+    "ಡಾಕ್ಟರ್", "ಡಾಕ್ಟರೇ", "ಡಾ", "ಸರ್", "ಮೇಡಂ", "ಅವರೇ", "ಅವರೆ",
+    "डॉक्टर", "डाक्टर", "डॉ", "जी", "सर", "मैडम", "साहब",
+}
+_GREETING_SPLIT_RE = re.compile(r"[\s,.!?;:।॥\-–—'\"()]+")
 
 
 def _is_social_greeting(text: str) -> bool:
-    """Skip medical retrieval and Kannada query translation for a greeting."""
+    """Skip medical retrieval and query translation for a greeting.
+
+    Must match whole messages made only of greeting words, in any repeat or order. An exact-phrase
+    match missed "ಹಾಯ್ ಹಲೋ" / "hello hello hello", which then went to PubMed and came back with
+    unrelated papers that derailed the doctor's reply.
+    """
     normalized = unicodedata.normalize("NFC", text.casefold()).strip()
-    normalized = normalized.strip(" \t\r\n.,!?;:।॥")
-    normalized = re.sub(r"\s+", " ", normalized)
-    return normalized in _SOCIAL_GREETING_REPLIES
+    words = [w for w in _GREETING_SPLIT_RE.split(normalized) if w]
+    if not words or len(words) > 6:
+        return False
+    return all(w in _GREETING_WORDS or w in _GREETING_FILLER for w in words) and any(
+        w in _GREETING_WORDS for w in words
+    )
 
 
 def _social_greeting_response(language: str, doctor_id: Optional[str]) -> str:
@@ -852,30 +870,41 @@ class ConnectionManager:
             from app.services.rag_service import rag_service
             rag_matches = []
             web_references = []
+            retrieval_query: Optional[str] = text
             if not _is_social_greeting(text):
-                retrieval_query = text
-                # MedQuAD and the counseling references are primarily English.
-                # Translate Kannada health questions for retrieval, while the
-                # response remains in the patient's selected language. Avoid a
-                # second model round trip for greetings and social openers.
-                if any("\u0c80" <= char <= "\u0cff" for char in text):
+                # MedQuAD, the counseling references and PubMed are English. Kannada and Hindi
+                # messages are translated to a short English query for retrieval, while the
+                # reply stays in the patient's language. Searching the raw Indic text returns
+                # unrelated papers (the model then answers about them instead of the patient),
+                # so if translation fails or the message is not a health question, skip
+                # retrieval altogether.
+                indic_script = any(
+                    "\u0c80" <= char <= "\u0cff" or "\u0900" <= char <= "\u097f" for char in text
+                )
+                if indic_script:
+                    retrieval_query = None
                     try:
                         expanded_query = await llm_service.generate_response(
                             [{"role": "user", "content": (
-                                "Translate the following Kannada health question into a short English "
-                                "search query. Return only the query terms, preserving medical names. "
-                                "Do not answer the question.\n\n" + text
+                                "Translate the following Kannada or Hindi health question into a short "
+                                "English search query. Return only the query terms, preserving medical "
+                                "names. Do not answer the question. If the message is a greeting, small "
+                                "talk, or not about health, return exactly NONE.\n\n" + text
                             )}],
-                            system_prompt="You translate search queries. Return at most 12 English words.",
+                            system_prompt="You translate search queries. Return at most 12 English words, or NONE.",
                         )
-                        if expanded_query.strip():
-                            retrieval_query = expanded_query.strip()
+                        candidate = expanded_query.strip().strip("\"'. ")
+                        if candidate and candidate.upper() != "NONE":
+                            retrieval_query = candidate
                     except Exception as exc:
-                        logger.info("Kannada knowledge query translation unavailable: %s", type(exc).__name__)
+                        logger.info("Indic knowledge query translation unavailable: %s", type(exc).__name__)
 
-                rag_matches = rag_service.search_for_doctor(
-                    retrieval_query, data.get("doctor_id"), top_k=4
-                )
+                if retrieval_query:
+                    rag_matches = rag_service.search_for_doctor(
+                        retrieval_query, data.get("doctor_id"), top_k=4
+                    )
+            else:
+                retrieval_query = None
 
             if rag_matches:
                 rag_block = (
@@ -894,7 +923,7 @@ class ConnectionManager:
                 # same response that is streamed to text, speech, and avatar.
                 from app.services.medical_web_research import format_references, search_pubmed
 
-                web_references = await search_pubmed(retrieval_query)
+                web_references = await search_pubmed(retrieval_query) if retrieval_query else []
                 if web_references:
                     system_prompt = (system_prompt or "") + format_references(web_references)
 
