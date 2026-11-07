@@ -429,9 +429,9 @@
   max-width: 18ch;
   margin: 0 auto;
   color: #11140d;
-  font-family: 'Urbanist Variable', Urbanist, Inter, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', Inter, sans-serif;
   font-size: clamp(36px, 6.3vw, 86px);
-  font-weight: 450;
+  font-weight: 500;
   line-height: 1.02;
   letter-spacing: -0.042em;
   text-wrap: balance;
@@ -453,22 +453,22 @@
 }
 .duo-brand-accent > span {
   color: #31553b;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.07em;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  transform: translate3d(-0.08em, 0, 0) skewX(-10deg);
-  clip-path: inset(-20% 100% -30% -5%);
-  filter: blur(6px);
-  opacity: 0.2;
+  font-family: inherit;
+  font-size: 1em;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: inherit;
+  transform: translate3d(0, 0.28em, 0);
+  clip-path: inset(0 100% 0 0);
+  filter: blur(8px);
+  opacity: 0;
   animation: duo-heading-accent 1500ms cubic-bezier(0.65, 0, 0.25, 1) both;
 }
 @keyframes duo-heading-rise {
   to { transform: none; }
 }
 @keyframes duo-heading-accent {
-  to { clip-path: inset(-20% -10% -30% -5%); filter: blur(0); opacity: 1; transform: none; }
+  to { clip-path: inset(0 -5% 0 0); filter: blur(0); opacity: 1; transform: none; }
 }
 @keyframes duo-v-left {
   0%   { transform: rotateY(-48deg); }
@@ -509,8 +509,8 @@
 }
 .duo-v-screen {
   position: absolute;
-  top: 3.2%;
-  bottom: 8.5%;
+  top: 5.5%;
+  bottom: 24%;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -520,7 +520,7 @@
   pointer-events: none;
 }
 .duo-v-screen-left {
-  left: 35.5%;
+  left: 42%;
   right: 1.2%;
   padding: 3.2% 3.4% 4%;
   border-radius: clamp(10px, 1.5vw, 20px) 0 0 clamp(7px, 1vw, 13px);
@@ -528,13 +528,12 @@
 }
 .duo-v-screen-right {
   left: 0.8%;
-  right: 40%;
+  right: 43%;
   padding: 3.5% 4.2% 4%;
   border-radius: 0 clamp(10px, 1.5vw, 20px) clamp(7px, 1vw, 13px) 0;
   background: #f0f6f2;
 }
-.duo-screen-brand-row,
-.duo-screen-trust {
+.duo-screen-brand-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -585,7 +584,6 @@
   animation: medicus-wordmark-sheen 1.7s ease-out both;
 }
 .duo-screen-live,
-.duo-screen-trust,
 .duo-screen-eyebrow {
   color: #527369;
   font-size: clamp(4px, 0.52vw, 6.5px);
@@ -604,16 +602,6 @@
   height: 3px;
   border-radius: 50%;
   background: #3b9b6d;
-}
-.duo-screen-trust {
-  justify-content: flex-start;
-  gap: 3px;
-  margin-bottom: 8%;
-  white-space: nowrap;
-}
-.duo-screen-trust svg {
-  width: clamp(7px, 0.85vw, 10px);
-  height: clamp(7px, 0.85vw, 10px);
 }
 .duo-screen-eyebrow {
   margin: 8% 0 0;
@@ -769,6 +757,61 @@
   background: linear-gradient(90deg, transparent, rgba(21, 27, 23, 0.22) 48%, rgba(255, 255, 255, 0.22) 58%, transparent);
   animation: duo-v-hinge 2.3s ease-out both;
 }
+.duo-v-device-cta {
+  position: absolute;
+  z-index: 3;
+  right: 28%;
+  bottom: 3.5%;
+  left: 28%;
+  display: flex;
+  min-height: clamp(44px, 6vw, 58px);
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 1% 1.2% 1% 2.2%;
+  border: 1px solid rgba(22, 34, 27, 0.08);
+  border-radius: 999px;
+  background: rgba(247, 247, 249, 0.98);
+  box-shadow: 0 4px 16px rgba(23, 37, 27, 0.1);
+}
+.duo-device-cta-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.duo-device-cta-copy strong {
+  overflow: hidden;
+  color: #1d1d1f;
+  font-size: clamp(7px, 0.95vw, 12px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.duo-device-cta-copy small {
+  overflow: hidden;
+  color: #73777a;
+  font-size: clamp(5px, 0.68vw, 8px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.duo-device-cta-button {
+  min-height: clamp(32px, 4vw, 44px);
+  flex: 0 0 auto;
+  padding: 0 clamp(8px, 1.4vw, 18px);
+  border: 0;
+  border-radius: 999px;
+  background: #6b8f3e;
+  color: #fff;
+  font-size: clamp(7px, 0.95vw, 12px);
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+.duo-device-cta-button:hover { background: #5f7d38; }
+.duo-device-cta-button:active { transform: scale(0.96); }
 @keyframes duo-v-hinge {
   0%, 25% { opacity: 0.8; }
   100% { opacity: 0; }

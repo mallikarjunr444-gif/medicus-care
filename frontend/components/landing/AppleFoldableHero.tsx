@@ -2,9 +2,8 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { HeartPulse, MessageCircle, RotateCcw, ShieldCheck } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 import type { DoctorId } from '@/lib/doctorTypes'
-import { BrandLogo } from '@/components/ui/BrandLogo'
 
 export interface AppleFoldableHeroProps {
   onSelectDoctor: (id: DoctorId) => void
@@ -14,7 +13,7 @@ export interface AppleFoldableHeroProps {
 }
 
 /**
- * Foldable hero with a Medicus-branded care experience on both screens.
+ * Foldable phone hero with a Medicus-branded headline.
  */
 export function AppleFoldableHero({
   onSelectDoctor,
@@ -35,7 +34,7 @@ export function AppleFoldableHero({
         )}
         <h1
           className="duo-brand-heading"
-          aria-label={isDefaultHeadline ? 'Care begins when you feel heard with Medicus.' : undefined}
+          aria-label={isDefaultHeadline ? 'Care, built around you.' : undefined}
         >
           {headline ?? <BrandRevealHeadline />}
         </h1>
@@ -47,78 +46,50 @@ export function AppleFoldableHero({
 
         <div
           key={replay}
-          role="img"
-          aria-label="A complete foldable phone frame held open by two hands, showing Medicus Care."
+          role="group"
+          aria-label="An open foldable phone held in two hands."
           className="duo-v-stage relative mx-auto mt-6 w-full sm:mt-8"
-          style={{ aspectRatio: '664 / 300', perspective: '1500px' }}
+          style={{ aspectRatio: '664 / 370', perspective: '1500px' }}
         >
-          {/* left half (left hand + left screen) */}
+          {/* left half (left hand + phone display) */}
           <div className="duo-v-left absolute left-0 top-0 h-full w-[50.9%]">
             <Image
-              src="/landing/duo-base.png"
+              src="/landing/apple-duo-left-transparent.png"
               alt=""
               fill
               sizes="(max-width: 1024px) 51vw, 460px"
-              className="object-cover object-left"
+              className="object-contain"
               priority
             />
-            <div className="duo-v-screen duo-v-screen-left" aria-hidden="true">
-              <div className="duo-screen-brand-row">
-                <span className="duo-screen-brand-reveal">
-                  <BrandLogo className="h-full w-full" />
-                </span>
-                <span className="duo-screen-live"><span /> AI CARE</span>
-              </div>
-              <p className="duo-screen-eyebrow">WELLBEING, AT YOUR PACE</p>
-              <h2 className="duo-screen-title">Care that starts with listening.</h2>
-              <p className="duo-screen-copy">Thoughtful support in the language that feels like yours.</p>
-              <div className="duo-screen-checkin">
-                <span className="duo-glass-mark"><HeartPulse aria-hidden="true" /></span>
-                <span><strong>Your daily check-in</strong><small>How are you feeling today?</small></span>
-              </div>
-            </div>
           </div>
-          {/* right half (right hand + right screen) */}
+          {/* right half (right hand + phone display) */}
           <div className="duo-v-right absolute left-[50.9%] top-0 h-full w-[49.1%]">
             <Image
-              src="/landing/duo-base.png"
+              src="/landing/apple-duo-right-transparent.png"
               alt=""
               fill
               sizes="(max-width: 1024px) 49vw, 440px"
-              className="object-cover object-right"
+              className="object-contain"
               priority
             />
-            <div className="duo-v-screen duo-v-screen-right" aria-hidden="true">
-              <div className="duo-screen-trust"><ShieldCheck aria-hidden="true" /> PRIVATE BY DESIGN</div>
-              <p className="duo-screen-eyebrow">A CLEAR NEXT STEP</p>
-              <h2 className="duo-screen-title">Talk it through.</h2>
-              <p className="duo-screen-copy">Start with an AI care guide that listens, without judgment.</p>
-              <div className="duo-screen-visit">
-                <span className="duo-screen-message"><MessageCircle aria-hidden="true" /></span>
-                <span><strong>Start a conversation</strong><small>Private AI care</small></span>
-                <span className="duo-screen-arrow" aria-hidden="true">→</span>
-              </div>
-              <div className="duo-screen-languages"><span>ENGLISH</span><span>ಕನ್ನಡ</span><span>हिंदी</span></div>
-            </div>
           </div>
           <div className="duo-v-hinge" aria-hidden="true" />
-        </div>
-
-        <div className="mt-3 flex flex-col items-center gap-2.5">
-          <div className="flex w-fit items-center gap-5 rounded-full border border-[#d2d2d7]/80 bg-[#f5f5f7]/90 py-2 pl-5 pr-2 shadow-[0_4px_24px_rgba(0,0,0,0.06)] backdrop-blur-xl">
-            <div className="text-left">
-              <p className="text-[12px] font-semibold tracking-tight text-[#1d1d1f]">Free to start · ₹0</p>
-              <p className="text-[11px] text-[#86868b]">AI care in Kannada, Hindi &amp; English</p>
-            </div>
+          <div className="duo-v-device-cta">
+            <span className="duo-device-cta-copy">
+              <strong>Free to start · ₹0</strong>
+              <small>Private Medicus AI care</small>
+            </span>
             <button
               type="button"
               onClick={() => onSelectDoctor('dr_ananya')}
-              className="rounded-full bg-[#6B8F3E] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_10px_rgba(68,104,48,0.2)] transition-all hover:bg-[#5f7d38] active:scale-95"
+              className="duo-device-cta-button"
             >
               Start free
             </button>
           </div>
+        </div>
 
+        <div className="mt-2 flex justify-center">
           <button
             type="button"
             onClick={() => setReplay((r) => r + 1)}
@@ -135,9 +106,8 @@ export function AppleFoldableHero({
 
 function BrandRevealHeadline() {
   const lines = [
-    [['Care', 520], ['begins', 595]],
-    [['when', 670], ['you', 745], ['feel', 820]],
-    [['heard with Medicus.', 920]],
+    [['Care,', 180], ['built', 300]],
+    [['around', 420], ['you.', 540]],
   ] as const
 
   return (
@@ -146,7 +116,7 @@ function BrandRevealHeadline() {
         <span className="duo-brand-heading-line" key={lineIndex} aria-hidden="true">
           {line.map(([word, delay]) => (
             <span
-              className={`duo-brand-word${lineIndex === 2 ? ' duo-brand-accent' : ''}`}
+              className={`duo-brand-word${word === 'you.' ? ' duo-brand-accent' : ''}`}
               key={word}
               style={{ animationDelay: `${delay}ms` }}
             >
