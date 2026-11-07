@@ -15,12 +15,18 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
   return (
     <section className="relative overflow-hidden bg-white pb-14 pt-8 sm:pb-20 sm:pt-12">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <p className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">MediCare Duo</p>
+        <p className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">Medicus Duo</p>
         <h1 className="mt-1 font-sans text-[3.2rem] font-bold leading-[1.02] tracking-[-0.04em] text-[#1d1d1f] sm:text-7xl lg:text-[5.4rem]">
           Hello, hello.
         </h1>
 
-        <div key={replay} className="duo-v-stage relative mx-auto mt-6 w-full sm:mt-8" style={{ aspectRatio: '664 / 370', perspective: '1800px' }}>
+        <div
+          key={replay}
+          role="img"
+          aria-label="Two hands open a foldable phone to reveal a calm wellness scene."
+          className="duo-v-stage relative mx-auto mt-6 w-full sm:mt-8"
+          style={{ aspectRatio: '664 / 370', perspective: '1500px' }}
+        >
           {/* left half (left hand + left screen) */}
           <div className="duo-v-left absolute left-0 top-0 h-full w-[50.9%]">
             <Image
@@ -43,6 +49,7 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
               priority
             />
           </div>
+          <div className="duo-v-hinge" aria-hidden="true" />
         </div>
 
         <div className="mt-3 flex flex-col items-center gap-2.5">
@@ -54,9 +61,9 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
             <button
               type="button"
               onClick={() => onSelectDoctor('dr_ananya')}
-              className="rounded-full bg-[#0071e3] px-5 py-2 text-sm font-semibold text-white shadow transition-all hover:bg-[#0077ed] active:scale-95"
+              className="rounded-full bg-[#6B8F3E] px-5 py-2 text-sm font-semibold text-white shadow-[0_3px_10px_rgba(68,104,48,0.2)] transition-all hover:bg-[#5f7d38] active:scale-95"
             >
-              Start
+              Start free
             </button>
           </div>
 
