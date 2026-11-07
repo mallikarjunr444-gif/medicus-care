@@ -125,7 +125,7 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen overflow-x-clip bg-[#F6F5EF] text-[#0F150A] ${showMobileNavigation ? 'pb-20 lg:pb-0' : ''}`}>
-      <header className={`sticky top-0 z-50 border-b border-[#e1e9e4] bg-white/90 pt-[env(safe-area-inset-top)] backdrop-blur-xl ${view === 'consultation' ? 'hidden' : ''}`}>
+      <header className={`${view === 'home' ? 'absolute inset-x-0 top-0 border-white/20 bg-transparent text-white' : 'sticky border-b border-[#e1e9e4] bg-white/90 text-[#183331] backdrop-blur-xl'} z-50 pt-[env(safe-area-inset-top)] ${view === 'consultation' ? 'hidden' : ''}`}>
         <div className="mx-auto flex min-h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Brand Logo & Tag */}
           <button
@@ -134,20 +134,20 @@ export default function Home() {
             className="group flex shrink-0 items-center gap-2.5 text-left focus:outline-none"
             aria-label="Medicus Labs Home"
           >
-            <BrandLogo className="h-9 w-[128px] sm:w-[140px]" priority />
-            <div className="hidden border-l border-slate-200 pl-2.5 xl:block">
-              <span className="block text-xs font-semibold leading-tight tracking-tight text-[#183331]">Medicus Labs</span>
-              <span className="block text-[10px] leading-tight text-[#657773] mt-0.5">Care &amp; AI Telemedicine</span>
+            <BrandLogo className={`h-9 w-[128px] sm:w-[140px] ${view === 'home' ? '[&_*]:brightness-0 [&_*]:invert' : ''}`} priority />
+            <div className={`hidden border-l pl-2.5 xl:block ${view === 'home' ? 'border-white/30' : 'border-slate-200'}`}>
+              <span className={`block text-xs font-semibold leading-tight tracking-tight ${view === 'home' ? 'text-white' : 'text-[#183331]'}`}>Medicus Labs</span>
+              <span className={`mt-0.5 block text-[10px] leading-tight ${view === 'home' ? 'text-white/70' : 'text-[#657773]'}`}>Care &amp; AI Telemedicine</span>
             </div>
           </button>
 
           {/* Home uses the editorial landing navigation; app views keep the full workspace nav. */}
           {view === 'home' ? (
-            <nav className="hidden items-center gap-7 text-xs font-medium text-[#68756c] lg:flex" aria-label="Landing page">
-              <a className="transition-colors hover:text-[#11140d]" href="#how-it-works">What&apos;s included</a>
-              <a className="transition-colors hover:text-[#11140d]" href="#doctor-selection">Health support</a>
-              <a className="transition-colors hover:text-[#11140d]" href="#trust">Safety &amp; privacy</a>
-              <a className="transition-colors hover:text-[#11140d]" href="#faq">FAQ</a>
+            <nav className="hidden items-center gap-7 text-xs font-medium text-white/80 lg:flex" aria-label="Landing page">
+              <a className="transition-colors hover:text-white" href="#how-it-works">What&apos;s included</a>
+              <a className="transition-colors hover:text-white" href="#doctor-selection">Health support</a>
+              <a className="transition-colors hover:text-white" href="#trust">Safety &amp; privacy</a>
+              <a className="transition-colors hover:text-white" href="#faq">FAQ</a>
             </nav>
           ) : (
             <div className="hidden lg:flex shrink-0">
@@ -167,12 +167,12 @@ export default function Home() {
 
           {/* Right Action Controls */}
           <div className="flex shrink-0 items-center gap-2.5">
-            {view === 'home' && <span className="hidden items-center gap-1.5 text-xs font-medium text-[#5f726e] 2xl:flex">Private, secure conversations</span>}
+            {view === 'home' && <span className="hidden items-center gap-1.5 text-xs font-medium text-white/75 2xl:flex">Private, secure conversations</span>}
             {view !== 'consultation' && (
               <button
                 type="button"
                 onClick={() => navigate('consultation')}
-                className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#6B8F3E] px-4 text-xs font-semibold text-white shadow-sm transition-all hover:bg-[#5f7d38] sm:text-sm"
+                className={`inline-flex min-h-10 items-center gap-2 rounded-xl px-4 text-xs font-semibold shadow-sm transition-all sm:text-sm ${view === 'home' ? 'bg-white text-[#11140d] hover:bg-[#dcebbf]' : 'bg-[#6B8F3E] text-white hover:bg-[#5f7d38]'}`}
               >
                 <span>Talk to a doctor</span>
                 <ArrowRight size={15} aria-hidden="true" />
