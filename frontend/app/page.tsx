@@ -30,6 +30,7 @@ import { MedicalInfoSection } from '@/components/interactive/MedicalInfoSection'
 import { StatBand } from '@/components/landing/StatBand'
 import { StepsSection } from '@/components/landing/StepsSection'
 import { CtaBanner } from '@/components/landing/CtaBanner'
+import { PersonalProfessionalSection } from '@/components/landing/PersonalProfessionalSection'
 import { LiquidNavbar } from '@/components/ui/liquid-glass-navbar'
 
 const DoctorShowcaseSection = dynamic(
@@ -223,6 +224,8 @@ export default function Home() {
             <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
 
             <MedicalInfoSection />
+
+            <PersonalProfessionalSection onSelectDoctor={handleStartDoctorConsultation} />
 
             <section className="border-y border-[#e1e9e4] bg-white">
               <div className="mx-auto grid max-w-7xl gap-6 px-4 py-9 sm:grid-cols-3 sm:px-6 sm:py-11">
