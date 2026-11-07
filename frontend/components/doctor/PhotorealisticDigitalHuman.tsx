@@ -52,6 +52,8 @@ export function PhotorealisticDigitalHuman({
   className = '',
 }: PhotorealisticDigitalHumanProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  // Wraps canvas + speaking video so breathing and head sway move both together.
+  const stageRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const animFrameRef = useRef<number | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
@@ -138,9 +140,11 @@ export function PhotorealisticDigitalHuman({
 
     const canvas = canvasRef.current
     if (!canvas) return
-    const ctx = canvas.getContext('2d', { alpha: false })
+    // alpha: true so, while the lip-sync video plays, the canvas can be transparent except for the eyelids.
+    const ctx = canvas.getContext('2d')
     if (!ctx) return
-    simRef.current.startTime = performance.now()
+    // Keep one clock across effect re-runs (state/video changes) so blink timing is not reset.
+    if (!simRef.current.startTime) simRef.current.startTime = performance.now()
 
     const render = (now: number) => {
       animFrameRef.current = requestAnimationFrame(render)
@@ -168,7 +172,8 @@ export function PhotorealisticDigitalHuman({
       // 1. Subtle idle breathing
       // ─────────────────────────────────────────────────────────────
       const breathPhase = Math.sin(t * 1.46)
-      sim.breathing = 1.0 + breathPhase * 0.008
+      // Base scale > 1 so head sway / breathing never exposes the edge of the frame.
+      sim.breathing = 1.025 + breathPhase * 0.006
 
       // ─────────────────────────────────────────────────────────────
       // 2. Conversational Head Kinematics & Posture by State
@@ -193,9 +198,10 @@ export function PhotorealisticDigitalHuman({
           break
 
         case 'speaking':
+          // Small nods on emphasis plus a slow sway, so a talking head is never frozen.
           sim.head.targetPitch = sim.mouth.open * 0.9 - 0.2
-          sim.head.targetYaw = 0
-          sim.head.targetRoll = 0
+          sim.head.targetYaw = Math.sin(t * 0.9) * 0.5
+          sim.head.targetRoll = Math.sin(t * 0.7) * 0.3
           sim.brows.lift = 0
           sim.brows.furrow = 0.0
           break
@@ -224,6 +230,16 @@ export function PhotorealisticDigitalHuman({
       sim.head.yaw += (sim.head.targetYaw - sim.head.yaw) * lerp
       sim.head.roll += (sim.head.targetRoll - sim.head.roll) * lerp
 
+      // Breathing + head motion are CSS on the wrapper, so the lip-sync video moves with them.
+      const stage = stageRef.current
+      if (stage) {
+        stage.style.transform = `translate3d(${sim.head.yaw * 3.5}px, ${sim.head.pitch * 3.0}px, 0) rotate(${sim.head.roll}deg) scale(${sim.breathing})`
+      }
+
+      // The lip-sync video plays over the canvas and never blinks (only the jaw is regenerated).
+      // While it plays, the canvas goes transparent except for the eyelids, drawn on top.
+      const overlayEyes = doctorState === 'speaking' && videoReady && !!speakingVideoSrc
+
       // ─────────────────────────────────────────────────────────────
       // Canvas drawing for the listening portrait
       // ─────────────────────────────────────────────────────────────
@@ -235,19 +251,13 @@ export function PhotorealisticDigitalHuman({
       ctx.clearRect(0, 0, width, height)
 
       ctx.save()
-      // Center origin for scale & perspective rotation
-      ctx.translate(width / 2, height / 2)
-      ctx.scale(sim.breathing, sim.breathing)
-      ctx.translate(sim.head.yaw * 3.5, sim.head.pitch * 3.0)
-      ctx.rotate((sim.head.roll * Math.PI) / 180)
-      ctx.translate(-width / 2, -height / 2)
 
       // Draw Base Doctor Photorealistic Portrait
       const scale = Math.max(width / img.naturalWidth, height / img.naturalHeight)
       const drawWidth = img.naturalWidth * scale
       const drawHeight = img.naturalHeight * scale
       // Bias the crop upward so the doctor's hair remains in frame in a wide viewport.
-      ctx.drawImage(img, (width - drawWidth) / 2, (height - drawHeight) * 0.25, drawWidth, drawHeight)
+      if (!overlayEyes) ctx.drawImage(img, (width - drawWidth) / 2, (height - drawHeight) * 0.25, drawWidth, drawHeight)
 
       // Animate the real photograph: eyelids, jaw/lips (driven by the voice that is playing), brows.
       const drawX = (width - drawWidth) / 2
@@ -275,12 +285,16 @@ export function PhotorealisticDigitalHuman({
       ctx.save()
       ctx.translate(drawX, drawY)
       ctx.scale(drawWidth / img.naturalWidth, drawHeight / img.naturalHeight)
-      warp.draw(ctx, img, {
-        blink: debug?.blink ?? blink,
-        open: debug?.open ?? mouth.open,
-        wide: debug?.wide ?? mouth.wide,
-        brow: debug?.brow ?? sim.browLift,
-      })
+      if (overlayEyes) {
+        warp.drawEyesOnly(ctx, img, debug?.blink ?? blink)
+      } else {
+        warp.draw(ctx, img, {
+          blink: debug?.blink ?? blink,
+          open: debug?.open ?? mouth.open,
+          wide: debug?.wide ?? mouth.wide,
+          brow: debug?.brow ?? sim.browLift,
+        })
+      }
       ctx.restore()
 
       ctx.restore()
@@ -299,10 +313,13 @@ export function PhotorealisticDigitalHuman({
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-950/10 to-slate-950/70 pointer-events-none z-10" />
 
       {/* When Doctor is speaking with neural generated video, show synchronized video stream */}
+      <div ref={stageRef} className="absolute inset-0 will-change-transform">
       <canvas
         ref={canvasRef}
         width={1600}
         height={900}
+        // Above the speaking video only while it supplies the eyelids; otherwise it is the base layer.
+        style={{ zIndex: doctorState === 'speaking' && videoReady ? 5 : 0 }}
         className="absolute inset-0 h-full w-full object-cover object-[center_25%] filter contrast-[1.03] brightness-[1.01]"
       />
 
@@ -324,6 +341,7 @@ export function PhotorealisticDigitalHuman({
           onError={() => onSpeakingVideoError?.()}
         />
       )}
+      </div>
 
       {playbackBlocked && speakingVideoSrc && doctorState === 'speaking' && (
         <button

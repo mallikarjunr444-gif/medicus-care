@@ -259,6 +259,31 @@ export class PortraitWarp {
     void m
   }
 
+  /**
+   * Draw only the two eyes (base photo + blink warp), clipped to the eye boxes, for compositing
+   * over a live video of the SAME photo. The generated lip-sync video never blinks (only the jaw
+   * is regenerated), so this overlay supplies the eyelids. Outside the clip the canvas stays
+   * transparent and the video shows through; at the clip edge the warp displacement is ~0, so
+   * the overlay's pixels equal the video's and the seam is invisible.
+   * `ctx` must map image px to the photo's placement, as for `draw`.
+   */
+  drawEyesOnly(ctx: CanvasRenderingContext2D, img: CanvasImageSource, blink: number) {
+    if (blink < 0.01) return
+    ctx.save()
+    ctx.beginPath()
+    for (const e of this.a.eye) {
+      const rx = e.w * 0.95 + CELL
+      const top = e.lid - e.w * 0.85 - CELL
+      const bottom = e.low + e.w * 0.45 + CELL
+      ctx.rect(e.cx - rx, top, rx * 2, bottom - top)
+    }
+    ctx.clip()
+    ctx.drawImage(img, 0, 0)
+    // mouth and brow cells are skipped by draw() at open=0, wide=1, brow=0.
+    this.draw(ctx, img, { blink, open: 0, wide: 1, brow: 0 })
+    ctx.restore()
+  }
+
   /** Fill the gap between the displaced inner-lip landmarks with a soft, shaded mouth interior. */
   private drawMouthInterior(ctx: CanvasRenderingContext2D, pose: PortraitPose, openPx: number) {
     const pts = this.face.points
