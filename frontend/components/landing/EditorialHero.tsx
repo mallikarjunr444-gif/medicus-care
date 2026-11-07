@@ -20,6 +20,9 @@ export function EditorialHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorI
           <br />
           MediCare.
         </h1>
+        <p className="mt-3 text-lg font-medium tracking-tight text-[#6e6e73] sm:text-xl">
+          Your Health is Your Priority.
+        </p>
 
         <div className="relative mx-auto mt-5 w-full sm:mt-6">
           <Image

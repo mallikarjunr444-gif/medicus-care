@@ -10,6 +10,7 @@ export interface AppleFoldableHeroProps {
   onSelectDoctor: (id: DoctorId) => void
   eyebrow?: string
   headline?: React.ReactNode
+  tagline?: string
 }
 
 /**
@@ -23,6 +24,7 @@ export function AppleFoldableHero({
       Say hello to<br className="hidden sm:inline" /> MediCare.
     </>
   ),
+  tagline = 'Your Health is Your Priority.',
 }: AppleFoldableHeroProps) {
   const [replay, setReplay] = useState(0)
 
@@ -35,6 +37,11 @@ export function AppleFoldableHero({
         <h1 className="mt-2 font-sans text-[2.8rem] font-bold leading-[1.02] tracking-[-0.04em] text-[#1d1d1f] sm:text-6xl lg:text-[5rem]">
           {headline}
         </h1>
+        {tagline && (
+          <p className="mt-3 text-lg font-medium tracking-tight text-[#6e6e73] sm:text-xl">
+            {tagline}
+          </p>
+        )}
 
         <div
           key={replay}
