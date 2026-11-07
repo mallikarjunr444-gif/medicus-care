@@ -17,7 +17,7 @@ export interface AppleFoldableHeroProps {
  */
 export function AppleFoldableHero({
   onSelectDoctor,
-  eyebrow = 'Medicus Duo · AI Care',
+  eyebrow = 'MediCare',
   headline = (
     <>
       Say hello to<br className="hidden sm:inline" /> calmer care.
@@ -29,7 +29,7 @@ export function AppleFoldableHero({
   return (
     <section className="relative overflow-hidden bg-white pb-14 pt-8 sm:pb-20 sm:pt-12">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B8F3E] sm:text-[15px]">
+        <p className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">
           {eyebrow}
         </p>
         <h1 className="mt-2 font-sans text-[2.8rem] font-bold leading-[1.02] tracking-[-0.04em] text-[#1d1d1f] sm:text-6xl lg:text-[5rem]">

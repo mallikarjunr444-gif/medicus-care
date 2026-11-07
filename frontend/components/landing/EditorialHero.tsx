@@ -14,7 +14,7 @@ export function EditorialHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorI
   return (
     <section className="relative overflow-hidden bg-white pb-12 pt-10 sm:pb-16 sm:pt-12">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <p className="text-sm font-semibold text-[#0F150A]">Medicus Care</p>
+        <p className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">MediCare</p>
         <h1 className="mt-2 font-sans text-[2.7rem] font-bold leading-[0.98] tracking-[-0.045em] text-[#0F150A] sm:text-6xl lg:text-[4.6rem]">
           Say hello to
           <br />
