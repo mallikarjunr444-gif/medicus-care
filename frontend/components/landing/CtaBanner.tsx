@@ -15,7 +15,7 @@ export function CtaBanner({ onStart }: Readonly<{ onStart: () => void }>) {
           className="object-cover object-center"
         />
       </picture>
-      <div className="absolute inset-0 -z-[5] bg-[linear-gradient(90deg,rgba(8,12,9,.9)_0%,rgba(8,12,9,.62)_42%,rgba(8,12,9,.12)_100%)]" />
+      <div className="absolute inset-0 -z-[5] bg-[linear-gradient(90deg,rgba(8,12,9,.62)_0%,rgba(8,12,9,.28)_36%,rgba(8,12,9,.04)_72%,rgba(8,12,9,.12)_100%)]" />
       <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
         <div className="max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#b8d39a]">A starting point, not a diagnosis</p>
