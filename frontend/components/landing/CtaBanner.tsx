@@ -15,14 +15,14 @@ export function CtaBanner({ onStart }: Readonly<{ onStart: () => void }>) {
           className="object-cover object-center"
         />
       </picture>
-      <div className="absolute inset-0 -z-[5] bg-[linear-gradient(90deg,rgba(8,12,9,.62)_0%,rgba(8,12,9,.28)_36%,rgba(8,12,9,.04)_72%,rgba(8,12,9,.12)_100%)]" />
+      <div className="absolute inset-0 -z-[5] bg-[linear-gradient(90deg,rgba(8,12,9,.22)_0%,rgba(8,12,9,.08)_38%,rgba(8,12,9,0)_74%)]" />
       <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
         <div className="max-w-xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#b8d39a]">A starting point, not a diagnosis</p>
-          <h2 className="mt-4 max-w-lg font-display text-4xl font-medium leading-[.96] tracking-[-.045em] text-white sm:text-6xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#dcebbf] [text-shadow:0_2px_12px_rgba(0,0,0,.7)]">A starting point, not a diagnosis</p>
+          <h2 className="mt-4 max-w-lg font-display text-4xl font-medium leading-[.96] tracking-[-.045em] text-white [text-shadow:0_3px_18px_rgba(0,0,0,.72)] sm:text-6xl">
             Ready when you are.
           </h2>
-          <p className="mt-5 max-w-md text-sm leading-6 text-white/75 sm:text-base">
+          <p className="mt-5 max-w-md text-sm leading-6 text-white [text-shadow:0_2px_10px_rgba(0,0,0,.76)] sm:text-base">
             Start a private consultation in your language. It begins only when you choose.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
