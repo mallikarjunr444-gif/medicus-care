@@ -18,7 +18,7 @@ export function EditorialHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorI
         <h1 className="mt-2 font-sans text-[2.7rem] font-bold leading-[0.98] tracking-[-0.045em] text-[#0F150A] sm:text-6xl lg:text-[4.6rem]">
           Say hello to
           <br />
-          calmer care.
+          MediCare.
         </h1>
 
         <div className="relative mx-auto mt-5 w-full sm:mt-6">

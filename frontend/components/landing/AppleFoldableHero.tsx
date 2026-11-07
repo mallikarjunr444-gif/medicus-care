@@ -20,7 +20,7 @@ export function AppleFoldableHero({
   eyebrow = 'MediCare',
   headline = (
     <>
-      Say hello to<br className="hidden sm:inline" /> calmer care.
+      Say hello to<br className="hidden sm:inline" /> MediCare.
     </>
   ),
 }: AppleFoldableHeroProps) {
