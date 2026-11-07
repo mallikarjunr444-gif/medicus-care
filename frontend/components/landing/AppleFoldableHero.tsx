@@ -132,3 +132,29 @@ export function AppleFoldableHero({
     </section>
   )
 }
+
+function BrandRevealHeadline() {
+  const lines = [
+    [['Care', 520], ['begins', 595]],
+    [['when', 670], ['you', 745], ['feel', 820]],
+    [['heard with Medicus.', 920]],
+  ] as const
+
+  return (
+    <>
+      {lines.map((line, lineIndex) => (
+        <span className="duo-brand-heading-line" key={lineIndex} aria-hidden="true">
+          {line.map(([word, delay]) => (
+            <span
+              className={`duo-brand-word${lineIndex === 2 ? ' duo-brand-accent' : ''}`}
+              key={word}
+              style={{ animationDelay: `${delay}ms` }}
+            >
+              <span>{word}</span>
+            </span>
+          ))}
+        </span>
+      ))}
+    </>
+  )
+}

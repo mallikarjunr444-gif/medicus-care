@@ -425,6 +425,51 @@
 }
 
 /* Two-hand foldable hero with the Medicus experience rendered on its screens. */
+.duo-brand-heading {
+  max-width: 18ch;
+  margin: 0 auto;
+  color: #11140d;
+  font-family: 'Urbanist Variable', Urbanist, Inter, sans-serif;
+  font-size: clamp(36px, 6.3vw, 86px);
+  font-weight: 450;
+  line-height: 1.02;
+  letter-spacing: -0.042em;
+  text-wrap: balance;
+}
+.duo-brand-heading-line { display: block; }
+.duo-brand-word {
+  display: inline-block;
+  overflow: hidden;
+  margin: -0.04em 0 -0.16em;
+  padding: 0.04em 0.055em 0.16em;
+  vertical-align: top;
+}
+.duo-brand-word:not(:last-child) { margin-right: 0.1em; }
+.duo-brand-word > span {
+  display: inline-block;
+  transform: translate3d(0, 108%, 0) rotate(4deg);
+  transform-origin: 0 100%;
+  animation: duo-heading-rise 1150ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.duo-brand-accent > span {
+  color: #31553b;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.07em;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  transform: translate3d(-0.08em, 0, 0) skewX(-10deg);
+  clip-path: inset(-20% 100% -30% -5%);
+  filter: blur(6px);
+  opacity: 0.2;
+  animation: duo-heading-accent 1500ms cubic-bezier(0.65, 0, 0.25, 1) both;
+}
+@keyframes duo-heading-rise {
+  to { transform: none; }
+}
+@keyframes duo-heading-accent {
+  to { clip-path: inset(-20% -10% -30% -5%); filter: blur(0); opacity: 1; transform: none; }
+}
 @keyframes duo-v-left {
   0%   { transform: rotateY(-48deg); }
   60%  { transform: rotateY(-14deg); }
@@ -464,7 +509,7 @@
 }
 .duo-v-screen {
   position: absolute;
-  top: 6.5%;
+  top: 4.5%;
   bottom: 24%;
   z-index: 1;
   display: flex;
@@ -479,14 +524,14 @@
   left: 42%;
   right: 1.2%;
   padding: 3.2% 3.4% 4%;
-  border-radius: 14px 0 0 11px;
+  border-radius: clamp(10px, 1.5vw, 20px) 0 0 clamp(7px, 1vw, 13px);
   background: #f7faf8;
 }
 .duo-v-screen-right {
   left: 0.8%;
   right: 43%;
   padding: 3.5% 4.2% 4%;
-  border-radius: 0 14px 11px 0;
+  border-radius: 0 clamp(10px, 1.5vw, 20px) clamp(7px, 1vw, 13px) 0;
   background: #f0f6f2;
 }
 .duo-screen-brand-row,
