@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 import { api } from '@/lib/api'
 import { useStore } from '@/store/useStore'
 import type { ApiError } from '@/lib/types'
+import { ClinicalCard } from '@/components/ui/clinical-primitives'
 
 export function SettingsPanel() {
   const { user, setAuth, token, clearAuth } = useStore()
@@ -73,10 +74,11 @@ export function SettingsPanel() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10 animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-gray-900 mb-2">Settings</h1>
-        <p className="text-gray-500">Manage your account and preferences.</p>
+    <div className="mx-auto max-w-4xl px-4 py-8 animate-fade-in sm:px-6 sm:py-12">
+      <div className="mb-8 border-b border-[#dfe8e2] pb-6">
+        <p className="inline-flex rounded-full border border-[#d8e5dc] bg-[#edf6f1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0f6257]">Preferences</p>
+        <h1 className="mt-4 font-display text-4xl font-medium tracking-[-.035em] text-[#183331] sm:text-5xl">Settings</h1>
+        <p className="mt-2 text-sm text-[#687b74]">Manage your account and preferences.</p>
       </div>
 
       {isGuest && (
@@ -90,7 +92,7 @@ export function SettingsPanel() {
       )}
 
       {/* Profile card */}
-      <div className="card flex flex-col gap-5">
+      <ClinicalCard className="flex flex-col gap-5 p-5 sm:p-6">
         <div className="flex items-center gap-2">
           <User size={16} className="text-primary-400" />
           <h2 className="text-xl font-bold text-gray-900">Profile</h2>
@@ -98,8 +100,9 @@ export function SettingsPanel() {
         <div className="divider" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Full name</label>
+            <label htmlFor="settings-full-name" className="text-sm font-medium text-gray-700">Full name</label>
             <input
+              id="settings-full-name"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -109,8 +112,9 @@ export function SettingsPanel() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Username</label>
+            <label htmlFor="settings-username" className="text-sm font-medium text-gray-700">Username</label>
             <input
+              id="settings-username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -120,8 +124,9 @@ export function SettingsPanel() {
             />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <label className="text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="settings-email" className="text-sm font-medium text-gray-700">Email</label>
             <input
+              id="settings-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -139,10 +144,10 @@ export function SettingsPanel() {
           {savingProfile ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
           Save changes
         </button>
-      </div>
+      </ClinicalCard>
 
       {/* Password card */}
-      <div className="card flex flex-col gap-5 mt-6">
+      <ClinicalCard className="mt-6 flex flex-col gap-5 p-5 sm:p-6">
         <div className="flex items-center gap-2">
           <KeyRound size={16} className="text-primary-400" />
           <h2 className="text-xl font-bold text-gray-900">Password</h2>
@@ -150,8 +155,9 @@ export function SettingsPanel() {
         <div className="divider" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">New password</label>
+            <label htmlFor="settings-new-password" className="text-sm font-medium text-gray-700">New password</label>
             <input
+              id="settings-new-password"
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -162,8 +168,9 @@ export function SettingsPanel() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-700">Confirm new password</label>
+            <label htmlFor="settings-confirm-password" className="text-sm font-medium text-gray-700">Confirm new password</label>
             <input
+              id="settings-confirm-password"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -182,10 +189,10 @@ export function SettingsPanel() {
           {savingPassword ? <Loader2 size={15} className="animate-spin" /> : <KeyRound size={15} />}
           Update password
         </button>
-      </div>
+      </ClinicalCard>
 
       {/* Danger zone */}
-      <div className="card flex flex-col gap-5 mt-6 border border-error-600/20">
+      <ClinicalCard className="mt-6 flex flex-col gap-5 border-error-600/20 p-5 sm:p-6">
         <div className="flex items-center gap-2">
           <Trash2 size={16} className="text-error-600" />
           <h2 className="text-xl font-bold text-gray-900">Danger zone</h2>
@@ -196,7 +203,7 @@ export function SettingsPanel() {
         </p>
         <button
           onClick={() => {
-            api.logout()
+            void api.logout()
             clearAuth()
             toast('Signed out', { icon: '👋' })
           }}
@@ -204,7 +211,7 @@ export function SettingsPanel() {
         >
           Sign out
         </button>
-      </div>
+      </ClinicalCard>
     </div>
   )
 }
