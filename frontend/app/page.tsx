@@ -20,7 +20,6 @@ import {
 import { PatientDashboard } from '@/components/patient/PatientDashboard'
 import { PatientNotesPanel } from '@/components/patient/PatientNotesPanel'
 import { AppointmentWorkspace } from '@/components/patient/AppointmentWorkspace'
-import { AppleFoldableHero } from '@/components/landing/AppleFoldableHero'
 import { BrandLogo } from '@/components/ui/BrandLogo'
 import { SpecialistBookingModal, type AppointmentRequestResult } from '@/components/doctor/SpecialistBookingModal'
 import type { DoctorId } from '@/lib/doctorTypes'
@@ -210,8 +209,6 @@ export default function Home() {
 
         {view === 'home' && (
           <div className="animate-fade-in">
-            <AppleFoldableHero onSelectDoctor={handleStartDoctorConsultation} />
-
             <WhyRelySection />
 
             <StatBand />
