@@ -11,7 +11,7 @@ export function BrandLogo({ className, priority = false }: BrandLogoProps) {
     <span className={`relative inline-block shrink-0 overflow-hidden ${className}`}>
       <Image
         src="/logo.png"
-        alt="Medicus Care"
+        alt="MediCare"
         fill
         sizes="(max-width: 640px) 132px, 160px"
         className="object-cover object-center"

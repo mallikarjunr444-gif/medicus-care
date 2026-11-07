@@ -10,7 +10,7 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 const FONT_VARS = 'font-sans'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://care.medicuslabs.app'
-const SITE_TITLE = 'Medicus Care — Voice and Text Health Consultations | Medicus Labs™'
+const SITE_TITLE = 'MediCare — Voice and Text Health Consultations | Medicus Labs™'
 const SITE_DESCRIPTION =
   'Share health concerns by voice or text, review medical reports, and access preliminary triage ' +
   'guidance with Dr. Smit or Dr. Ananya in your selected language.'
@@ -26,12 +26,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_TITLE,
-    template: '%s · Medicus Care',
+    template: '%s · MediCare',
   },
   description: SITE_DESCRIPTION,
-  applicationName: 'Medicus Care',
+  applicationName: 'MediCare',
   keywords: [
-    'Medicus Care', 'Doctor consultation', 'Dr. Smit', 'Dr. Ananya',
+    'MediCare', 'Doctor consultation', 'Dr. Smit', 'Dr. Ananya',
     'telemedicine', 'medical triage', 'symptom checker', 'digital healthcare',
     'multilingual healthcare', 'Kannada doctor', 'Hindi doctor', 'Medicus Labs',
   ],
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: SITE_URL,
-    siteName: 'Medicus Care',
+    siteName: 'MediCare',
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     locale: 'en_US',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
 const JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'Medicus Care',
+  name: 'MediCare',
   applicationCategory: 'HealthApplication',
   operatingSystem: 'Web browser on iOS, iPadOS, Android, Windows, macOS, and Linux',
   description: SITE_DESCRIPTION,

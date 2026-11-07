@@ -100,7 +100,7 @@ function buildPrintHtml(s: ConsultationSummaryData): string {
 <body>
   <div class="head">
     <h1>Clinical Consultation Summary</h1>
-    <div class="meta">Medicus Care · Record #${e(s.id.slice(0, 8).toUpperCase())} · ${e(s.consultationDate)}</div>
+    <div class="meta">MediCare · Record #${e(s.id.slice(0, 8).toUpperCase())} · ${e(s.consultationDate)}</div>
   </div>
   <div class="grid">
     <div><b>AI Doctor</b>${e(s.doctorName)}</div>

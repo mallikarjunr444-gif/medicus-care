@@ -135,7 +135,7 @@ export default function Home() {
             aria-label="Medicus Labs Home"
           >
             {view === 'home' ? (
-              <span className="font-display text-[1.65rem] font-medium leading-none tracking-[-0.06em] text-white sm:text-[1.8rem]">Medicus Care</span>
+              <span className="font-display text-[1.65rem] font-medium leading-none tracking-[-0.06em] text-white sm:text-[1.8rem]">MediCare</span>
             ) : (
               <BrandLogo className="h-9 w-[128px] sm:w-[140px]" priority />
             )}
@@ -249,7 +249,7 @@ export default function Home() {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">Safety and privacy</p>
                   <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Honest about what this is</h2>
-                  <p className="mt-3 text-sm leading-6 text-[#687b74]">Medicus Care gives health information and preliminary guidance. It does not diagnose, prescribe, or replace a qualified clinician.</p>
+                  <p className="mt-3 text-sm leading-6 text-[#687b74]">MediCare gives health information and preliminary guidance. It does not diagnose, prescribe, or replace a qualified clinician.</p>
                 </div>
                 <ul className="grid gap-3 sm:grid-cols-2">
                   {[
@@ -274,10 +274,10 @@ export default function Home() {
                 </div>
                 <div className="divide-y divide-[#dfe5dc] border-y border-[#dfe5dc]">
                   {[
-                    ['Is this a consultation with a human doctor?', 'Medicus Care uses clearly identified AI care assistants for preliminary health information and guidance. It does not replace a qualified clinician.'],
+                    ['Is this a consultation with a human doctor?', 'MediCare uses clearly identified AI care assistants for preliminary health information and guidance. It does not replace a qualified clinician.'],
                     ['What can I talk about?', 'You can share symptoms, reports, questions about wellbeing, or anything you want to understand before deciding on a next step.'],
                     ['Is my conversation private?', 'Guest consultations are kept separate from other users and your summary is saved only to your own session.'],
-                    ['What should I do in an emergency?', 'Do not use Medicus Care for emergencies. Contact local emergency services immediately. In India, call 112.'],
+                    ['What should I do in an emergency?', 'Do not use MediCare for emergencies. Contact local emergency services immediately. In India, call 112.'],
                   ].map(([question, answer]) => (
                     <details key={question} className="group py-5">
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-sm font-semibold text-[#11140d] marker:hidden">

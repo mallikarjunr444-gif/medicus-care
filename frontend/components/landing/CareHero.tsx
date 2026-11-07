@@ -23,7 +23,7 @@ export function CareHero({ onSelectDoctor }: Readonly<CareHeroProps>) {
         loop
         playsInline
         preload="metadata"
-        aria-label="A calm visual introduction to Medicus Care"
+        aria-label="A calm visual introduction to MediCare"
       >
         <source src="/landing/care-hero.mp4" type="video/mp4" />
       </video>

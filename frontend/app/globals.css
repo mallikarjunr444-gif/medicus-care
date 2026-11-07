@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 /*
-  * Medicus Care design system.
+  * MediCare design system.
  *
  * Fonts are loaded in app/layout.tsx via next/font so they are self-hosted and
  * do not cause a flash of unstyled text — a @import here would block render.

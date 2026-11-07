@@ -21,7 +21,7 @@ export function StatBand() {
           <p className="mt-3 font-display text-xl font-medium leading-snug tracking-tight text-[#0F150A] sm:text-2xl">
             A calmer path to understanding your health — one conversation at a time.
           </p>
-          <footer className="mt-4 text-xs font-medium text-[#68766E]">The Medicus Care design principle</footer>
+          <footer className="mt-4 text-xs font-medium text-[#68766E]">The MediCare design principle</footer>
         </blockquote>
       </div>
     </section>

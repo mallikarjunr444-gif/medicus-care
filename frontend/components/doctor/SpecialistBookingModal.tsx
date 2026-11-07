@@ -116,7 +116,7 @@ export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAp
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-800"><Stethoscope size={19} /></div>
             <div>
               <h2 id="specialist-title" className="text-base font-semibold text-slate-900">Request a specialist appointment</h2>
-              <p className="mt-0.5 text-xs text-slate-500">Directory results from Medicus Care’s specialist service</p>
+              <p className="mt-0.5 text-xs text-slate-500">Directory results from MediCare’s specialist service</p>
             </div>
           </div>
           <button type="button" onClick={onClose} aria-label="Close specialist request" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900"><X size={18} /></button>
@@ -171,7 +171,7 @@ export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAp
 
               <label className="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm leading-5 text-slate-700">
                 <input type="checkbox" checked={patientConfirmed} onChange={(event) => setPatientConfirmed(event.target.checked)} className="mt-1 h-4 w-4 rounded border-slate-300 text-sky-800 focus:ring-sky-700" />
-                <span>I authorize Medicus Care to submit an appointment request for {selectedSpecialist?.name || 'the selected specialist'}. The clinic must confirm availability separately.</span>
+                <span>I authorize MediCare to submit an appointment request for {selectedSpecialist?.name || 'the selected specialist'}. The clinic must confirm availability separately.</span>
               </label>
               <p className="flex items-start gap-2 text-xs leading-5 text-slate-500"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-sky-800" />This sends a request to the configured directory service; it does not guarantee a clinic booking.</p>
               {errorMessage && <div role="alert" className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"><AlertCircle size={17} className="mt-0.5 shrink-0" />{errorMessage}</div>}

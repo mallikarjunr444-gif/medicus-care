@@ -194,7 +194,7 @@ export function TriageSimulator({ onStartConsultation }: TriageSimulatorProps) {
         </h2>
         <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
           Test our clinical screening protocol in real time. Select symptoms and parameters to
-          experience how Medicus Care classifies health risks and protects patient safety.
+          experience how MediCare classifies health risks and protects patient safety.
         </p>
       </div>
 
