@@ -134,8 +134,12 @@ export default function Home() {
             className="group flex shrink-0 items-center gap-2.5 text-left focus:outline-none"
             aria-label="Medicus Labs Home"
           >
-            <BrandLogo className={`h-9 w-[128px] sm:w-[140px] ${view === 'home' ? '[&_*]:brightness-0 [&_*]:invert' : ''}`} priority />
-            <div className={`hidden border-l pl-2.5 xl:block ${view === 'home' ? 'border-white/30' : 'border-slate-200'}`}>
+            {view === 'home' ? (
+              <span className="font-display text-[1.65rem] font-medium leading-none tracking-[-0.06em] text-white sm:text-[1.8rem]">Medicus Care</span>
+            ) : (
+              <BrandLogo className="h-9 w-[128px] sm:w-[140px]" priority />
+            )}
+            <div className={`hidden border-l pl-2.5 xl:block ${view === 'home' ? 'border-white/35' : 'border-slate-200'}`}>
               <span className={`block text-xs font-semibold leading-tight tracking-tight ${view === 'home' ? 'text-white' : 'text-[#183331]'}`}>Medicus Labs</span>
               <span className={`mt-0.5 block text-[10px] leading-tight ${view === 'home' ? 'text-white/70' : 'text-[#657773]'}`}>Care &amp; AI Telemedicine</span>
             </div>
