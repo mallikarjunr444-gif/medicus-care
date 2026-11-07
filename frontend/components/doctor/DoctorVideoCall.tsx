@@ -752,7 +752,7 @@ export function DoctorVideoCall({
             ? 'A clinician review may be appropriate based on the symptoms discussed.'
             : 'No referral was suggested based on the information shared in this conversation.',
       disclaimer:
-        'MediCare is an AI virtual medical assistant and is not an autonomous licensed doctor. No clinical diagnosis, prescription, or regulated medical service is provided. In emergencies, call 112 immediately.',
+        'Medicus Care is an AI virtual medical assistant and is not an autonomous licensed doctor. No clinical diagnosis, prescription, or regulated medical service is provided. In emergencies, call 112 immediately.',
     }
 
     setSummaryData(summary)
@@ -793,7 +793,7 @@ export function DoctorVideoCall({
             {
               id: `apt-${Date.now()}`,
               role: 'doctor',
-              speakerName: 'MediCare',
+              speakerName: 'Medicus Care',
               text: `Appointment request submitted for ${details.doctor_name} at ${details.hospital} on ${details.date} (${details.time_slot}). Please contact the clinic to confirm availability. Request ID: ${details.booking_id}.`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },

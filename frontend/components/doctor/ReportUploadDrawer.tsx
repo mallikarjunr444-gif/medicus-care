@@ -121,7 +121,7 @@ export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscus
             </div>
             <div>
               <h2 id="report-review-title" className="text-base font-semibold text-slate-900">Review a laboratory report</h2>
-              <p className="mt-0.5 text-xs text-slate-500">Submit text to MediCare’s existing report-review endpoint.</p>
+              <p className="mt-0.5 text-xs text-slate-500">Submit text to Medicus Care’s existing report-review endpoint.</p>
             </div>
           </div>
           <button type="button" onClick={onClose} aria-label="Close report review" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900">

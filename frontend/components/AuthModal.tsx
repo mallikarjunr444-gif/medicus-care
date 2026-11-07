@@ -78,7 +78,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
         full_name: regFullName || 'Patient User',
         is_guest: false,
       })
-      toast.success('Account created! Welcome to MediCare!', { icon: '🎉' })
+      toast.success('Account created! Welcome to Medicus Care!', { icon: '🎉' })
       if (onClose) onClose()
     } finally {
       setIsLoading(false)

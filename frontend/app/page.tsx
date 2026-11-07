@@ -249,7 +249,7 @@ export default function Home() {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">Safety and privacy</p>
                   <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">Honest about what this is</h2>
-                  <p className="mt-3 text-sm leading-6 text-[#687b74]">MediCare gives health information and preliminary guidance. It does not diagnose, prescribe, or replace a qualified clinician.</p>
+                  <p className="mt-3 text-sm leading-6 text-[#687b74]">Medicus Care gives health information and preliminary guidance. It does not diagnose, prescribe, or replace a qualified clinician.</p>
                 </div>
                 <ul className="grid gap-3 sm:grid-cols-2">
                   {[

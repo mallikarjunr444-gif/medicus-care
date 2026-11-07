@@ -45,11 +45,11 @@ const items = [
   },
 ]
 
-/** Bento "capabilities" band with a featured conversation tile. Light MediCare register. */
+/** Bento "capabilities" band with a featured conversation tile. Light Medicus Care register. */
 export function MedicalInfoSection() {
   return (
     <section id="medical-info" className="section-y mx-auto max-w-7xl px-4 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">Why MediCare</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">Why Medicus Care</p>
       <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1c3c36] sm:text-3xl">
         Care that feels like a conversation
       </h2>

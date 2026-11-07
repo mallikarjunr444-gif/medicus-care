@@ -142,7 +142,7 @@ export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDa
         <div>
           <h3 className="text-sm font-semibold text-[#25423b]">A thoughtful place to start</h3>
           <p className="mt-1 text-sm leading-6 text-[#60756c]">
-            MediCare offers AI health information and preliminary guidance. It does not replace a qualified clinician or emergency care.
+            Medicus Care offers AI health information and preliminary guidance. It does not replace a qualified clinician or emergency care.
           </p>
         </div>
       </div>

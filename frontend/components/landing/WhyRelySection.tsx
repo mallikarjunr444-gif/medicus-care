@@ -25,14 +25,14 @@ const cards: { label: string; desc: string; image?: string; icon?: LucideIcon }[
   },
 ]
 
-/** "Why people rely on MediCare" — three image cards in the Neuro Pulse style. */
+/** "Why people rely on Medicus Care" — three image cards in the Neuro Pulse style. */
 export function WhyRelySection() {
   return (
     <section className="bg-[#E5ECE8] py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="max-w-xl font-display text-2xl font-medium leading-tight tracking-tight text-[#0F150A] sm:text-4xl">
-            Why people rely on MediCare for their well-being
+            Why people rely on Medicus Care for their well-being
           </h2>
           <p className="max-w-sm text-sm leading-6 text-[#5C6B62]">
             A calm, private place to understand how you feel — with clear next steps.

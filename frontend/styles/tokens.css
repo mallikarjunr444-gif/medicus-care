@@ -1,9 +1,9 @@
 /*
- * MediCare design tokens.
+ * Medicus Care design tokens.
  *
  * Structure (spacing scale, section rhythm, radii, type scale, tracking) is adapted from the
  * "professional" design system in nexu-io/open-design (Apache-2.0,
- * https://github.com/nexu-io/open-design). Colour values are MediCare's own botanical green.
+ * https://github.com/nexu-io/open-design). Colour values are Medicus Care's own botanical green.
  * See docs/THIRD_PARTY_NOTICES.md.
  */
 :root {
