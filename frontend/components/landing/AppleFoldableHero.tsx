@@ -18,15 +18,12 @@ export interface AppleFoldableHeroProps {
  */
 export function AppleFoldableHero({
   onSelectDoctor,
-  eyebrow,
-  headline = (
-    <>
-      Say hello to<br className="hidden sm:inline" /> MediCare.
-    </>
-  ),
-  tagline = 'Your Health is Your Priority.',
+  eyebrow = 'Medicus Care',
+  headline,
+  tagline = 'AI care that listens, in a language that feels like yours.',
 }: AppleFoldableHeroProps) {
   const [replay, setReplay] = useState(0)
+  const isDefaultHeadline = headline === undefined
 
   return (
     <section className="relative overflow-hidden bg-white pb-14 pt-8 sm:pb-20 sm:pt-12">
@@ -36,8 +33,11 @@ export function AppleFoldableHero({
             {eyebrow}
           </p>
         )}
-        <h1 className="font-sans text-[2.8rem] font-bold leading-[1.02] tracking-[-0.04em] text-[#1d1d1f] sm:text-6xl lg:text-[5rem]">
-          {headline}
+        <h1
+          className="duo-brand-heading"
+          aria-label={isDefaultHeadline ? 'Care begins when you feel heard with Medicus.' : undefined}
+        >
+          {headline ?? <BrandRevealHeadline />}
         </h1>
         {tagline && (
           <p className="mt-3 text-lg font-medium tracking-tight text-[#6e6e73] sm:text-xl">
@@ -48,18 +48,18 @@ export function AppleFoldableHero({
         <div
           key={replay}
           role="img"
-          aria-label="Two hands open a foldable phone to reveal the Medicus Care experience."
+          aria-label="A fully framed foldable phone, held open by two hands, displays the Medicus Care experience."
           className="duo-v-stage relative mx-auto mt-6 w-full sm:mt-8"
-          style={{ aspectRatio: '664 / 370', perspective: '1500px' }}
+          style={{ aspectRatio: '664 / 300', perspective: '1500px' }}
         >
           {/* left half (left hand + left screen) */}
           <div className="duo-v-left absolute left-0 top-0 h-full w-[50.9%]">
             <Image
-              src="/landing/duo-neuro-left.png"
+              src="/landing/duo-base.png"
               alt=""
               fill
               sizes="(max-width: 1024px) 51vw, 460px"
-              className="object-contain"
+              className="object-cover object-left"
               priority
             />
             <div className="duo-v-screen duo-v-screen-left" aria-hidden="true">
@@ -81,11 +81,11 @@ export function AppleFoldableHero({
           {/* right half (right hand + right screen) */}
           <div className="duo-v-right absolute left-[50.9%] top-0 h-full w-[49.1%]">
             <Image
-              src="/landing/duo-neuro-right.png"
+              src="/landing/duo-base.png"
               alt=""
               fill
               sizes="(max-width: 1024px) 49vw, 440px"
-              className="object-contain"
+              className="object-cover object-right"
               priority
             />
             <div className="duo-v-screen duo-v-screen-right" aria-hidden="true">
