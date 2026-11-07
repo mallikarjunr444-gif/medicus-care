@@ -141,27 +141,33 @@ export default function Home() {
             </div>
           </button>
 
-          {/* Desktop Nav Items — 21st.dev Liquid Glass Navbar */}
-          <div className="hidden lg:flex shrink-0">
-            <LiquidNavbar
-              items={navItems.map(({ id, icon: Icon, label }) => ({
-                label,
-                icon: (active: boolean) => <Icon size={14} strokeWidth={active ? 2.2 : 1.8} aria-hidden="true" />,
-                fx: 'glow',
-                onClick: () => navigate(id),
-              }))}
-              active={Math.max(0, navItems.findIndex((item) => item.id === view))}
-              onChange={(idx) => navigate(navItems[idx].id)}
-              tone="light"
-            />
-          </div>
+          {/* Home uses the editorial landing navigation; app views keep the full workspace nav. */}
+          {view === 'home' ? (
+            <nav className="hidden items-center gap-7 text-xs font-medium text-[#68756c] lg:flex" aria-label="Landing page">
+              <a className="transition-colors hover:text-[#11140d]" href="#how-it-works">What&apos;s included</a>
+              <a className="transition-colors hover:text-[#11140d]" href="#doctor-selection">Health support</a>
+              <a className="transition-colors hover:text-[#11140d]" href="#trust">Safety &amp; privacy</a>
+              <a className="transition-colors hover:text-[#11140d]" href="#faq">FAQ</a>
+            </nav>
+          ) : (
+            <div className="hidden lg:flex shrink-0">
+              <LiquidNavbar
+                items={navItems.map(({ id, icon: Icon, label }) => ({
+                  label,
+                  icon: (active: boolean) => <Icon size={14} strokeWidth={active ? 2.2 : 1.8} aria-hidden="true" />,
+                  fx: 'glow',
+                  onClick: () => navigate(id),
+                }))}
+                active={Math.max(0, navItems.findIndex((item) => item.id === view))}
+                onChange={(idx) => navigate(navItems[idx].id)}
+                tone="light"
+              />
+            </div>
+          )}
 
           {/* Right Action Controls */}
           <div className="flex shrink-0 items-center gap-2.5">
-            <span className="hidden items-center gap-1.5 text-xs font-medium text-[#5f726e] 2xl:flex">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Private, secure conversations
-            </span>
+            {view === 'home' && <span className="hidden items-center gap-1.5 text-xs font-medium text-[#5f726e] 2xl:flex">Private, secure conversations</span>}
             {view !== 'consultation' && (
               <button
                 type="button"
@@ -172,10 +178,7 @@ export default function Home() {
                 <ArrowRight size={15} aria-hidden="true" />
               </button>
             )}
-            <span className="flex items-center gap-1.5 rounded-full border border-[#dce8e2] bg-[#f5f9f6] px-2.5 py-1 text-[11px] font-medium text-[#45645d] sm:hidden">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Online
-            </span>
+            {view !== 'home' && <span className="flex items-center gap-1.5 rounded-full border border-[#dce8e2] bg-[#f5f9f6] px-2.5 py-1 text-[11px] font-medium text-[#45645d] sm:hidden"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />Online</span>}
           </div>
         </div>
       </header>
@@ -216,7 +219,7 @@ export default function Home() {
 
             <StatBand />
 
-            <DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} />
+            <div id="doctor-selection"><DoctorShowcaseSection onSelectDoctor={handleStartDoctorConsultation} /></div>
 
             <MedicalInfoSection />
 
@@ -256,6 +259,31 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
+              </div>
+            </section>
+
+            <section id="faq" className="section-y mx-auto max-w-7xl px-4 sm:px-6">
+              <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6B8F3E]">FAQ</p>
+                  <h2 className="mt-2 max-w-sm font-display text-3xl font-medium leading-tight tracking-tight text-[#11140d] sm:text-4xl">A few clear answers before you begin.</h2>
+                </div>
+                <div className="divide-y divide-[#dfe5dc] border-y border-[#dfe5dc]">
+                  {[
+                    ['Is this a consultation with a human doctor?', 'Medicus Care uses clearly identified AI care assistants for preliminary health information and guidance. It does not replace a qualified clinician.'],
+                    ['What can I talk about?', 'You can share symptoms, reports, questions about wellbeing, or anything you want to understand before deciding on a next step.'],
+                    ['Is my conversation private?', 'Guest consultations are kept separate from other users and your summary is saved only to your own session.'],
+                    ['What should I do in an emergency?', 'Do not use Medicus Care for emergencies. Contact local emergency services immediately. In India, call 112.'],
+                  ].map(([question, answer]) => (
+                    <details key={question} className="group py-5">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-sm font-semibold text-[#11140d] marker:hidden">
+                        {question}
+                        <span className="text-xl font-normal text-[#6B8F3E] transition-transform group-open:rotate-45">+</span>
+                      </summary>
+                      <p className="max-w-2xl pt-3 pr-10 text-sm leading-6 text-[#68756c]">{answer}</p>
+                    </details>
+                  ))}
+                </div>
               </div>
             </section>
 
