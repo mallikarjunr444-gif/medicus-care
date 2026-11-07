@@ -6,18 +6,34 @@ import { HeartPulse, MessageCircle, RotateCcw, ShieldCheck } from 'lucide-react'
 import type { DoctorId } from '@/lib/doctorTypes'
 import { BrandLogo } from '@/components/ui/BrandLogo'
 
+export interface AppleFoldableHeroProps {
+  onSelectDoctor: (id: DoctorId) => void
+  eyebrow?: string
+  headline?: React.ReactNode
+}
+
 /**
  * Foldable hero with a Medicus-branded care experience on both screens.
  */
-export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId) => void }) {
+export function AppleFoldableHero({
+  onSelectDoctor,
+  eyebrow = 'Medicus Duo · AI Care',
+  headline = (
+    <>
+      Say hello to<br className="hidden sm:inline" /> calmer care.
+    </>
+  ),
+}: AppleFoldableHeroProps) {
   const [replay, setReplay] = useState(0)
 
   return (
     <section className="relative overflow-hidden bg-white pb-14 pt-8 sm:pb-20 sm:pt-12">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <p className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">Medicus Duo</p>
-        <h1 className="mt-1 font-sans text-[3.2rem] font-bold leading-[1.02] tracking-[-0.04em] text-[#1d1d1f] sm:text-7xl lg:text-[5.4rem]">
-          Hello, hello.
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#6B8F3E] sm:text-[15px]">
+          {eyebrow}
+        </p>
+        <h1 className="mt-2 font-sans text-[2.8rem] font-bold leading-[1.02] tracking-[-0.04em] text-[#1d1d1f] sm:text-6xl lg:text-[5rem]">
+          {headline}
         </h1>
 
         <div
