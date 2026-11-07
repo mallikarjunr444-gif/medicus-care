@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  allowedDevOrigins: ['127.0.0.1', 'localhost'],
   images: {
     dangerouslyAllowSVG: true,
     unoptimized: process.env.NODE_ENV === 'development',

@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { RotateCcw } from 'lucide-react'
+import { HeartPulse, MessageCircle, RotateCcw, ShieldCheck } from 'lucide-react'
 import type { DoctorId } from '@/lib/doctorTypes'
+import { BrandLogo } from '@/components/ui/BrandLogo'
 
 /**
- * iPhone Duo with two hands, opening in a shallow V and settling flat.
- * The screen contains the Neuro Pulse hero scene.
+ * Foldable hero with a Medicus-branded care experience on both screens.
  */
 export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId) => void }) {
   const [replay, setReplay] = useState(0)
@@ -23,7 +23,7 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
         <div
           key={replay}
           role="img"
-          aria-label="Two hands open a foldable phone to reveal a calm wellness scene."
+          aria-label="Two hands open a foldable phone to reveal the Medicus Care experience."
           className="duo-v-stage relative mx-auto mt-6 w-full sm:mt-8"
           style={{ aspectRatio: '664 / 370', perspective: '1500px' }}
         >
@@ -37,6 +37,19 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
               className="object-contain"
               priority
             />
+            <div className="duo-v-screen duo-v-screen-left" aria-hidden="true">
+              <div className="duo-screen-brand-row">
+                <BrandLogo className="h-[clamp(9px,1.25vw,15px)] w-[clamp(42px,5.6vw,68px)]" />
+                <span className="duo-screen-live"><span /> AI CARE</span>
+              </div>
+              <p className="duo-screen-eyebrow">WELLBEING, AT YOUR PACE</p>
+              <h2 className="duo-screen-title">Care that starts with listening.</h2>
+              <p className="duo-screen-copy">Thoughtful support in the language that feels like yours.</p>
+              <div className="duo-screen-checkin">
+                <span className="duo-glass-mark"><HeartPulse aria-hidden="true" /></span>
+                <span><strong>Your daily check-in</strong><small>How are you feeling today?</small></span>
+              </div>
+            </div>
           </div>
           {/* right half (right hand + right screen) */}
           <div className="duo-v-right absolute left-[50.9%] top-0 h-full w-[49.1%]">
@@ -48,6 +61,18 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
               className="object-contain"
               priority
             />
+            <div className="duo-v-screen duo-v-screen-right" aria-hidden="true">
+              <div className="duo-screen-trust"><ShieldCheck aria-hidden="true" /> PRIVATE BY DESIGN</div>
+              <p className="duo-screen-eyebrow">A CLEAR NEXT STEP</p>
+              <h2 className="duo-screen-title">Talk it through.</h2>
+              <p className="duo-screen-copy">Start with an AI care guide that listens, without judgment.</p>
+              <div className="duo-screen-visit">
+                <span className="duo-screen-message"><MessageCircle aria-hidden="true" /></span>
+                <span><strong>Start a conversation</strong><small>Private AI care</small></span>
+                <span className="duo-screen-arrow" aria-hidden="true">→</span>
+              </div>
+              <div className="duo-screen-languages"><span>ENGLISH</span><span>ಕನ್ನಡ</span><span>हिंदी</span></div>
+            </div>
           </div>
           <div className="duo-v-hinge" aria-hidden="true" />
         </div>
