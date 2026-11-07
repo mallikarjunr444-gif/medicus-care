@@ -520,18 +520,23 @@
   background: linear-gradient(90deg, transparent, rgba(21, 27, 23, 0.22) 48%, rgba(255, 255, 255, 0.22) 58%, transparent);
   animation: duo-v-hinge 2.3s ease-out both;
 }
-.duo-v-top-frame {
+.duo-v-panel-frame {
   position: absolute;
-  z-index: 4;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  animation: duo-top-frame-reveal 900ms ease-out 1.2s both;
-}
-.duo-v-top-frame svg {
-  display: block;
-  width: 100%;
+  z-index: 2;
+  top: 0;
   height: 100%;
+  pointer-events: none;
+}
+.duo-v-panel-frame-left {
+  left: 0;
+  width: 195.7%;
+}
+.duo-v-panel-frame-right {
+  left: -103.7%;
+  width: 203.7%;
+}
+.duo-v-panel-frame {
+  display: block;
   overflow: visible;
 }
 .duo-v-device-cta {
@@ -593,13 +598,8 @@
   0%, 25% { opacity: 0.8; }
   100% { opacity: 0; }
 }
-@keyframes duo-top-frame-reveal {
-  from { opacity: 0; filter: blur(2px); }
-  to { opacity: 1; filter: blur(0); }
-}
 @media (prefers-reduced-motion: reduce) {
   .duo-v-left, .duo-v-right, .duo-v-stage, .duo-v-hinge { animation: none; transform: none; }
-  .duo-v-top-frame { animation: none; opacity: 1; filter: none; }
   .duo-brand-word > span,
   .duo-brand-accent > span { animation: none; transform: none; clip-path: none; filter: none; opacity: 1; }
 }
