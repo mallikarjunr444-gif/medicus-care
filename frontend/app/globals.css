@@ -424,6 +424,42 @@
   .lock-screen { animation: none; transform: translateY(-100%); }
 }
 
+/* iPhone Duo with two hands: V-fold opening, Neuro Pulse scene inside. */
+@keyframes duo-v-left {
+  0%   { transform: rotateY(-24deg); }
+  100% { transform: rotateY(0deg); }
+}
+@keyframes duo-v-right {
+  0%   { transform: rotateY(24deg); }
+  100% { transform: rotateY(0deg); }
+}
+@keyframes duo-v-stage {
+  0%   { transform: scale(0.94) rotateX(7deg); }
+  100% { transform: scale(1) rotateX(0deg); }
+}
+@keyframes duo-v-blur {
+  0%   { filter: blur(3px) brightness(0.85); }
+  100% { filter: blur(0px) brightness(1); }
+}
+.duo-v-left {
+  animation:
+    duo-v-left 2s cubic-bezier(0.22, 1, 0.36, 1) both,
+    duo-v-blur 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: right center;
+  transform-style: preserve-3d;
+}
+.duo-v-right {
+  animation: duo-v-right 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+.duo-v-stage {
+  animation: duo-v-stage 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .duo-v-left, .duo-v-right, .duo-v-stage { animation: none; transform: none; }
+}
+
 /* Kept for other hero variants that reveal the whole screen. */
 @keyframes screen-reveal {
   0%   { filter: blur(14px) brightness(0.5); opacity: 0.85; }
