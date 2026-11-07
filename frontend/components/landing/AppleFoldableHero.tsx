@@ -39,7 +39,9 @@ export function AppleFoldableHero({ onSelectDoctor }: { onSelectDoctor: (id: Doc
             />
             <div className="duo-v-screen duo-v-screen-left" aria-hidden="true">
               <div className="duo-screen-brand-row">
-                <BrandLogo className="h-[clamp(9px,1.25vw,15px)] w-[clamp(42px,5.6vw,68px)]" />
+                <span className="duo-screen-brand-reveal">
+                  <BrandLogo className="h-full w-full" />
+                </span>
                 <span className="duo-screen-live"><span /> AI CARE</span>
               </div>
               <p className="duo-screen-eyebrow">WELLBEING, AT YOUR PACE</p>
