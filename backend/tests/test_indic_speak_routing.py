@@ -151,11 +151,27 @@ async def test_worker_failure_does_not_fall_back_to_edge_or_gnani(monkeypatch, t
     monkeypatch.setattr(service, "_edge_fallback", edge)
     monkeypatch.setattr(gnani_service, "synthesize", gnani)
 
-    with pytest.raises(RuntimeError, match="no external or English voice fallback"):
-        await service.synthesize("नमस्ते", str(tmp_path / "hi.wav"), language="hi")
+    result = await service.synthesize(
+        "नमस्ते", str(tmp_path / "hi.wav"), language="hi", voice_gender="male"
+    )
 
-    edge.assert_not_awaited()
+    assert result.engine == "edge-tts"
+    assert result.fallback is True
+    edge.assert_awaited_once_with("नमस्ते", str(tmp_path / "hi.wav"), "hi", "male")
     gnani.assert_not_awaited()
+
+
+async def test_hindi_kannada_use_gtts_when_indic_speak_and_edge_both_fail(monkeypatch, tmp_path):
+    service = TTSService()
+    monkeypatch.setattr(service, "_indic_speak", AsyncMock(side_effect=RuntimeError("down")))
+    monkeypatch.setattr(service, "_edge_fallback", AsyncMock(side_effect=RuntimeError("offline")))
+    gtts = AsyncMock()
+    monkeypatch.setattr(service, "_gtts_fallback", gtts)
+
+    result = await service.synthesize("ನಮಸ್ಕಾರ", str(tmp_path / "kn.wav"), language="kn")
+
+    assert result.engine == "gtts"
+    gtts.assert_awaited_once_with("ನಮಸ್ಕಾರ", str(tmp_path / "kn.wav"), "kn")
 
 
 async def test_english_keeps_the_existing_male_voice_route(monkeypatch, tmp_path):
