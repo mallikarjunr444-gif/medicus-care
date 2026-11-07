@@ -74,6 +74,29 @@ export function AppleFoldableHero({
             />
           </div>
           <div className="duo-v-hinge" aria-hidden="true" />
+          <div className="duo-v-top-frame" aria-hidden="true">
+            <svg viewBox="0 0 664 370" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="duo-top-frame-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#74797d" />
+                  <stop offset="22%" stopColor="#272a2d" />
+                  <stop offset="82%" stopColor="#111214" />
+                  <stop offset="100%" stopColor="#55595d" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M122 14 C122 6 127 1 137 2 L317 19 Q332 21 347 19 L527 2 C537 1 542 6 542 14 L541 22 C541 15 536 11 527 11 L348 28 Q332 30 316 28 L137 11 C128 11 123 15 123 22 Z"
+                fill="url(#duo-top-frame-fill)"
+              />
+              <path
+                d="M130 6 C133 3 137 3 143 4 L317 21 Q332 23 347 21 L521 4 C527 3 531 3 534 6"
+                fill="none"
+                stroke="rgba(255,255,255,0.62)"
+                strokeLinecap="round"
+                strokeWidth="1.25"
+              />
+            </svg>
+          </div>
           <div className="duo-v-device-cta">
             <span className="duo-device-cta-copy">
               <strong>Free to start · ₹0</strong>
