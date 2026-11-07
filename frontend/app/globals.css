@@ -469,6 +469,7 @@
   bottom: 3%;
   left: 50.9%;
   width: 12px;
+  opacity: 0;
   pointer-events: none;
   transform: translateX(-50%);
   background: linear-gradient(90deg, transparent, rgba(21, 27, 23, 0.22) 48%, rgba(255, 255, 255, 0.22) 58%, transparent);
