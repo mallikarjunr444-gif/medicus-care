@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUpRight, BriefcaseBusiness, HeartHandshake, ShieldCheck } from 'lucide-react'
+import { ArrowUpRight, Briefcase, HeartHandshake, ShieldCheck } from 'lucide-react'
 import type { DoctorId } from '@/lib/doctorTypes'
 
 interface PersonalProfessionalSectionProps {
@@ -43,7 +43,7 @@ export function PersonalProfessionalSection({ onSelectDoctor }: Readonly<Persona
 
           <article className="group relative overflow-hidden rounded-[1.75rem] border border-[#cbd8ce] bg-white p-6 text-[#173b32] shadow-[0_16px_40px_-25px_rgba(23,59,50,.35)] sm:p-8">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full border border-[#dfe8e2] transition-transform duration-500 group-hover:scale-110" />
-            <BriefcaseBusiness size={24} className="text-[#6b8f3e]" aria-hidden="true" />
+            <Briefcase size={24} className="text-[#6b8f3e]" aria-hidden="true" />
             <p className="mt-12 text-xs font-semibold uppercase tracking-[0.16em] text-[#6b8f3e]">For professionals</p>
             <h3 className="mt-2 font-display text-3xl font-medium tracking-[-.035em] sm:text-4xl">A better care conversation.</h3>
             <p className="mt-3 max-w-sm text-sm leading-6 text-[#68756c]">Give patients a structured way to share context before an appointment or follow-up.</p>
