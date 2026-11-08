@@ -51,11 +51,10 @@ export function PatientNotesPanel() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-10">
+    <section className="mx-auto max-w-[1080px] px-5 py-10 sm:py-14">
       <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <ClinicalBadge><FileText size={13} /> Personal workspace</ClinicalBadge>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-.04em] text-[#1d1d1f] sm:text-4xl">Your health notes</h1>
+          <h1 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#1d1d1f] sm:text-[48px]">Your health notes</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6e6e73]">Keep questions and details you want to remember for a conversation with a qualified clinician.</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-[#6e6e73]">

@@ -123,7 +123,7 @@ export function PatientDashboard({ displayName, isGuest, onNavigate }: PatientDa
             onClick={() => onNavigate(destination)}
             className="group flex min-h-56 flex-col rounded-2xl border border-[#d2d2d7] bg-white p-5 text-left shadow-[0_2px_8px_rgba(34,71,56,.03)] transition hover:-translate-y-0.5 hover:border-[#c7c7cc] hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c7c7cc]"
           >
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f5f5f7] text-[#0058b0] transition group-hover:bg-[#0058b0] group-hover:text-white">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f5f5f7] text-[#0058b0] transition group-hover:bg-[#0058b0] group-hover:text-[#1d1d1f]">
               <Icon size={20} aria-hidden="true" />
             </span>
             <span className="mt-4 text-base font-semibold text-[#1d1d1f]">{title}</span>

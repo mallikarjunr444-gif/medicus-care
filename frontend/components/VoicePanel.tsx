@@ -370,7 +370,7 @@ export function VoicePanel({ onVoiceSelect }: VoicePanelProps = {}) {
                     className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0
  transition-all duration-200
  ${isPreviewing
- ? 'bg-primary-600 text-gray-900'
+ ? 'bg-primary-600 text-white'
  : 'bg-gray-100 hover:bg-primary-600/30 text-gray-500 hover:text-primary-300 opacity-0 group-hover:opacity-100'
  }`}
                     title={isPreviewing ? 'Stop preview' : 'Preview voice sample'}

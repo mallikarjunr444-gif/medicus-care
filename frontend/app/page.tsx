@@ -169,8 +169,8 @@ export default function Home() {
         )}
 
         {view === 'chat' && selectedAvatar && <PageFrame eyebrow="Conversation" title="Live conversation" description="Continue your text and voice session."><ChatInterface key={`${selectedAvatar}:${resumeSessionId ?? 'new'}`} avatarId={selectedAvatar} resumeSessionId={resumeSessionId ?? undefined} onSessionCreated={() => undefined} /></PageFrame>}
-        {view === 'history' && <PageFrame eyebrow="Your care" title="Conversation history" description="Return to a previous conversation."><HistoryPanel onResume={handleResumeFromHistory} /></PageFrame>}
-        {view === 'settings' && <PageFrame eyebrow="Preferences" title="Settings" description="Manage your account and app preferences."><SettingsPanel /></PageFrame>}
+        {view === 'history' && <HistoryPanel onResume={handleResumeFromHistory} />}
+        {view === 'settings' && <SettingsPanel />}
         {view === 'admin' && <div className="min-h-[calc(100dvh-3rem)] bg-[#f5f5f7]"><AdminKnowledgeDashboard /></div>}
       </main>
 

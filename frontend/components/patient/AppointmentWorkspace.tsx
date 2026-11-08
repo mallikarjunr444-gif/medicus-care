@@ -11,11 +11,10 @@ interface AppointmentWorkspaceProps {
 
 export function AppointmentWorkspace({ onRequestAppointment, latestRequest }: AppointmentWorkspaceProps) {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-10">
+    <section className="mx-auto max-w-[1080px] px-5 py-10 sm:py-14">
       <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <ClinicalBadge><CalendarDays size={13} /> Care coordination</ClinicalBadge>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-.04em] text-[#1d1d1f] sm:text-4xl">Appointments</h1>
+          <h1 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#1d1d1f] sm:text-[48px]">Appointments</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6e6e73]">Send a request to a specialist in the available directory. The clinic confirms the appointment separately.</p>
         </div>
         <ClinicalButton onClick={onRequestAppointment}><CalendarDays size={16} /> Request an appointment</ClinicalButton>

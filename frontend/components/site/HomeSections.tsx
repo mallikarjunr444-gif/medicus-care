@@ -343,6 +343,7 @@ const FOOTER_COLUMNS = [
   { title: 'Consult', links: [{ label: 'Dr. Ananya', href: '#doctor-selection' }, { label: 'Dr. Smit', href: '#doctor-selection' }, { label: 'How it works', href: '#how-it-works' }] },
   { title: 'Safety', links: [{ label: 'Honest about what this is', href: '#trust' }, { label: 'Emergency: call 112', href: 'tel:112' }, { label: 'FAQ', href: '#faq' }] },
   { title: 'Languages', links: [{ label: 'ಕನ್ನಡ', href: '#doctor-selection' }, { label: 'हिन्दी', href: '#doctor-selection' }, { label: 'English', href: '#doctor-selection' }] },
+  { title: 'Legal', links: [{ label: 'Terms of Use', href: '/terms' }, { label: 'Privacy Policy', href: '/privacy' }] },
 ]
 
 export function SiteFooter() {
@@ -352,7 +353,7 @@ export function SiteFooter() {
         <p className="border-t border-[#d2d2d7] pt-6 text-[12px] leading-[1.6]">
           MediCare is an AI health assistant from Medicus Labs. It provides general health information and preliminary guidance. It is not a licensed physician, does not diagnose or prescribe, and is not for emergencies. In an emergency, call 112.
         </p>
-        <div className="mt-8 grid grid-cols-2 gap-8 border-t border-[#d2d2d7] pt-8 sm:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-8 border-t border-[#d2d2d7] pt-8 sm:grid-cols-4">
           {FOOTER_COLUMNS.map((column) => (
             <div key={column.title}>
               <h3 className="text-[12px] font-semibold text-[#1d1d1f]">{column.title}</h3>
@@ -368,7 +369,10 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-        <p className="mt-10 border-t border-[#d2d2d7] pt-5 text-[12px]">Copyright © {new Date().getFullYear()} Medicus Labs. All rights reserved.</p>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-[#d2d2d7] pt-5 text-[12px]">
+          <p>Copyright © {new Date().getFullYear()} Medicus Labs. All rights reserved.</p>
+          <p className="flex gap-4"><a href="/privacy" className="hover:text-[#1d1d1f] hover:underline">Privacy Policy</a><a href="/terms" className="hover:text-[#1d1d1f] hover:underline">Terms of Use</a></p>
+        </div>
       </div>
     </footer>
   )

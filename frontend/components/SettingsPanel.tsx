@@ -74,10 +74,9 @@ export function SettingsPanel() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 animate-fade-in sm:px-6 sm:py-12">
-      <div className="mb-8 border-b border-[#d2d2d7] pb-6">
-        <p className="inline-flex rounded-full border border-[#d2d2d7] bg-[#f5f5f7] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0058b0]">Preferences</p>
-        <h1 className="mt-4 font-display text-4xl font-medium tracking-[-.035em] text-[#1d1d1f] sm:text-5xl">Settings</h1>
+    <div className="mx-auto max-w-[860px] px-5 py-10 animate-fade-in sm:py-14">
+      <div className="mb-8">
+        <h1 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#1d1d1f] sm:text-[48px]">Settings</h1>
         <p className="mt-2 text-sm text-[#6e6e73]">Manage your account and preferences.</p>
       </div>
 

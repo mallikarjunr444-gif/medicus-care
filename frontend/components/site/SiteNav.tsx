@@ -28,7 +28,7 @@ export function SiteNav({ view, homeLinks, appLinks, onNavigate, onStart }: Site
 
         <nav aria-label={isHome ? 'On this page' : 'Sections'} className="hidden items-center gap-1 lg:flex">
           {isHome
-            ? homeLinks.map((link) => (
+            ? [...homeLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
@@ -36,7 +36,15 @@ export function SiteNav({ view, homeLinks, appLinks, onNavigate, onStart }: Site
                 >
                   {link.label}
                 </a>
-              ))
+              )),
+              <button
+                key="my-care"
+                type="button"
+                onClick={() => onNavigate('patient')}
+                className="rounded-full px-3 py-1.5 text-[13px] text-[#1d1d1f]/80 transition-colors hover:text-[#1d1d1f] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30"
+              >
+                My care
+              </button>]
             : appLinks.map((link) => (
                 <button
                   key={link.id}
