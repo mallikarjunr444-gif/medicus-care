@@ -113,7 +113,7 @@ export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAp
       <section role="dialog" aria-modal="true" aria-labelledby="specialist-title" className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-800"><Stethoscope size={19} /></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-clinic-mist/60 text-clinic-teal-deep"><Stethoscope size={19} /></div>
             <div>
               <h2 id="specialist-title" className="text-base font-semibold text-slate-900">Request a specialist appointment</h2>
               <p className="mt-0.5 text-xs text-slate-500">Directory results from MediCare’s specialist service</p>
@@ -134,14 +134,14 @@ export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAp
                 {specialists.map((specialist) => {
                   const selected = specialist.id === selectedId
                   return (
-                    <button key={specialist.id} type="button" aria-pressed={selected} onClick={() => setSelectedId(specialist.id)} className={`w-full rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-100 ${selected ? 'border-sky-700 bg-sky-50' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}>
+                    <button key={specialist.id} type="button" aria-pressed={selected} onClick={() => setSelectedId(specialist.id)} className={`w-full rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25 ${selected ? 'border-clinic-teal bg-clinic-mist/60' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`}>
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <div className="font-semibold text-slate-900">{specialist.name}</div>
-                          <div className="mt-0.5 text-sm text-sky-900">{specialist.specialty}</div>
+                          <div className="mt-0.5 text-sm text-clinic-ink">{specialist.specialty}</div>
                           <div className="mt-0.5 text-xs text-slate-500">{specialist.qualification}</div>
                         </div>
-                        {selected && <CheckCircle2 size={18} className="shrink-0 text-sky-800" />}
+                        {selected && <CheckCircle2 size={18} className="shrink-0 text-clinic-teal-deep" />}
                       </div>
                       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-600">
                         <span className="inline-flex items-center gap-1"><Building2 size={13} />{specialist.hospital}</span>
@@ -156,12 +156,12 @@ export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAp
 
               <div className="grid gap-3 border-t border-slate-100 pt-4 sm:grid-cols-2">
                 <label className="space-y-1 text-sm font-medium text-slate-800">
-                  <span className="inline-flex items-center gap-1.5"><CalendarDays size={15} className="text-sky-800" />Preferred date</span>
-                  <input type="date" value={preferredDate} min={new Date().toISOString().slice(0, 10)} onChange={(event) => setPreferredDate(event.target.value)} className="min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-900 focus:border-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-100" />
+                  <span className="inline-flex items-center gap-1.5"><CalendarDays size={15} className="text-clinic-teal-deep" />Preferred date</span>
+                  <input type="date" value={preferredDate} min={new Date().toISOString().slice(0, 10)} onChange={(event) => setPreferredDate(event.target.value)} className="min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-900 focus:border-clinic-teal focus:outline-none focus:ring-4 focus:ring-clinic-teal/25" />
                 </label>
                 <label className="space-y-1 text-sm font-medium text-slate-800">
-                  <span className="inline-flex items-center gap-1.5"><Clock3 size={15} className="text-sky-800" />Preferred time</span>
-                  <select value={preferredSlot} onChange={(event) => setPreferredSlot(event.target.value)} className="min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-900 focus:border-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-100">
+                  <span className="inline-flex items-center gap-1.5"><Clock3 size={15} className="text-clinic-teal-deep" />Preferred time</span>
+                  <select value={preferredSlot} onChange={(event) => setPreferredSlot(event.target.value)} className="min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-900 focus:border-clinic-teal focus:outline-none focus:ring-4 focus:ring-clinic-teal/25">
                     <option>Morning (10:00 AM - 1:00 PM)</option>
                     <option>Afternoon (2:00 PM - 5:00 PM)</option>
                     <option>Evening (5:30 PM - 7:30 PM)</option>
@@ -170,10 +170,10 @@ export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAp
               </div>
 
               <label className="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm leading-5 text-slate-700">
-                <input type="checkbox" checked={patientConfirmed} onChange={(event) => setPatientConfirmed(event.target.checked)} className="mt-1 h-4 w-4 rounded border-slate-300 text-sky-800 focus:ring-sky-700" />
+                <input type="checkbox" checked={patientConfirmed} onChange={(event) => setPatientConfirmed(event.target.checked)} className="mt-1 h-4 w-4 rounded border-slate-300 text-clinic-teal-deep focus:ring-clinic-teal" />
                 <span>I authorize MediCare to submit an appointment request for {selectedSpecialist?.name || 'the selected specialist'}. The clinic must confirm availability separately.</span>
               </label>
-              <p className="flex items-start gap-2 text-xs leading-5 text-slate-500"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-sky-800" />This sends a request to the configured directory service; it does not guarantee a clinic booking.</p>
+              <p className="flex items-start gap-2 text-xs leading-5 text-slate-500"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-clinic-teal-deep" />This sends a request to the configured directory service; it does not guarantee a clinic booking.</p>
               {errorMessage && <div role="alert" className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"><AlertCircle size={17} className="mt-0.5 shrink-0" />{errorMessage}</div>}
             </>
           )}
@@ -181,7 +181,7 @@ export function SpecialistBookingModal({ isOpen, onClose, initialSpecialty, onAp
 
         <footer className="flex flex-wrap justify-end gap-2 border-t border-slate-100 bg-slate-50 px-5 py-4 sm:px-6">
           <button type="button" onClick={onClose} className="min-h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
-          <button type="button" onClick={handleRequest} disabled={!selectedSpecialist || !preferredDate || !patientConfirmed || isSubmitting || isLoading} className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#123d55] px-4 text-sm font-semibold text-white hover:bg-[#0d3145] disabled:cursor-not-allowed disabled:opacity-50">
+          <button type="button" onClick={handleRequest} disabled={!selectedSpecialist || !preferredDate || !patientConfirmed || isSubmitting || isLoading} className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-clinic-teal px-4 text-sm font-semibold text-white hover:bg-clinic-teal-deep disabled:cursor-not-allowed disabled:opacity-50">
             {isSubmitting && <Loader2 size={15} className="animate-spin" />}
             {isSubmitting ? 'Submitting…' : 'Submit appointment request'}
           </button>

@@ -40,8 +40,24 @@ module.exports = {
           900: '#0d2a4a',
         },
         // Legacy teal/emerald utilities resolve to the brand blue so the whole product shares one identity.
-        teal: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#5aa2f5', 500: '#2a82e4', 600: '#0b63ce', 700: '#0a56b8', 800: '#08428f', 900: '#0d2a4a', 950: '#081c33' },
+        // Real teal (it used to alias the brand blue). 700 is the call-screen action colour.
+        teal: { 50: '#eef7f7', 100: '#d9ecec', 200: '#b8e2e3', 300: '#86cfd0', 400: '#4fb6b8', 500: '#1f9a9d', 600: '#138689', 700: '#0c6e70', 800: '#095557', 900: '#073f41', 950: '#052b2d' },
         emerald: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#5aa2f5', 500: '#2a82e4', 600: '#0b63ce', 700: '#0a56b8', 800: '#08428f', 900: '#0d2a4a', 950: '#081c33' },
+        // Call-screen palette ("calm clinical"): cool porcelain surfaces, teal-ink text, one teal
+        // for action, and a brick red reserved for ending a call and for emergencies.
+        clinic: {
+          porcelain: '#eef3f3',
+          surface: '#ffffff',
+          ink: '#0f2f36',
+          muted: '#5a6f75',
+          hairline: '#ccdadb',
+          mist: '#d9ecec',
+          teal: '#0c6e70',
+          'teal-deep': '#095557',
+          brick: '#b3392b',
+          'brick-deep': '#8f2b20',
+          amber: '#8a5a10',
+        },
         success: { 50: '#ecfdf3', 500: '#12b76a', 600: '#039855', 700: '#027a48' },
         warning: { 50: '#fffaeb', 500: '#f79009', 600: '#dc6803', 700: '#b54708' },
         error: { 50: '#fef3f2', 400: '#f97066', 500: '#f04438', 600: '#d92d20', 700: '#b42318' },
@@ -51,6 +67,7 @@ module.exports = {
         // var(--font-*) are injected by next/font in app/layout.tsx; the
         // literal names are the fallback if a face fails to load.
         sans: ['Inter Variable', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        consult: ['Atkinson Hyperlegible Next Variable', 'Noto Sans Kannada Variable', 'Noto Sans Devanagari Variable', 'Inter Variable', 'system-ui', 'sans-serif'],
         display: ['Urbanist Variable', 'Urbanist', 'Inter', 'system-ui', 'sans-serif'],
         mono: [ 'ui-monospace', 'monospace'],
         // A gentle editorial accent for occasional headings.

@@ -1,5 +1,10 @@
 import '@fontsource-variable/inter'
 import '@fontsource-variable/urbanist'
+// Consultation screen: a legibility-first Latin face plus real Kannada and Devanagari glyphs,
+// so regional-language subtitles do not fall back to whatever the device happens to have.
+import '@fontsource-variable/atkinson-hyperlegible-next'
+import '@fontsource-variable/noto-sans-kannada'
+import '@fontsource-variable/noto-sans-devanagari'
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'react-hot-toast'
@@ -104,8 +109,8 @@ export default function RootLayout({
             <div id="app-content">{children}</div>
           </ErrorBoundary>
           <Toaster
-            position="bottom-center"
-            containerStyle={{ bottom: 88 }}
+            position="top-center"
+            containerStyle={{ top: 76 }}
             toastOptions={{
               className: ' ',
             }}

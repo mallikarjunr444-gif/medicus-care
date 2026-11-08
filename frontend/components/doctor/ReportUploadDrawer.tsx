@@ -116,7 +116,7 @@ export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscus
       >
         <header className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-800">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-clinic-mist/60 text-clinic-teal-deep">
               <FileText size={19} />
             </div>
             <div>
@@ -140,11 +140,11 @@ export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscus
                 rows={9}
                 maxLength={30000}
                 placeholder="Paste the report text, including values and laboratory reference ranges…"
-                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm leading-6 text-slate-900 placeholder:text-slate-400 focus:border-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-100"
+                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm leading-6 text-slate-900 placeholder:text-slate-400 focus:border-clinic-teal focus:outline-none focus:ring-4 focus:ring-clinic-teal/25"
               />
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                  <FileCheck2 size={16} className="text-sky-800" />
+                  <FileCheck2 size={16} className="text-clinic-teal-deep" />
                   {fileName || 'Choose text/CSV file'}
                   <input type="file" accept=".txt,.csv,text/plain,text/csv" onChange={handleFileChange} className="sr-only" />
                 </label>
@@ -164,7 +164,7 @@ export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscus
                   type="button"
                   onClick={handleAnalyze}
                   disabled={isProcessing || !reportText.trim()}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#123d55] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0d3145] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-clinic-teal px-4 text-sm font-semibold text-white transition-colors hover:bg-clinic-teal-deep disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isProcessing && <Loader2 size={16} className="animate-spin" />}
                   {isProcessing ? 'Reviewing report…' : 'Review report text'}
@@ -173,12 +173,12 @@ export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscus
             </div>
           ) : (
             <div className="space-y-5">
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                <div className="flex items-center gap-2 font-semibold text-emerald-900">
+              <div className="rounded-xl border border-clinic-hairline bg-clinic-mist/60 p-4">
+                <div className="flex items-center gap-2 font-semibold text-clinic-ink">
                   <FileCheck2 size={18} />
                   <span>Report text reviewed</span>
                 </div>
-                <p className="mt-1 text-sm text-emerald-800">{analyzedReport.fileName} · {analyzedReport.fileSize}</p>
+                <p className="mt-1 text-sm text-clinic-teal-deep">{analyzedReport.fileName} · {analyzedReport.fileSize}</p>
               </div>
 
               <div className="overflow-hidden rounded-xl border border-slate-200">
@@ -198,8 +198,8 @@ export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscus
                 </div>
               </div>
 
-              <div className="rounded-xl border border-sky-100 bg-sky-50 p-4">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-sky-900">Preliminary guidance</h3>
+              <div className="rounded-xl border border-clinic-hairline bg-clinic-mist/60 p-4">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-clinic-ink">Preliminary guidance</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-700">{analyzedReport.aiInterpretation}</p>
               </div>
 
@@ -210,7 +210,7 @@ export function ReportUploadDrawer({ isOpen, onClose, onReportAnalyzed, onDiscus
 
               <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-4">
                 <button type="button" onClick={reset} className="min-h-10 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Review another report</button>
-                <button type="button" onClick={() => { onDiscussWithDoctor(reportText); onClose() }} className="min-h-10 rounded-lg bg-[#123d55] px-4 text-sm font-semibold text-white hover:bg-[#0d3145]">Discuss with doctor</button>
+                <button type="button" onClick={() => { onDiscussWithDoctor(reportText); onClose() }} className="min-h-10 rounded-lg bg-clinic-teal px-4 text-sm font-semibold text-white hover:bg-clinic-teal-deep">Discuss with doctor</button>
               </div>
             </div>
           )}

@@ -90,19 +90,19 @@ export function PatientWebcamPiP({
     return (
       <div
         onClick={() => setIsMinimized(false)}
-        className="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md text-white text-xs hover:border-sky-500 transition-all group"
-        title="Maximize Patient Camera"
+        className="cursor-pointer inline-flex h-10 items-center gap-2 rounded-full bg-white/95 px-3.5 text-clinic-ink shadow-[0_1px_3px_rgba(15,47,54,.25)] transition hover:bg-white group"
+        title="Show your camera"
       >
-        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-[11px] font-medium">You (Patient Video)</span>
-        <ChevronUp size={14} className="text-slate-400 group-hover:text-white" />
+        <span className="h-2 w-2 rounded-full bg-clinic-teal" aria-hidden="true" />
+        <span className="text-[13px] font-semibold">Your camera</span>
+        <ChevronUp size={15} className="text-clinic-muted" aria-hidden="true" />
       </div>
     )
   }
 
   return (
     <div
-      className={`relative rounded-2xl overflow-hidden bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md transition-all group ${
+      className={`relative overflow-hidden rounded-2xl border-2 border-white bg-clinic-ink shadow-[0_4px_16px_rgba(15,47,54,.35)] transition-all group ${
         isExpanded ? 'w-72 sm:w-80 aspect-[4/3]' : 'w-44 sm:w-52 aspect-[4/3]'
       } ${className}`}
     >
@@ -119,64 +119,64 @@ export function PatientWebcamPiP({
 
       {/* Camera Off / Privacy Fallback */}
       {!isCameraOn && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 text-slate-400 p-3 text-center">
-          <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mb-1 text-slate-400 border border-slate-700">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-clinic-ink p-3 text-center">
+          <div className="mb-1.5 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
             <User size={20} />
           </div>
-          <span className="text-[11px] font-medium text-slate-300">You (Camera Off)</span>
+          <span className="text-[13px] font-semibold text-white/85">Camera is off</span>
         </div>
       )}
 
       {/* Error State */}
       {isCameraOn && hasPermission === false && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-amber-300 p-2 text-center text-[10px]">
-          <CameraOff size={18} className="mb-1 text-amber-400" />
-          <span>Camera Blocked</span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-clinic-ink p-2 text-center text-[13px] font-semibold text-white">
+          <CameraOff size={20} className="mb-1" aria-hidden="true" />
+          <span>Camera blocked. Allow it in your browser.</span>
         </div>
       )}
 
       {/* Label Badge Overlay */}
-      <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 text-[10px] text-white font-medium">
-        <span className={`w-1.5 h-1.5 rounded-full ${isCameraOn ? 'bg-emerald-400' : 'bg-slate-500'}`} />
-        <span>You (Patient)</span>
+      <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-[12px] font-semibold text-white">
+        <span className={`h-1.5 w-1.5 rounded-full ${isCameraOn ? 'bg-teal-300' : 'bg-slate-400'}`} aria-hidden="true" />
+        <span>You</span>
       </div>
 
       {/* Quick Camera, Mic, Minimize & Expand Controls */}
       <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
         <button
           onClick={onToggleMic}
-          className={`p-1 rounded-lg text-white backdrop-blur-sm transition-colors ${
-            isMicOn ? 'bg-black/60 hover:bg-black/80' : 'bg-red-500/80 hover:bg-red-600'
+          className={`h-8 w-8 flex items-center justify-center rounded-lg text-white transition-colors ${
+            isMicOn ? 'bg-black/60 hover:bg-black/80' : 'bg-clinic-brick hover:bg-clinic-brick-deep'
           }`}
-          title={isMicOn ? 'Mute Mic' : 'Unmute Mic'}
+          title={isMicOn ? 'Turn microphone off' : 'Turn microphone on'} aria-label={isMicOn ? 'Turn microphone off' : 'Turn microphone on'}
         >
-          {isMicOn ? <Mic size={11} /> : <MicOff size={11} />}
+          {isMicOn ? <Mic size={15} /> : <MicOff size={15} />}
         </button>
 
         <button
           onClick={onToggleCamera}
-          className={`p-1 rounded-lg text-white backdrop-blur-sm transition-colors ${
-            isCameraOn ? 'bg-black/60 hover:bg-black/80' : 'bg-red-500/80 hover:bg-red-600'
+          className={`h-8 w-8 flex items-center justify-center rounded-lg text-white transition-colors ${
+            isCameraOn ? 'bg-black/60 hover:bg-black/80' : 'bg-clinic-brick hover:bg-clinic-brick-deep'
           }`}
-          title={isCameraOn ? 'Turn off camera' : 'Turn on camera'}
+          title={isCameraOn ? 'Turn camera off' : 'Turn camera on'} aria-label={isCameraOn ? 'Turn camera off' : 'Turn camera on'}
         >
-          {isCameraOn ? <Camera size={11} /> : <CameraOff size={11} />}
+          {isCameraOn ? <Camera size={15} /> : <CameraOff size={15} />}
         </button>
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1 rounded-lg text-white bg-black/60 hover:bg-black/80 backdrop-blur-sm transition-colors"
-          title={isExpanded ? 'Shrink window' : 'Expand window'}
+          className="h-8 w-8 flex items-center justify-center rounded-lg text-white bg-black/60 hover:bg-black/80 transition-colors"
+          title={isExpanded ? 'Shrink preview' : 'Enlarge preview'} aria-label={isExpanded ? 'Shrink preview' : 'Enlarge preview'}
         >
-          {isExpanded ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
+          {isExpanded ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
         </button>
 
         <button
           onClick={() => setIsMinimized(true)}
-          className="p-1 rounded-lg text-white bg-black/60 hover:bg-black/80 backdrop-blur-sm transition-colors"
-          title="Minimize window"
+          className="h-8 w-8 flex items-center justify-center rounded-lg text-white bg-black/60 hover:bg-black/80 transition-colors"
+          title="Hide preview" aria-label="Hide preview"
         >
-          <ChevronDown size={11} />
+          <ChevronDown size={15} />
         </button>
       </div>
     </div>

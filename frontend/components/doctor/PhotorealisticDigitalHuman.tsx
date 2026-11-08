@@ -10,7 +10,6 @@ import {
   RotateCcw,
   WifiOff,
 } from 'lucide-react'
-import { VoiceOrb } from '@/components/ui/voice-orb'
 
 interface PhotorealisticDigitalHumanProps {
   doctorId: DoctorId
@@ -347,56 +346,38 @@ export function PhotorealisticDigitalHuman({
         <button
           type="button"
           onClick={() => videoRef.current?.play().then(() => setPlaybackBlocked(false)).catch(() => setPlaybackBlocked(true))}
-          className="absolute z-30 rounded-xl border border-white/20 bg-slate-950/90 px-4 py-3 text-sm font-medium text-white shadow-xl"
+          className="absolute z-30 h-12 rounded-xl bg-white px-5 text-[15px] font-bold text-clinic-ink shadow-[0_8px_24px_rgba(15,47,54,.35)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/40"
         >
-          Tap to play synchronized response
+          Tap to hear the reply
         </button>
       )}
 
       {/* Disconnected State Overlay */}
       {doctorState === 'disconnected' && (
-        <div className="absolute inset-0 z-40 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-fade-in">
-          <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-4">
-            <WifiOff size={28} />
+        <div role="alert" className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-clinic-ink/90 p-6 text-center backdrop-blur-sm">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-white">
+            <WifiOff size={26} aria-hidden="true" />
           </div>
-          <h3 className="text-lg font-bold text-white mb-2">Consultation Stream Disconnected</h3>
-          <p className="text-xs text-slate-400 max-w-sm mb-5 leading-relaxed">
-            Connection to {doctor.name} was temporarily interrupted. Reconnect to resume.
+          <h3 className="mb-1.5 text-[20px] font-bold text-white">Connection lost</h3>
+          <p className="mb-6 max-w-sm text-[15px] leading-relaxed text-white/80">
+            The link to {doctor.name} dropped. Your conversation is saved. Reconnect to carry on.
           </p>
           <button
             onClick={onReconnect}
-            className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg transition-transform hover:scale-105"
+            className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-5 text-[15px] font-bold text-clinic-ink transition hover:bg-clinic-mist focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
           >
-            <RotateCcw size={14} />
-            <span>Reconnect to Doctor</span>
+            <RotateCcw size={17} aria-hidden="true" />
+            Reconnect
           </button>
         </div>
       )}
 
-      {/* VoiceOrb Visual Feedback when Doctor is Attentively Listening */}
-      {doctorState === 'listening' && (
-        <div className="absolute bottom-6 right-6 z-20 flex flex-col items-center gap-1.5 pointer-events-none transition-all duration-300">
-          <div className="relative flex items-center justify-center p-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-emerald-500/30 shadow-xl shadow-emerald-950/50">
-            <VoiceOrb
-              activity={Math.min(1, Math.max(0.18, fallbackSpeechLevel * 1.5))}
-              colors={doctorId === 'dr_ananya' ? ['#0d9488', '#99f6e4', '#042f2e'] : ['#0e6257', '#5eead4', '#064e3b']}
-              className="w-16 h-16 sm:w-20 sm:h-20"
-              speed={1.2}
-            />
-          </div>
-          <span className="text-[11px] font-semibold text-emerald-300 tracking-wide bg-slate-950/85 px-2.5 py-0.5 rounded-full border border-emerald-500/20 backdrop-blur-sm shadow-md">
-            Doctor listening…
-          </span>
-        </div>
-      )}
-
-      {/* Doctor Live Subtitles (Bottom Center) */}
+      {/* Live subtitles: large, high contrast, sized for Kannada and Devanagari glyphs */}
       {subtitles && (
-        <div className="absolute bottom-6 left-6 right-6 z-20 flex justify-center pointer-events-none" aria-live="polite" aria-atomic="true">
-          <div className="max-h-20 max-w-4xl overflow-hidden px-5 py-3 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 text-white text-center text-xs sm:text-sm font-medium leading-relaxed shadow-2xl animate-fade-in">
-            <span className="text-sky-400 font-bold mr-2">{doctor.name}:</span>
-            <span>{subtitles}</span>
-          </div>
+        <div className="pointer-events-none absolute inset-x-4 bottom-5 z-20 flex justify-center sm:inset-x-8" aria-live="polite" aria-atomic="true">
+          <p className="line-clamp-3 max-w-3xl rounded-2xl bg-clinic-ink/90 px-5 py-3 text-center text-[17px] font-semibold leading-[1.65] text-white shadow-[0_6px_20px_rgba(15,47,54,.35)] sm:text-[19px]">
+            {subtitles}
+          </p>
         </div>
       )}
     </div>
