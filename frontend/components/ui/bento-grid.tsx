@@ -25,9 +25,9 @@ const BentoCard = React.forwardRef<HTMLDivElement, BentoCardProps>(
       className={cn(
         'group relative flex flex-col overflow-hidden rounded-2xl border',
         featured
-          ? 'gradient-ring border-[#cfe3da] bg-gradient-to-br from-[#f4faf6] via-white to-[#eef7f2] shadow-[0_18px_50px_-24px_rgba(15,117,101,.35)]'
-          : 'border-[#e1e9e4] bg-white shadow-[0_4px_18px_rgba(27,65,52,.045)]',
-        'transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#cfe0d6] hover:shadow-[0_12px_32px_rgba(27,65,52,.09)]',
+          ? 'gradient-ring border-[#d2d2d7] bg-gradient-to-br from-[#f5f5f7] via-white to-[#f5f5f7] shadow-[0_18px_50px_-24px_rgba(15,117,101,.35)]'
+          : 'border-[#d2d2d7] bg-white shadow-[0_4px_18px_rgba(27,65,52,.045)]',
+        'transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#d2d2d7] hover:shadow-[0_12px_32px_rgba(27,65,52,.09)]',
         className,
       )}
       {...props}

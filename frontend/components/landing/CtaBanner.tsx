@@ -4,7 +4,7 @@ import Image from 'next/image'
 /** Image-led closing invitation, using the supplied reference artwork. */
 export function CtaBanner({ onStart }: Readonly<{ onStart: () => void }>) {
   return (
-    <section className="relative isolate aspect-[4/3] overflow-hidden bg-[#0f150a] text-white">
+    <section className="relative isolate aspect-[4/3] overflow-hidden bg-[#1d1d1f] text-white">
       <picture className="absolute inset-0 -z-10 block">
         <source type="image/avif" srcSet="/landing/care-cta.avif" />
         <Image
@@ -18,7 +18,7 @@ export function CtaBanner({ onStart }: Readonly<{ onStart: () => void }>) {
       <div className="absolute inset-0 -z-[5] bg-[linear-gradient(90deg,rgba(8,12,9,.22)_0%,rgba(8,12,9,.08)_38%,rgba(8,12,9,0)_74%)]" />
       <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
         <div className="max-w-xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#dcebbf] [text-shadow:0_2px_12px_rgba(0,0,0,.7)]">A starting point, not a diagnosis</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#cfe3fb] [text-shadow:0_2px_12px_rgba(0,0,0,.7)]">A starting point, not a diagnosis</p>
           <h2 className="mt-4 max-w-lg font-display text-4xl font-medium leading-[.96] tracking-[-.045em] text-white [text-shadow:0_3px_18px_rgba(0,0,0,.72)] sm:text-6xl">
             Ready when you are.
           </h2>
@@ -29,10 +29,10 @@ export function CtaBanner({ onStart }: Readonly<{ onStart: () => void }>) {
             <button
               type="button"
               onClick={onStart}
-              className="group inline-flex min-h-12 items-center gap-3 rounded-full bg-[#dcebbf] pl-6 pr-2 text-sm font-semibold text-[#0f150a] transition hover:bg-white"
+              className="group inline-flex min-h-12 items-center gap-3 rounded-full bg-[#eaf2fd] pl-6 pr-2 text-sm font-semibold text-[#1d1d1f] transition hover:bg-white"
             >
               <span>Start a consultation</span>
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0f150a] text-[#dcebbf] transition group-hover:translate-x-0.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1d1d1f] text-[#cfe3fb] transition group-hover:translate-x-0.5">
                 <ArrowRight size={16} aria-hidden="true" />
               </span>
             </button>

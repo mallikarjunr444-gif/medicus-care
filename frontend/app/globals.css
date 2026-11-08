@@ -13,11 +13,11 @@
 @layer base {
   :root {
     color-scheme: light;
-    --medicare-ink: #0f2742;
-    --medicare-canvas: #f5f8f6;
-    --medicare-accent: #0f7565;
-    --medicare-accent-dark: #0b5149;
-    --medicare-border: #e1e9e4;
+    --medicare-ink: #1d1d1f;
+    --medicare-canvas: #f5f5f7;
+    --medicare-accent: #0071e3;
+    --medicare-accent-dark: #0058b0;
+    --medicare-border: #d2d2d7;
   }
 
   html {
@@ -29,19 +29,22 @@
   body {
     background: var(--medicare-canvas);
     color: var(--medicare-ink);
+    font-family: theme('fontFamily.sans');
     font-size: 15px;
     line-height: 1.55;
     min-width: 320px;
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Rule 2: Urbanist headlines. H1 is weight 400 — thin on purpose; the
-     system gets its authority from spacing and restraint, not from bold. */
+  /* Headlines: semibold, tight tracking, balanced wrapping. Authority comes from size and space. */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-heading;
+    @apply font-display;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
   }
-  h1 { font-weight: 400; }
-  h2, h3 { font-weight: 500; }
+  h1, h2 { font-weight: 600; }
+  h3, h4 { font-weight: 600; }
+  p { text-wrap: pretty; }
 
   ::selection {
     background: theme('colors.primary.100');
@@ -51,7 +54,7 @@
   /* One focus treatment everywhere, matching --shadow-ring. */
   :focus-visible {
     outline: none;
-    @apply ring-4 ring-primary-600/[.12] ring-offset-0;
+    @apply ring-4 ring-[#0071e3]/30 ring-offset-0;
   }
 
   /* The system is quiet; motion should never be the loud part. */
@@ -177,7 +180,7 @@
   .badge-yellow { @apply badge bg-warning-50 text-warning-700 ring-1 ring-inset ring-warning-700/[.12]; }
   .badge-amber  { @apply badge bg-warning-50 text-warning-700 ring-1 ring-inset ring-warning-700/[.12]; }
   .badge-red    { @apply badge bg-error-50 text-error-700     ring-1 ring-inset ring-error-700/[.12]; }
-  .badge-brand  { @apply badge bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-600/[.12]; }
+  .badge-brand  { @apply badge bg-primary-50 text-primary-700 ring-1 ring-inset ring-[#0071e3]/30; }
 
   .divider {
     @apply h-px w-full bg-gray-200;

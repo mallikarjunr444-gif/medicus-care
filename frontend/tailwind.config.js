@@ -33,29 +33,29 @@ module.exports = {
           200: '#bfdbfe',
           300: '#93c5fd',
           400: '#5aa2f5',
-          500: '#2a82e4',
-          600: '#0b63ce', // the brand accent: medical blue
-          700: '#0a56b8',
-          800: '#08428f',
+          500: '#2997ff',
+          600: '#0071e3', // the single accent blue
+          700: '#0058b0',
+          800: '#00448a',
           900: '#0d2a4a',
         },
         // Legacy teal/emerald utilities resolve to the brand blue so the whole product shares one identity.
         // Real teal (it used to alias the brand blue). 700 is the call-screen action colour.
-        teal: { 50: '#eef7f7', 100: '#d9ecec', 200: '#b8e2e3', 300: '#86cfd0', 400: '#4fb6b8', 500: '#1f9a9d', 600: '#138689', 700: '#0c6e70', 800: '#095557', 900: '#073f41', 950: '#052b2d' },
+        // `teal-*` utilities follow the single accent blue so older screens match.
+        teal: { 50: '#f0f7ff', 100: '#e0efff', 200: '#b9dbff', 300: '#84bfff', 400: '#3d9bff', 500: '#1a85f2', 600: '#0a7aea', 700: '#0071e3', 800: '#0058b0', 900: '#003f80', 950: '#002a57' },
         emerald: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#5aa2f5', 500: '#2a82e4', 600: '#0b63ce', 700: '#0a56b8', 800: '#08428f', 900: '#0d2a4a', 950: '#081c33' },
-        // Call-screen palette ("calm clinical"): cool porcelain surfaces, teal-ink text, one teal
-        // for action, and a brick red reserved for ending a call and for emergencies.
+        // One neutral scale and one blue. Red is reserved for ending a call and for emergencies.
         clinic: {
-          porcelain: '#eef3f3',
+          porcelain: '#f5f5f7',
           surface: '#ffffff',
-          ink: '#0f2f36',
-          muted: '#5a6f75',
-          hairline: '#ccdadb',
-          mist: '#d9ecec',
-          teal: '#0c6e70',
-          'teal-deep': '#095557',
-          brick: '#b3392b',
-          'brick-deep': '#8f2b20',
+          ink: '#1d1d1f',
+          muted: '#6e6e73',
+          hairline: '#d2d2d7',
+          mist: '#eaf2fd',
+          teal: '#0071e3',
+          'teal-deep': '#0058b0',
+          brick: '#c4281c',
+          'brick-deep': '#9f1f15',
           amber: '#8a5a10',
         },
         success: { 50: '#ecfdf3', 500: '#12b76a', 600: '#039855', 700: '#027a48' },
@@ -66,9 +66,9 @@ module.exports = {
       fontFamily: {
         // var(--font-*) are injected by next/font in app/layout.tsx; the
         // literal names are the fallback if a face fails to load.
-        sans: ['Inter Variable', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        consult: ['Atkinson Hyperlegible Next Variable', 'Noto Sans Kannada Variable', 'Noto Sans Devanagari Variable', 'Inter Variable', 'system-ui', 'sans-serif'],
-        display: ['Urbanist Variable', 'Urbanist', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Inter Variable', 'Noto Sans Kannada Variable', 'Noto Sans Devanagari Variable', 'system-ui', 'sans-serif'],
+        consult: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Inter Variable', 'Noto Sans Kannada Variable', 'Noto Sans Devanagari Variable', 'system-ui', 'sans-serif'],
+        display: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Inter Variable', 'Noto Sans Kannada Variable', 'Noto Sans Devanagari Variable', 'system-ui', 'sans-serif'],
         mono: [ 'ui-monospace', 'monospace'],
         // A gentle editorial accent for occasional headings.
         accent: ['Georgia', 'serif'],

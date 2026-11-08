@@ -1,0 +1,375 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { Activity, FileText, Pill, ShieldAlert } from 'lucide-react'
+import { DOCTORS } from '@/lib/doctorTypes'
+import type { DoctorId } from '@/lib/doctorTypes'
+
+/* ───────────────────────── shared pieces ───────────────────────── */
+
+const H2 = 'text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#1d1d1f] sm:text-[48px] lg:text-[56px]'
+const LEAD = 'text-[19px] leading-[1.4] text-[#6e6e73] sm:text-[21px]'
+
+function PillButton({ children, onClick, large = false }: { children: React.ReactNode; onClick: () => void; large?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex items-center justify-center rounded-full bg-[#0071e3] font-normal text-white transition-colors hover:bg-[#0077ed] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30 ${
+        large ? 'h-12 px-7 text-[17px]' : 'h-11 px-6 text-[17px]'
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
+
+function TextLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      className="rounded text-[19px] text-[#0071e3] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30"
+    >
+      {children} <span aria-hidden="true">›</span>
+    </a>
+  )
+}
+
+/* ───────────────────────── hero ───────────────────────── */
+
+// The same greeting, as the doctor would say it in each language.
+const GREETINGS = [
+  { lang: 'ಕನ್ನಡ', text: 'ನಮಸ್ಕಾರ, ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?' },
+  { lang: 'हिन्दी', text: 'नमस्ते, आज मैं आपकी कैसे मदद कर सकती हूँ?' },
+  { lang: 'English', text: 'Hello, how can I help you today?' },
+]
+
+export function Hero({ onStart }: { onStart: () => void }) {
+  const [index, setIndex] = useState(0)
+
+  // The one moving thing on the page: the example reply changes language every few seconds.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const timer = window.setInterval(() => setIndex((i) => (i + 1) % GREETINGS.length), 4500)
+    return () => window.clearInterval(timer)
+  }, [])
+
+  const greeting = GREETINGS[index]
+
+  return (
+    <section className="bg-white pt-14 text-center sm:pt-20">
+      <div className="mx-auto max-w-[980px] px-5">
+        <h1 className="text-[44px] font-semibold leading-[1.04] tracking-[-0.035em] text-[#1d1d1f] sm:text-[72px] lg:text-[88px]">
+          Talk to a doctor.
+          <br />
+          In your language.
+        </h1>
+        <p className="mx-auto mt-5 max-w-[640px] text-[19px] leading-[1.3] text-[#6e6e73] sm:text-[24px]">
+          Share a symptom or a report and get clear, preliminary guidance in Kannada, Hindi or English.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+          <PillButton onClick={onStart} large>
+            Start a conversation
+          </PillButton>
+          <TextLink href="#how-it-works">See how it works</TextLink>
+        </div>
+        <p className="mt-4 text-[14px] text-[#6e6e73]">No sign-up needed. Not for emergencies: call 112.</p>
+      </div>
+
+      <div className="mx-auto mt-12 max-w-[1240px] px-3 sm:mt-16 sm:px-5">
+        <figure className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-[#f5f5f7] sm:aspect-[16/9] lg:aspect-[2/1]">
+          <Image
+            src="/doctor/dr_ananya.jpg"
+            alt="Dr. Ananya, an AI physician, on a video consultation"
+            fill
+            priority
+            sizes="(max-width: 1240px) 100vw, 1240px"
+            className="object-cover object-[48%_20%]"
+          />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/45 to-transparent" aria-hidden="true" />
+          <figcaption className="absolute inset-x-4 bottom-5 flex justify-center sm:bottom-8">
+            <p
+              key={greeting.lang}
+              aria-hidden="true"
+              className="max-w-[640px] animate-fade-in rounded-2xl bg-black/70 px-5 py-3 text-center text-[17px] font-semibold leading-[1.6] text-white backdrop-blur-md sm:text-[22px]"
+            >
+              {greeting.text}
+            </p>
+            <span className="sr-only">An example reply from Dr. Ananya, shown in Kannada, Hindi and English.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+  )
+}
+
+/* ───────────────────────── doctors ───────────────────────── */
+
+const DOCTOR_ORDER: DoctorId[] = ['dr_ananya', 'dr_arjun']
+const DOCTOR_IMAGE: Record<DoctorId, { src: string; position: string }> = {
+  dr_ananya: { src: '/doctor/dr_ananya.jpg', position: '50% 18%' },
+  dr_arjun: { src: '/doctor/dr_arjun.jpg', position: '50% 12%' },
+}
+
+export function DoctorTiles({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId) => void }) {
+  return (
+    <section id="doctor-selection" className="scroll-mt-12 bg-white py-20 sm:py-28">
+      <div className="mx-auto max-w-[1240px] px-3 sm:px-5">
+        <div className="mx-auto max-w-[760px] px-2 text-center">
+          <h2 className={H2}>Meet your doctors.</h2>
+          <p className={`${LEAD} mt-4`}>Two AI physicians who listen, ask the right follow-up questions, and always say what they are.</p>
+        </div>
+
+        <div className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 md:grid-cols-2">
+          {DOCTOR_ORDER.map((id) => {
+            const doctor = DOCTORS[id]
+            const image = DOCTOR_IMAGE[id]
+            return (
+              <article key={id} className="flex flex-col overflow-hidden rounded-[28px] bg-[#f5f5f7] text-center">
+                <div className="px-6 pb-8 pt-10 sm:px-10 sm:pb-10 sm:pt-12">
+                  <h3 className="text-[32px] font-semibold leading-[1.1] tracking-[-0.025em] text-[#1d1d1f] sm:text-[40px]">{doctor.name}</h3>
+                  <p className="mt-2 text-[19px] leading-[1.35] text-[#1d1d1f]">{doctor.specialty}</p>
+                  <p className="mx-auto mt-3 max-w-[420px] text-[17px] leading-[1.45] text-[#6e6e73]">{doctor.bio}</p>
+                  <div className="mt-6">
+                    <PillButton onClick={() => onSelectDoctor(id)}>Talk to {doctor.name}</PillButton>
+                  </div>
+                </div>
+                <div className="relative mt-auto aspect-[4/3] w-full">
+                  <Image
+                    src={image.src}
+                    alt={`${doctor.name}, an AI physician`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 620px"
+                    className="object-cover"
+                    style={{ objectPosition: image.position }}
+                  />
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ───────────────────────── languages (dark band) ───────────────────────── */
+
+const LANGUAGES = [
+  { script: 'ಕನ್ನಡ', name: 'Kannada' },
+  { script: 'हिन्दी', name: 'Hindi' },
+  { script: 'English', name: 'English' },
+]
+
+export function LanguagesBand() {
+  return (
+    <section className="bg-black px-5 py-24 text-center sm:py-32">
+      <h2 className="mx-auto max-w-[760px] text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#f5f5f7] sm:text-[48px] lg:text-[56px]">
+        Speaks the way you do.
+      </h2>
+      <p className="mx-auto mt-4 max-w-[560px] text-[19px] leading-[1.4] text-[#a1a1a6] sm:text-[21px]">
+        Ask in one language, switch to another halfway through. The doctor keeps up, and so do the subtitles.
+      </p>
+      <ul className="mt-14 flex flex-col items-center justify-center gap-10 sm:mt-20 sm:flex-row sm:items-end sm:gap-20">
+        {LANGUAGES.map((language) => (
+          <li key={language.name}>
+            <span className="block text-[64px] font-semibold leading-[1.3] tracking-[-0.01em] text-[#f5f5f7] sm:text-[88px]">{language.script}</span>
+            <span className="mt-1 block text-[17px] text-[#a1a1a6]">{language.name}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+/* ───────────────────────── features ───────────────────────── */
+
+const FEATURES = [
+  {
+    icon: FileText,
+    title: 'Understand your reports.',
+    body: 'Paste a lab report and get a plain-language reading of what each value means and what to ask next.',
+  },
+  {
+    icon: ShieldAlert,
+    title: 'Knows when to say go now.',
+    body: 'Warning signs such as chest pain or trouble breathing are routed straight to urgent care, including 112 in India.',
+  },
+  {
+    icon: Pill,
+    title: 'Medicine, explained.',
+    body: 'General information about common medicines, and the questions worth asking your pharmacist.',
+  },
+  {
+    icon: Activity,
+    title: 'Keep track over time.',
+    body: 'Every conversation ends with a summary you can save and take to your own clinician.',
+  },
+]
+
+export function FeatureTiles() {
+  return (
+    <section id="how-it-works-features" className="bg-[#f5f5f7] py-20 sm:py-28">
+      <div className="mx-auto max-w-[1240px] px-3 sm:px-5">
+        <div className="mx-auto max-w-[760px] px-2 text-center">
+          <h2 className={H2}>Everything before you see a clinician.</h2>
+        </div>
+        <div className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 md:grid-cols-2">
+          {FEATURES.map(({ icon: Icon, title, body }) => (
+            <article key={title} className="flex min-h-[300px] flex-col justify-between rounded-[28px] bg-white p-8 sm:min-h-[340px] sm:p-12">
+              <Icon size={40} strokeWidth={1.5} className="text-[#0071e3]" aria-hidden="true" />
+              <div>
+                <h3 className="text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] sm:text-[32px]">{title}</h3>
+                <p className="mt-3 max-w-[420px] text-[17px] leading-[1.5] text-[#6e6e73]">{body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ───────────────────────── how it works ───────────────────────── */
+
+const STEPS = [
+  { title: 'Choose a language.', body: 'Pick Kannada, Hindi or English, and the doctor you would like to talk to.' },
+  { title: 'Say what is wrong.', body: 'Speak or type. The doctor replies out loud, with subtitles, and asks what it needs to know.' },
+  { title: 'Leave with a next step.', body: 'Get a short summary and clear guidance on whether to rest, see a clinician, or go to hospital.' },
+]
+
+export function HowItWorks() {
+  return (
+    <section id="how-it-works" className="scroll-mt-12 bg-white py-20 sm:py-28">
+      <div className="mx-auto max-w-[1080px] px-5">
+        <h2 className={`${H2} mx-auto max-w-[760px] text-center`}>Three steps. About five minutes.</h2>
+        <ol className="mt-12 grid gap-10 sm:mt-16 md:grid-cols-3 md:gap-8">
+          {STEPS.map((step, i) => (
+            <li key={step.title} className="border-t border-[#d2d2d7] pt-6">
+              <span className="block text-[56px] font-semibold leading-none tracking-[-0.03em] text-[#d2d2d7]" aria-hidden="true">
+                {i + 1}
+              </span>
+              <h3 className="mt-5 text-[24px] font-semibold leading-[1.2] tracking-[-0.02em] text-[#1d1d1f]">{step.title}</h3>
+              <p className="mt-2 text-[17px] leading-[1.5] text-[#6e6e73]">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+/* ───────────────────────── safety ───────────────────────── */
+
+const SAFETY = [
+  { lead: 'They are AI.', body: 'The doctors say so, and never claim to be human clinicians.' },
+  { lead: 'Not for emergencies.', body: 'If you think it is serious, call 112 first. Warning signs in a conversation point you to urgent care.' },
+  { lead: 'No diagnosis.', body: 'You get information and preliminary guidance. A qualified clinician makes the diagnosis and prescribes.' },
+  { lead: 'Kept to you.', body: 'Guest consultations are separate from other users, and your summary is saved only to your own session.' },
+]
+
+export function Safety() {
+  return (
+    <section id="trust" className="scroll-mt-12 bg-[#f5f5f7] py-20 sm:py-28">
+      <div className="mx-auto grid max-w-[1080px] gap-12 px-5 md:grid-cols-[0.9fr_1.1fr] md:gap-16">
+        <div>
+          <h2 className={H2}>Honest about what this is.</h2>
+        </div>
+        <dl className="space-y-7">
+          {SAFETY.map((item) => (
+            <div key={item.lead}>
+              <dt className="text-[21px] font-semibold leading-[1.25] tracking-[-0.015em] text-[#1d1d1f]">{item.lead}</dt>
+              <dd className="mt-1 text-[17px] leading-[1.5] text-[#6e6e73]">{item.body}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  )
+}
+
+/* ───────────────────────── faq ───────────────────────── */
+
+const FAQ = [
+  ['Is this a consultation with a human doctor?', 'No. MediCare uses clearly identified AI care assistants for preliminary health information and guidance. They do not replace a qualified clinician.'],
+  ['What can I talk about?', 'Symptoms, reports, questions about your wellbeing, or anything you want to understand before deciding on a next step.'],
+  ['Is my conversation private?', 'Guest consultations are kept separate from other users, and your summary is saved only to your own session.'],
+  ['What should I do in an emergency?', 'Do not use MediCare. Contact local emergency services immediately. In India, call 112.'],
+]
+
+export function Faq() {
+  return (
+    <section id="faq" className="scroll-mt-12 bg-white py-20 sm:py-28">
+      <div className="mx-auto max-w-[820px] px-5">
+        <h2 className={`${H2} text-center`}>Questions, answered.</h2>
+        <div className="mt-12 border-b border-[#d2d2d7] sm:mt-16">
+          {FAQ.map(([question, answer]) => (
+            <details key={question} className="group border-t border-[#d2d2d7]">
+              <summary className="flex min-h-[72px] cursor-pointer list-none items-center justify-between gap-6 py-4 text-[19px] font-semibold leading-[1.3] text-[#1d1d1f] marker:hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#0071e3]/30 sm:text-[21px]">
+                {question}
+                <span className="text-[28px] font-light leading-none text-[#6e6e73] transition-transform group-open:rotate-45" aria-hidden="true">
+                  +
+                </span>
+              </summary>
+              <p className="max-w-[640px] pb-6 pr-10 text-[17px] leading-[1.55] text-[#6e6e73]">{answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ───────────────────────── closing call to action ───────────────────────── */
+
+export function ClosingCta({ onStart }: { onStart: () => void }) {
+  return (
+    <section className="bg-[#f5f5f7] px-5 py-24 text-center sm:py-32">
+      <h2 className={`${H2} mx-auto max-w-[760px]`}>Start with what is on your mind.</h2>
+      <p className={`${LEAD} mx-auto mt-4 max-w-[520px]`}>Free, private, and in the language you think in.</p>
+      <div className="mt-8">
+        <PillButton onClick={onStart} large>
+          Start a conversation
+        </PillButton>
+      </div>
+    </section>
+  )
+}
+
+/* ───────────────────────── footer ───────────────────────── */
+
+const FOOTER_COLUMNS = [
+  { title: 'Consult', links: [{ label: 'Dr. Ananya', href: '#doctor-selection' }, { label: 'Dr. Smit', href: '#doctor-selection' }, { label: 'How it works', href: '#how-it-works' }] },
+  { title: 'Safety', links: [{ label: 'Honest about what this is', href: '#trust' }, { label: 'Emergency: call 112', href: 'tel:112' }, { label: 'FAQ', href: '#faq' }] },
+  { title: 'Languages', links: [{ label: 'ಕನ್ನಡ', href: '#doctor-selection' }, { label: 'हिन्दी', href: '#doctor-selection' }, { label: 'English', href: '#doctor-selection' }] },
+]
+
+export function SiteFooter() {
+  return (
+    <footer className="bg-[#f5f5f7] text-[#6e6e73]">
+      <div className="mx-auto max-w-[1080px] px-5 pb-10">
+        <p className="border-t border-[#d2d2d7] pt-6 text-[12px] leading-[1.6]">
+          MediCare is an AI health assistant from Medicus Labs. It provides general health information and preliminary guidance. It is not a licensed physician, does not diagnose or prescribe, and is not for emergencies. In an emergency, call 112.
+        </p>
+        <div className="mt-8 grid grid-cols-2 gap-8 border-t border-[#d2d2d7] pt-8 sm:grid-cols-3">
+          {FOOTER_COLUMNS.map((column) => (
+            <div key={column.title}>
+              <h3 className="text-[12px] font-semibold text-[#1d1d1f]">{column.title}</h3>
+              <ul className="mt-3 space-y-2">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="rounded text-[12px] hover:text-[#1d1d1f] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="mt-10 border-t border-[#d2d2d7] pt-5 text-[12px]">Copyright © {new Date().getFullYear()} Medicus Labs. All rights reserved.</p>
+      </div>
+    </footer>
+  )
+}

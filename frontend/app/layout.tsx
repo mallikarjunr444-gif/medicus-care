@@ -1,8 +1,5 @@
 import '@fontsource-variable/inter'
-import '@fontsource-variable/urbanist'
-// Consultation screen: a legibility-first Latin face plus real Kannada and Devanagari glyphs,
-// so regional-language subtitles do not fall back to whatever the device happens to have.
-import '@fontsource-variable/atkinson-hyperlegible-next'
+// Kannada and Devanagari faces so regional text never falls back to whatever the device has.
 import '@fontsource-variable/noto-sans-kannada'
 import '@fontsource-variable/noto-sans-devanagari'
 import './globals.css'
@@ -24,7 +21,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#f5f8f6',
+  themeColor: '#ffffff',
 }
 
 export const metadata: Metadata = {

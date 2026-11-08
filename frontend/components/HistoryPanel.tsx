@@ -208,8 +208,8 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
       <div className="mb-7 flex items-end justify-between gap-4 flex-wrap">
         <div>
           <ClinicalBadge><History size={13} /> Your care</ClinicalBadge>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-.04em] text-[#1b3a5c] sm:text-4xl">Conversation history</h1>
-          <p className="mt-2 text-sm text-[#4f6580]">Review, continue, export, or delete a previous conversation.</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-[-.04em] text-[#1d1d1f] sm:text-4xl">Conversation history</h1>
+          <p className="mt-2 text-sm text-[#6e6e73]">Review, continue, export, or delete a previous conversation.</p>
         </div>
         <button onClick={() => refetch()} className="btn-icon" title="Refresh" aria-label="Refresh conversations">
           <RefreshCw size={15} />

@@ -234,7 +234,7 @@ export function ConsultationSummaryModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#07130f]/50 p-3 backdrop-blur-sm animate-fade-in sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#1d1d1f]/50 p-3 backdrop-blur-sm animate-fade-in sm:p-6"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
@@ -246,7 +246,7 @@ export function ConsultationSummaryModal({
         className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_30px_80px_-24px_rgba(6,25,20,.55)] ring-1 ring-black/5 animate-fade-up"
       >
         {/* Letterhead header */}
-        <header className="relative shrink-0 bg-gradient-to-r from-clinic-ink via-[#0f4a40] to-clinic-teal-deep px-5 py-4 text-white sm:px-6">
+        <header className="relative shrink-0 bg-gradient-to-r from-clinic-ink via-[#0058b0] to-clinic-teal-deep px-5 py-4 text-white sm:px-6">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
@@ -428,7 +428,7 @@ export function ConsultationSummaryModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-clinic-teal px-5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#0b5f52]"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-clinic-teal px-5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#0058b0]"
             >
               Done &amp; save summary
             </button>

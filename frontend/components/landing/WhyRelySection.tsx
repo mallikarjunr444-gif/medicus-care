@@ -28,13 +28,13 @@ const cards: { label: string; desc: string; image?: string; icon?: LucideIcon }[
 /** "Why people rely on MediCare" — three image cards in the Neuro Pulse style. */
 export function WhyRelySection() {
   return (
-    <section className="bg-[#E5ECE8] py-14 sm:py-20">
+    <section className="bg-[#eaf2fd] py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="max-w-xl font-display text-2xl font-medium leading-tight tracking-tight text-[#0F150A] sm:text-4xl">
+          <h2 className="max-w-xl font-display text-2xl font-medium leading-tight tracking-tight text-[#1d1d1f] sm:text-4xl">
             Why people rely on MediCare for their well-being
           </h2>
-          <p className="max-w-sm text-sm leading-6 text-[#5C6B62]">
+          <p className="max-w-sm text-sm leading-6 text-[#6e6e73]">
             A calm, private place to understand how you feel — with clear next steps.
           </p>
         </div>
@@ -62,7 +62,7 @@ export function WhyRelySection() {
                   )}
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-[#0F150A]/80 via-[#0F150A]/10 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-t from-[#1d1d1f]/80 via-[#1d1d1f]/10 to-transparent"
                   />
                   <figcaption className="absolute inset-x-4 bottom-4 text-white">
                     <p className="text-sm font-semibold">{card.label}</p>
@@ -74,7 +74,7 @@ export function WhyRelySection() {
           </div>
         </Reveal>
 
-        <div className="mt-6 flex items-center gap-2 text-xs font-medium text-[#4E6338]">
+        <div className="mt-6 flex items-center gap-2 text-xs font-medium text-[#1d1d1f]">
           <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: OLIVE }} />
           Built to feel calm, simple and supportive
         </div>

@@ -149,7 +149,7 @@ export function LanguageSelectionModal({
             type="checkbox"
             checked={hasConsultationConsent}
             onChange={(event) => setHasConsultationConsent(event.target.checked)}
-            className="mt-1 h-5 w-5 flex-shrink-0 accent-[#0c6e70]"
+            className="mt-1 h-5 w-5 flex-shrink-0 accent-[#0058b0]"
           />
           <span>
             I agree to use the microphone for speech recognition and to send my transcript and the doctor&apos;s replies to MediCare for this consultation. The conversation is saved in my consultation history. If local medical references have no match, a search query with common direct identifiers removed may be sent to PubMed; I will avoid sharing identifying details. Camera access is optional and starts only if I turn it on. I understand this is an AI health assistant, not a licensed physician.

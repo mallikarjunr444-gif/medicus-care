@@ -16,7 +16,7 @@ export function BorderGlow({
     <div className={cn('group relative isolate rounded-[inherit]', className)}>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-1 -z-10 rounded-[inherit] bg-gradient-to-r from-[#0f7565] via-[#0a86b5] to-[#12b76a] opacity-40 blur-xl transition-opacity duration-500 group-hover:opacity-75"
+        className="pointer-events-none absolute -inset-1 -z-10 rounded-[inherit] bg-gradient-to-r from-[#0058b0] via-[#0071e3] to-[#12b76a] opacity-40 blur-xl transition-opacity duration-500 group-hover:opacity-75"
       />
       {children}
     </div>
