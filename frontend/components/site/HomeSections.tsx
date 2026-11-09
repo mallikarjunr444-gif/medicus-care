@@ -1,8 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { Activity, FileText, Pill, ShieldAlert } from 'lucide-react'
+import { MotionButton } from '@/components/ui/motion-button'
+import { TextWordCarousel } from '@/components/ui/text-word-carousel'
+import { TiltSpotlightCard } from '@/components/ui/tilt-spotlight-card'
+import { Marquee } from '@/components/ui/marquee'
+import { Reveal } from '@/components/ui/reveal'
 import { DOCTORS } from '@/lib/doctorTypes'
 import type { DoctorId } from '@/lib/doctorTypes'
 
@@ -13,15 +19,9 @@ const LEAD = 'text-[19px] leading-[1.4] text-[#6e6e73] sm:text-[21px]'
 
 function PillButton({ children, onClick, large = false }: { children: React.ReactNode; onClick: () => void; large?: boolean }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex items-center justify-center rounded-full bg-[#0071e3] font-normal text-white transition-colors hover:bg-[#0077ed] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30 ${
-        large ? 'h-12 px-7 text-[17px]' : 'h-11 px-6 text-[17px]'
-      }`}
-    >
+    <MotionButton onClick={onClick} large={large}>
       {children}
-    </button>
+    </MotionButton>
   )
 }
 
@@ -56,14 +56,32 @@ export function Hero({ onStart }: { onStart: () => void }) {
   }, [])
 
   const greeting = GREETINGS[index]
+  const reduce = useReducedMotion()
+  const figureRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: figureRef, offset: ['start end', 'end start'] })
+  const imageY = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['-6%', '6%'])
+  const figureScale = useTransform(scrollYProgress, [0, 0.35], reduce ? [1, 1] : [0.94, 1])
 
   return (
-    <section id="overview" className="scroll-mt-24 bg-white pt-14 text-center sm:pt-20">
-      <div className="mx-auto max-w-[980px] px-5">
+    <section id="overview" className="relative scroll-mt-24 overflow-hidden bg-white pt-14 text-center sm:pt-20">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-0 h-[560px]">
+        <motion.div className="absolute -left-24 top-0 h-[380px] w-[380px] rounded-full bg-[#0071e3]/20 blur-[100px]" animate={reduce ? undefined : { x: [0, 60, 0], y: [0, 30, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.div className="absolute right-0 top-10 h-[340px] w-[340px] rounded-full bg-[#bf5af2]/20 blur-[100px]" animate={reduce ? undefined : { x: [0, -50, 0], y: [0, 40, 0] }} transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.div className="absolute left-1/3 top-24 h-[300px] w-[300px] rounded-full bg-[#30d5c8]/20 blur-[100px]" animate={reduce ? undefined : { x: [0, 40, 0], y: [0, -30, 0] }} transition={{ duration: 19, repeat: Infinity, ease: 'easeInOut' }} />
+      </div>
+      <div className="relative mx-auto max-w-[980px] px-5">
         <h1 className="text-[44px] font-semibold leading-[1.04] tracking-[-0.035em] text-[#1d1d1f] sm:text-[72px] lg:text-[88px]">
           Talk to a doctor.
           <br />
-          In your language.
+          <span className="sr-only">In your language.</span>
+          <span aria-hidden="true">
+            In{' '}
+            <TextWordCarousel
+              words={['your language.', 'ಕನ್ನಡ.', 'हिन्दी.', 'English.']}
+              interval={2600}
+              className="bg-gradient-to-r from-[#0071e3] via-[#7a5cff] to-[#30b8d5] bg-clip-text pb-[0.12em] text-transparent"
+            />
+          </span>
         </h1>
         <p className="mx-auto mt-5 max-w-[640px] text-[19px] leading-[1.3] text-[#6e6e73] sm:text-[24px]">
           Share a symptom or a report and get clear, preliminary guidance in Kannada, Hindi or English.
@@ -78,15 +96,17 @@ export function Hero({ onStart }: { onStart: () => void }) {
       </div>
 
       <div className="mx-auto mt-12 max-w-[1240px] px-3 sm:mt-16 sm:px-5">
-        <figure className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-[#f5f5f7] sm:aspect-[16/9] lg:aspect-[2/1]">
-          <Image
-            src="/doctor/dr_ananya.jpg"
-            alt="Dr. Ananya, an AI physician, on a video consultation"
-            fill
-            priority
-            sizes="(max-width: 1240px) 100vw, 1240px"
-            className="object-cover object-[48%_20%]"
-          />
+        <motion.figure ref={figureRef} style={{ scale: figureScale }} className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-[#f5f5f7] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.35)] sm:aspect-[16/9] lg:aspect-[2/1]">
+          <motion.div style={{ y: imageY, scale: 1.14 }} className="absolute inset-0">
+            <Image
+              src="/doctor/dr_ananya.jpg"
+              alt="Dr. Ananya, an AI physician, on a video consultation"
+              fill
+              priority
+              sizes="(max-width: 1240px) 100vw, 1240px"
+              className="object-cover object-[48%_20%]"
+            />
+          </motion.div>
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/45 to-transparent" aria-hidden="true" />
           <figcaption className="absolute inset-x-4 bottom-5 flex justify-center sm:bottom-8">
             <p
@@ -98,9 +118,23 @@ export function Hero({ onStart }: { onStart: () => void }) {
             </p>
             <span className="sr-only">An example reply from Dr. Ananya, shown in Kannada, Hindi and English.</span>
           </figcaption>
-        </figure>
+        </motion.figure>
       </div>
     </section>
+  )
+}
+
+/* ───────────────────────── scrolling strip ───────────────────────── */
+
+export function TopicsStrip() {
+  return (
+    <div className="bg-white py-10 sm:py-14" role="presentation">
+      <span className="sr-only">Topics you can ask about: fever, headache, diabetes, blood pressure, lab reports, medicines, skin, sleep, stress.</span>
+      <Marquee
+        className="text-[28px] font-semibold tracking-[-0.02em] text-[#1d1d1f]/20 sm:text-[44px]"
+        items={['Fever', 'Headache', 'Diabetes', 'Blood pressure', 'Lab reports', 'Medicines', 'Skin', 'Sleep', 'Stress', 'ಜ್ವರ', 'सिरदर्द']}
+      />
+    </div>
   )
 }
 
@@ -217,13 +251,15 @@ export function FeatureTiles() {
         </div>
         <div className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 md:grid-cols-2">
           {FEATURES.map(({ icon: Icon, title, body }) => (
-            <article key={title} className="flex min-h-[300px] flex-col justify-between rounded-[28px] bg-white p-8 sm:min-h-[340px] sm:p-12">
-              <Icon size={40} strokeWidth={1.5} className="text-[#0071e3]" aria-hidden="true" />
-              <div>
-                <h3 className="text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] sm:text-[32px]">{title}</h3>
-                <p className="mt-3 max-w-[420px] text-[17px] leading-[1.5] text-[#6e6e73]">{body}</p>
-              </div>
-            </article>
+            <Reveal key={title} className="h-full">
+              <TiltSpotlightCard className="min-h-[300px] rounded-[28px] bg-white p-8 sm:min-h-[340px] sm:p-12">
+                <Icon size={40} strokeWidth={1.5} className="text-[#0071e3]" aria-hidden="true" />
+                <article>
+                  <h3 className="text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] sm:text-[32px]">{title}</h3>
+                  <p className="mt-3 max-w-[420px] text-[17px] leading-[1.5] text-[#6e6e73]">{body}</p>
+                </article>
+              </TiltSpotlightCard>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -339,14 +375,23 @@ export function Faq() {
 
 export function ClosingCta({ onStart }: { onStart: () => void }) {
   return (
-    <section className="bg-[#f5f5f7] px-5 py-24 text-center sm:py-32">
-      <h2 className={`${H2} mx-auto max-w-[760px]`}>Start with what is on your mind.</h2>
-      <p className={`${LEAD} mx-auto mt-4 max-w-[520px]`}>Free, private, and in the language you think in.</p>
-      <div className="mt-8">
-        <PillButton onClick={onStart} large>
-          Start a conversation
-        </PillButton>
+    <section className="relative overflow-hidden bg-black px-5 py-28 text-center text-white sm:py-40">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-[420px] w-[900px] -translate-x-1/2 rounded-[100%] bg-[#0071e3]/25 blur-[110px]" />
+        <div className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]" />
+        <div className="absolute left-1/2 top-1/2 h-[860px] w-[860px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.04]" />
       </div>
+      <Reveal className="relative">
+        <h2 className="mx-auto max-w-[820px] bg-gradient-to-b from-white to-[#8e8e93] bg-clip-text text-[44px] font-semibold leading-[1.03] tracking-[-0.04em] text-transparent sm:text-[84px]">
+          Start with what is on your mind.
+        </h2>
+        <p className="mx-auto mt-6 max-w-[520px] text-[19px] leading-[1.4] text-[#a1a1a6] sm:text-[21px]">Free, private, and in the language you think in.</p>
+        <div className="mt-10">
+          <PillButton onClick={onStart} large>
+            Start a conversation
+          </PillButton>
+        </div>
+      </Reveal>
     </section>
   )
 }
