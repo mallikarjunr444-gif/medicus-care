@@ -1,0 +1,14 @@
+{
+  "mit-9-00sc-introduction-to-psychology-e3f4e183606a": {
+    "book_id": "mit-9-00sc-introduction-to-psychology-e3f4e183606a",
+    "book_name": "MIT 9.00SC Introduction to Psychology",
+    "specialist_id": "dr_ananya",
+    "collection": "mental_wellness",
+    "source_file": "MIT9_00SCF11_text.pdf",
+    "source_sha256": "e3f4e183606a3edb5a9064b10b14fcbed061a4ec755ff1a4d12267d9811f79e9",
+    "chunk_count": 798,
+    "status": "processed",
+    "created_at": "2026-11-09T07:09:40.971901+00:00",
+    "artifact_dir": "/Users/malikarjunr/medicus-care/database/rag_store/specialist_books/mit-9-00sc-introduction-to-psychology-e3f4e183606a"
+  }
+}
