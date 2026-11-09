@@ -15,9 +15,8 @@ import {
   X,
 } from 'lucide-react'
 import { SiteNav } from '@/components/site/SiteNav'
-import { ScrollStory } from '@/components/site/ScrollStory'
 import { ScrollProgress } from '@/components/ui/scroll-progress'
-import { ClosingCta, DoctorTiles, Faq, FeatureTiles, Hero, Safety, SiteFooter } from '@/components/site/HomeSections'
+import { ClosingCta, DoctorTiles, Faq, FeatureTiles, Hero, HowItWorks, Safety, SiteFooter } from '@/components/site/HomeSections'
 import { CompareDoctors, HighlightChips, HighlightsGallery, LanguageViewer, LocalNav } from '@/components/site/ProductSections'
 import { PatientDashboard } from '@/components/patient/PatientDashboard'
 import { PatientNotesPanel } from '@/components/patient/PatientNotesPanel'
@@ -167,7 +166,7 @@ export default function Home() {
             <DoctorTiles onSelectDoctor={handleStartDoctorConsultation} />
             <LanguageViewer onStart={() => navigate('consultation')} />
             <FeatureTiles />
-            <ScrollStory />
+            <HowItWorks />
             <CompareDoctors onSelectDoctor={handleStartDoctorConsultation} />
             <Safety />
             <Faq />
