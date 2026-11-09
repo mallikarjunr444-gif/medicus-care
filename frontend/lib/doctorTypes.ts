@@ -94,7 +94,7 @@ export const DOCTORS: Record<DoctorId, DoctorProfile> = {
     id: 'dr_ananya',
     name: 'Dr. Ananya',
     formalTitle: 'Dr. Ananya, M.D.',
-    specialty: 'AI General Physician & Wellness Consultant',
+    specialty: 'AI Psychologist / Mental Wellness Consultant',
     gender: 'female',
     bio: 'Specialized in holistic preliminary health assessment, diagnostic lab interpretation, and wellness counselling.',
     avatarThumbnail: '/avatars/dr_ananya_thumb.png',
