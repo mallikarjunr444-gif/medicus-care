@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import logging
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -16,6 +17,10 @@ from pydantic import BaseModel
 
 from app.services.rag_service import KnowledgeChunk, rag_service
 from app.services.safety_service import medical_safety_validator
+from app.services.specialist_knowledge import (
+    SpecialistKnowledgeError,
+    specialist_knowledge_service,
+)
 
 logger = logging.getLogger("medicus_care.admin")
 router = APIRouter()
@@ -26,6 +31,14 @@ class ChunkUpdateAction(BaseModel):
 class SafetyEvalRequest(BaseModel):
     benchmark_suite: str = "ALL"  # 'CRADLE' | 'BetweenHelpAndHarm' | 'DistressBench' | 'NOPE' | 'ALL'
     sample_size: int = 20
+
+
+class SpecialistBookAction(BaseModel):
+    specialist_id: str
+
+
+def _specialist_error(exc: SpecialistKnowledgeError) -> HTTPException:
+    return HTTPException(status_code=400, detail=str(exc))
 
 
 SAFETY_BENCHMARK_CASES = [
@@ -244,6 +257,57 @@ async def delete_source(chunk_id: str):
         return {"deleted": True, "chunk_id": chunk_id, "collection": "mental_wellness"}
 
     raise HTTPException(status_code=404, detail="Chunk not found")
+
+
+@router.get("/knowledge/books")
+async def list_specialist_books(specialist_id: Optional[str] = Query(None)):
+    """List processed books and their assigned specialist collections."""
+    return {"books": specialist_knowledge_service.list_books(specialist_id)}
+
+
+@router.post("/knowledge/books/upload")
+async def upload_specialist_book(
+    file: UploadFile = File(...),
+    specialist_id: str = Form(..., description="Specialist receiving this book"),
+    book_name: Optional[str] = Form(None),
+):
+    """Extract, structure, embed, and store a book in its assigned collection."""
+    if not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF books are supported")
+    content = await file.read()
+    temporary_path: Optional[Path] = None
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temporary:
+            temporary.write(content)
+            temporary_path = Path(temporary.name)
+        return specialist_knowledge_service.ingest_pdf(
+            temporary_path,
+            specialist_id=specialist_id,
+            book_name=book_name or file.filename.rsplit(".", 1)[0],
+        )
+    except SpecialistKnowledgeError as exc:
+        raise _specialist_error(exc) from exc
+    finally:
+        if temporary_path:
+            temporary_path.unlink(missing_ok=True)
+
+
+@router.get("/knowledge/books/{book_id}/validate")
+async def validate_specialist_book(book_id: str):
+    """Validate persisted source and structured artifacts for a book."""
+    try:
+        return specialist_knowledge_service.validate_book(book_id)
+    except SpecialistKnowledgeError as exc:
+        raise _specialist_error(exc) from exc
+
+
+@router.delete("/knowledge/books/{book_id}")
+async def delete_specialist_book(book_id: str):
+    """Remove a book's Qdrant points and all local artifacts."""
+    try:
+        return specialist_knowledge_service.delete_book(book_id)
+    except SpecialistKnowledgeError as exc:
+        raise _specialist_error(exc) from exc
 
 @router.post("/knowledge/upload")
 async def upload_document(

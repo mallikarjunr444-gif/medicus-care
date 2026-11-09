@@ -18,12 +18,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-logger = logging.getLogger("medicus_care.rag")
+from app.services.specialist_knowledge import (
+    DOCTOR_COLLECTIONS,
+    SpecialistKnowledgeError,
+    specialist_knowledge_service,
+)
 
-DOCTOR_COLLECTIONS = {
-    "dr_ananya": "mental_wellness",
-    "dr_arjun": "medical",
-}
+logger = logging.getLogger("medicus_care.rag")
 
 @dataclass
 class KnowledgeChunk:
@@ -602,12 +603,38 @@ class UnifiedRAGService:
     ) -> List[RetrievalResult]:
         """Search only the knowledge collection assigned to a doctor role."""
         collection = DOCTOR_COLLECTIONS.get(doctor_id, "all")
-        return self.search(
+        results = self.search(
             query,
             collection=collection,
             top_k=top_k,
             threshold=threshold,
         )
+        if doctor_id in DOCTOR_COLLECTIONS:
+            try:
+                book_results = specialist_knowledge_service.search(
+                    query, collection=collection, top_k=top_k
+                )
+            except (SpecialistKnowledgeError, RuntimeError, OSError):
+                book_results = []
+            for payload in book_results:
+                results.append(
+                    RetrievalResult(
+                        chunk_id=str(payload.get("chunk_id", "")),
+                        collection=collection,
+                        category="specialist_book",
+                        title=str(payload.get("book_name", "Specialist book")),
+                        content=str(payload.get("content_markdown", "")),
+                        source_name=str(payload.get("book_name", "Specialist book")),
+                        license="Book source; see administrator metadata",
+                        similarity_score=1.0,
+                        attribution_text=(
+                            f"Source book: {payload.get('book_name', 'Specialist book')} | "
+                            f"Chapter: {payload.get('chapter', 'Unclassified')} | "
+                            f"Page: {payload.get('page_start', 'unknown')}"
+                        ),
+                    )
+                )
+        return results[:top_k]
 
     def get_stats(self) -> Dict[str, Any]:
         return {
