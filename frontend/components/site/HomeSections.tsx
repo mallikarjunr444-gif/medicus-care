@@ -58,7 +58,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
   const greeting = GREETINGS[index]
 
   return (
-    <section className="bg-white pt-14 text-center sm:pt-20">
+    <section id="overview" className="scroll-mt-24 bg-white pt-14 text-center sm:pt-20">
       <div className="mx-auto max-w-[980px] px-5">
         <h1 className="text-[44px] font-semibold leading-[1.04] tracking-[-0.035em] text-[#1d1d1f] sm:text-[72px] lg:text-[88px]">
           Talk to a doctor.
@@ -74,7 +74,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           </PillButton>
           <TextLink href="#how-it-works">See how it works</TextLink>
         </div>
-        <p className="mt-4 text-[14px] text-[#6e6e73]">No sign-up needed. Not for emergencies: call 112.</p>
+        <p className="mt-4 text-[14px] text-[#6e6e73]">No sign-up needed. Not for emergencies: call 112.<sup className="ml-0.5">1</sup></p>
       </div>
 
       <div className="mx-auto mt-12 max-w-[1240px] px-3 sm:mt-16 sm:px-5">
@@ -114,7 +114,7 @@ const DOCTOR_IMAGE: Record<DoctorId, { src: string; position: string }> = {
 
 export function DoctorTiles({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId) => void }) {
   return (
-    <section id="doctor-selection" className="scroll-mt-12 bg-white py-20 sm:py-28">
+    <section id="doctor-selection" className="scroll-mt-24 bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-[1240px] px-3 sm:px-5">
         <div className="mx-auto max-w-[760px] px-2 text-center">
           <h2 className={H2}>Meet your doctors.</h2>
@@ -241,7 +241,7 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="scroll-mt-12 bg-white py-20 sm:py-28">
+    <section id="how-it-works" className="scroll-mt-24 bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-[1080px] px-5">
         <h2 className={`${H2} mx-auto max-w-[760px] text-center`}>Three steps. About five minutes.</h2>
         <ol className="mt-12 grid gap-10 sm:mt-16 md:grid-cols-3 md:gap-8">
@@ -271,7 +271,7 @@ const SAFETY = [
 
 export function Safety() {
   return (
-    <section id="trust" className="scroll-mt-12 bg-[#f5f5f7] py-20 sm:py-28">
+    <section id="trust" className="scroll-mt-24 bg-[#f5f5f7] py-20 sm:py-28">
       <div className="mx-auto grid max-w-[1080px] gap-12 px-5 md:grid-cols-[0.9fr_1.1fr] md:gap-16">
         <div>
           <h2 className={H2}>Honest about what this is.</h2>
@@ -296,24 +296,38 @@ const FAQ = [
   ['What can I talk about?', 'Symptoms, reports, questions about your wellbeing, or anything you want to understand before deciding on a next step.'],
   ['Is my conversation private?', 'Guest consultations are kept separate from other users, and your summary is saved only to your own session.'],
   ['What should I do in an emergency?', 'Do not use MediCare. Contact local emergency services immediately. In India, call 112.'],
+  ['Which languages are supported?', 'Kannada, Hindi and English, for both doctors. You can switch language during the conversation.'],
+  ['Do I need an account?', 'No. You can start as a guest. Guest sessions are temporary and cleared automatically.'],
+  ['Can it read my lab report?', 'Yes. Share the values and it explains them in plain language and suggests questions for your clinician. It does not diagnose.'],
 ]
 
 export function Faq() {
+  const [open, setOpen] = useState<Set<number>>(new Set())
+  const allOpen = open.size === FAQ.length
+  const toggle = (i: number) => setOpen((prev) => { const next = new Set(prev); if (next.has(i)) next.delete(i); else next.add(i); return next })
+
   return (
-    <section id="faq" className="scroll-mt-12 bg-white py-20 sm:py-28">
+    <section id="faq" className="scroll-mt-24 bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-[820px] px-5">
         <h2 className={`${H2} text-center`}>Questions, answered.</h2>
-        <div className="mt-12 border-b border-[#d2d2d7] sm:mt-16">
-          {FAQ.map(([question, answer]) => (
-            <details key={question} className="group border-t border-[#d2d2d7]">
-              <summary className="flex min-h-[72px] cursor-pointer list-none items-center justify-between gap-6 py-4 text-[19px] font-semibold leading-[1.3] text-[#1d1d1f] marker:hidden focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#0071e3]/30 sm:text-[21px]">
-                {question}
-                <span className="text-[28px] font-light leading-none text-[#6e6e73] transition-transform group-open:rotate-45" aria-hidden="true">
-                  +
-                </span>
-              </summary>
-              <p className="max-w-[640px] pb-6 pr-10 text-[17px] leading-[1.55] text-[#6e6e73]">{answer}</p>
-            </details>
+        <div className="mt-8 flex justify-end">
+          <button type="button" onClick={() => setOpen(allOpen ? new Set() : new Set(FAQ.map((_, i) => i)))} className="rounded text-[14px] text-[#0071e3] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30">
+            {allOpen ? 'Collapse all' : 'Expand all'}
+          </button>
+        </div>
+        <div className="mt-3 border-b border-[#d2d2d7]">
+          {FAQ.map(([question, answer], i) => (
+            <div key={question} className="border-t border-[#d2d2d7]">
+              <h3>
+                <button type="button" aria-expanded={open.has(i)} aria-controls={`faq-${i}`} onClick={() => toggle(i)} className="flex min-h-[72px] w-full items-center justify-between gap-6 py-4 text-left text-[19px] font-semibold leading-[1.3] text-[#1d1d1f] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#0071e3]/30 sm:text-[21px]">
+                  {question}
+                  <span className={`text-[28px] font-light leading-none text-[#6e6e73] transition-transform ${open.has(i) ? 'rotate-45' : ''}`} aria-hidden="true">+</span>
+                </button>
+              </h3>
+              <div id={`faq-${i}`} role="region" hidden={!open.has(i)}>
+                <p className="max-w-[640px] pb-6 pr-10 text-[17px] leading-[1.55] text-[#6e6e73]">{answer}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -350,9 +364,12 @@ export function SiteFooter() {
   return (
     <footer className="bg-[#f5f5f7] text-[#6e6e73]">
       <div className="mx-auto max-w-[1080px] px-5 pb-10">
-        <p className="border-t border-[#d2d2d7] pt-6 text-[12px] leading-[1.6]">
-          MediCare is an AI health assistant from Medicus Labs. It provides general health information and preliminary guidance. It is not a licensed physician, does not diagnose or prescribe, and is not for emergencies. In an emergency, call 112.
-        </p>
+        <ol className="list-decimal space-y-2 border-t border-[#d2d2d7] pt-6 pl-4 text-[12px] leading-[1.6]">
+          <li>MediCare is an AI health assistant from Medicus Labs. It gives general health information and preliminary guidance. It is not a licensed physician, does not diagnose or prescribe, and is not for emergencies. In an emergency, call 112.</li>
+          <li>The doctors are AI characters, not real people. Replies can be incomplete or wrong; confirm anything important with a qualified clinician.</li>
+          <li>Kannada, Hindi and English are supported. Voice and subtitle quality depends on your device, browser and connection.</li>
+          <li>Guest sessions are temporary and are deleted automatically. See the <a href="/privacy" className="underline">Privacy Policy</a>.</li>
+        </ol>
         <div className="mt-8 grid grid-cols-2 gap-8 border-t border-[#d2d2d7] pt-8 sm:grid-cols-4">
           {FOOTER_COLUMNS.map((column) => (
             <div key={column.title}>

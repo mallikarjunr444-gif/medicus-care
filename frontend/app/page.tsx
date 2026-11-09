@@ -15,7 +15,8 @@ import {
   X,
 } from 'lucide-react'
 import { SiteNav } from '@/components/site/SiteNav'
-import { ClosingCta, DoctorTiles, Faq, FeatureTiles, Hero, HowItWorks, LanguagesBand, Safety, SiteFooter } from '@/components/site/HomeSections'
+import { ClosingCta, DoctorTiles, Faq, FeatureTiles, Hero, HowItWorks, Safety, SiteFooter } from '@/components/site/HomeSections'
+import { CompareDoctors, HighlightChips, HighlightsGallery, LanguageViewer, LocalNav } from '@/components/site/ProductSections'
 import { PatientDashboard } from '@/components/patient/PatientDashboard'
 import { PatientNotesPanel } from '@/components/patient/PatientNotesPanel'
 import { AppointmentWorkspace } from '@/components/patient/AppointmentWorkspace'
@@ -156,11 +157,15 @@ export default function Home() {
 
         {view === 'home' && (
           <>
+            <LocalNav onStart={() => navigate('consultation')} />
             <Hero onStart={() => navigate('consultation')} />
+            <HighlightChips />
+            <HighlightsGallery />
             <DoctorTiles onSelectDoctor={handleStartDoctorConsultation} />
-            <LanguagesBand />
+            <LanguageViewer onStart={() => navigate('consultation')} />
             <FeatureTiles />
             <HowItWorks />
+            <CompareDoctors onSelectDoctor={handleStartDoctorConsultation} />
             <Safety />
             <Faq />
             <ClosingCta onStart={() => navigate('consultation')} />
