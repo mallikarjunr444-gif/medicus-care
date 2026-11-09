@@ -38,7 +38,10 @@ except ImportError:
     class MedicalSafetyValidator:
         def evaluate_patient_query(self, query: str) -> SafetyValidationResult:
             q = query.lower()
-            if any(k in q for k in ["chest pain", "heart attack", "breathe", "kill myself", "suicide", "stroke"]):
+            if any(k in q for k in [
+                "chest pain", "heart attack", "breathe", "kill myself", "suicide",
+                "end my life", "stroke", "slurred speech", "arm weakness", "facial drooping",
+            ]):
                 return SafetyValidationResult(
                     is_safe=True,
                     triage_level=TriageLevel.LEVEL_4_EMERGENCY,
