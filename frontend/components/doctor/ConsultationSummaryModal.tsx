@@ -140,9 +140,9 @@ function triageTheme(level: number) {
     }
   }
   return {
-    card: 'border-emerald-200 bg-emerald-50/70',
-    accent: 'text-emerald-700',
-    soft: 'text-emerald-600',
+    card: 'border-clinic-hairline bg-clinic-mist/60/70',
+    accent: 'text-clinic-teal',
+    soft: 'text-clinic-teal',
     track: 'bg-emerald-100',
     fill: 'bg-emerald-500',
   }
@@ -234,7 +234,7 @@ export function ConsultationSummaryModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#07130f]/50 p-3 backdrop-blur-sm animate-fade-in sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#1d1d1f]/50 p-3 backdrop-blur-sm animate-fade-in sm:p-6"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
@@ -246,11 +246,11 @@ export function ConsultationSummaryModal({
         className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_30px_80px_-24px_rgba(6,25,20,.55)] ring-1 ring-black/5 animate-fade-up"
       >
         {/* Letterhead header */}
-        <header className="relative shrink-0 bg-gradient-to-r from-[#123f3a] via-[#0f4a40] to-[#0d5a4c] px-5 py-4 text-white sm:px-6">
+        <header className="relative shrink-0 bg-gradient-to-r from-clinic-ink via-[#0058b0] to-clinic-teal-deep px-5 py-4 text-white sm:px-6">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
-                <FileText size={20} className="text-[#a8e6d3]" aria-hidden="true" />
+                <FileText size={20} className="text-clinic-mist" aria-hidden="true" />
               </span>
               <div className="min-w-0">
                 <h2
@@ -292,13 +292,13 @@ export function ConsultationSummaryModal({
           {/* Metadata strip */}
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             {metaItems.map(({ icon: Icon, label, value, accent }) => (
-              <div key={label} className="rounded-xl border border-[#e6eee9] bg-[#f7faf8] px-3 py-2.5">
-                <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#7d9089]">
+              <div key={label} className="rounded-xl border border-clinic-hairline bg-clinic-porcelain px-3 py-2.5">
+                <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-clinic-muted">
                   <Icon size={11} aria-hidden="true" /> {label}
                 </span>
                 <span
                   className={`mt-1 block truncate text-sm font-semibold ${
-                    accent ? 'text-[#0f7565]' : 'text-[#25423b]'
+                    accent ? 'text-clinic-teal' : 'text-clinic-ink'
                   }`}
                 >
                   {value}
@@ -338,10 +338,10 @@ export function ConsultationSummaryModal({
 
           {/* Patient-reported information */}
           <Section icon={User} title="Patient-reported information">
-            <div className="rounded-xl border border-[#e6eee9] bg-white p-3.5">
+            <div className="rounded-xl border border-clinic-hairline bg-white p-3.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-[#5c716b]">Reported symptoms</span>
-                <span className="rounded-full bg-[#eef7f2] px-2 py-0.5 text-[10px] font-semibold text-[#0f7565]">
+                <span className="text-xs font-medium text-clinic-muted">Reported symptoms</span>
+                <span className="rounded-full bg-clinic-mist/60 px-2 py-0.5 text-[10px] font-semibold text-clinic-teal">
                   {summary.patientReportedSymptoms.length} extracts
                 </span>
               </div>
@@ -349,13 +349,13 @@ export function ConsultationSummaryModal({
                 {summary.patientReportedSymptoms.map((symptom, index) => (
                   <span
                     key={index}
-                    className="rounded-full border border-[#d7e8df] bg-[#f1f8f4] px-2.5 py-1 text-xs font-medium text-[#2f534a]"
+                    className="rounded-full border border-clinic-hairline bg-clinic-porcelain px-2.5 py-1 text-xs font-medium text-clinic-ink"
                   >
                     {symptom}
                   </span>
                 ))}
               </div>
-              <div className="mt-3 grid gap-2 border-t border-[#eef3ef] pt-3 sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 border-t border-clinic-porcelain pt-3 sm:grid-cols-2">
                 <Fact label="Duration" value={summary.symptomDuration} />
                 <Fact label="Relevant history" value={summary.relevantHistory} />
               </div>
@@ -378,10 +378,10 @@ export function ConsultationSummaryModal({
 
           {/* Recommended next steps */}
           <Section icon={CheckCircle2} title="Recommended next steps">
-            <ol className="space-y-2.5 rounded-xl border border-[#e6eee9] bg-[#f9fbfa] p-3.5">
+            <ol className="space-y-2.5 rounded-xl border border-clinic-hairline bg-clinic-porcelain p-3.5">
               {summary.recommendedNextSteps.map((step, index) => (
-                <li key={index} className="flex items-start gap-2.5 text-xs text-[#36564d]">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0f7565] text-[10px] font-bold text-white">
+                <li key={index} className="flex items-start gap-2.5 text-xs text-clinic-ink">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-clinic-teal text-[10px] font-bold text-white">
                     {index + 1}
                   </span>
                   <span className="pt-0.5 leading-5">{step}</span>
@@ -391,10 +391,10 @@ export function ConsultationSummaryModal({
           </Section>
 
           {/* Human doctor referral */}
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#cfe3da] bg-[#eef7f2] p-3.5">
-            <ArrowRight size={16} className="mt-0.5 shrink-0 text-[#0f7565]" aria-hidden="true" />
-            <div className="text-xs text-[#2f534a]">
-              <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-[#0f7565]">
+          <div className="flex items-start gap-2.5 rounded-xl border border-clinic-hairline bg-clinic-mist/60 p-3.5">
+            <ArrowRight size={16} className="mt-0.5 shrink-0 text-clinic-teal" aria-hidden="true" />
+            <div className="text-xs text-clinic-ink">
+              <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-clinic-teal">
                 Human doctor referral
               </span>
               <p className="mt-0.5 leading-5">{summary.referralRecommendation}</p>
@@ -402,25 +402,25 @@ export function ConsultationSummaryModal({
           </div>
 
           {/* Regulatory disclaimer */}
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#e6eee9] bg-[#f7faf8] p-3.5 text-[11px] leading-5 text-[#687b74]">
-            <ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#7d9089]" aria-hidden="true" />
+          <div className="flex items-start gap-2.5 rounded-xl border border-clinic-hairline bg-clinic-porcelain p-3.5 text-[11px] leading-5 text-clinic-muted">
+            <ShieldCheck size={14} className="mt-0.5 shrink-0 text-clinic-muted" aria-hidden="true" />
             <p>
-              <span className="font-semibold text-[#45645d]">Medical AI disclaimer: </span>
+              <span className="font-semibold text-clinic-ink">Medical AI disclaimer: </span>
               {summary.disclaimer}
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-[#e6eee9] bg-[#f9fbfa] px-4 py-3.5 sm:px-6">
-          <span className="hidden text-[11px] text-[#7d9089] sm:block">
+        <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-clinic-hairline bg-clinic-porcelain px-4 py-3.5 sm:px-6">
+          <span className="hidden text-[11px] text-clinic-muted sm:block">
             AI-generated summary · not a medical diagnosis
           </span>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleCopy}
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-[#dfe8e2] bg-white px-3.5 text-xs font-semibold text-[#45645d] transition-colors hover:bg-[#f1f7f3]"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-clinic-hairline bg-white px-3.5 text-xs font-semibold text-clinic-ink transition-colors hover:bg-clinic-porcelain"
             >
               {copied ? <CheckCircle2 size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
               {copied ? 'Copied' : 'Copy'}
@@ -428,7 +428,7 @@ export function ConsultationSummaryModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-[#0f7565] px-5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#0b5f52]"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-clinic-teal px-5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#0058b0]"
             >
               Done &amp; save summary
             </button>
@@ -478,7 +478,7 @@ function Section({
     <div className="space-y-2">
       <h3
         className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] ${
-          tone === 'amber' ? 'text-amber-700' : 'text-[#0f7565]'
+          tone === 'amber' ? 'text-amber-700' : 'text-clinic-teal'
         }`}
       >
         <Icon size={13} aria-hidden="true" /> {title}
@@ -491,8 +491,8 @@ function Section({
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline gap-1.5 text-xs">
-      <span className="shrink-0 text-[#7d9089]">{label}:</span>
-      <span className="font-medium text-[#36564d]">{value || 'Not recorded'}</span>
+      <span className="shrink-0 text-clinic-muted">{label}:</span>
+      <span className="font-medium text-clinic-ink">{value || 'Not recorded'}</span>
     </div>
   )
 }

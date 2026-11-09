@@ -51,24 +51,23 @@ export function PatientNotesPanel() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-10">
+    <section className="mx-auto max-w-[1080px] px-5 py-10 sm:py-14">
       <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <ClinicalBadge><FileText size={13} /> Personal workspace</ClinicalBadge>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-.04em] text-[#203e37] sm:text-4xl">Your health notes</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6c7d76]">Keep questions and details you want to remember for a conversation with a qualified clinician.</p>
+          <h1 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#1d1d1f] sm:text-[48px]">Your health notes</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6e6e73]">Keep questions and details you want to remember for a conversation with a qualified clinician.</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-[#6c7d76]">
-          <LockKeyhole size={15} className="text-[#4d7b69]" /> Saved only in this browser
+        <div className="flex items-center gap-2 text-xs text-[#6e6e73]">
+          <LockKeyhole size={15} className="text-[#6e6e73]" /> Saved only in this browser
         </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(250px,.7fr)]">
         <ClinicalCard className="overflow-hidden">
-          <div className="flex items-start justify-between gap-4 border-b border-[#edf1ee] px-5 py-4 sm:px-6">
+          <div className="flex items-start justify-between gap-4 border-b border-[#d2d2d7] px-5 py-4 sm:px-6">
             <div>
-              <h2 className="text-sm font-semibold text-[#29463f]">Private notes</h2>
-              <p className="mt-1 text-xs text-[#71817b]">A simple personal reminder—not part of your medical record.</p>
+              <h2 className="text-sm font-semibold text-[#1d1d1f]">Private notes</h2>
+              <p className="mt-1 text-xs text-[#6e6e73]">A simple personal reminder—not part of your medical record.</p>
             </div>
             <ClinicalBadge className={saved ? '' : 'border-amber-200 bg-amber-50 text-amber-800'}>
               <span className={`h-1.5 w-1.5 rounded-full ${saved ? 'bg-emerald-500' : 'bg-amber-500'}`} />
@@ -83,10 +82,10 @@ export function PatientNotesPanel() {
               onChange={(event) => { setNotes(event.target.value); setSaved(false) }}
               disabled={!ready}
               placeholder={'Questions I want to ask…\n\nSymptoms or changes I want to remember…\n\nDates, medicines, or details to discuss…'}
-              className="min-h-[320px] w-full resize-y rounded-xl border border-[#dfe8e2] bg-[#fcfdfc] p-4 text-sm leading-7 text-[#36564d] placeholder:text-[#8a9993] focus:border-[#6fb296] focus:outline-none focus:ring-4 focus:ring-[#dceee3] disabled:opacity-60 sm:p-5"
+              className="min-h-[320px] w-full resize-y rounded-xl border border-[#d2d2d7] bg-[#f5f5f7] p-4 text-sm leading-7 text-[#1d1d1f] placeholder:text-[#86868b] focus:border-[#0071e3] focus:outline-none focus:ring-4 focus:ring-[#d2d2d7] disabled:opacity-60 sm:p-5"
             />
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs text-[#71817b]" aria-live="polite">
+              <p className="text-xs text-[#6e6e73]" aria-live="polite">
                 {!ready ? 'Opening notes…' : savedAt && saved ? `Last saved ${new Date(savedAt).toLocaleString()}` : 'Changes are not saved yet'}
               </p>
               <div className="flex items-center gap-2">
@@ -103,15 +102,15 @@ export function PatientNotesPanel() {
 
         <aside className="space-y-4">
           <ClinicalCard className="p-5 sm:p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#edf5f0] text-[#4d7b69]"><LockKeyhole size={18} /></div>
-            <h2 className="mt-4 text-base font-semibold text-[#29463f]">Know where notes live</h2>
-            <p className="mt-2 text-sm leading-6 text-[#6c7d76]">These notes stay in this browser’s local storage. They are not sent to your account, shared with a doctor, or synced to other devices.</p>
-            <p className="mt-3 rounded-xl bg-[#f6f9f7] p-3 text-xs leading-5 text-[#71817b]">Avoid entering information you would not want stored on this device. Clear notes on shared devices.</p>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f5f5f7] text-[#6e6e73]"><LockKeyhole size={18} /></div>
+            <h2 className="mt-4 text-base font-semibold text-[#1d1d1f]">Know where notes live</h2>
+            <p className="mt-2 text-sm leading-6 text-[#6e6e73]">These notes stay in this browser’s local storage. They are not sent to your account, shared with a doctor, or synced to other devices.</p>
+            <p className="mt-3 rounded-xl bg-[#f5f5f7] p-3 text-xs leading-5 text-[#6e6e73]">Avoid entering information you would not want stored on this device. Clear notes on shared devices.</p>
           </ClinicalCard>
           <ClinicalCard className="p-5 sm:p-6">
-            <p className="text-xs font-semibold uppercase tracking-[.14em] text-[#4d7b69]">A useful prompt</p>
-            <h2 className="mt-2 text-base font-semibold text-[#29463f]">What changed, and when?</h2>
-            <p className="mt-2 text-sm leading-6 text-[#6c7d76]">Timing, what makes a symptom better or worse, and questions you want answered can help you prepare for a clinician visit.</p>
+            <p className="text-xs font-semibold uppercase tracking-[.14em] text-[#6e6e73]">A useful prompt</p>
+            <h2 className="mt-2 text-base font-semibold text-[#1d1d1f]">What changed, and when?</h2>
+            <p className="mt-2 text-sm leading-6 text-[#6e6e73]">Timing, what makes a symptom better or worse, and questions you want answered can help you prepare for a clinician visit.</p>
           </ClinicalCard>
         </aside>
       </div>

@@ -24,23 +24,23 @@ const keywords = [
 /** Social-proof band: count-up stats plus a scrolling keyword marquee. */
 export function StatsSection() {
   return (
-    <section className="border-b border-[#e1e9e4] bg-[#f2f7f4]">
+    <section className="border-b border-[#d2d2d7] bg-[#f5f5f7]">
       <div className="mx-auto max-w-7xl px-4 py-9 sm:px-6 sm:py-11">
         <div className="grid gap-x-6 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="flex items-baseline gap-3">
-              <span className="text-3xl font-semibold tracking-tight text-[#0f6257] sm:text-4xl">
+              <span className="text-3xl font-semibold tracking-tight text-[#0058b0] sm:text-4xl">
                 <AnimatedCounter to={s.to} suffix={s.suffix} />
               </span>
-              <span className="text-sm font-medium leading-tight text-[#5c716b]">{s.label}</span>
+              <span className="text-sm font-medium leading-tight text-[#6e6e73]">{s.label}</span>
             </div>
           ))}
         </div>
       </div>
-      <div className="border-t border-[#e1e9e4] py-3.5">
+      <div className="border-t border-[#d2d2d7] py-3.5">
         <Marquee
           items={keywords}
-          className="text-xs font-semibold uppercase tracking-[0.18em] text-[#789089]"
+          className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6e6e73]"
         />
       </div>
     </section>

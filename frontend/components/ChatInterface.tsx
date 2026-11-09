@@ -1162,7 +1162,7 @@ export function ChatInterface({ avatarId, voiceId, resumeSessionId, onSessionCre
                           </button>
                           <button
                             onClick={() => saveEditMessage(message.id)}
-                            className="text-xs text-gray-900 bg-primary-600 hover:bg-primary-500 px-2.5 py-1 rounded-md
+                            className="text-xs text-white bg-primary-600 hover:bg-primary-500 px-2.5 py-1 rounded-md
  flex items-center gap-1"
                           >
                             <Check size={11} />
@@ -1306,7 +1306,7 @@ export function ChatInterface({ avatarId, voiceId, resumeSessionId, onSessionCre
               className={`relative flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center
  transition-all duration-200 active:scale-95
  ${handsFree
- ? 'bg-primary-600 hover:bg-primary-500 text-gray-900 shadow-[0_0_20px_rgba(99,102,241,0.45)]'
+ ? 'bg-primary-600 hover:bg-primary-500 text-white shadow-[0_6px_18px_rgba(0,113,227,0.35)]'
  : 'bg-gray-100 hover:bg-gray-200 border border-gray-200 hover:border-primary-500/40 text-gray-500 hover:text-gray-900'
  }`}
             >

@@ -249,19 +249,19 @@ export function AdminKnowledgeDashboard() {
   })
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 py-8 animate-fade-in font-sans text-slate-100">
+    <div className="w-full max-w-7xl mx-auto px-6 py-8 animate-fade-in font-sans text-[#1d1d1f]">
       {/* ── Top Header ── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#d2d2d7]">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+            <div className="w-9 h-9 rounded-xl bg-[#0071e3]/10 border border-[#0071e3]/40 flex items-center justify-center text-[#0071e3]">
               <Database size={20} />
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold text-white tracking-tight">
-                Medi<span className="text-sky-400">Care</span> Knowledge & Safety Console
+              <h1 className="text-2xl font-extrabold text-[#1d1d1f] tracking-tight">
+                Medi<span className="text-[#0071e3]">Care</span> Knowledge & Safety Console
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#6e6e73]">
                 Independent RAG Intelligence, Clinician Document Approvals & Clinical Safety Auditing
               </p>
             </div>
@@ -272,7 +272,7 @@ export function AdminKnowledgeDashboard() {
           <button
             onClick={handleReindex}
             disabled={isReindexing}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-700 text-xs font-semibold transition-colors shadow-md disabled:opacity-50"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#ffffff] hover:bg-[#f5f5f7] text-[#0071e3] border border-[#d2d2d7] text-xs font-semibold transition-colors shadow-md disabled:opacity-50"
           >
             <RefreshCw size={14} className={isReindexing ? 'animate-spin' : ''} />
             <span>{isReindexing ? 'Re-Indexing...' : 'Re-Index Knowledge'}</span>
@@ -282,45 +282,45 @@ export function AdminKnowledgeDashboard() {
 
       {/* ── Metric Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="p-4 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7]">
+          <div className="flex items-center justify-between text-[#6e6e73] mb-1">
             <span className="text-[11px] font-mono uppercase">Indexed Chunks</span>
-            <Layers size={15} className="text-sky-400" />
+            <Layers size={15} className="text-[#0071e3]" />
           </div>
-          <div className="text-2xl font-black text-white">419</div>
-          <span className="text-[10px] text-emerald-400 font-mono">100% Quality Audited</span>
+          <div className="text-2xl font-black text-[#1d1d1f]">419</div>
+          <span className="text-[10px] text-[#1a7f37] font-mono">100% Quality Audited</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="p-4 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7]">
+          <div className="flex items-center justify-between text-[#6e6e73] mb-1">
             <span className="text-[11px] font-mono uppercase">Medical Base</span>
-            <HeartPulse size={15} className="text-sky-400" />
+            <HeartPulse size={15} className="text-[#0071e3]" />
           </div>
-          <div className="text-2xl font-black text-white">300</div>
-          <span className="text-[10px] text-slate-400 font-mono">MedQuAD / NIH Topics</span>
+          <div className="text-2xl font-black text-[#1d1d1f]">300</div>
+          <span className="text-[10px] text-[#6e6e73] font-mono">MedQuAD / NIH Topics</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="p-4 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7]">
+          <div className="flex items-center justify-between text-[#6e6e73] mb-1">
             <span className="text-[11px] font-mono uppercase">Mental Wellness</span>
-            <Brain size={15} className="text-purple-400" />
+            <Brain size={15} className="text-[#0071e3]" />
           </div>
-          <div className="text-2xl font-black text-white">119</div>
-          <span className="text-[10px] text-purple-300 font-mono">ESConv & CACTUS CBT</span>
+          <div className="text-2xl font-black text-[#1d1d1f]">119</div>
+          <span className="text-[10px] text-[#0071e3] font-mono">ESConv & CACTUS CBT</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-          <div className="flex items-center justify-between text-slate-400 mb-1">
+        <div className="p-4 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7]">
+          <div className="flex items-center justify-between text-[#6e6e73] mb-1">
             <span className="text-[11px] font-mono uppercase">Safety Pass Rate</span>
-            <ShieldCheck size={15} className="text-emerald-400" />
+            <ShieldCheck size={15} className="text-[#1a7f37]" />
           </div>
-          <div className="text-2xl font-black text-emerald-400">99.6%</div>
-          <span className="text-[10px] text-slate-400 font-mono">5 Benchmark Suites</span>
+          <div className="text-2xl font-black text-[#1a7f37]">99.6%</div>
+          <span className="text-[10px] text-[#6e6e73] font-mono">5 Benchmark Suites</span>
         </div>
       </div>
 
       {/* ── Navigation Tabs ── */}
-      <div className="flex items-center gap-2 border-b border-slate-800 mb-6 overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 border-b border-[#d2d2d7] mb-6 overflow-x-auto pb-1">
         {[
           { id: 'explorer', label: 'Knowledge Explorer', icon: BookOpen },
           { id: 'upload', label: 'Upload Document', icon: Upload },
@@ -335,8 +335,8 @@ export function AdminKnowledgeDashboard() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 isActive
-                  ? 'bg-sky-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#0071e3] text-white shadow-md'
+                  : 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#ffffff]'
               }`}
             >
               <Icon size={15} />
@@ -350,21 +350,21 @@ export function AdminKnowledgeDashboard() {
       {activeTab === 'explorer' && (
         <div className="space-y-4">
           {/* Filters Bar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-[#ffffff]/60 border border-[#d2d2d7]">
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-xs text-slate-400 font-mono flex items-center gap-1 ml-1">
+              <span className="text-xs text-[#6e6e73] font-mono flex items-center gap-1 ml-1">
                 <Filter size={13} />
                 Collection:
               </span>
-              <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+              <div className="flex items-center gap-1 bg-[#f5f5f7] p-1 rounded-xl border border-[#d2d2d7] text-xs">
                 {(['all', 'medical', 'mental_wellness'] as const).map(col => (
                   <button
                     key={col}
                     onClick={() => setCollectionFilter(col)}
                     className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
                       collectionFilter === col
-                        ? 'bg-sky-600 text-white'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-[#0071e3] text-white'
+                        : 'text-[#6e6e73] hover:text-[#1d1d1f]'
                     }`}
                   >
                     {col === 'all' ? 'All' : col === 'medical' ? 'Medical' : 'Mental Wellness'}
@@ -374,22 +374,22 @@ export function AdminKnowledgeDashboard() {
             </div>
 
             <div className="relative w-full sm:w-72">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6e6e73]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search knowledge chunks..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] rounded-xl pl-9 pr-4 py-2 text-xs text-[#1d1d1f] placeholder-slate-500 focus:outline-none focus:border-[#0071e3]/40"
               />
             </div>
           </div>
 
           {/* Chunks Table */}
-          <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl">
+          <div className="overflow-hidden rounded-2xl border border-[#d2d2d7] bg-[#ffffff]/60 shadow-xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-mono text-[11px] uppercase">
+                <thead className="bg-[#f5f5f7] border-b border-[#d2d2d7] text-[#6e6e73] text-[11px] font-semibold uppercase tracking-wide">
                   <tr>
                     <th className="py-3 px-4">Title & Context</th>
                     <th className="py-3 px-4">Collection</th>
@@ -398,35 +398,35 @@ export function AdminKnowledgeDashboard() {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-[#d2d2d7]">
                   {filteredChunks.map(chunk => (
-                    <tr key={chunk.chunk_id} className="hover:bg-slate-800/40 transition-colors">
+                    <tr key={chunk.chunk_id} className="hover:bg-[#f5f5f7]/40 transition-colors">
                       <td className="py-3 px-4 max-w-sm">
-                        <span className="font-semibold text-white block truncate">{chunk.title}</span>
-                        <span className="text-[11px] text-slate-400 line-clamp-1">{chunk.snippet}</span>
+                        <span className="font-semibold text-[#1d1d1f] block truncate">{chunk.title}</span>
+                        <span className="text-[11px] text-[#6e6e73] line-clamp-1">{chunk.snippet}</span>
                       </td>
                       <td className="py-3 px-4">
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-mono border ${
                             chunk.collection === 'medical'
-                              ? 'bg-sky-500/10 text-sky-400 border-sky-500/20'
-                              : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                              ? 'bg-[#0071e3]/10 text-[#0071e3] border-[#0071e3]/40'
+                              : 'bg-[#0071e3]/10 text-[#0071e3] border-[#0071e3]/40'
                           }`}
                         >
                           {chunk.collection === 'medical' ? 'Medical' : 'Wellness'}
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="text-slate-300 block truncate">{chunk.source_name}</span>
-                        <span className="text-[10px] text-slate-500 font-mono">{chunk.license}</span>
+                        <span className="text-[#424245] block truncate">{chunk.source_name}</span>
+                        <span className="text-[10px] text-[#6e6e73] font-mono">{chunk.license}</span>
                       </td>
                       <td className="py-3 px-4">
                         <button
                           onClick={() => handleToggleApproval(chunk.chunk_id, chunk.approved)}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-all ${
                             chunk.approved
-                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
-                              : 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
+                              ? 'bg-[#1a7f37]/10 border-emerald-500/30 text-[#1a7f37] hover:bg-[#1a7f37]/10'
+                              : 'bg-[#8a5a10]/10 border-amber-500/30 text-[#8a5a10] hover:bg-[#8a5a10]/10'
                           }`}
                         >
                           {chunk.approved ? <CheckCircle2 size={12} /> : <AlertTriangle size={12} />}
@@ -436,7 +436,7 @@ export function AdminKnowledgeDashboard() {
                       <td className="py-3 px-4 text-right">
                         <button
                           onClick={() => handleDeleteChunk(chunk.chunk_id)}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                          className="p-1.5 rounded-lg text-[#6e6e73] hover:text-[#c4281c] hover:bg-[#c4281c]/10 transition-colors"
                           title="Delete chunk"
                         >
                           <Trash2 size={14} />
@@ -453,12 +453,12 @@ export function AdminKnowledgeDashboard() {
 
       {/* ── TAB 2: UPLOAD DOCUMENT ── */}
       {activeTab === 'upload' && (
-        <div className="max-w-2xl mx-auto p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl">
+        <div className="max-w-2xl mx-auto p-6 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7] shadow-xl">
           <div className="mb-6">
-            <h2 className="text-lg font-bold text-white mb-1">Ingest Knowledge Document</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-lg font-bold text-[#1d1d1f] mb-1">Ingest Knowledge Document</h2>
+            <p className="text-xs text-[#6e6e73]">
               Upload PDF, DOCX, TXT, CSV or JSON clinical reference guides. Uploaded items are staged as
-              <span className="text-amber-400 font-semibold"> Pending Review</span> until approved by an administrator.
+              <span className="text-[#8a5a10] font-semibold"> Pending Review</span> until approved by an administrator.
             </p>
           </div>
 
@@ -471,20 +471,20 @@ export function AdminKnowledgeDashboard() {
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Target Collection</label>
+              <label className="block text-[#424245] font-medium mb-1.5">Target Collection</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setUploadCollection('medical')}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     uploadCollection === 'medical'
-                      ? 'bg-sky-600/20 border-sky-500 text-sky-200'
-                      : 'bg-slate-950 border-slate-800 text-slate-400'
+                      ? 'bg-[#0071e3]/20 border-[#0071e3]/40 text-[#0071e3]'
+                      : 'bg-[#f5f5f7] border-[#d2d2d7] text-[#6e6e73]'
                   }`}
                 >
-                  <HeartPulse size={16} className="mb-1 text-sky-400" />
+                  <HeartPulse size={16} className="mb-1 text-[#0071e3]" />
                   <span className="font-bold block">Medical Clinical Base</span>
-                  <span className="text-[10px] text-slate-400">Symptoms, diseases, first-aid, protocols</span>
+                  <span className="text-[10px] text-[#6e6e73]">Symptoms, diseases, first-aid, protocols</span>
                 </button>
 
                 <button
@@ -492,23 +492,23 @@ export function AdminKnowledgeDashboard() {
                   onClick={() => setUploadCollection('mental_wellness')}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     uploadCollection === 'mental_wellness'
-                      ? 'bg-purple-600/20 border-purple-500 text-purple-200'
-                      : 'bg-slate-950 border-slate-800 text-slate-400'
+                      ? 'bg-purple-600/20 border-[#0071e3]/40 text-[#0071e3]'
+                      : 'bg-[#f5f5f7] border-[#d2d2d7] text-[#6e6e73]'
                   }`}
                 >
-                  <Brain size={16} className="mb-1 text-purple-400" />
+                  <Brain size={16} className="mb-1 text-[#0071e3]" />
                   <span className="font-bold block">Mental Wellness Base</span>
-                  <span className="text-[10px] text-slate-400">CBT exercises, stress coping, relaxation</span>
+                  <span className="text-[10px] text-[#6e6e73]">CBT exercises, stress coping, relaxation</span>
                 </button>
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Category Classification</label>
+              <label className="block text-[#424245] font-medium mb-1.5">Category Classification</label>
               <select
                 value={uploadCategory}
                 onChange={e => setUploadCategory(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-sky-500"
+                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] rounded-xl px-3.5 py-2.5 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3]/40"
               >
                 <option value="symptoms">Symptoms & Clinical Presentation</option>
                 <option value="diseases">Disease Etiology & Pathology</option>
@@ -522,40 +522,40 @@ export function AdminKnowledgeDashboard() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-slate-300 font-medium mb-1.5">Source Attribution</label>
+                <label className="block text-[#424245] font-medium mb-1.5">Source Attribution</label>
                 <input
                   type="text"
                   value={uploadAttribution}
                   onChange={e => setUploadAttribution(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-sky-500"
+                  className="w-full bg-[#f5f5f7] border border-[#d2d2d7] rounded-xl px-3.5 py-2 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3]/40"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-300 font-medium mb-1.5">Licensing Terms</label>
+                <label className="block text-[#424245] font-medium mb-1.5">Licensing Terms</label>
                 <input
                   type="text"
                   value={uploadLicense}
                   onChange={e => setUploadLicense(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-sky-500"
+                  className="w-full bg-[#f5f5f7] border border-[#d2d2d7] rounded-xl px-3.5 py-2 text-[#1d1d1f] focus:outline-none focus:border-[#0071e3]/40"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Select Document File</label>
+              <label className="block text-[#424245] font-medium mb-1.5">Select Document File</label>
               <input
                 type="file"
                 accept=".pdf,.docx,.txt,.csv,.json,.md"
                 onChange={e => setUploadFile(e.target.files?.[0] || null)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-600 file:text-white hover:file:bg-sky-500"
+                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] rounded-xl p-2 text-[#6e6e73] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#0071e3] file:text-white hover:file:bg-[#0071e3]"
               />
             </div>
 
             <button
               type="submit"
               disabled={!uploadFile}
-              className="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-40 font-bold text-white transition-colors shadow-lg mt-4 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl bg-[#0071e3] hover:bg-[#0071e3] disabled:opacity-40 font-bold text-white transition-colors shadow-lg mt-4 flex items-center justify-center gap-2"
             >
               <Upload size={16} />
               <span>Ingest and Stage for Review</span>
@@ -567,32 +567,32 @@ export function AdminKnowledgeDashboard() {
       {/* ── TAB 3: REPOSITORIES & LICENSES ── */}
       {activeTab === 'repos' && (
         <div className="space-y-4">
-          <div className="p-4 rounded-2xl bg-slate-900/40 border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+          <div className="p-4 rounded-2xl bg-[#ffffff]/40 border border-[#d2d2d7] text-xs text-[#424245] flex items-center justify-between">
             <span>
-              <span className="font-bold text-white">15 Repositories Audited</span> across medical, psychological, and voice domains.
+              <span className="font-bold text-[#1d1d1f]">15 Repositories Audited</span> across medical, psychological, and voice domains.
             </span>
-            <span className="text-emerald-400 font-mono text-[11px]">100% Free of Per-Minute SaaS Fees</span>
+            <span className="text-[#1a7f37] font-mono text-[11px]">100% Free of Per-Minute SaaS Fees</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {REPOSITORIES.map(repo => (
-              <div key={repo.name} className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+              <div key={repo.name} className="p-4 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7] flex flex-col justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-bold text-sm text-white">{repo.name}</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-sky-400 font-mono border border-slate-700">
+                    <h3 className="font-bold text-sm text-[#1d1d1f]">{repo.name}</h3>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#f5f5f7] text-[#0071e3] font-mono border border-[#d2d2d7]">
                       {repo.category}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-400 space-y-1 mb-4 font-mono text-[11px]">
-                    <div>Files: <span className="text-slate-200">{repo.files.toLocaleString()}</span> • Size: <span className="text-slate-200">{repo.size}</span></div>
-                    <div>License: <span className="text-emerald-400">{repo.license}</span></div>
+                  <div className="text-xs text-[#6e6e73] space-y-1 mb-4 font-mono text-[11px]">
+                    <div>Files: <span className="text-[#1d1d1f]">{repo.files.toLocaleString()}</span> • Size: <span className="text-[#1d1d1f]">{repo.size}</span></div>
+                    <div>License: <span className="text-[#1a7f37]">{repo.license}</span></div>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                  <span className="text-slate-400">Ingestion Status:</span>
-                  <span className="text-sky-300 font-semibold">{repo.status}</span>
+                <div className="pt-2 border-t border-[#d2d2d7] flex items-center justify-between text-[11px]">
+                  <span className="text-[#6e6e73]">Ingestion Status:</span>
+                  <span className="text-[#0071e3] font-semibold">{repo.status}</span>
                 </div>
               </div>
             ))}
@@ -603,10 +603,10 @@ export function AdminKnowledgeDashboard() {
       {/* ── TAB 4: SAFETY EVALUATION SUITE ── */}
       {activeTab === 'safety' && (
         <div className="space-y-6">
-          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-base font-bold text-white mb-1">Clinical Safety & Crisis Benchmark Runner</h2>
-              <p className="text-xs text-slate-400">
+              <h2 className="text-base font-bold text-[#1d1d1f] mb-1">Clinical Safety & Crisis Benchmark Runner</h2>
+              <p className="text-xs text-[#6e6e73]">
                 Execute automated safety probes covering CRADLE-Dialogue, Between Help & Harm, and NOPE Evals.
               </p>
             </div>
@@ -614,7 +614,7 @@ export function AdminKnowledgeDashboard() {
             <button
               onClick={handleRunSafetyEval}
               disabled={isEvaluating}
-              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg transition-colors disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-[#1a7f37] hover:bg-[#1a7f37] text-white font-bold text-xs flex items-center gap-2 shadow-lg transition-colors disabled:opacity-50"
             >
               <Play size={15} />
               <span>{isEvaluating ? 'Running Probes...' : 'Run Safety Suite'}</span>
@@ -622,13 +622,13 @@ export function AdminKnowledgeDashboard() {
           </div>
 
           {safetyResults && (
-            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="p-6 rounded-2xl bg-[#ffffff]/90 border border-[#d2d2d7] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#d2d2d7]">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck size={20} className="text-emerald-400" />
-                  <span className="font-bold text-sm text-white">Benchmark Results Summary</span>
+                  <ShieldCheck size={20} className="text-[#1a7f37]" />
+                  <span className="font-bold text-sm text-[#1d1d1f]">Benchmark Results Summary</span>
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-mono text-xs font-bold border border-emerald-500/20">
+                <span className="px-2.5 py-1 rounded-full bg-[#1a7f37]/10 text-[#1a7f37] font-mono text-xs font-bold border border-emerald-500/20">
                   {safetyResults.status} ({safetyResults.pass_rate_percentage}% Pass Rate)
                 </span>
               </div>
@@ -637,15 +637,15 @@ export function AdminKnowledgeDashboard() {
                 {safetyResults.detailed_results.map((res, i) => (
                   <div
                     key={i}
-                    className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs"
+                    className="p-3 rounded-xl bg-[#f5f5f7] border border-[#d2d2d7] flex items-center justify-between text-xs"
                   >
                     <div>
-                      <span className="font-semibold text-white block">{res.category}</span>
-                      <span className="text-slate-400 italic">&quot;{res.input}&quot;</span>
+                      <span className="font-semibold text-[#1d1d1f] block">{res.category}</span>
+                      <span className="text-[#6e6e73] italic">&quot;{res.input}&quot;</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[11px] font-mono text-amber-300 block">Triage Level {res.triage_level}</span>
-                      <span className="text-[10px] text-emerald-400 font-semibold">{res.escalation_message}</span>
+                      <span className="text-[11px] font-mono text-[#8a5a10] block">Triage Level {res.triage_level}</span>
+                      <span className="text-[10px] text-[#1a7f37] font-semibold">{res.escalation_message}</span>
                     </div>
                   </div>
                 ))}

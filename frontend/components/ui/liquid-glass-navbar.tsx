@@ -166,7 +166,7 @@ export function LiquidNavbar({
           "relative inline-flex items-center gap-1.5 p-1.5 rounded-full transition-all duration-300",
           isDark
             ? "bg-slate-900/80 border border-white/10 shadow-[0_16px_36px_-10px_rgba(0,0,0,0.6),inset_0_1px_1px_0_rgba(255,255,255,0.15)] text-slate-300 backdrop-blur-2xl"
-            : "bg-white/85 border border-[#dce8e0] shadow-[0_20px_45px_-12px_rgba(15,98,87,0.16),inset_0_1px_2px_0_rgba(255,255,255,0.9)] text-[#4a635b] backdrop-blur-xl",
+            : "bg-white/85 border border-[#d2d2d7] shadow-[0_20px_45px_-12px_rgba(15,98,87,0.16),inset_0_1px_2px_0_rgba(255,255,255,0.9)] text-[#6e6e73] backdrop-blur-xl",
           className
         )}
       >
@@ -181,7 +181,7 @@ export function LiquidNavbar({
                 "absolute top-1.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
                 isDark
                   ? "bg-gradient-to-r from-teal-500/30 via-emerald-400/40 to-teal-400/30 border border-emerald-400/40 shadow-[0_0_20px_rgba(45,212,191,0.4)]"
-                  : "bg-gradient-to-r from-[#0f6257] to-[#127a6c] shadow-[0_8px_20px_-4px_rgba(15,98,87,0.38),inset_0_1px_1px_rgba(255,255,255,0.3)]",
+                  : "bg-gradient-to-r from-[#0058b0] to-[#0058b0] shadow-[0_8px_20px_-4px_rgba(15,98,87,0.38),inset_0_1px_1px_rgba(255,255,255,0.3)]",
                 stretching && "scale-x-110 scale-y-90"
               )}
               style={{
@@ -201,7 +201,7 @@ export function LiquidNavbar({
           <div
             className={cn(
               "absolute top-1.5 rounded-full pointer-events-none transition-all duration-300 ease-out",
-              isDark ? "bg-white/5" : "bg-[#0f6257]/5"
+              isDark ? "bg-white/5" : "bg-[#0058b0]/5"
             )}
             style={{
               left: `${itemsRef.current[hoverIndex]?.offsetLeft || 0}px`,
@@ -235,7 +235,7 @@ export function LiquidNavbar({
                     : "text-white font-bold"
                   : isDark
                   ? "text-slate-400 hover:text-slate-200"
-                  : "text-[#526d64] hover:text-[#183a33]"
+                  : "text-[#6e6e73] hover:text-[#1d1d1f]"
               )}
             >
               {/* Icon with interactive FX animation */}
@@ -262,10 +262,10 @@ export function LiquidNavbar({
                   className={cn(
                     "inline-flex items-center justify-center px-1.5 py-0.2 rounded-full text-[10px] font-extrabold leading-none",
                     isActive
-                      ? "bg-white text-[#0f6257]"
+                      ? "bg-white text-[#0058b0]"
                       : isDark
                       ? "bg-emerald-500/20 text-emerald-300"
-                      : "bg-[#e2efe8] text-[#0f6257]"
+                      : "bg-[#eaf2fd] text-[#0058b0]"
                   )}
                 >
                   {item.badge}

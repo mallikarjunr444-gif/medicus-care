@@ -1,5 +1,7 @@
 import '@fontsource-variable/inter'
-import '@fontsource-variable/urbanist'
+// Kannada and Devanagari faces so regional text never falls back to whatever the device has.
+import '@fontsource-variable/noto-sans-kannada'
+import '@fontsource-variable/noto-sans-devanagari'
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'react-hot-toast'
@@ -19,7 +21,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#f5f8f6',
+  themeColor: '#ffffff',
 }
 
 export const metadata: Metadata = {
@@ -94,7 +96,7 @@ export default function RootLayout({
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100]
- focus:px-4 focus:py-2 focus:rounded-lg focus:bg-primary-600 focus:text-gray-900
+ focus:px-4 focus:py-2 focus:rounded-lg focus:bg-primary-600 focus:text-white
  focus:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
         >
           Skip to main content
@@ -104,8 +106,8 @@ export default function RootLayout({
             <div id="app-content">{children}</div>
           </ErrorBoundary>
           <Toaster
-            position="bottom-center"
-            containerStyle={{ bottom: 88 }}
+            position="top-center"
+            containerStyle={{ top: 76 }}
             toastOptions={{
               className: ' ',
             }}

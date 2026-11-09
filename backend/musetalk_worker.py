@@ -63,10 +63,12 @@ def _load_face_restorer(mode: str, model_path: str, device):
     """
     if mode != "gfpgan":
         return None
-    if device.type != "cuda":
+    if device.type not in ("cuda", "mps"):
         # On CPU a MuseTalk turn already takes 30-90 s; adding a per-frame
         # restoration pass would make it unusable rather than nicer.
-        sys.stderr.write("INFO: face restoration skipped — requires CUDA\n")
+        # MPS (Apple GPU) is allowed: it is opt-in via FACE_RESTORE=gfpgan, and
+        # without it the generated mouth interior (teeth/tongue) stays soft.
+        sys.stderr.write("INFO: face restoration skipped — requires CUDA or MPS\n")
         sys.stderr.flush()
         return None
     if not os.path.isfile(model_path):

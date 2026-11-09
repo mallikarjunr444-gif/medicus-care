@@ -49,7 +49,6 @@ import { useConsultationSpeechRecognition } from './useConsultationSpeechRecogni
 import { api } from '@/lib/api'
 import { useDoctorBackendSession } from './useDoctorBackendSession'
 import { ConsultationSummaryModal } from './ConsultationSummaryModal'
-import { StatusBadge } from '@/components/ui/status-badge'
 import { ReportUploadDrawer } from './ReportUploadDrawer'
 import { SpecialistBookingModal, type Specialist } from './SpecialistBookingModal'
 import { LanguageSelectionModal, SUPPORTED_LANGUAGES } from './LanguageSelectionModal'
@@ -109,6 +108,7 @@ export function DoctorVideoCall({
   const [doctorId] = useState<DoctorId>(initialDoctorId)
   const [doctorState, setDoctorState] = useState<DoctorState>('idle')
   const [language, setLanguage] = useState<ConsultationLanguage>('kn') // Default to regional Kannada or selected
+  const [panelTab, setPanelTab] = useState<'chat' | 'notes'>('chat')
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(true)
   const [isCameraOn, setIsCameraOn] = useState(false)
   const [consultationSeconds, setConsultationSeconds] = useState(0)
@@ -780,8 +780,30 @@ export function DoctorVideoCall({
     }
   }
 
+  // Whose turn it is, in plain words. Drives the stage chip and the dock next to the microphone.
+  const turn = (() => {
+    const name = doctor.name
+    switch (consultationStatus) {
+      case 'Speaking':
+        return { chip: `${name} is speaking`, title: `${name} is replying`, hint: 'You can interrupt at any time.', dot: 'bg-clinic-teal', pulse: true }
+      case 'Thinking':
+        return { chip: `${name} is thinking`, title: 'Thinking…', hint: 'Preparing a reply.', dot: 'bg-[#c98a1d]', pulse: true }
+      case 'Connecting':
+        return { chip: 'Connecting', title: 'Connecting…', hint: 'Getting the microphone ready.', dot: 'bg-[#c98a1d]', pulse: true }
+      case 'Disconnected':
+      case 'Error':
+        return { chip: consultationStatus === 'Error' ? 'Something went wrong' : 'Disconnected', title: 'Connection lost', hint: 'Check your network, then reconnect.', dot: 'bg-clinic-brick', pulse: false }
+      case 'Listening':
+        return { chip: 'Listening to you', title: 'Listening', hint: 'Speak naturally. Pause when you finish.', dot: 'bg-clinic-teal', pulse: true }
+      default:
+        return { chip: 'Ready', title: 'Tap the microphone to speak', hint: 'Or type in the panel on the right.', dot: 'bg-slate-400', pulse: false }
+    }
+  })()
+  const notesCount =
+    sessionMemorySnapshot.chiefComplaints.length + patientStatements.length + (sessionMemorySnapshot.duration ? 1 : 0)
+
   return (
-    <div className="relative w-full min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] flex flex-col bg-[#f3f7fc] text-slate-900 overflow-x-hidden font-sans">
+    <div className="font-consult relative w-full min-h-[100dvh] lg:h-[100dvh] flex flex-col bg-clinic-porcelain text-clinic-ink overflow-x-hidden">
       {/* ── 1. PRE-CONSULTATION LANGUAGE SELECTION GATE MODAL ── */}
       <LanguageSelectionModal
         isOpen={isLanguageModalOpen}
@@ -834,85 +856,59 @@ export function DoctorVideoCall({
         />
       )}
 
-      {/* ── TOP NAVIGATION BAR ── */}
-      <header className="h-16 border-b border-slate-200 bg-white px-4 sm:px-6 flex items-center justify-between gap-3 z-30 flex-shrink-0 shadow-sm">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <BrandLogo className="h-8 w-[112px] sm:h-9 sm:w-[132px]" priority />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm tracking-tight text-slate-900">
-                Medicus Labs
-              </span>
-              <span className="hidden xl:inline text-[10px] uppercase px-2 py-1 rounded-full bg-teal-50 text-teal-800 border border-teal-100 font-semibold">
-                Care consultation
-              </span>
-            </div>
-            <span className="text-xs text-slate-500">
-              With <span className="text-slate-800 font-semibold">{doctor.name}</span>
-            </span>
+      {/* ── HEADER ── */}
+      <header className="h-16 border-b border-clinic-hairline bg-clinic-surface px-4 sm:px-6 flex items-center justify-between gap-3 z-30 flex-shrink-0">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-4 md:flex-none">
+          <BrandLogo className="h-7 w-[84px] sm:h-9 sm:w-[124px] shrink-0" priority />
+          <span className="h-7 w-px shrink-0 bg-clinic-hairline sm:h-8" aria-hidden="true" />
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-[15px] font-bold text-clinic-ink">{doctor.name}</p>
+            <p className="hidden sm:block truncate text-[13px] text-clinic-muted">{doctor.specialty}</p>
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
-            <Clock size={14} className="text-teal-700" />
-            <span>{formatTimer(consultationSeconds)}</span>
-          </div>
-
-          <StatusBadge
-            status={
-              consultationStatus === 'Listening'
-                ? 'live'
-                : consultationStatus === 'Speaking'
-                ? 'active'
-                : consultationStatus === 'Thinking' || consultationStatus === 'Connecting'
-                ? 'warning'
-                : consultationStatus === 'Error' || consultationStatus === 'Disconnected'
-                ? 'error'
-                : 'idle'
-            }
-            label={consultationStatus}
-          />
+        <div className="hidden md:flex items-center gap-2 text-[13px] text-clinic-muted" aria-label="Consultation time">
+          <Clock size={15} className="text-clinic-teal" aria-hidden="true" />
+          <span className="font-semibold tabular-nums text-clinic-ink">{formatTimer(consultationSeconds)}</span>
         </div>
 
-        {/* Right Controls: Language Selector Dropdown & End Call */}
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
             onClick={onOpenPatient}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-teal-100 bg-teal-50 px-2.5 text-xs font-semibold text-teal-800 transition hover:bg-teal-100 sm:px-3"
+            className="inline-flex h-11 items-center gap-2 rounded-xl border border-clinic-hairline bg-clinic-surface px-3 text-[13px] font-semibold text-clinic-ink transition hover:bg-clinic-porcelain focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25"
             aria-label="Open patient portal"
           >
-            <UserRound size={15} aria-hidden="true" />
-            <span>Patient</span>
+            <UserRound size={16} className="text-clinic-teal" aria-hidden="true" />
+            <span className="hidden sm:inline">Patient</span>
           </button>
 
-          {/* Active Language Pill & Switcher */}
-          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 text-xs shadow-sm">
-            <Globe size={14} className="text-teal-700 ml-1.5 mr-0.5" />
+          <label className="inline-flex h-11 items-center gap-2 rounded-xl border border-clinic-hairline bg-clinic-surface pl-3 pr-2 text-[13px] focus-within:ring-4 focus-within:ring-clinic-teal/25">
+            <Globe size={16} className="text-clinic-teal" aria-hidden="true" />
             <select
               value={language}
               onChange={(e) => handleSwitchLanguage(e.target.value as ConsultationLanguage)}
               aria-label="Consultation language"
-              className="bg-transparent text-slate-800 font-medium text-xs focus:outline-none cursor-pointer pr-1 py-1"
+              className="max-w-[6.5rem] cursor-pointer truncate bg-transparent py-1 pr-1 text-[13px] font-semibold text-clinic-ink focus:outline-none sm:max-w-none"
             >
               {SUPPORTED_LANGUAGES.map((l) => (
                 <option key={l.code} value={l.code} className="bg-white text-slate-900">
-                  {l.nativeName} ({l.label})
+                  {l.nativeName === l.label ? l.label : `${l.nativeName} (${l.label})`}
                 </option>
               ))}
             </select>
-          </div>
-
+          </label>
         </div>
       </header>
 
-      {/* ── MAIN CONSULTATION LAYOUT: DOCTOR-FOCUSED VIDEO + TRANSCRIPT ── */}
-      <div className="relative flex-1 min-h-0 w-full max-w-[1600px] mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-4 overflow-y-auto lg:overflow-hidden">
-        {/* ── MAIN CONSULTATION AREA ── */}
-        <section className="relative w-full lg:flex-[1.75] h-[60vh] min-h-[380px] lg:h-auto lg:min-h-0 flex flex-col bg-[#101b25] overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
-          {/* Doctor video viewport */}
-          <div className="relative w-full flex-1 overflow-hidden">
+      {/* ── MAIN: DOCTOR STAGE + CONVERSATION ── */}
+      <div className="relative flex-1 min-h-0 w-full max-w-[1600px] mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-5 overflow-y-auto lg:overflow-hidden">
+        {/* ── STAGE ── */}
+        <section
+          aria-label={`Video consultation with ${doctor.name}`}
+          className="relative w-full lg:flex-[1.75] h-[66vh] min-h-[420px] lg:h-auto lg:min-h-0 flex flex-col overflow-hidden rounded-[20px] border border-clinic-hairline bg-clinic-surface"
+        >
+          <div className="relative w-full flex-1 min-h-0 overflow-hidden bg-clinic-ink">
             <PhotorealisticDigitalHuman
               doctorId={doctorId}
               doctorState={doctorState}
@@ -935,7 +931,17 @@ export function DoctorVideoCall({
               className="w-full h-full"
             />
 
-            {/* Floating Patient Camera Window (PiP) */}
+            {/* Who has the floor */}
+            <div
+              role="status"
+              aria-live="polite"
+              className="absolute left-4 top-4 z-20 inline-flex items-center gap-2 rounded-full bg-white/95 py-1.5 pl-3 pr-3.5 text-[13px] font-semibold text-clinic-ink shadow-[0_1px_2px_rgba(15,47,54,.18)] backdrop-blur"
+            >
+              <span className={`h-2.5 w-2.5 rounded-full ${turn.dot} ${turn.pulse ? 'motion-safe:animate-pulse' : ''}`} aria-hidden="true" />
+              {turn.chip}
+            </div>
+
+            {/* Patient camera preview */}
             <div className="absolute top-4 right-4 z-20">
               <PatientWebcamPiP
                 isCameraOn={isCameraOn}
@@ -945,154 +951,169 @@ export function DoctorVideoCall({
               />
             </div>
 
-            {/* Emergency Hotline Banner (Triggered on Triage Level 4) */}
+            {/* Emergency banner (triage level 4) */}
             {activeTriage === 4 && (
-              <div className="absolute top-20 left-4 right-4 z-30 max-w-lg mx-auto p-4 rounded-2xl bg-red-600/95 border border-red-400 text-white shadow-2xl backdrop-blur-md animate-bounce">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <ShieldAlert size={26} className="text-white flex-shrink-0" />
+              <div role="alert" className="absolute top-16 left-4 right-4 z-30 mx-auto max-w-xl rounded-2xl bg-clinic-brick p-4 text-white shadow-[0_8px_24px_rgba(15,47,54,.35)]">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <ShieldAlert size={24} className="mt-0.5 shrink-0" aria-hidden="true" />
                     <div>
-                      <span className="text-xs font-black uppercase tracking-wider block">
-                        Emergency Warning Signs Detected
-                      </span>
-                      <span className="text-xs text-red-100">
-                        Call 112 (National Emergency) or 108 (Arogya Kavacha Karnataka) immediately.
-                      </span>
+                      <p className="text-[15px] font-bold">Possible emergency warning signs</p>
+                      <p className="mt-0.5 text-[13px] text-white/90">
+                        Call 112 (national emergency) or 108 (Arogya Kavacha, Karnataka) now.
+                      </p>
                     </div>
                   </div>
                   <a
                     href="tel:112"
-                    className="px-3.5 py-1.5 rounded-xl bg-white text-red-700 font-extrabold text-xs flex items-center gap-1 shadow-md hover:bg-red-50"
+                    className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-white px-4 text-[14px] font-bold text-clinic-brick-deep hover:bg-red-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
                   >
-                    <PhoneCall size={14} />
-                    <span>Dial 112</span>
+                    <PhoneCall size={16} aria-hidden="true" />
+                    Dial 112
                   </a>
                 </div>
               </div>
             )}
           </div>
 
-          {/* ── BOTTOM CONSULTATION CONTROLS (Zero dead black space) ── */}
-          <div className="min-h-[76px] border-t border-slate-700/70 bg-white px-3 sm:px-5 flex items-center justify-center sm:justify-between gap-2 z-20 flex-shrink-0">
-            <div className="hidden sm:block w-24 shrink-0" />
-
-            {/* Center: Essential Telemedicine Actions */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Mic Speech Button */}
+          {/* ── DOCK: whose turn it is, then the controls ── */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-clinic-hairline bg-clinic-surface px-4 py-3 sm:px-6 sm:flex-nowrap">
+            <div className="flex min-w-0 items-center gap-3 sm:flex-1">
               <button
                 onClick={toggleMicListening}
                 aria-label={voiceInput.isEnabled ? 'Turn microphone off' : 'Turn microphone on'}
                 aria-pressed={voiceInput.isEnabled}
-                className={`h-12 w-12 sm:w-auto sm:px-4 rounded-2xl text-xs font-semibold flex items-center justify-center sm:justify-start gap-2 transition-all shadow-sm focus-visible:ring-4 focus-visible:ring-teal-100 ${
-                  voiceInput.isEnabled
-                    ? 'bg-teal-700 text-white hover:bg-teal-800'
-                    : 'bg-white border border-slate-300 hover:bg-slate-50 text-slate-700'
-                }`}
                 title="Speak naturally. Pause when you finish and the doctor will reply."
+                className={`relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/30 ${
+                  voiceInput.isEnabled
+                    ? 'bg-clinic-teal text-white hover:bg-clinic-teal-deep'
+                    : 'border-2 border-clinic-hairline bg-clinic-surface text-clinic-teal hover:bg-clinic-mist'
+                } ${isListeningSpeech ? 'ring-4 ring-clinic-teal/25' : ''}`}
               >
                 {voiceInput.isEnabled ? (
                   <VoiceOrb
                     activity={Math.min(1, Math.max(0.2, audioLevel * 2))}
-                    colors={['#0e6257', '#5eead4', '#064e3b']}
-                    className="w-5 h-5 shrink-0"
+                    colors={['#e6fffb', '#5eead4', '#0c6e70']}
+                    className="h-7 w-7 shrink-0"
                     speed={1.5}
                   />
                 ) : (
-                  <MicOff size={17} />
+                  <MicOff size={22} aria-hidden="true" />
                 )}
-                <span className="hidden sm:inline">{voiceInput.isEnabled ? (isListeningSpeech ? 'Listening' : 'Mic on') : 'Start speaking'}</span>
               </button>
+              <div className="min-w-0 leading-snug">
+                <p className="truncate text-[16px] font-bold text-clinic-ink">{turn.title}</p>
+                <p className="text-[13px] text-clinic-muted">{turn.hint}</p>
+              </div>
+            </div>
 
-              {/* Camera Toggle */}
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsCameraOn(!isCameraOn)}
                 aria-label={isCameraOn ? 'Turn camera off' : 'Turn camera on'}
-                className={`h-11 w-11 sm:w-auto sm:px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all border ${
-                  isCameraOn
-                    ? 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
-                    : 'bg-white text-slate-500 border-slate-200'
-                }`}
+                aria-pressed={isCameraOn}
                 title={isCameraOn ? 'Turn camera off' : 'Turn camera on'}
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-clinic-hairline bg-clinic-surface px-3 text-[13px] font-semibold text-clinic-ink transition hover:bg-clinic-porcelain focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25"
               >
-                {isCameraOn ? <Video size={15} /> : <VideoOff size={15} />}
-                <span className="hidden sm:inline">{isCameraOn ? 'Cam On' : 'Cam Off'}</span>
+                {isCameraOn ? <Video size={17} className="text-clinic-teal" aria-hidden="true" /> : <VideoOff size={17} className="text-clinic-muted" aria-hidden="true" />}
+                <span className="hidden lg:inline">{isCameraOn ? 'Camera on' : 'Camera off'}</span>
               </button>
 
-              {/* Speaker Mute */}
               <button
                 onClick={toggleMute}
                 aria-label={isMuted ? 'Unmute doctor' : 'Mute doctor'}
                 aria-pressed={isMuted}
-                className={`h-11 w-11 sm:w-auto sm:px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all border ${
+                title={isMuted ? 'Unmute doctor' : 'Mute doctor'}
+                className={`inline-flex h-11 items-center gap-2 rounded-xl border px-3 text-[13px] font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25 ${
                   isMuted
-                    ? 'bg-amber-50 text-amber-800 border-amber-200'
-                    : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                    ? 'border-amber-300 bg-amber-50 text-clinic-amber'
+                    : 'border-clinic-hairline bg-clinic-surface text-clinic-ink hover:bg-clinic-porcelain'
                 }`}
-                title={isMuted ? 'Unmute Doctor' : 'Mute Doctor'}
               >
-                {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                <span className="hidden sm:inline">{isMuted ? 'Muted' : 'Audio'}</span>
+                {isMuted ? <VolumeX size={17} aria-hidden="true" /> : <Volume2 size={17} className="text-clinic-teal" aria-hidden="true" />}
+                <span className="hidden lg:inline">{isMuted ? 'Doctor muted' : 'Doctor audio'}</span>
               </button>
 
-              {/* Patient Interrupt Button */}
               <button
                 onClick={interruptDoctor}
                 disabled={doctorState !== 'speaking' && doctorState !== 'thinking' && !isSpeaking}
-                className="h-11 w-11 sm:w-auto sm:px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 text-xs font-semibold flex items-center justify-center sm:justify-start gap-1.5 transition-all"
-                title="Interrupt doctor politely"
+                title="Interrupt the doctor politely"
                 aria-label="Interrupt doctor"
+                className="inline-flex h-11 items-center gap-2 rounded-xl border border-clinic-hairline bg-clinic-surface px-3 text-[13px] font-semibold text-clinic-ink transition hover:bg-clinic-porcelain disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25"
               >
-                <Hand size={14} className="text-teal-700" />
-                <span className="hidden sm:inline">Interrupt</span>
+                <Hand size={17} className="text-clinic-teal" aria-hidden="true" />
+                <span className="hidden lg:inline">Interrupt</span>
               </button>
-            </div>
 
-            {/* Right: End Call & Summary Button */}
-            <div className="flex items-center gap-2">
               <button
                 onClick={handleEndCall}
-                className="h-11 w-11 sm:w-auto sm:px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
                 aria-label="End call and create summary"
+                className="ml-1 inline-flex h-11 items-center gap-2 rounded-xl bg-clinic-brick px-3.5 text-[13px] font-bold text-white transition hover:bg-clinic-brick-deep focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-brick/30"
               >
-                <PhoneOff size={14} />
-                <span className="hidden sm:inline">End Call &amp; Summary</span>
+                <PhoneOff size={17} aria-hidden="true" />
+                <span className="hidden sm:inline">End call &amp; summary</span>
               </button>
             </div>
           </div>
         </section>
 
-        {/* ── TRANSCRIPT SIDEBAR ── */}
-        <aside className="w-full lg:w-[390px] xl:w-[420px] h-[38vh] min-h-[270px] lg:h-auto lg:min-h-0 border border-slate-200 bg-white flex flex-col z-20 flex-shrink-0 rounded-3xl shadow-sm overflow-hidden">
-          {/* Transcript Header */}
-          <div className="p-4 border-b border-slate-100 bg-white flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <MessageSquare size={16} className="text-teal-700" />
-              <span className="font-semibold text-sm text-slate-900">Conversation</span>
+        {/* ── CONVERSATION PANEL ── */}
+        <aside className="w-full lg:w-[400px] xl:w-[440px] h-[56vh] min-h-[360px] lg:h-auto lg:min-h-0 flex flex-col flex-shrink-0 overflow-hidden rounded-[20px] border border-clinic-hairline bg-clinic-surface">
+          {/* Tabs + report */}
+          <div className="flex items-end gap-4 border-b border-clinic-hairline px-4 sm:gap-6 sm:px-5">
+            <div role="tablist" aria-label="Consultation panel" className="flex items-end gap-4 sm:gap-6">
+              <button
+                type="button"
+                role="tab"
+                id="tab-chat"
+                aria-selected={panelTab === 'chat'}
+                aria-controls="panel-chat"
+                onClick={() => setPanelTab('chat')}
+                className={`-mb-px border-b-2 py-3.5 text-[15px] font-bold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25 ${
+                  panelTab === 'chat' ? 'border-clinic-teal text-clinic-ink' : 'border-transparent text-clinic-muted hover:text-clinic-ink'
+                }`}
+              >
+                Conversation
+              </button>
+              <button
+                type="button"
+                role="tab"
+                id="tab-notes"
+                aria-selected={panelTab === 'notes'}
+                aria-controls="panel-notes"
+                onClick={() => setPanelTab('notes')}
+                className={`-mb-px inline-flex items-center gap-2 border-b-2 py-3.5 text-[15px] font-bold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25 ${
+                  panelTab === 'notes' ? 'border-clinic-teal text-clinic-ink' : 'border-transparent text-clinic-muted hover:text-clinic-ink'
+                }`}
+              >
+                Notes
+                {notesCount > 0 && (
+                  <span className="rounded-full bg-clinic-mist px-2 py-0.5 text-[12px] font-bold leading-none text-clinic-teal-deep">{notesCount}</span>
+                )}
+              </button>
             </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500">{SUPPORTED_LANGUAGES.find((item) => item.code === language)?.nativeName}</span>
-                <button
-                  type="button"
-                  onClick={() => setIsReportDrawerOpen(true)}
-                  className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
-                >
-                  <FileText size={14} className="text-teal-800" />
-                  <span>Report</span>
-                </button>
-              </div>
+            <button
+              type="button"
+              onClick={() => setIsReportDrawerOpen(true)}
+              className="mb-2 ml-auto inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 text-[13px] font-semibold text-clinic-teal-deep transition hover:bg-clinic-mist focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/25"
+            >
+              <FileText size={16} aria-hidden="true" />
+              <span className="sm:hidden">Report</span>
+              <span className="hidden sm:inline">Add a report</span>
+            </button>
           </div>
 
-          <div className="px-4 py-3 border-b border-slate-100 bg-[#f6f9fd]" aria-live="polite" role="status">
+          {/* What the microphone just heard */}
+          <div className="border-b border-clinic-hairline bg-clinic-porcelain/70 px-5 py-2.5" aria-live="polite" role="status">
             {voiceInput.error ? (
-              <p className="text-xs leading-relaxed text-rose-700">{voiceInput.error}</p>
+              <p className="text-[13px] leading-relaxed text-clinic-brick-deep">{voiceInput.error}</p>
             ) : voiceInput.transcript ? (
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-teal-800 mb-1">I heard</p>
-                <p className="text-sm text-slate-700 leading-relaxed">{voiceInput.transcript}</p>
-              </div>
+              <p className="text-[14px] leading-[1.6] text-clinic-ink">
+                <span className="mr-2 font-bold text-clinic-teal-deep">I heard</span>
+                {voiceInput.transcript}
+              </p>
             ) : (
-              <p className="text-xs text-slate-500">
+              <p className="text-[13px] text-clinic-muted">
                 {isListeningSpeech
                   ? 'Listening. Speak naturally; pause briefly when you want a reply.'
                   : voiceInput.isEnabled
@@ -1102,156 +1123,154 @@ export function DoctorVideoCall({
             )}
           </div>
 
-          {/* Running consultation note: only patient statements and fields the intake recognizer captured. */}
-          <section className="mx-4 mt-3 rounded-xl border border-teal-100 bg-teal-50/70 p-3" aria-live="polite">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-teal-950">Consultation notes</h3>
-              <span className="text-[10px] text-teal-800">Updates as you speak</span>
-            </div>
+          {/* Notes */}
+          <section
+            id="panel-notes"
+            role="tabpanel"
+            aria-labelledby="tab-notes"
+            hidden={panelTab !== 'notes'}
+            className={`${panelTab === 'notes' ? 'block' : 'hidden'} flex-1 min-h-0 overflow-y-auto px-5 py-4`}
+            aria-live="polite"
+          >
+            <h3 className="text-[15px] font-bold text-clinic-ink">What you have told the doctor</h3>
+            <p className="mt-0.5 text-[13px] text-clinic-muted">Updates as you speak. Nothing is added that you did not say.</p>
             {sessionMemorySnapshot.chiefComplaints.length > 0 || sessionMemorySnapshot.duration ? (
-              <div className="mb-2 flex flex-wrap gap-1.5">
+              <div className="mt-3 flex flex-wrap gap-2">
                 {sessionMemorySnapshot.chiefComplaints.map((complaint) => (
-                  <span key={complaint} className="rounded-full border border-teal-200 bg-white px-2 py-0.5 text-[11px] text-slate-700">{complaint}</span>
+                  <span key={complaint} className="rounded-full bg-clinic-mist px-3 py-1 text-[13px] font-semibold text-clinic-teal-deep">{complaint}</span>
                 ))}
                 {sessionMemorySnapshot.duration && (
-                  <span className="rounded-full border border-teal-200 bg-white px-2 py-0.5 text-[11px] text-slate-700">Duration: {sessionMemorySnapshot.duration}</span>
+                  <span className="rounded-full bg-clinic-mist px-3 py-1 text-[13px] font-semibold text-clinic-teal-deep">For {sessionMemorySnapshot.duration}</span>
                 )}
               </div>
             ) : null}
             {patientStatements.length > 0 ? (
-              <ul className="max-h-24 space-y-1 overflow-y-auto text-xs leading-relaxed text-slate-700">
-                {patientStatements.map((statement) => <li key={statement.id}>• {statement.text}</li>)}
+              <ul className="mt-3 divide-y divide-clinic-hairline border-y border-clinic-hairline text-[14px] leading-[1.65] text-clinic-ink">
+                {patientStatements.map((statement) => <li key={statement.id} className="py-2.5">{statement.text}</li>)}
               </ul>
             ) : (
-              <p className="text-xs text-slate-500">Your spoken and typed details will appear here. Nothing is inferred when you haven’t mentioned it.</p>
+              <p className="mt-4 text-[14px] leading-relaxed text-clinic-muted">Your spoken and typed details will appear here.</p>
             )}
             {voiceInput.transcript && (
-              <p className="mt-2 border-t border-teal-100 pt-2 text-xs text-teal-900"><span className="font-semibold">Hearing now: </span>{voiceInput.transcript}</p>
+              <p className="mt-3 text-[13px] text-clinic-teal-deep"><span className="font-bold">Hearing now: </span>{voiceInput.transcript}</p>
             )}
           </section>
 
-          {/* Transcript Messages List */}
-          <div ref={chatScrollRef} tabIndex={0} role="log" aria-label="Conversation transcript" className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm">
-            {chatHistory.length === 0 && (
-              <div className="h-full min-h-[120px] flex flex-col items-center justify-center text-center px-5">
-                <div className="w-11 h-11 rounded-2xl bg-teal-50 text-teal-800 flex items-center justify-center mb-3">
-                  <HeartPulse size={20} />
+          {/* Conversation */}
+          <div
+            id="panel-chat"
+            role="tabpanel"
+            aria-labelledby="tab-chat"
+            hidden={panelTab !== 'chat'}
+            className={`${panelTab === 'chat' ? 'flex' : 'hidden'} flex-1 min-h-0 flex-col`}
+          >
+            <div ref={chatScrollRef} tabIndex={0} role="log" aria-label="Conversation transcript" className="flex-1 min-h-0 overflow-y-auto px-5 py-5 space-y-6 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-clinic-teal/25">
+              {chatHistory.length === 0 && (
+                <div className="flex h-full min-h-[140px] flex-col items-center justify-center px-5 text-center">
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-clinic-mist text-clinic-teal">
+                    <HeartPulse size={22} aria-hidden="true" />
+                  </div>
+                  <p className="text-[16px] font-bold text-clinic-ink">Start with what brought you in</p>
+                  <p className="mt-1 max-w-[260px] text-[14px] leading-relaxed text-clinic-muted">Your words will appear here, followed by the doctor’s response.</p>
                 </div>
-                <p className="text-sm font-semibold text-slate-800">Start with what brought you in</p>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">Your words will appear here, followed by the doctor’s response.</p>
-              </div>
-            )}
-            {chatHistory.map((item) => (
-              <div
-                key={item.id}
-                className={`flex flex-col ${
-                  item.role === 'patient' ? 'items-end' : 'items-start'
-                } animate-fade-in`}
-              >
-                <div className="flex items-center gap-1.5 mb-1.5 text-[10px] text-slate-600">
-                  <span className="font-semibold text-slate-600">{item.speakerName}</span>
-                  <span>•</span>
-                  <span>{item.time}</span>
-                </div>
+              )}
+              {chatHistory.map((item) => (
+                <div key={item.id} className={`flex flex-col ${item.role === 'patient' ? 'items-end' : 'items-start'}`}>
+                  <div className="mb-1.5 flex items-baseline gap-2 text-[13px] text-clinic-muted">
+                    <span className="font-bold text-clinic-ink">{item.speakerName}</span>
+                    <span className="tabular-nums">{item.time}</span>
+                  </div>
 
-                <div
-                    className={`max-w-[94%] p-3.5 rounded-2xl text-sm leading-relaxed ${
-                    item.role === 'patient'
-                      ? 'bg-[#123d55] text-white rounded-br-md shadow-sm'
-                      : 'bg-[#f1f6fc] text-slate-800 border border-slate-100 rounded-bl-md'
-                  }`}
-                >
-                  <p>{item.text}</p>
+                  <div
+                    className={
+                      item.role === 'patient'
+                        ? 'max-w-[92%] rounded-2xl rounded-br-md bg-clinic-ink px-4 py-3 text-[15px] leading-[1.7] text-white'
+                        : 'w-full border-l-[3px] border-clinic-teal pl-4 text-[15px] leading-[1.7] text-clinic-ink'
+                    }
+                  >
+                    <p>{item.text}</p>
 
-                  {item.sources && item.sources.length > 0 && (
-                    <div className="mt-3 border-t border-slate-200 pt-2">
-                      <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">Medical sources</p>
-                      <ul className="space-y-1">
-                        {item.sources.map((source) => (
-                          <li key={source.url}>
-                            <a href={source.url} target="_blank" rel="noreferrer" className="text-xs text-teal-800 underline underline-offset-2 hover:text-teal-950">
-                              {source.title} ({source.year})
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                      <p className="mt-2 text-[10px] leading-relaxed text-slate-500">
-                        PubMed records are provided by the U.S. National Library of Medicine. Their inclusion is not an endorsement; article abstracts may be copyrighted by their publishers or authors.{' '}
-                        <a href="https://www.ncbi.nlm.nih.gov/home/about/policies/" target="_blank" rel="noreferrer" className="underline underline-offset-2">NCBI policies</a>.
-                      </p>
-                    </div>
-                  )}
+                    {item.sources && item.sources.length > 0 && (
+                      <div className="mt-3 border-t border-clinic-hairline pt-3">
+                        <p className="mb-1 text-[13px] font-bold text-clinic-muted">Medical sources</p>
+                        <ul className="space-y-1">
+                          {item.sources.map((source) => (
+                            <li key={source.url}>
+                              <a href={source.url} target="_blank" rel="noreferrer" className="text-[13px] font-semibold leading-snug text-clinic-teal underline underline-offset-2 hover:text-clinic-teal-deep">
+                                {source.title} ({source.year})
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-2 text-[12px] leading-relaxed text-clinic-muted">
+                          PubMed records are provided by the U.S. National Library of Medicine. Their inclusion is not an endorsement; article abstracts may be copyrighted by their publishers or authors.{' '}
+                          <a href="https://www.ncbi.nlm.nih.gov/home/about/policies/" target="_blank" rel="noreferrer" className="underline underline-offset-2">NCBI policies</a>.
+                        </p>
+                      </div>
+                    )}
 
-                  {item.actionCard?.type === 'report_analysis' && (
-                    <button
-                      type="button"
-                      onClick={() => setIsReportDrawerOpen(true)}
-                      className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[#123d55] px-3 text-xs font-semibold text-white hover:bg-[#0d3145]"
-                    >
-                      <FileText size={14} />
-                      Review report text
-                    </button>
-                  )}
+                    {item.actionCard?.type === 'report_analysis' && (
+                      <button
+                        type="button"
+                        onClick={() => setIsReportDrawerOpen(true)}
+                        className="mt-3 inline-flex h-10 items-center gap-2 rounded-lg bg-clinic-teal px-3.5 text-[13px] font-bold text-white transition hover:bg-clinic-teal-deep focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/30"
+                      >
+                        <FileText size={16} aria-hidden="true" />
+                        Review report text
+                      </button>
+                    )}
 
-                  {/* Specialist Referral Card */}
-                  {item.actionCard?.type === 'specialist_recommendation' && (
-                    <div className="mt-3 space-y-2 pt-2.5 border-t border-slate-700">
-                      <span className="text-[10px] font-mono uppercase text-sky-400 font-bold block">
-                        Verified Karnataka Healthcare Specialists:
-                      </span>
-                      {item.actionCard.payload.specialists.map((spec: Specialist) => (
-                        <div
-                          key={spec.id}
-                          className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col gap-1 text-[11px]"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-white">{spec.name}</span>
-                            <button
-                              onClick={() => setIsSpecialistModalOpen(true)}
-                              className="px-2 py-0.5 rounded-md bg-sky-600 hover:bg-sky-500 text-white font-semibold text-[10px]"
-                            >
-                              Book Visit
-                            </button>
+                    {/* Specialist referral */}
+                    {item.actionCard?.type === 'specialist_recommendation' && (
+                      <div className="mt-3 space-y-2">
+                        <p className="text-[13px] font-bold text-clinic-muted">Verified Karnataka healthcare specialists</p>
+                        {item.actionCard.payload.specialists.map((spec: Specialist) => (
+                          <div key={spec.id} className="rounded-xl border border-clinic-hairline bg-clinic-porcelain/60 p-3 text-[13px]">
+                            <div className="flex items-center justify-between gap-3">
+                              <span className="font-bold text-clinic-ink">{spec.name}</span>
+                              <button
+                                onClick={() => setIsSpecialistModalOpen(true)}
+                                className="h-9 shrink-0 rounded-lg bg-clinic-teal px-3 text-[13px] font-bold text-white transition hover:bg-clinic-teal-deep focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/30"
+                              >
+                                Book a visit
+                              </button>
+                            </div>
+                            <p className="mt-1 text-clinic-muted">{spec.specialty} · {spec.hospital}</p>
+                            <p className="text-clinic-muted">{spec.location}</p>
                           </div>
-                          <span className="text-slate-400">
-                            {spec.specialty} • {spec.hospital}
-                          </span>
-                          <span className="text-slate-500 font-mono text-[10px]">
-                            {spec.location}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
 
-                  {/* 4-4-4 Box Breathing Interactive Card */}
-                  {item.actionCard?.type === 'breathing_exercise' && (
-                    <div className="mt-3 p-3.5 rounded-xl bg-purple-950/60 border border-purple-800 text-purple-200 text-center">
-                      <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-purple-300 mb-2">
-                        <Wind size={15} className="animate-spin" />
-                        <span>Box Breathing Pacer (Inhale 4s • Hold 4s • Exhale 4s)</span>
+                    {/* Box breathing */}
+                    {item.actionCard?.type === 'breathing_exercise' && (
+                      <div className="mt-3 rounded-xl bg-clinic-mist p-4 text-clinic-ink">
+                        <div className="flex items-center gap-2 text-[14px] font-bold text-clinic-teal-deep">
+                          <Wind size={17} aria-hidden="true" />
+                          <span>Box breathing: in for 4, hold for 4, out for 4</span>
+                        </div>
+                        <p className="mt-1 text-[13px] text-clinic-muted">
+                          Breathe along with {doctor.name} to settle your heart rate.
+                        </p>
+                        <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white">
+                          <div className="h-full w-2/3 rounded-full bg-clinic-teal motion-safe:animate-pulse" />
+                        </div>
                       </div>
-                      <p className="text-[11px] text-purple-300 mb-2">
-                        Breathe along with Dr. Ananya to regulate heart rate variability.
-                      </p>
-                      <div className="w-full bg-purple-900/60 h-2 rounded-full overflow-hidden">
-                        <div className="bg-purple-400 h-full w-2/3 animate-pulse" />
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* Transcript Text Input Area */}
-          <div className="p-4 border-t border-slate-100 bg-white">
+          {/* Message input */}
+          <div className="border-t border-clinic-hairline px-5 py-4">
             <form
               onSubmit={(e) => {
                 e.preventDefault()
                 handleSendMessage()
               }}
-                className="flex items-center gap-2"
+              className="flex items-center gap-2"
             >
               <input
                 type="text"
@@ -1265,22 +1284,25 @@ export function DoctorVideoCall({
                     : `Speak or type symptoms for ${doctor.name}…`
                 }
                 aria-label="Type a message for the doctor"
-                className="flex-1 min-w-0 bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-teal-600 transition-colors"
+                className="h-12 min-w-0 flex-1 rounded-xl border border-clinic-hairline bg-white px-4 text-[15px] text-clinic-ink placeholder:text-clinic-muted/80 focus:border-clinic-teal focus:outline-none focus:ring-4 focus:ring-clinic-teal/20"
               />
               <button
                 type="submit"
                 disabled={!inputText.trim()}
-                className="h-11 w-11 rounded-xl bg-teal-700 hover:bg-teal-800 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center justify-center"
                 title="Send message"
                 aria-label="Send message"
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-clinic-teal text-white transition hover:bg-clinic-teal-deep disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/30"
               >
-                <Send size={15} />
+                <Send size={18} aria-hidden="true" />
               </button>
             </form>
 
-            <div className="flex items-center justify-between gap-2 text-[10px] text-slate-600 mt-2 px-1">
-              <span>Health information only</span>
-              <a href="tel:112" className="text-rose-700 font-medium hover:underline">Emergency: 112</a>
+            <div className="mt-3 flex items-center justify-between gap-2 text-[13px]">
+              <span className="text-clinic-muted">Health information only</span>
+              <a href="tel:112" className="inline-flex items-center gap-1.5 font-bold text-clinic-brick-deep underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-brick/25 rounded">
+                <PhoneCall size={14} aria-hidden="true" />
+                Emergency? Call 112
+              </a>
             </div>
           </div>
         </aside>

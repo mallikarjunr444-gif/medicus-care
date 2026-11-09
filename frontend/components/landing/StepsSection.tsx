@@ -30,10 +30,10 @@ export function StepsSection() {
         <p className="text-xs font-semibold uppercase tracking-[0.16em]" style={{ color: OLIVE }}>
           How it works
         </p>
-        <h2 className="mt-2 font-display text-2xl font-medium tracking-tight text-[#0F150A] sm:text-4xl">
+        <h2 className="mt-2 font-display text-2xl font-medium tracking-tight text-[#1d1d1f] sm:text-4xl">
           Discover how we empower you to feel understood
         </h2>
-        <p className="mt-3 text-sm leading-6 text-[#5C6B62]">
+        <p className="mt-3 text-sm leading-6 text-[#6e6e73]">
           Your mental and physical health matter. A short, private check-in helps you reflect and decide what
           comes next.
         </p>
@@ -44,7 +44,7 @@ export function StepsSection() {
           {steps.map((step, index) => (
             <div
               key={step.n}
-              className="relative rounded-2xl border border-[#DDE5D4] bg-white p-6 shadow-[0_4px_18px_rgba(15,21,10,.04)]"
+              className="relative rounded-2xl border border-[#d2d2d7] bg-white p-6 shadow-[0_4px_18px_rgba(15,21,10,.04)]"
             >
               <div className="flex items-center gap-2">
                 <span
@@ -60,12 +60,12 @@ export function StepsSection() {
                 {index < steps.length - 1 ? (
                   <span
                     aria-hidden="true"
-                    className="ml-2 hidden h-px flex-1 border-t border-dashed border-[#C9D2BD] sm:block"
+                    className="ml-2 hidden h-px flex-1 border-t border-dashed border-[#c7c7cc] sm:block"
                   />
                 ) : null}
               </div>
-              <h3 className="mt-4 text-base font-semibold text-[#0F150A]">{step.title}</h3>
-              <p className="mt-1.5 text-sm leading-6 text-[#5C6B62]">{step.body}</p>
+              <h3 className="mt-4 text-base font-semibold text-[#1d1d1f]">{step.title}</h3>
+              <p className="mt-1.5 text-sm leading-6 text-[#6e6e73]">{step.body}</p>
             </div>
           ))}
         </div>

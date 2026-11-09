@@ -852,11 +852,11 @@ export function MetallicButton({
           >
             {isIcon ? (
               <Sparkles
-                className={`size-4 text-[#666666] drop-shadow-[0px_1px_2px_rgba(0,0,0,0.5)] ${SETTLE}`}
+                className={`size-4 text-[#6e6e73] drop-shadow-[0px_1px_2px_rgba(0,0,0,0.5)] ${SETTLE}`}
               />
             ) : (
               <span
-                className={`text-sm font-normal whitespace-nowrap text-[#666666] [text-shadow:0px_1px_2px_rgba(0,0,0,0.5)] ${SETTLE}`}
+                className={`text-sm font-normal whitespace-nowrap text-[#6e6e73] [text-shadow:0px_1px_2px_rgba(0,0,0,0.5)] ${SETTLE}`}
               >
                 {label}
               </span>

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import type { ConsultationLanguage, DoctorId } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
-import { Globe, Check, ArrowRight } from 'lucide-react'
+import { Check, ArrowRight } from 'lucide-react'
 import { soundFX } from '@/lib/audioEffects'
 
 export interface LanguageOption {
@@ -78,27 +78,20 @@ export function LanguageSelectionModal({
     SUPPORTED_LANGUAGES.find((l) => l.code === currentSelected) || SUPPORTED_LANGUAGES[0]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-sm animate-fade-in">
-      <div role="dialog" aria-modal="true" aria-labelledby="consultation-language-title" className="relative w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 sm:p-8 shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]">
+    <div className="font-consult fixed inset-0 z-50 flex items-center justify-center bg-clinic-ink/60 p-3 backdrop-blur-sm animate-fade-in sm:p-4">
+      <div role="dialog" aria-modal="true" aria-labelledby="consultation-language-title" className="relative flex max-h-[94dvh] w-full max-w-2xl flex-col overflow-y-auto rounded-[20px] bg-white p-5 shadow-[0_24px_60px_rgba(15,47,54,.35)] sm:p-8">
         {/* Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 border border-teal-100 mb-3">
-            <Globe size={14} className="text-teal-800" />
-            <span className="text-xs font-semibold text-teal-900">
-              Consultation preferences
-            </span>
-          </div>
-
-          <h2 id="consultation-language-title" className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-2 tracking-tight">
-            Which language are you most comfortable speaking?
+        <div className="mb-6">
+          <h2 id="consultation-language-title" className="mb-2 text-[26px] font-bold leading-tight tracking-tight text-clinic-ink sm:text-[30px]">
+            Which language do you speak most comfortably?
           </h2>
-          <p className="text-slate-600 text-sm max-w-xl mx-auto leading-relaxed">
-            Choose a language for voice recognition and messages. After you start, the microphone listens for a phrase and sends it when you pause. You can mute it at any time.
+          <p className="max-w-xl text-[15px] leading-relaxed text-clinic-muted">
+            {doctor.name} will listen and reply in this language. The microphone sends what you say when you pause, and you can mute it at any time.
           </p>
         </div>
 
         {/* Language Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto pr-1 mb-5 max-h-[42vh] scrollbar-thin">
+        <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {SUPPORTED_LANGUAGES.map((lang) => {
             const isSelected = currentSelected === lang.code
             return (
@@ -107,65 +100,65 @@ export function LanguageSelectionModal({
                 key={lang.code}
                 onClick={() => handleCardClick(lang.code)}
                 aria-pressed={isSelected}
-                className={`min-h-[88px] p-3.5 rounded-xl text-left border transition-colors duration-150 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100 ${
+                className={`flex min-h-[96px] flex-col justify-between rounded-2xl border-2 p-4 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/30 ${
                   isSelected
-                    ? 'border-teal-700 bg-teal-50'
-                    : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
+                    ? 'border-clinic-teal bg-clinic-mist/60'
+                    : 'border-clinic-hairline bg-white hover:bg-clinic-porcelain'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-base sm:text-lg font-semibold text-slate-900">
+                  <span className="text-[22px] font-bold leading-tight text-clinic-ink">
                     {lang.nativeName}
                   </span>
                   {isSelected ? (
-                    <span className="w-5 h-5 rounded-full bg-teal-700 flex items-center justify-center text-white">
-                      <Check size={12} strokeWidth={3} />
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-clinic-teal text-white">
+                      <Check size={14} strokeWidth={3} aria-hidden="true" />
                     </span>
                   ) : (
-                    <span className="w-5 h-5 rounded-full border border-slate-300" />
+                    <span className="h-6 w-6 rounded-full border-2 border-clinic-hairline" aria-hidden="true" />
                   )}
                 </div>
 
                 <div>
-                  <span className="text-xs font-medium text-slate-800 block">{lang.label}</span>
-                  <span className="text-[10px] text-slate-600">{lang.region}</span>
+                  <span className="block text-[14px] font-semibold text-clinic-ink">{lang.label}</span>
+                  <span className="text-[13px] text-clinic-muted">{lang.region}</span>
                 </div>
               </button>
             )
           })}
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-5 flex items-start gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-[#123d55] flex items-center justify-center text-white font-semibold flex-shrink-0">
+        <div className="mb-5 flex items-center gap-3.5 rounded-2xl bg-clinic-porcelain p-4">
+          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-clinic-ink text-[15px] font-bold text-white">
             {doctorId === 'dr_ananya' ? 'An' : 'Ar'}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-semibold text-slate-900">
-                Consultation language: {selectedOption.label} ({selectedOption.nativeName})
+              <span className="text-[15px] font-bold text-clinic-ink">
+                {doctor.name} · {selectedOption.label} ({selectedOption.nativeName})
               </span>
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              With {doctor.name}. You can switch languages during the call or type instead of speaking.
+            <p className="text-[14px] leading-relaxed text-clinic-muted">
+              You can switch language during the call, or type instead of speaking.
             </p>
           </div>
         </div>
 
-        <label className="mb-4 flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-white p-3.5 text-xs leading-relaxed text-slate-700">
+        <label className="mb-4 flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-clinic-hairline bg-white p-4 text-[14px] leading-[1.65] text-clinic-ink focus-within:border-clinic-teal">
           <input
             type="checkbox"
             checked={hasConsultationConsent}
             onChange={(event) => setHasConsultationConsent(event.target.checked)}
-            className="mt-0.5 h-4 w-4 flex-shrink-0 accent-teal-700"
+            className="mt-1 h-5 w-5 flex-shrink-0 accent-[#0058b0]"
           />
           <span>
-            I agree to use the microphone for speech recognition and to send my transcript and the doctor&apos;s replies to MediCare for this consultation. The conversation is saved in my consultation history. If local medical references have no match, a search query with common direct identifiers removed may be sent to PubMed; I will avoid sharing identifying details. Camera access is optional and starts only if I turn it on. I understand this is an AI health assistant, not a licensed physician.
+            I agree to use the microphone for speech recognition and to send my transcript and the doctor&apos;s replies to MediCare for this consultation. The conversation is saved in my consultation history. If local medical references have no match, a search query with common direct identifiers removed may be sent to PubMed; I will avoid sharing identifying details. Camera access is optional and starts only if I turn it on. I understand this is an AI health assistant, not a licensed physician. See the <a href="/terms" target="_blank" rel="noreferrer" className="text-clinic-teal underline">Terms</a> and <a href="/privacy" target="_blank" rel="noreferrer" className="text-clinic-teal underline">Privacy Policy</a>.
           </span>
         </label>
 
         {/* Action Button */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200">
-          <span className="text-xs text-slate-500 hidden sm:inline">
+        <div className="flex flex-col gap-3 border-t border-clinic-hairline pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <span className="hidden text-[13px] text-clinic-muted sm:inline">
             Microphone starts if this browser supports voice input.
           </span>
 
@@ -175,10 +168,10 @@ export function LanguageSelectionModal({
               onConfirm()
             }}
             disabled={!hasConsultationConsent}
-            className="min-h-12 w-full sm:w-auto px-6 py-3 rounded-xl bg-[#123d55] hover:bg-[#0d3145] disabled:cursor-not-allowed disabled:opacity-50 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-100"
+            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-clinic-teal px-6 py-3 text-[15px] font-bold text-white transition-colors hover:bg-clinic-teal-deep disabled:cursor-not-allowed disabled:opacity-45 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-clinic-teal/30 sm:w-auto"
           >
-            <span>Start Consultation in {selectedOption.nativeName}</span>
-            <ArrowRight size={16} />
+            <span>Start in {selectedOption.nativeName}</span>
+            <ArrowRight size={18} aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -204,12 +204,11 @@ export function HistoryPanel({ onResume }: HistoryPanelProps) {
   }, [refetch])
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-7 animate-fade-in sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-[1080px] px-5 py-10 animate-fade-in sm:py-14">
       <div className="mb-7 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <ClinicalBadge><History size={13} /> Your care</ClinicalBadge>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-.04em] text-[#1b3a5c] sm:text-4xl">Conversation history</h1>
-          <p className="mt-2 text-sm text-[#4f6580]">Review, continue, export, or delete a previous conversation.</p>
+          <h1 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#1d1d1f] sm:text-[48px]">Conversation history</h1>
+          <p className="mt-2 text-sm text-[#6e6e73]">Review, continue, export, or delete a previous conversation.</p>
         </div>
         <button onClick={() => refetch()} className="btn-icon" title="Refresh" aria-label="Refresh conversations">
           <RefreshCw size={15} />
