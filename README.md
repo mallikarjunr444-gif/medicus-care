@@ -37,8 +37,14 @@ MediCare separates patient-facing medical facts from mental health counseling di
    * Cross-referenced with **Google MedGemma** clinical prompt architectures.
    * Strictly isolates entrance exam datasets (**MedMCQA**) to offline benchmarking only.
 2. **Mental Wellness Knowledge Collection**:
-   * Sourced from **ESConv** (1,300 emotional support dialogues), **Cogni-OpenModel** (8,500 counseling turns), **CACTUS** (CBT prompt protocols), and **Psy-Insight**.
+   * Active sources include **ESConv** counselling examples, **CACTUS** CBT records, and the administrator-ingested **MIT 9.00SC Introduction to Psychology** book.
+   * Every record retains dataset/source metadata; book references retain book name, chapter, and page number for answer attribution.
+   * Other cloned datasets and research repositories remain isolated from patient retrieval until their payload, provenance, privacy, and license terms are validated. See [`ananya_dataset_validation.md`](documentation/ananya_dataset_validation.md).
    * Structured for empathetic validation, OARS motivational interviewing, and rational thought challenging without claiming licensed psychotherapy.
+
+Dr. Ananya is restricted to `mental_wellness`; Dr. Smit is restricted to
+`medical`. Collections are never automatically mixed during specialist
+retrieval.
 
 ---
 
@@ -75,7 +81,8 @@ Deterministic 4-level clinical triage screener running inline on every patient t
 Administrators can navigate to `/` and select the **Admin Console** tab:
 * **Knowledge Explorer**: Browse, inspect, approve, or reject chunks across Medical and Mental Wellness collections.
 * **Document Ingestion**: Upload PDF, DOCX, TXT, CSV, or JSON reference documents staged as *Pending Review* until clinician sign-off.
-* **Repository & License Tracker**: Audit all 15 open-source repositories under `medicus-ai-data/`.
+* **Specialist Book Ingestion**: Assign a PDF book explicitly to Dr. Ananya; extract pages and tables, create Markdown/JSON artifacts, generate embeddings, and store them in the existing `mental_wellness` Qdrant collection with duplicate detection and deletion controls.
+* **Repository & License Tracker**: Audit repositories under `medicus-ai-data/`; research-only clones are not automatically patient-facing knowledge.
 * **Safety Evaluation Suite**: Run automated safety probes against CRADLE-Dialogue, Between Help & Harm, and NOPE Evals with live pass-rate metrics.
 
 ---
@@ -95,6 +102,7 @@ All formal documentation deliverables are maintained in [`documentation/`](docum
 9. [`deployment_guide.md`](documentation/deployment_guide.md) — Production AWS EC2 GPU deployment and local Mac Apple Silicon guide.
 10. [`DEPLOY_WORLDWIDE.md`](DEPLOY_WORLDWIDE.md) — HTTPS, GPU-hosted models, and multi-device production setup.
 11. [`documentation/README.md`](documentation/README.md) — Documentation index and master reference guide.
+12. [`ananya_dataset_validation.md`](documentation/ananya_dataset_validation.md) — Dr. Ananya dataset payload, license, and production-readiness validation.
 
 ---
 
