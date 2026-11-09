@@ -388,7 +388,12 @@ class UnifiedRAGService:
                 source_name="Emotional Support Conversation (ESConv)",
                 license="Apache 2.0",
                 origin_url="https://github.com/thu-coai/Emotional-Support-Conversation",
-                metadata={"emotion": emotion, "problem": problem}
+                metadata={
+                    "emotion": emotion,
+                    "problem": problem,
+                    "type": "counselling_example",
+                    "dataset": "ESConv",
+                }
             )
             self.mental_wellness_store[chunk_id] = chunk
             self.content_hashes.add(h)
@@ -422,7 +427,11 @@ class UnifiedRAGService:
                         source_name="CACTUS CBT Framework",
                         license="MIT License",
                         origin_url="https://github.com/coding-groot/cactus",
-                        metadata={"file": txt_file.name}
+                        metadata={
+                            "file": txt_file.name,
+                            "type": "cbt_dialogue",
+                            "dataset": "CACTUS",
+                        }
                     )
                     self.mental_wellness_store[chunk_id] = chunk
                     self.content_hashes.add(h)

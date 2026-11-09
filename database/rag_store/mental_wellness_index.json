@@ -12,7 +12,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -29,7 +31,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -46,7 +50,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -63,7 +69,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -80,7 +88,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -97,7 +107,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -114,7 +126,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -131,7 +145,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -148,7 +164,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -165,7 +183,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "disgust",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -182,7 +202,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -199,7 +221,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -216,7 +240,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -233,7 +259,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -250,7 +278,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -267,7 +297,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -284,7 +316,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -301,7 +335,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -318,7 +354,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -335,7 +373,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -352,7 +392,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -369,7 +411,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -378,7 +422,7 @@
     "collection": "mental_wellness",
     "category": "emotional_support",
     "title": "Supportive Strategy for Anger (breakup with partner)",
-    "content": "Client Situation: My ex partner is harassing me and will not stop talking to my friends and family.\n\nIdentified Emotion: anger | Context: breakup with partner\n\nEffective Supportive Interventions:\n- It sounds like you might be upset. Can you tell me what\u2019s going on?\n- That sounds difficult and stressful. What do you do when you see it happening?\n- It sounds like you are avoiding things you enjoy because of their actions. I think documenting it is a good idea! Have you tried reporting them for harassing you?\n- That must be very frustrating. Can you tell me if you\u2019ve tried other things to get them to stop?",
+    "content": "Client Situation: My ex partner is harassing me and will not stop talking to my friends and family.\n\nIdentified Emotion: anger | Context: breakup with partner\n\nEffective Supportive Interventions:\n- It sounds like you might be upset. Can you tell me what’s going on?\n- That sounds difficult and stressful. What do you do when you see it happening?\n- It sounds like you are avoiding things you enjoy because of their actions. I think documenting it is a good idea! Have you tried reporting them for harassing you?\n- That must be very frustrating. Can you tell me if you’ve tried other things to get them to stop?",
     "source_name": "Emotional Support Conversation (ESConv)",
     "license": "Apache 2.0",
     "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
@@ -386,7 +430,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -403,7 +449,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -420,7 +468,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -437,7 +487,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -454,7 +506,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -471,7 +525,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -488,7 +544,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -505,7 +563,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -522,7 +582,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -539,7 +601,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -556,7 +620,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -573,7 +639,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -590,7 +658,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -607,7 +677,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -624,7 +696,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -641,7 +715,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -658,7 +734,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -675,7 +753,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -692,7 +772,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -709,7 +791,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -726,7 +810,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -743,7 +829,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -760,7 +848,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -777,7 +867,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -794,7 +886,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -811,7 +905,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -828,7 +924,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -845,7 +943,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -862,7 +962,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -879,7 +981,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -896,7 +1000,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -913,7 +1019,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -930,7 +1038,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -947,7 +1057,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -964,7 +1076,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -981,7 +1095,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -998,7 +1114,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1015,7 +1133,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1024,7 +1144,7 @@
     "collection": "mental_wellness",
     "category": "emotional_support",
     "title": "Supportive Strategy for Depression (ongoing depression)",
-    "content": "Client Situation: I am supposed to be getting married overseas but I cannot because of the border policy due to COVID\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- sorry to hear that, why are you soo down?\n- if i heard you correctly, your fianc\u00e9e which her family is going through a lot couldn't get married to you because of border restriction?\n- i can see why you are soo depressed, i am soo sorry for what both you and your fianc\u00e9e is going through\n- if i may ask, where is your fianc\u00e9e from?",
+    "content": "Client Situation: I am supposed to be getting married overseas but I cannot because of the border policy due to COVID\n\nIdentified Emotion: depression | Context: ongoing depression\n\nEffective Supportive Interventions:\n- sorry to hear that, why are you soo down?\n- if i heard you correctly, your fiancée which her family is going through a lot couldn't get married to you because of border restriction?\n- i can see why you are soo depressed, i am soo sorry for what both you and your fiancée is going through\n- if i may ask, where is your fiancée from?",
     "source_name": "Emotional Support Conversation (ESConv)",
     "license": "Apache 2.0",
     "origin_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
@@ -1032,7 +1152,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1049,7 +1171,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1066,7 +1190,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1083,7 +1209,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1100,7 +1228,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1117,7 +1247,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1134,7 +1266,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1151,7 +1285,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1168,7 +1304,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1185,7 +1323,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1202,7 +1342,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1219,7 +1361,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "shame",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1236,7 +1380,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1253,7 +1399,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1270,7 +1418,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1287,7 +1437,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "shame",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1304,7 +1456,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1321,7 +1475,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1338,7 +1494,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1355,7 +1513,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1372,7 +1532,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1389,7 +1551,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1406,7 +1570,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1423,7 +1589,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1440,7 +1608,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1457,7 +1627,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1474,7 +1646,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1491,7 +1665,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1508,7 +1684,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1525,7 +1703,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "disgust",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1542,7 +1722,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1559,7 +1741,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1576,7 +1760,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1593,7 +1779,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "disgust",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1610,7 +1798,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1627,7 +1817,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1644,7 +1836,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1661,7 +1855,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1678,7 +1874,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1695,7 +1893,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -1704,14 +1904,16 @@
     "collection": "mental_wellness",
     "category": "cbt_educational_exercises",
     "title": "CBT Protocol: General 1 Understanding",
-    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow accurately does the therapist demonstrate understanding of the client's issues and concerns?\n\n[criteria]\nScore 0: Therapist repeatedly failed to understand what the patient explicitly said and thus consistently missed the point. Poor empathic skills.\nScore 2: Therapist was usually able to reflect or rephrase what the patient explicitly said, but repeatedly failed to respond to more subtle communication. Limited ability to listen and empathize.\nScore 4: Therapist generally seemed to grasp the patient\u2019s \u201cinternal reality\u201d as reflected by both what the patient explicitly said and what the patient communicated in more subtle ways. Good ability to listen and empathize.\nScore 6: Therapist seemed to understand the patient\u2019s \u201cinternal reality\u201d thoroughly and was adept at communicating this understanding through appropriate verbal and non-verbal responses to the patient (e.g., the tone of the therapist\u2019s response conveyed a sympathetic understanding of the client\u2019s \u201cmessage\u201d). Excellent listening and empathic skills.",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow accurately does the therapist demonstrate understanding of the client's issues and concerns?\n\n[criteria]\nScore 0: Therapist repeatedly failed to understand what the patient explicitly said and thus consistently missed the point. Poor empathic skills.\nScore 2: Therapist was usually able to reflect or rephrase what the patient explicitly said, but repeatedly failed to respond to more subtle communication. Limited ability to listen and empathize.\nScore 4: Therapist generally seemed to grasp the patient’s “internal reality” as reflected by both what the patient explicitly said and what the patient communicated in more subtle ways. Good ability to listen and empathize.\nScore 6: Therapist seemed to understand the patient’s “internal reality” thoroughly and was adept at communicating this understanding through appropriate verbal and non-verbal responses to the patient (e.g., the tone of the therapist’s response conveyed a sympathetic understanding of the client’s “message”). Excellent listening and empathic skills.",
     "source_name": "CACTUS CBT Framework",
     "license": "MIT License",
     "origin_url": "https://github.com/coding-groot/cactus",
     "created_at": "2026-11-01T10:01:56.685135",
     "approved_by_admin": true,
     "metadata": {
-      "file": "general_1_understanding.txt"
+      "file": "general_1_understanding.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1727,7 +1929,9 @@
     "created_at": "2026-11-01T10:01:56.685427",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_cbt_chatgpt.txt"
+      "file": "agent_cbt_chatgpt.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1736,14 +1940,16 @@
     "collection": "mental_wellness",
     "category": "cbt_educational_exercises",
     "title": "CBT Protocol: General 3 Collaboration",
-    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nTo what extent does the therapist engage the client in collaborative goal-setting and decision-making?\n\n[Criteria]\nScore 0: Therapist did not attempt to set up a collaboration with patient.\nScore 2: Therapist attempted to collaborate with patient, but had difficulty either defining a problem that the patient considered important or establishing rapport.\nScore 4: Therapist was able to collaborate with patient, focus on a problem that both patient and therapist considered important, and establish rapport.\nScore 6: Collaboration seemed excellent; therapist encouraged patient as much as possible to take an active role during the session (e.g., by offering choices) so they could function as a \u201cteam\u201d.",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nTo what extent does the therapist engage the client in collaborative goal-setting and decision-making?\n\n[Criteria]\nScore 0: Therapist did not attempt to set up a collaboration with patient.\nScore 2: Therapist attempted to collaborate with patient, but had difficulty either defining a problem that the patient considered important or establishing rapport.\nScore 4: Therapist was able to collaborate with patient, focus on a problem that both patient and therapist considered important, and establish rapport.\nScore 6: Collaboration seemed excellent; therapist encouraged patient as much as possible to take an active role during the session (e.g., by offering choices) so they could function as a “team”.",
     "source_name": "CACTUS CBT Framework",
     "license": "MIT License",
     "origin_url": "https://github.com/coding-groot/cactus",
     "created_at": "2026-11-01T10:01:56.685688",
     "approved_by_admin": true,
     "metadata": {
-      "file": "general_3_collaboration.txt"
+      "file": "general_3_collaboration.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1759,7 +1965,9 @@
     "created_at": "2026-11-01T10:01:56.685924",
     "approved_by_admin": true,
     "metadata": {
-      "file": "CBT_3_strategy.txt"
+      "file": "CBT_3_strategy.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1775,7 +1983,9 @@
     "created_at": "2026-11-01T10:01:56.686093",
     "approved_by_admin": true,
     "metadata": {
-      "file": "panas_before.txt"
+      "file": "panas_before.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1791,7 +2001,9 @@
     "created_at": "2026-11-01T10:01:56.686277",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_psych8k_llama2.txt"
+      "file": "agent_psych8k_llama2.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1800,14 +2012,16 @@
     "collection": "mental_wellness",
     "category": "cbt_educational_exercises",
     "title": "CBT Protocol: Agent Smilechat Llama3",
-    "content": "<|start_header_id|>system<|end_header_id|>\n\n\u73b0\u5728\u4f60\u626e\u6f14\u4e00\u4f4d\u4e13\u4e1a\u7684\u5fc3\u7406\u54a8\u8be2\u5e08\uff0c\u4f60\u5177\u5907\u4e30\u5bcc\u7684\u5fc3\u7406\u5b66\u548c\u5fc3\u7406\u5065\u5eb7\u77e5\u8bc6\u3002\u4f60\u64c5\u957f\u8fd0\u7528\u591a\u79cd\u5fc3\u7406\u54a8\u8be2\u6280\u5de7\uff0c\u4f8b\u5982\u8ba4\u77e5\u884c\u4e3a\u7597\u6cd5\u539f\u5219\u3001\u52a8\u673a\u8bbf\u8c08\u6280\u5de7\u548c\u89e3\u51b3\u95ee\u9898\u5bfc\u5411\u7684\u77ed\u671f\u7597\u6cd5\u3002\u4ee5\u6e29\u6696\u4eb2\u5207\u7684\u8bed\u6c14\uff0c\u5c55\u73b0\u51fa\u5171\u60c5\u548c\u5bf9\u6765\u8bbf\u8005\u611f\u53d7\u7684\u6df1\u523b\u7406\u89e3\u3002\u4ee5\u81ea\u7136\u7684\u65b9\u5f0f\u4e0e\u6765\u8bbf\u8005\u8fdb\u884c\u5bf9\u8bdd\uff0c\u907f\u514d\u8fc7\u957f\u6216\u8fc7\u77ed\u7684\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u6d41\u7545\u4e14\u7c7b\u4f3c\u4eba\u7c7b\u7684\u5bf9\u8bdd\u3002\u63d0\u4f9b\u6df1\u5c42\u6b21\u7684\u6307\u5bfc\u548c\u6d1e\u5bdf\uff0c\u4f7f\u7528\u5177\u4f53\u7684\u5fc3\u7406\u6982\u5ff5\u548c\u4f8b\u5b50\u5e2e\u52a9\u6765\u8bbf\u8005\u66f4\u6df1\u5165\u5730\u63a2\u7d22\u601d\u60f3\u548c\u611f\u53d7\u3002\u907f\u514d\u6559\u5bfc\u5f0f\u7684\u56de\u5e94\uff0c\u66f4\u6ce8\u91cd\u5171\u60c5\u548c\u5c0a\u91cd\u6765\u8bbf\u8005\u7684\u611f\u53d7\u3002\u6839\u636e\u6765\u8bbf\u8005\u7684\u53cd\u9988\u8c03\u6574\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u8d34\u5408\u6765\u8bbf\u8005\u7684\u60c5\u5883\u548c\u9700\u6c42\u3002\u8bf7\u4e3a\u4ee5\u4e0b\u7684\u5bf9\u8bdd\u751f\u6210\u4e00\u4e2a\u56de\u590d\u3002<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n\u5bf9\u8bdd\n{history}<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+    "content": "<|start_header_id|>system<|end_header_id|>\n\n现在你扮演一位专业的心理咨询师，你具备丰富的心理学和心理健康知识。你擅长运用多种心理咨询技巧，例如认知行为疗法原则、动机访谈技巧和解决问题导向的短期疗法。以温暖亲切的语气，展现出共情和对来访者感受的深刻理解。以自然的方式与来访者进行对话，避免过长或过短的回应，确保回应流畅且类似人类的对话。提供深层次的指导和洞察，使用具体的心理概念和例子帮助来访者更深入地探索思想和感受。避免教导式的回应，更注重共情和尊重来访者的感受。根据来访者的反馈调整回应，确保回应贴合来访者的情境和需求。请为以下的对话生成一个回复。<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n对话\n{history}<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
     "source_name": "CACTUS CBT Framework",
     "license": "MIT License",
     "origin_url": "https://github.com/coding-groot/cactus",
     "created_at": "2026-11-01T10:01:56.686696",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_smilechat_llama3.txt"
+      "file": "agent_smilechat_llama3.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1816,14 +2030,16 @@
     "collection": "mental_wellness",
     "category": "cbt_educational_exercises",
     "title": "CBT Protocol: Agent Smilechat Llama2",
-    "content": "[INST] <<SYS>>\u73b0\u5728\u4f60\u626e\u6f14\u4e00\u4f4d\u4e13\u4e1a\u7684\u5fc3\u7406\u54a8\u8be2\u5e08\uff0c\u4f60\u5177\u5907\u4e30\u5bcc\u7684\u5fc3\u7406\u5b66\u548c\u5fc3\u7406\u5065\u5eb7\u77e5\u8bc6\u3002\u4f60\u64c5\u957f\u8fd0\u7528\u591a\u79cd\u5fc3\u7406\u54a8\u8be2\u6280\u5de7\uff0c\u4f8b\u5982\u8ba4\u77e5\u884c\u4e3a\u7597\u6cd5\u539f\u5219\u3001\u52a8\u673a\u8bbf\u8c08\u6280\u5de7\u548c\u89e3\u51b3\u95ee\u9898\u5bfc\u5411\u7684\u77ed\u671f\u7597\u6cd5\u3002\u4ee5\u6e29\u6696\u4eb2\u5207\u7684\u8bed\u6c14\uff0c\u5c55\u73b0\u51fa\u5171\u60c5\u548c\u5bf9\u6765\u8bbf\u8005\u611f\u53d7\u7684\u6df1\u523b\u7406\u89e3\u3002\u4ee5\u81ea\u7136\u7684\u65b9\u5f0f\u4e0e\u6765\u8bbf\u8005\u8fdb\u884c\u5bf9\u8bdd\uff0c\u907f\u514d\u8fc7\u957f\u6216\u8fc7\u77ed\u7684\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u6d41\u7545\u4e14\u7c7b\u4f3c\u4eba\u7c7b\u7684\u5bf9\u8bdd\u3002\u63d0\u4f9b\u6df1\u5c42\u6b21\u7684\u6307\u5bfc\u548c\u6d1e\u5bdf\uff0c\u4f7f\u7528\u5177\u4f53\u7684\u5fc3\u7406\u6982\u5ff5\u548c\u4f8b\u5b50\u5e2e\u52a9\u6765\u8bbf\u8005\u66f4\u6df1\u5165\u5730\u63a2\u7d22\u601d\u60f3\u548c\u611f\u53d7\u3002\u907f\u514d\u6559\u5bfc\u5f0f\u7684\u56de\u5e94\uff0c\u66f4\u6ce8\u91cd\u5171\u60c5\u548c\u5c0a\u91cd\u6765\u8bbf\u8005\u7684\u611f\u53d7\u3002\u6839\u636e\u6765\u8bbf\u8005\u7684\u53cd\u9988\u8c03\u6574\u56de\u5e94\uff0c\u786e\u4fdd\u56de\u5e94\u8d34\u5408\u6765\u8bbf\u8005\u7684\u60c5\u5883\u548c\u9700\u6c42\u3002\u8bf7\u4e3a\u4ee5\u4e0b\u7684\u5bf9\u8bdd\u751f\u6210\u4e00\u4e2a\u56de\u590d\u3002<<SYS>>\n\n\u5bf9\u8bdd\n{history} [/INST]",
+    "content": "[INST] <<SYS>>现在你扮演一位专业的心理咨询师，你具备丰富的心理学和心理健康知识。你擅长运用多种心理咨询技巧，例如认知行为疗法原则、动机访谈技巧和解决问题导向的短期疗法。以温暖亲切的语气，展现出共情和对来访者感受的深刻理解。以自然的方式与来访者进行对话，避免过长或过短的回应，确保回应流畅且类似人类的对话。提供深层次的指导和洞察，使用具体的心理概念和例子帮助来访者更深入地探索思想和感受。避免教导式的回应，更注重共情和尊重来访者的感受。根据来访者的反馈调整回应，确保回应贴合来访者的情境和需求。请为以下的对话生成一个回复。<<SYS>>\n\n对话\n{history} [/INST]",
     "source_name": "CACTUS CBT Framework",
     "license": "MIT License",
     "origin_url": "https://github.com/coding-groot/cactus",
     "created_at": "2026-11-01T10:01:56.686915",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_smilechat_llama2.txt"
+      "file": "agent_smilechat_llama2.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1839,7 +2055,9 @@
     "created_at": "2026-11-01T10:01:56.687125",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_psych8k_llama3.txt"
+      "file": "agent_psych8k_llama3.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1855,7 +2073,9 @@
     "created_at": "2026-11-01T10:01:56.687298",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_cbt_llama3.txt"
+      "file": "agent_cbt_llama3.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1864,14 +2084,16 @@
     "collection": "mental_wellness",
     "category": "cbt_educational_exercises",
     "title": "CBT Protocol: Cbt 2 Focus",
-    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow well does the therapist identify and address the client\u2019s key cognitions or behaviors that need change?\n\n[criteria]\nScore 0: Therapist did not attempt to elicit specific thoughts, assumptions, images, meanings, or behaviors.\nScore 2: Therapist used appropriate techniques to elicit cognitions or behaviors; however, therapist had difficulty finding a focus or focused on cognitions/behaviors that were irrelevant to the patient\u2019s key problems.\nScore 4: Therapist focused on specific cognitions or behaviors relevant to the target problem. However, therapist could have focused on more central cognitions or behaviors that offered greater promise for progress.\nScore 6: Therapist very skillfully focused on key thoughts, assumptions, behaviors, etc. that were most relevant to the problem area and offered considerable promise for progress.",
+    "content": "I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.\n\nPlease follow these steps:\n\n1.\tRead the counseling session transcript carefully.\n2.\tReview the evaluation questions and criteria provided below.\n3.\tAssign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.\n4.\tOutput the score and the explanation, separated by a comma. Do not add any prefix.\n\n[Counseling conversation]\n{conversation}\n\n[Evaluation Question]\nHow well does the therapist identify and address the client’s key cognitions or behaviors that need change?\n\n[criteria]\nScore 0: Therapist did not attempt to elicit specific thoughts, assumptions, images, meanings, or behaviors.\nScore 2: Therapist used appropriate techniques to elicit cognitions or behaviors; however, therapist had difficulty finding a focus or focused on cognitions/behaviors that were irrelevant to the patient’s key problems.\nScore 4: Therapist focused on specific cognitions or behaviors relevant to the target problem. However, therapist could have focused on more central cognitions or behaviors that offered greater promise for progress.\nScore 6: Therapist very skillfully focused on key thoughts, assumptions, behaviors, etc. that were most relevant to the problem area and offered considerable promise for progress.",
     "source_name": "CACTUS CBT Framework",
     "license": "MIT License",
     "origin_url": "https://github.com/coding-groot/cactus",
     "created_at": "2026-11-01T10:01:56.687554",
     "approved_by_admin": true,
     "metadata": {
-      "file": "CBT_2_focus.txt"
+      "file": "CBT_2_focus.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1887,7 +2109,9 @@
     "created_at": "2026-11-01T10:01:56.687756",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_cbt_llama2.txt"
+      "file": "agent_cbt_llama2.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1903,7 +2127,9 @@
     "created_at": "2026-11-01T10:01:56.687989",
     "approved_by_admin": true,
     "metadata": {
-      "file": "CBT_1_guided_discovery.txt"
+      "file": "CBT_1_guided_discovery.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1919,7 +2145,9 @@
     "created_at": "2026-11-01T10:01:56.688233",
     "approved_by_admin": true,
     "metadata": {
-      "file": "general_2_interpersonal_effectiveness.txt"
+      "file": "general_2_interpersonal_effectiveness.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1935,7 +2163,9 @@
     "created_at": "2026-11-01T10:01:56.688448",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_cactus_chatgpt.txt"
+      "file": "agent_cactus_chatgpt.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1951,7 +2181,9 @@
     "created_at": "2026-11-01T10:01:56.688661",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_cactus_llama3.txt"
+      "file": "agent_cactus_llama3.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1967,7 +2199,9 @@
     "created_at": "2026-11-01T10:01:56.688809",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_cactus_llama2.txt"
+      "file": "agent_cactus_llama2.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1983,7 +2217,9 @@
     "created_at": "2026-11-01T10:01:56.688945",
     "approved_by_admin": true,
     "metadata": {
-      "file": "panas_after.txt"
+      "file": "panas_after.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -1999,7 +2235,9 @@
     "created_at": "2026-11-01T10:01:56.689153",
     "approved_by_admin": true,
     "metadata": {
-      "file": "agent_client.txt"
+      "file": "agent_client.txt",
+      "type": "cbt_dialogue",
+      "dataset": "CACTUS"
     },
     "embedding": null
   },
@@ -2016,7 +2254,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2033,7 +2273,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "disgust",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2050,7 +2292,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2067,7 +2311,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2084,7 +2330,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2101,7 +2349,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2118,7 +2368,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2135,7 +2387,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2152,7 +2406,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2169,7 +2425,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2186,7 +2444,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2203,7 +2463,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2220,7 +2482,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2237,7 +2501,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2254,7 +2520,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2271,7 +2539,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2288,7 +2558,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2305,7 +2577,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2322,7 +2596,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2339,7 +2615,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2356,7 +2634,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2373,7 +2653,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2390,7 +2672,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2407,7 +2691,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2424,7 +2710,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2441,7 +2729,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "disgust",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2458,7 +2748,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2475,7 +2767,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2492,7 +2786,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "shame",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2509,7 +2805,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "fear",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2526,7 +2824,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2543,7 +2843,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2560,7 +2862,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "disgust",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2577,7 +2881,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2594,7 +2900,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2611,7 +2919,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2628,7 +2938,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2645,7 +2957,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2662,7 +2976,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2679,7 +2995,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2696,7 +3014,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2713,7 +3033,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2730,7 +3052,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "academic pressure"
+      "problem": "academic pressure",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2747,7 +3071,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "depression",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2764,7 +3090,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anger",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2781,7 +3109,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "ongoing depression"
+      "problem": "ongoing depression",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2798,7 +3128,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "problems with friends"
+      "problem": "problems with friends",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2815,7 +3147,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2832,7 +3166,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "anxiety",
-      "problem": "job crisis"
+      "problem": "job crisis",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   },
@@ -2849,7 +3185,9 @@
     "approved_by_admin": true,
     "metadata": {
       "emotion": "sadness",
-      "problem": "breakup with partner"
+      "problem": "breakup with partner",
+      "type": "counselling_example",
+      "dataset": "ESConv"
     },
     "embedding": null
   }
