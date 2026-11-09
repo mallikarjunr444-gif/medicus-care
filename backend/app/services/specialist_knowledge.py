@@ -47,6 +47,7 @@ class SpecialistKnowledgeService:
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         self.manifest_path = self.storage_dir / "manifest.json"
         self.manifest: dict[str, dict[str, Any]] = self._load_manifest()
+        self._qdrant_client: Any = None
 
     def _load_manifest(self) -> dict[str, dict[str, Any]]:
         if not self.manifest_path.exists():
@@ -76,6 +77,8 @@ class SpecialistKnowledgeService:
         return f"{slug or 'book'}-{source_hash[:12]}"
 
     def _qdrant(self):
+        if self._qdrant_client is not None:
+            return self._qdrant_client
         try:
             from qdrant_client import QdrantClient
         except ImportError as exc:
@@ -84,8 +87,10 @@ class SpecialistKnowledgeService:
             ) from exc
         url = __import__("os").environ.get("QDRANT_URL")
         if url:
-            return QdrantClient(url=url, api_key=__import__("os").environ.get("QDRANT_API_KEY"))
-        return QdrantClient(path=str(self.storage_dir / "qdrant"))
+            self._qdrant_client = QdrantClient(url=url, api_key=__import__("os").environ.get("QDRANT_API_KEY"))
+        else:
+            self._qdrant_client = QdrantClient(path=str(self.storage_dir / "qdrant"))
+        return self._qdrant_client
 
     @staticmethod
     def _embedder():
@@ -255,7 +260,11 @@ class SpecialistKnowledgeService:
         model = self._embedder()
         vector = model.encode([query], normalize_embeddings=True).tolist()[0]
         client = self._qdrant()
-        results = client.search(collection_name=collection, query_vector=vector, limit=top_k)
+        results = client.query_points(
+            collection_name=collection,
+            query=vector,
+            limit=top_k,
+        ).points
         return [result.payload for result in results if result.payload and result.payload.get("collection") == collection]
 
 

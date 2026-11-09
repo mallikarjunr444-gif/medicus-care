@@ -38,6 +38,17 @@ interface ChunkItem {
   created_at: string
 }
 
+interface SpecialistBook {
+  book_id: string
+  book_name: string
+  specialist_id: string
+  collection: string
+  source_file: string
+  chunk_count: number
+  status: string
+  created_at: string
+}
+
 interface SafetyEvalResult {
   suite: string
   timestamp: string
@@ -90,6 +101,10 @@ export function AdminKnowledgeDashboard() {
   const [uploadAttribution, setUploadAttribution] = useState('Internal Clinical Advisory Board')
   const [uploadLicense, setUploadLicense] = useState('Medicus Labs Internal Review')
   const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [specialistBook, setSpecialistBook] = useState<File | null>(null)
+  const [bookName, setBookName] = useState('')
+  const [specialistBooks, setSpecialistBooks] = useState<SpecialistBook[]>([])
+  const [isProcessingBook, setIsProcessingBook] = useState(false)
 
   // Fetch Sources from API or Local Mock
   const fetchSources = async () => {
@@ -146,7 +161,57 @@ export function AdminKnowledgeDashboard() {
 
   useEffect(() => {
     fetchSources()
+    fetchSpecialistBooks()
   }, [])
+
+  const fetchSpecialistBooks = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/admin/knowledge/books?specialist_id=dr_ananya')
+      if (res.ok) {
+        const data = await res.json()
+        setSpecialistBooks(data.books || [])
+      }
+    } catch {
+      // The book list is unavailable until the backend is running.
+    }
+  }
+
+  const handleSpecialistBookUpload = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!specialistBook) return
+    setIsProcessingBook(true)
+    const formData = new FormData()
+    formData.append('file', specialistBook)
+    formData.append('specialist_id', 'dr_ananya')
+    if (bookName.trim()) formData.append('book_name', bookName.trim())
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/admin/knowledge/books/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.detail || 'Book processing failed')
+      toast.success(`Processed ${data.book_name} into ${data.chunk_count} Ananya references`)
+      setSpecialistBook(null)
+      setBookName('')
+      await fetchSpecialistBooks()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Book processing failed')
+    } finally {
+      setIsProcessingBook(false)
+    }
+  }
+
+  const handleDeleteSpecialistBook = async (bookId: string) => {
+    if (!window.confirm('Delete this book and its Ananya knowledge references permanently?')) return
+    const res = await fetch(`http://localhost:8000/api/v1/admin/knowledge/books/${bookId}`, { method: 'DELETE' })
+    if (!res.ok) {
+      toast.error('Book deletion failed')
+      return
+    }
+    toast.success('Book and Qdrant references deleted')
+    setSpecialistBooks(prev => prev.filter(book => book.book_id !== bookId))
+  }
 
   // Approve / Reject chunk
   const handleToggleApproval = async (chunkId: string, currentStatus: boolean) => {
@@ -453,7 +518,50 @@ export function AdminKnowledgeDashboard() {
 
       {/* ── TAB 2: UPLOAD DOCUMENT ── */}
       {activeTab === 'upload' && (
-        <div className="max-w-2xl mx-auto p-6 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7] shadow-xl">
+        <div className="max-w-3xl mx-auto space-y-5">
+          <section className="p-6 rounded-2xl bg-[#101820] border border-[#29404b] shadow-xl text-white">
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#8fc9bd] font-semibold">Specialist library</p>
+                <h2 className="text-lg font-bold mt-1">Feed Dr. Ananya a psychology book</h2>
+                <p className="text-xs text-[#b8c8c8] mt-1">PDF pages, chapters, tables, embeddings, and citations stay in the mental_wellness collection.</p>
+              </div>
+              <Brain size={22} className="text-[#8fc9bd] shrink-0" />
+            </div>
+            <form onSubmit={handleSpecialistBookUpload} className="space-y-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[#b8c8c8] mb-1.5">Assigned specialist</label>
+                  <div className="rounded-xl border border-[#3b5961] bg-[#18262d] px-3 py-2.5 font-semibold">Dr. Ananya · AI Psychologist</div>
+                </div>
+                <div>
+                  <label className="block text-[#b8c8c8] mb-1.5">Book name (optional)</label>
+                  <input value={bookName} onChange={e => setBookName(e.target.value)} placeholder="Uses the PDF filename when blank" className="w-full rounded-xl border border-[#3b5961] bg-[#18262d] px-3 py-2.5 text-white placeholder:text-[#779096] focus:outline-none focus:border-[#8fc9bd]" />
+                </div>
+              </div>
+              <input type="file" accept=".pdf,application/pdf" onChange={e => setSpecialistBook(e.target.files?.[0] || null)} className="w-full rounded-xl border border-[#3b5961] bg-[#18262d] p-2 text-[#b8c8c8] file:mr-3 file:rounded-lg file:border-0 file:bg-[#8fc9bd] file:px-3 file:py-1.5 file:font-semibold file:text-[#101820]" />
+              <button type="submit" disabled={!specialistBook || isProcessingBook} className="w-full rounded-xl bg-[#8fc9bd] py-3 font-bold text-[#101820] transition-colors hover:bg-[#b0ded4] disabled:opacity-40 flex items-center justify-center gap-2">
+                {isProcessingBook ? <RefreshCw size={15} className="animate-spin" /> : <Upload size={15} />}
+                {isProcessingBook ? 'Extracting and embedding book...' : 'Process into Ananya knowledge'}
+              </button>
+            </form>
+            {specialistBooks.length > 0 && (
+              <div className="mt-5 space-y-2 border-t border-[#29404b] pt-4">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-[#8fc9bd] font-semibold">Processed books</p>
+                {specialistBooks.map(book => (
+                  <div key={book.book_id} className="flex items-center justify-between gap-3 rounded-xl bg-[#18262d] px-3 py-2.5">
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold">{book.book_name}</p>
+                      <p className="text-[10px] text-[#9cb0b2]">{book.chunk_count.toLocaleString()} page references · {book.collection}</p>
+                    </div>
+                    <button type="button" onClick={() => handleDeleteSpecialistBook(book.book_id)} title="Delete book" className="shrink-0 rounded-lg p-2 text-[#ff9b8f] hover:bg-[#ff9b8f]/10"><Trash2 size={15} /></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <div className="p-6 rounded-2xl bg-[#ffffff]/80 border border-[#d2d2d7] shadow-xl">
           <div className="mb-6">
             <h2 className="text-lg font-bold text-[#1d1d1f] mb-1">Ingest Knowledge Document</h2>
             <p className="text-xs text-[#6e6e73]">
@@ -561,6 +669,7 @@ export function AdminKnowledgeDashboard() {
               <span>Ingest and Stage for Review</span>
             </button>
           </form>
+          </div>
         </div>
       )}
 
