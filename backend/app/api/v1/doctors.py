@@ -20,7 +20,7 @@ DOCTORS = {
     "dr_ananya": {
         "name": "Dr. Ananya",
         "image": REPO_ROOT / "frontend/public/doctor/dr_ananya.jpg",
-        "specialty": "Metabolic Health, Lab Diagnostics & Wellness",
+        "specialty": "AI Psychologist / Mental Wellness Consultant",
     },
     "dr_arjun": {
         "name": "Dr. Smit",

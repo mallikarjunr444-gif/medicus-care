@@ -14,9 +14,9 @@ settings; they do not select separate medical knowledge collections.
   with source attribution in the model context. Kannada search text is
   translated locally for retrieval when possible; the reply stays in the
   patient's selected language.
-- Dr. Ananya is routed to the mental-wellness collection; the general
-  physician can search both collections. Mental-wellness dialogue is framed
-  to the model as supportive examples, not clinical directives.
+- Dr. Ananya is routed to the mental-wellness collection; Dr. Smit is routed
+  to the medical collection. Mental-wellness dialogue is framed to the model
+  as supportive examples, not clinical directives.
 - Retrieval currently uses lexical matching. No embedding model or model
   fine-tuning is active. This is retrieval-augmented generation (RAG), not
   training a medical model.
@@ -42,17 +42,22 @@ application database. New dialogue examples can be staged with
 `backend/scripts/ingest_mental_wellness.py`; every imported chunk is marked
 `approved_by_admin=false`, so it cannot enter patient retrieval until reviewed
 and approved in the Admin Knowledge Console. The importer accepts downloaded
-Kaggle ZIPs or extracted folders and defaults to inspecting at most 2,000 rows.
+Kaggle or Hugging Face archives/folders and defaults to inspecting at most
+2,000 rows.
 
 ```bash
 python backend/scripts/ingest_mental_wellness.py \
   --source kaggle-mental-health --path ~/Downloads/mental-health.zip
 python backend/scripts/ingest_mental_wellness.py \
   --source kaggle-counseling --path /path/to/mental-health-counseling.zip
+python backend/scripts/ingest_mental_wellness.py \
+  --source huggingface-mental-health-counseling --path /path/to/dataset
 ```
 
 The two Kaggle sources above declare CC BY 4.0 and MIT, respectively. Imported
 Q&A must still be checked for provenance, privacy, unsafe advice, and quality.
+The Hugging Face source is licensed under RAIL-D; preserve its original
+records and license terms, and complete the required review before approval.
 `samhog/psychology-10k` is not imported because its Hugging Face metadata does
 not declare a license. `li-lab/MentalHealthBenchX` is also excluded from RAG:
 its own card says it is evaluation-only and must not be used for training; use

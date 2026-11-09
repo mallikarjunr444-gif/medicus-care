@@ -107,4 +107,29 @@ def test_doctor_search_routes_ananya_to_wellness_collection(tmp_path):
     ananya_results = service.search_for_doctor("anxiety", "dr_ananya", threshold=0)
     physician_results = service.search_for_doctor("anxiety", "dr_arjun", threshold=0)
     assert {result.collection for result in ananya_results} == {"mental_wellness"}
-    assert {result.collection for result in physician_results} == {"medical", "mental_wellness"}
+    assert {result.collection for result in physician_results} == {"medical"}
+
+
+def test_unknown_doctor_keeps_broad_search_for_internal_callers(tmp_path):
+    service = UnifiedRAGService(data_root=tmp_path, storage_dir=tmp_path / "index")
+    service.medical_store["med"] = KnowledgeChunk(
+        chunk_id="med",
+        collection="medical",
+        category="general_health_education",
+        title="General health",
+        content="General health education",
+        source_name="Medical source",
+        license="CC BY 4.0",
+    )
+    service.mental_wellness_store["well"] = KnowledgeChunk(
+        chunk_id="well",
+        collection="mental_wellness",
+        category="emotional_support",
+        title="Emotional support",
+        content="Emotional support education",
+        source_name="Wellness source",
+        license="MIT",
+    )
+
+    results = service.search_for_doctor("health support", None, threshold=0)
+    assert {result.collection for result in results} == {"medical", "mental_wellness"}

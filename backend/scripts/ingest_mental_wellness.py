@@ -1,11 +1,11 @@
-"""Import eligible Kaggle dialogue datasets into the review-only RAG queue.
+"""Import eligible dialogue datasets into the review-only RAG queue.
 
 Run from the repository root, for example:
   python backend/scripts/ingest_mental_wellness.py \
     --source kaggle-mental-health --path ~/Downloads/mental-health.zip
 
 The importer never auto-approves records. See MEDICARE_KNOWLEDGE_BASE.md for
-dataset eligibility and why the two Hugging Face sources are not patient RAG.
+dataset eligibility and review requirements.
 """
 
 from __future__ import annotations
@@ -41,6 +41,12 @@ SOURCES = {
         "source_name": "Mental Health Counseling Conversations (Kaggle)",
         "license": "MIT",
         "url": "https://www.kaggle.com/datasets/melissamonfared/mental-health-counseling-conversations-k",
+    },
+    "huggingface-mental-health-counseling": {
+        "dataset_id": "Amod/mental_health_counseling_conversations",
+        "source_name": "Mental Health Counseling Conversations (Hugging Face)",
+        "license": "RAIL-D",
+        "url": "https://huggingface.co/datasets/Amod/mental_health_counseling_conversations",
     },
 }
 
@@ -200,7 +206,7 @@ def to_qa_record(row: dict[str, Any], source_file: str, row_number: int) -> dict
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True, choices=(*SOURCES, "psychology-10k", "mentalhealthbenchx"))
-    parser.add_argument("--path", type=Path, help="Downloaded Kaggle ZIP or extracted dataset folder")
+    parser.add_argument("--path", type=Path, help="Downloaded dataset ZIP or extracted folder")
     parser.add_argument("--max-rows", type=int, default=2_000, help="Maximum source rows to inspect (default: 2000)")
     return parser.parse_args()
 
