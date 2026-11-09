@@ -9,6 +9,7 @@ import { TextWordCarousel } from '@/components/ui/text-word-carousel'
 import { TiltSpotlightCard } from '@/components/ui/tilt-spotlight-card'
 import { Marquee } from '@/components/ui/marquee'
 import { Reveal } from '@/components/ui/reveal'
+import { WordReveal } from '@/components/ui/word-reveal'
 import { DOCTORS } from '@/lib/doctorTypes'
 import type { DoctorId } from '@/lib/doctorTypes'
 
@@ -151,7 +152,7 @@ export function DoctorTiles({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId)
     <section id="doctor-selection" className="scroll-mt-24 bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-[1240px] px-3 sm:px-5">
         <div className="mx-auto max-w-[760px] px-2 text-center">
-          <h2 className={H2}>Meet your doctors.</h2>
+          <WordReveal className={H2}>Meet your doctors.</WordReveal>
           <p className={`${LEAD} mt-4`}>Two AI physicians who listen, ask the right follow-up questions, and always say what they are.</p>
         </div>
 
@@ -160,7 +161,7 @@ export function DoctorTiles({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId)
             const doctor = DOCTORS[id]
             const image = DOCTOR_IMAGE[id]
             return (
-              <article key={id} className="flex flex-col overflow-hidden rounded-[28px] bg-[#f5f5f7] text-center">
+              <article key={id} className="group flex flex-col overflow-hidden rounded-[28px] bg-[#f5f5f7] text-center transition-shadow duration-500 hover:shadow-[0_30px_60px_-30px_rgba(0,0,0,0.35)]">
                 <div className="px-6 pb-8 pt-10 sm:px-10 sm:pb-10 sm:pt-12">
                   <h3 className="text-[32px] font-semibold leading-[1.1] tracking-[-0.025em] text-[#1d1d1f] sm:text-[40px]">{doctor.name}</h3>
                   <p className="mt-2 text-[19px] leading-[1.35] text-[#1d1d1f]">{doctor.specialty}</p>
@@ -175,7 +176,7 @@ export function DoctorTiles({ onSelectDoctor }: { onSelectDoctor: (id: DoctorId)
                     alt={`${doctor.name}, an AI physician`}
                     fill
                     sizes="(max-width: 768px) 100vw, 620px"
-                    className="object-cover"
+                    className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
                     style={{ objectPosition: image.position }}
                   />
                 </div>
@@ -247,7 +248,7 @@ export function FeatureTiles() {
     <section id="how-it-works-features" className="bg-[#f5f5f7] py-20 sm:py-28">
       <div className="mx-auto max-w-[1240px] px-3 sm:px-5">
         <div className="mx-auto max-w-[760px] px-2 text-center">
-          <h2 className={H2}>Everything before you see a clinician.</h2>
+          <WordReveal className={H2}>Everything before you see a clinician.</WordReveal>
         </div>
         <div className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 md:grid-cols-2">
           {FEATURES.map(({ icon: Icon, title, body }) => (
@@ -279,7 +280,7 @@ export function HowItWorks() {
   return (
     <section id="how-it-works" className="scroll-mt-24 bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-[1080px] px-5">
-        <h2 className={`${H2} mx-auto max-w-[760px] text-center`}>Three steps. About five minutes.</h2>
+        <WordReveal className={`${H2} mx-auto max-w-[760px] text-center`}>Three steps. About five minutes.</WordReveal>
         <ol className="mt-12 grid gap-10 sm:mt-16 md:grid-cols-3 md:gap-8">
           {STEPS.map((step, i) => (
             <li key={step.title} className="border-t border-[#d2d2d7] pt-6">
@@ -310,7 +311,7 @@ export function Safety() {
     <section id="trust" className="scroll-mt-24 bg-[#f5f5f7] py-20 sm:py-28">
       <div className="mx-auto grid max-w-[1080px] gap-12 px-5 md:grid-cols-[0.9fr_1.1fr] md:gap-16">
         <div>
-          <h2 className={H2}>Honest about what this is.</h2>
+          <WordReveal className={H2}>Honest about what this is.</WordReveal>
         </div>
         <dl className="space-y-7">
           {SAFETY.map((item) => (
