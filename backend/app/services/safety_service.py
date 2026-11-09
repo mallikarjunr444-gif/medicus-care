@@ -56,6 +56,14 @@ except ImportError:
                 disclaimer_required=True
             )
 
+        def validate_ai_response(self, response_text: str):
+            lower = response_text.lower()
+            if "prescribe" in lower or "take " in lower and any(unit in lower for unit in ("mg", "ml", "tablet", "capsule")):
+                return True, "Discuss appropriate medication and dosing with your attending physician."
+            if "you are diagnosed with" in lower or "you definitely have" in lower:
+                return True, "The clinical presentation may suggest possibilities that require assessment by a qualified clinician."
+            return True, response_text
+
     medical_safety_validator = MedicalSafetyValidator()
 
 __all__ = ["medical_safety_validator", "MedicalSafetyValidator"]
