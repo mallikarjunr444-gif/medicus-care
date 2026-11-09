@@ -13,6 +13,7 @@ from app.api.v1.users import require_current_user
 from app.database import get_db
 from app.models import Avatar, User
 from app.services.storage import storage_service
+from app.services.ananya_prompt import ANANYA_SYSTEM_PROMPT
 
 router = APIRouter()
 REPO_ROOT = Path(__file__).resolve().parents[4]
@@ -56,7 +57,7 @@ async def get_or_create_doctor_avatar(
     key = f"avatars/{avatar_id}/image.jpg"
     image_bytes = image_path.read_bytes()
     reference_hash = hashlib.sha256(image_bytes).hexdigest()
-    system_prompt = (
+    system_prompt = ANANYA_SYSTEM_PROMPT if doctor_id == "dr_ananya" else (
         f"You are MediCare's AI doctor persona named {profile['name']}, focused on "
         f"{profile['specialty']}. Be warm, concise, and conversational for speech. "
         "Respond promptly with a brief acknowledgement and one useful answer or one focused follow-up question. "
