@@ -7,7 +7,6 @@ import { Activity, FileText, Pill, ShieldAlert } from 'lucide-react'
 import { MotionButton } from '@/components/ui/motion-button'
 import { TextWordCarousel } from '@/components/ui/text-word-carousel'
 import { TiltSpotlightCard } from '@/components/ui/tilt-spotlight-card'
-import { Marquee } from '@/components/ui/marquee'
 import { Reveal } from '@/components/ui/reveal'
 import { WordReveal } from '@/components/ui/word-reveal'
 import { DOCTORS } from '@/lib/doctorTypes'
@@ -122,20 +121,6 @@ export function Hero({ onStart }: { onStart: () => void }) {
         </motion.figure>
       </div>
     </section>
-  )
-}
-
-/* ───────────────────────── scrolling strip ───────────────────────── */
-
-export function TopicsStrip() {
-  return (
-    <div className="bg-white py-10 sm:py-14" role="presentation">
-      <span className="sr-only">Topics you can ask about: fever, headache, diabetes, blood pressure, lab reports, medicines, skin, sleep, stress.</span>
-      <Marquee
-        className="text-[28px] font-semibold tracking-[-0.02em] text-[#1d1d1f]/20 sm:text-[44px]"
-        items={['Fever', 'Headache', 'Diabetes', 'Blood pressure', 'Lab reports', 'Medicines', 'Skin', 'Sleep', 'Stress', 'ಜ್ವರ', 'सिरदर्द']}
-      />
-    </div>
   )
 }
 
