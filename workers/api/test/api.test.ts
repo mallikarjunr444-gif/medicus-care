@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
+import { pgcrypto } from "@electric-sql/pglite/contrib/pgcrypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "../src/app";
 import type { Env } from "../src/env";
@@ -30,7 +31,8 @@ const json = (token: string | null, body?: unknown, method = "POST"): RequestIni
 const auth = (token: string): RequestInit => ({ headers: { authorization: `Bearer ${token}` } });
 
 beforeAll(async () => {
-  db = new PGlite();
+  db = new PGlite({ extensions: { pgcrypto } });
+  await db.exec("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
   await db.exec(readFileSync(new URL("./schema.sql", import.meta.url), "utf8"));
   app = createApp(() => async (text, params = []) => (await db.query(text, params as any[])).rows as any[]);
 });
@@ -114,7 +116,7 @@ describe("users/auth", () => {
       expect(await r.json()).toEqual({ detail: "Incorrect email or password" });
     }
   });
-  it("verifies a password hashed by the Python backend (bcrypt cost 12)", async () => {
+  it("verifies a password hashed by the Python backend (bcrypt cost 12, checked via pgcrypto)", async () => {
     await db.query(
       "INSERT INTO users (id,email,username,hashed_password) VALUES ('py-1','py@example.com','pyuser',$1)",
       [PY_HASH],

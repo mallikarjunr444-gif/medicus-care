@@ -28,8 +28,8 @@
       "name": "medicare-api-prod",
       "vars": {
         "ENVIRONMENT": "production",
-        // Exact Firebase Hosting origin(s) only. No wildcards.
-        "CORS_ORIGINS": "https://REPLACE-WITH-FIREBASE-SITE.web.app",
+        // Exact Firebase Hosting origins only (no wildcards). Add the MediCare site here once it exists.
+        "CORS_ORIGINS": "https://medicus-labs.web.app,https://medicus-labs.firebaseapp.com",
         "AUTH_COOKIE_NAME": "access_token",
         "AUTH_COOKIE_SECURE": "true",
         // Frontend (web.app) and API (workers.dev) are different sites, so the

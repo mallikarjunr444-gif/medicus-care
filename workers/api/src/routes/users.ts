@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import {
-  clearAuthCookie, createAccessToken, hashPassword, requireUser, setAuthCookie, verifyPassword,
+  BCRYPT_COST, clearAuthCookie, createAccessToken, requireUser, setAuthCookie,
 } from "../auth";
 import type { AppVars, DbUser, Env } from "../env";
 import { fail, iso } from "../http";
@@ -34,8 +34,8 @@ users.post("/register", async (c) => {
 
   const rows = await q(
     `INSERT INTO users (id, email, username, hashed_password, full_name, is_active, is_superuser, is_guest)
-     VALUES ($1,$2,$3,$4,$5,true,false,false) RETURNING *`,
-    [crypto.randomUUID(), email, username, await hashPassword(password!), fullName ?? null],
+     VALUES ($1,$2,$3,crypt($4, gen_salt('bf', ${BCRYPT_COST})),$5,true,false,false) RETURNING *`,
+    [crypto.randomUUID(), email, username, password, fullName ?? null],
   );
   return c.json(userOut(rows[0] as DbUser), 201);
 });
@@ -49,9 +49,20 @@ users.post("/login", async (c) => {
     return c.json({ detail: [{ loc: ["body", "username"], msg: "Field required", type: "missing" }] }, 422);
   }
   const email = username.trim().toLowerCase();
-  const user = (await c.var.query("SELECT * FROM users WHERE email = $1", [email]))[0] as DbUser | undefined;
+  // Verified in Postgres. Python writes `$2b$` hashes; pgcrypto wants `$2a$`
+  // (identical for passwords under 255 bytes), so normalise the prefix. Non-bcrypt
+  // hashes (e.g. the guest "*") never match.
+  const user = (
+    await c.var.query(
+      `SELECT *, (hashed_password LIKE '$2%' AND
+                  regexp_replace(hashed_password, '^[$]2[by][$]', '$2a$') =
+                  crypt($2, regexp_replace(hashed_password, '^[$]2[by][$]', '$2a$'))) AS pw_ok
+         FROM users WHERE email = $1`,
+      [email, password],
+    )
+  )[0] as (DbUser & { pw_ok: boolean }) | undefined;
 
-  if (!password || !user || !user.hashed_password || !(await verifyPassword(password, user.hashed_password))) {
+  if (!password || !user || !user.hashed_password || !user.pw_ok) {
     fail(401, "Incorrect email or password", { "WWW-Authenticate": "Bearer" });
   }
   if (!user!.is_active) fail(403, "Inactive user");
@@ -103,10 +114,10 @@ users.put("/me", requireUser, async (c) => {
        email = COALESCE($2, email),
        username = COALESCE($3, username),
        full_name = COALESCE($4, full_name),
-       hashed_password = COALESCE($5, hashed_password),
+       hashed_password = COALESCE(crypt($5, gen_salt('bf', ${BCRYPT_COST})), hashed_password),
        updated_at = now()
      WHERE id = $1 RETURNING *`,
-    [me.id, email ?? null, username ?? null, fullName ?? null, password !== undefined ? await hashPassword(password) : null],
+    [me.id, email ?? null, username ?? null, fullName ?? null, password ?? null],
   );
   return c.json(userOut(rows[0] as DbUser));
 });

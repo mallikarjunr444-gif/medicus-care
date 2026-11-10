@@ -1,0 +1,52 @@
+name: Deploy API Worker
+
+# Deploys workers/api to Cloudflare Workers (free plan) on every push to main
+# that touches it. One-time setup: add these GitHub repository secrets.
+#   CLOUDFLARE_API_TOKEN   token with "Edit Cloudflare Workers" permission
+#   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account id
+#   DATABASE_URL           Neon connection string (pooled, sslmode=require)
+#   JWT_SECRET_KEY         long random string (openssl rand -base64 48)
+#   SENTRY_DSN             optional
+
+on:
+  push:
+    branches: [main]
+    paths: ["workers/api/**", ".github/workflows/deploy-worker.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: workers/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/api/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/api
+          environment: production
+          command: deploy --env production
+          secrets: |
+            DATABASE_URL
+            JWT_SECRET_KEY
+            SENTRY_DSN
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

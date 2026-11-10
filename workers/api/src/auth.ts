@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import type { Context, MiddlewareHandler } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
@@ -34,23 +33,12 @@ export async function subjectFromToken(env: Env, token: string): Promise<string 
   }
 }
 
-// bcrypt reads at most 72 bytes; cap without splitting a multi-byte character.
-function truncate72(password: string): string {
-  const bytes = new TextEncoder().encode(password);
-  if (bytes.length <= 72) return password;
-  return new TextDecoder("utf-8").decode(bytes.slice(0, 72)).replace(/�+$/, "");
-}
-
-export async function verifyPassword(plain: string, hashed: string): Promise<boolean> {
-  if (!plain || !hashed) return false;
-  try {
-    return await bcrypt.compare(truncate72(plain), hashed);
-  } catch {
-    return false; // malformed hash such as "*" (guest accounts)
-  }
-}
-
-export const hashPassword = (plain: string) => bcrypt.hash(truncate72(plain), 10);
+// Password hashing runs INSIDE Postgres (pgcrypto bcrypt, `$2a$` format): the
+// Workers Free plan allows ~10 ms CPU per request and pure-JS bcrypt needs
+// 80-300 ms. pgcrypto output is interchangeable with Python's bcrypt, so
+// existing hashes keep working. Passwords travel to the database only over
+// TLS, as bound query parameters (never interpolated, never logged).
+export const BCRYPT_COST = 10;
 
 const sameSite = (v: string) => (v.toLowerCase() === "none" ? "None" : v.toLowerCase() === "strict" ? "Strict" : "Lax") as "None" | "Strict" | "Lax";
 
