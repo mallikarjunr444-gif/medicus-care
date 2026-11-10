@@ -3,7 +3,7 @@ import { createApp } from "./app";
 import { neonQuery } from "./db";
 import type { Env } from "./env";
 
-const app = createApp(neonQuery);
+const app = createApp(neonQuery, { report: (e) => Sentry.captureException(e) });
 
 export default Sentry.withSentry(
   (env: Env) => ({

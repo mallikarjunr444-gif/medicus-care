@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { HTTPException } from "hono/http-exception";
-import * as Sentry from "@sentry/cloudflare";
 import { loadUser } from "./auth";
 import type { AppVars, Env, Query } from "./env";
 import { messages } from "./routes/messages";
@@ -12,7 +11,26 @@ import { users } from "./routes/users";
 const HEALTH_TIMEOUT_MS = 3000;
 
 /** `makeQuery` is injected so tests can swap in an in-process Postgres. */
-export function createApp(makeQuery: (env: Env) => Query) {
+export interface AppOptions {
+  /** Called with unexpected errors (e.g. Sentry.captureException). Never receives request bodies. */
+  report?: (err: unknown) => void;
+}
+
+// Fallback limiter for hosts without the Cloudflare binding (per warm instance).
+const FALLBACK_LIMIT = 120;
+const hits = new Map<string, { n: number; reset: number }>();
+function fallbackAllow(key: string): boolean {
+  const now = Date.now();
+  const h = hits.get(key);
+  if (!h || now > h.reset) {
+    if (hits.size > 5000) hits.clear();
+    hits.set(key, { n: 1, reset: now + 60_000 });
+    return true;
+  }
+  return ++h.n <= FALLBACK_LIMIT;
+}
+
+export function createApp(makeQuery: (env: Env) => Query, opts: AppOptions = {}) {
   const app = new Hono<{ Bindings: Env; Variables: AppVars }>();
 
   app.use("*", secureHeaders());
@@ -28,11 +46,9 @@ export function createApp(makeQuery: (env: Env) => Query) {
 
   // Per-identity limiter (Cloudflare's rate-limit binding). Skipped if unbound.
   app.use("/api/*", async (c, next) => {
-    if (c.env.RATE_LIMITER) {
-      const key = c.req.header("cf-connecting-ip") ?? "unknown";
-      const { success } = await c.env.RATE_LIMITER.limit({ key });
-      if (!success) return c.json({ detail: "Rate limit exceeded. Try again later." }, 429, { "Retry-After": "60" });
-    }
+    const key = (c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for")?.split(",")[0] ?? "unknown").trim();
+    const ok = c.env.RATE_LIMITER ? (await c.env.RATE_LIMITER.limit({ key })).success : fallbackAllow(key);
+    if (!ok) return c.json({ detail: "Rate limit exceeded. Try again later." }, 429, { "Retry-After": "60" });
     await next();
   });
 
@@ -71,7 +87,7 @@ export function createApp(makeQuery: (env: Env) => Query) {
   app.onError((err, c) => {
     if (err instanceof HTTPException) return err.getResponse();
     // Never log request bodies: they can contain patient-sensitive text.
-    Sentry.captureException(err);
+    opts.report?.(err);
     console.error("unhandled_error", err instanceof Error ? err.message : "unknown");
     return c.json({ detail: "Internal server error" }, 500);
   });
