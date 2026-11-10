@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -208,6 +209,10 @@ async def root():
     }
 
 
+# Seconds a dependency check may take before /health reports it down.
+_HEALTH_CHECK_TIMEOUT = 3.0
+
+
 @app.get("/health")
 async def health_check(response: Response):
     """
@@ -236,9 +241,14 @@ async def health_check(response: Response):
     }
 
     # Check database
-    try:
+    # Bounded by a timeout: a hung database must fail the probe quickly, not
+    # hold the probe (and the orchestrator's patience) open indefinitely.
+    async def _db_ping() -> None:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
+
+    try:
+        await asyncio.wait_for(_db_ping(), timeout=_HEALTH_CHECK_TIMEOUT)
         services["database"] = "connected"
     except Exception:
         services["database"] = "disconnected"
@@ -247,7 +257,7 @@ async def health_check(response: Response):
     # Check Redis
     try:
         if cache_service.redis:
-            await cache_service.redis.ping()
+            await asyncio.wait_for(cache_service.redis.ping(), timeout=_HEALTH_CHECK_TIMEOUT)
             services["redis"] = "connected"
         else:
             services["redis"] = "not configured"

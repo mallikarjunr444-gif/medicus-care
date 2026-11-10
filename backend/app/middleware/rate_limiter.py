@@ -18,12 +18,13 @@ from __future__ import annotations
 
 import logging
 import time
-from collections import defaultdict
-from typing import Callable, Optional
+from collections import defaultdict, deque
+from typing import Optional
 
-from fastapi import Request, Response, status
+from fastapi import Request, status
 from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.datastructures import MutableHeaders
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from app.config import settings
 from app.services.cache import cache_service
@@ -39,10 +40,10 @@ _EXEMPT_PREFIXES = ("/uploads/",)
 class _RateLimited(Exception):
     """Internal signal: limit hit. Carries the user-facing detail + headers.
 
-    NOTE: this is deliberately NOT fastapi.HTTPException — an HTTPException
-    raised inside BaseHTTPMiddleware never reaches FastAPI's exception
-    handlers (they live inside the middleware stack), so it used to surface
-    as a 500 "Internal server error" instead of a 429.
+    NOTE: this is deliberately NOT fastapi.HTTPException — an exception
+    raised from a middleware never reaches FastAPI's exception handlers
+    (they live inside the middleware stack), so it would surface as a 500
+    "Internal server error" instead of a 429.
     """
 
     def __init__(self, detail: str, retry_after: int):
@@ -69,33 +70,45 @@ def _extract_user_id(request: Request) -> Optional[str]:
     return subject_from_token(token)
 
 
-class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Fixed-window rate limiter scoped per authenticated user (else per IP)."""
+class RateLimitMiddleware:
+    """Fixed-window rate limiter scoped per authenticated user (else per IP).
+
+    Plain ASGI middleware (no `BaseHTTPMiddleware`) so a request does not pay
+    for an extra task and body re-streaming just to be counted.
+    """
 
     def __init__(
         self,
-        app,
+        app: Optional[ASGIApp],
         rate_per_minute: Optional[int] = None,
         rate_per_hour: Optional[int] = None,
     ):
-        super().__init__(app)
+        self.app = app
         self.rate_per_minute = rate_per_minute or settings.RATE_LIMIT_PER_MINUTE
         self.rate_per_hour = rate_per_hour or settings.RATE_LIMIT_PER_HOUR
-        # Fallback in-process buckets (used only when Redis is unavailable)
-        self._minute_buckets: dict[str, list[float]] = defaultdict(list)
-        self._hour_buckets: dict[str, list[float]] = defaultdict(list)
+        # Fallback in-process buckets (used only when Redis is unavailable).
+        # Deques keep the oldest hit at the left so expiring old hits is
+        # O(expired) instead of rebuilding a list of every hit on every request.
+        self._minute_buckets: dict[str, deque[float]] = defaultdict(deque)
+        self._hour_buckets: dict[str, deque[float]] = defaultdict(deque)
         self._last_prune = 0.0
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
-        path = request.url.path
-        if path in _EXEMPT_PATHS or any(path.startswith(p) for p in _EXEMPT_PREFIXES):
-            return await call_next(request)
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
 
+        path = scope["path"]
+        if path in _EXEMPT_PATHS or path.startswith(_EXEMPT_PREFIXES):
+            await self.app(scope, receive, send)
+            return
+
+        request = Request(scope, receive)
         identity = self._identity_key(request)
         try:
-            minute_count, hour_count = await self._consume(identity)
+            minute_count, _hour_count = await self._consume(identity)
         except _RateLimited as exc:
-            return JSONResponse(
+            response = JSONResponse(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 content={"detail": exc.detail},
                 headers={
@@ -104,12 +117,22 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "X-RateLimit-Remaining": "0",
                 },
             )
+            await response(scope, receive, send)
+            return
 
-        response = await call_next(request)
-        response.headers["X-RateLimit-Limit"] = str(self.rate_per_minute)
-        response.headers["X-RateLimit-Remaining"] = str(max(0, self.rate_per_minute - minute_count))
-        response.headers["X-RateLimit-Identity"] = identity.split(":", 1)[0]
-        return response
+        limit = str(self.rate_per_minute)
+        remaining = str(max(0, self.rate_per_minute - minute_count))
+        kind = identity.split(":", 1)[0]
+
+        async def send_with_limits(message: Message) -> None:
+            if message["type"] == "http.response.start":
+                out = MutableHeaders(scope=message)
+                out["X-RateLimit-Limit"] = limit
+                out["X-RateLimit-Remaining"] = remaining
+                out["X-RateLimit-Identity"] = kind
+            await send(message)
+
+        await self.app(scope, receive, send_with_limits)
 
     # ── identity ──────────────────────────────────────────────────────────────
 
@@ -183,12 +206,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 for key in [k for k, v in buckets.items() if not v or now - v[-1] >= window]:
                     del buckets[key]
 
-        minute = self._minute_buckets[identity] = [
-            t for t in self._minute_buckets[identity] if now - t < 60
-        ]
-        hour = self._hour_buckets[identity] = [
-            t for t in self._hour_buckets[identity] if now - t < 3600
-        ]
+        minute = self._minute_buckets[identity]
+        hour = self._hour_buckets[identity]
+        # Oldest hits are on the left; pop only the ones that have expired.
+        while minute and now - minute[0] >= 60:
+            minute.popleft()
+        while hour and now - hour[0] >= 3600:
+            hour.popleft()
 
         if len(minute) >= self.rate_per_minute:
             logger.warning(f"Rate limit exceeded (minute, local) for {identity}")
