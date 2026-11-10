@@ -1,0 +1,46 @@
+{
+  // MediCare API edge Worker. Free plan: 100k requests/day, 10 ms CPU/request.
+  "name": "medicare-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Non-secret config. Secrets (DATABASE_URL, JWT_SECRET_KEY, SENTRY_DSN) are
+  // NEVER put here: set them with `wrangler secret put <NAME>`.
+  "vars": {
+    "ENVIRONMENT": "development",
+    "CORS_ORIGINS": "http://localhost:3000",
+    "AUTH_COOKIE_NAME": "access_token",
+    "AUTH_COOKIE_SECURE": "false",
+    "AUTH_COOKIE_SAMESITE": "lax",
+    "JWT_EXPIRATION_HOURS": "24",
+    "GUEST_ACCOUNTS_ENABLED": "true"
+  },
+
+  // Cloudflare's built-in rate limiter: 60 requests / 60 s per key.
+  "ratelimits": [
+    { "name": "RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } }
+  ],
+
+  "env": {
+    "production": {
+      "name": "medicare-api-prod",
+      "vars": {
+        "ENVIRONMENT": "production",
+        // Exact Firebase Hosting origin(s) only. No wildcards.
+        "CORS_ORIGINS": "https://REPLACE-WITH-FIREBASE-SITE.web.app",
+        "AUTH_COOKIE_NAME": "access_token",
+        "AUTH_COOKIE_SECURE": "true",
+        // Frontend (web.app) and API (workers.dev) are different sites, so the
+        // cookie must be SameSite=None; Secure. Bearer tokens also work.
+        "AUTH_COOKIE_SAMESITE": "none",
+        "JWT_EXPIRATION_HOURS": "24",
+        "GUEST_ACCOUNTS_ENABLED": "true"
+      },
+      "ratelimits": [
+        { "name": "RATE_LIMITER", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } }
+      ]
+    }
+  }
+}
