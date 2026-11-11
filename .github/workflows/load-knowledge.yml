@@ -1,6 +1,12 @@
 name: Load Knowledge Base
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/load_knowledge.py
+      - database/rag_store/*.json
+      - .github/workflows/load-knowledge.yml
 permissions:
   contents: read
 jobs:
