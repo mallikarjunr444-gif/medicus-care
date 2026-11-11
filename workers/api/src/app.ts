@@ -1,5 +1,8 @@
 import { Hono } from "hono/tiny";
 import { doctors } from "./doctors";
+import { avatars } from "./routes/avatars";
+import { voices } from "./routes/voices";
+import { admin } from "./routes/admin";
 import { conversations } from "./routes/conversations";
 import { consultationReports } from "./routes/consultationReports";
 import { doctorActions } from "./doctorActions";
@@ -84,6 +87,9 @@ export function createApp(makeQuery: (env: Env) => Query, opts: AppOptions = {})
 
   app.use("/api/v1/*", loadUser);
   app.route("/api/v1/doctors", doctors);
+  app.route("/api/v1/avatars", avatars);
+  app.route("/api/v1/voices", voices);
+  app.route("/api/v1/admin", admin);
   app.route("/api/v1/conversations", conversations);
   app.route("/api/v1/consultation-reports", consultationReports);
   app.route("/api/v1/doctor", doctorActions);

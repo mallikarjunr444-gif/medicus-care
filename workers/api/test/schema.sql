@@ -27,3 +27,21 @@ CREATE TABLE consultation_reports (
   user_id varchar NOT NULL REFERENCES users(id) ON DELETE CASCADE, doctor_id varchar, language varchar,
   triage_level integer, duration_seconds integer, report json NOT NULL,
   created_at timestamptz DEFAULT now(), updated_at timestamptz);
+
+
+CREATE TABLE IF NOT EXISTS knowledge_chunks (
+  chunk_id text PRIMARY KEY,
+  collection text NOT NULL,
+  category text,
+  title text NOT NULL,
+  content text NOT NULL,
+  source_name text,
+  origin_url text,
+  license text,
+  approved boolean NOT NULL DEFAULT true,
+  tsv tsvector GENERATED ALWAYS AS (
+    setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(content, '')), 'B')) STORED
+);
+CREATE INDEX IF NOT EXISTS knowledge_chunks_tsv_idx ON knowledge_chunks USING gin (tsv);
+CREATE INDEX IF NOT EXISTS knowledge_chunks_collection_idx ON knowledge_chunks (collection);

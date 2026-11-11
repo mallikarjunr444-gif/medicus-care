@@ -287,3 +287,54 @@ describe("conversations and reports", () => {
     expect((await call(`/api/v1/consultation-reports/${s.id}`, auth(other))).status).toBe(404);
   });
 });
+
+describe("avatars, voices and admin", () => {
+  const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
+  it("uploads an avatar image, rejects non-images, and lists/renames/deletes", async () => {
+    const t = (await (await call("/api/v1/users/guest", json(null))).json()).access_token as string;
+    const fd = new FormData();
+    fd.set("name", "Me");
+    fd.set("file", new File([png], "me.png", { type: "image/png" }));
+    const up = await call("/api/v1/avatars/upload", { method: "POST", headers: { authorization: `Bearer ${t}` }, body: fd });
+    expect(up.status).toBe(201);
+    const a = await up.json();
+    expect(a.status).toBe("ready");
+    expect(a.image_url.startsWith("data:image/png;base64,")).toBe(true);
+    const bad = new FormData();
+    bad.set("name", "x");
+    bad.set("file", new File([new Uint8Array([1, 2, 3, 4])], "x.png", { type: "image/png" }));
+    expect((await call("/api/v1/avatars/upload", { method: "POST", headers: { authorization: `Bearer ${t}` }, body: bad })).status).toBe(400);
+    const rn = await (await call(`/api/v1/avatars/${a.id}/name`, json(t, { name: "Renamed" }, "PATCH"))).json();
+    expect(rn.name).toBe("Renamed");
+    expect((await (await call("/api/v1/avatars/", auth(t))).json()).length).toBe(1);
+    expect((await call("/api/v1/voices/", auth(t))).status).toBe(200);
+    expect((await call("/api/v1/voices/clone", json(t, {}))).status).toBe(503);
+    expect((await call(`/api/v1/avatars/${a.id}`, { method: "DELETE", ...auth(t) })).status).toBe(204);
+  });
+  it("keeps the admin API for superusers only", async () => {
+    const t = (await (await call("/api/v1/users/guest", json(null))).json()).access_token as string;
+    expect((await call("/api/v1/admin/stats", auth(t))).status).toBe(403);
+    expect((await call("/api/v1/admin/stats")).status).toBe(401);
+  });
+});
+
+describe("admin as superuser", () => {
+  it("lists, filters, approves and deletes knowledge chunks, and runs the safety eval", async () => {
+    await db.query(`INSERT INTO knowledge_chunks (chunk_id, collection, title, content) VALUES
+      ('t1','medical','Fever','Fever guidance text'),('t2','mental_wellness','Calm','Breathing text')`);
+    const g = await (await call("/api/v1/users/guest", json(null))).json();
+    const me = await (await call("/api/v1/users/me", auth(g.access_token))).json();
+    await db.query("UPDATE users SET is_superuser = true WHERE id = $1", [me.id]);
+    const t = g.access_token as string;
+    const stats = await (await call("/api/v1/admin/stats", auth(t))).json();
+    expect(stats.knowledge_base.total_chunks).toBeGreaterThanOrEqual(2);
+    const list = await (await call("/api/v1/admin/knowledge/sources?search=fever&collection=medical", auth(t))).json();
+    expect(list.chunks.map((c: any) => c.chunk_id)).toEqual(["t1"]);
+    const rej = await (await call("/api/v1/admin/knowledge/sources/t1/action", json(t, { action: "reject" }))).json();
+    expect(rej.approved).toBe(false);
+    expect((await (await call("/api/v1/admin/knowledge/sources?status=pending", auth(t))).json()).total).toBe(1);
+    const ev = await (await call("/api/v1/admin/safety/eval", json(t, { sample_size: 20 }))).json();
+    expect(ev.passed_probes).toBe(ev.total_probes);
+    expect((await call("/api/v1/admin/knowledge/sources/t2", { method: "DELETE", ...auth(t) })).status).toBe(200);
+  });
+});

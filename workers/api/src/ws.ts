@@ -1,5 +1,6 @@
 import { subjectFromToken } from "./auth";
 import { DOCTORS, systemPrompt } from "./doctors";
+import { evaluatePatientQuery, validateAiResponse } from "./safety";
 import type { Env, Query } from "./env";
 
 const LANGS: Record<string, string> = { kn: "Kannada (ಕನ್ನಡ script)", en: "English", hi: "Hindi (देवनागरी script)" };
@@ -208,12 +209,22 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
           /* fall back to original text */
         }
       }
+      // Deterministic emergency escalation runs before any AI reply (same rules as the Python service).
+      const triage = [text, searchText].map(evaluatePatientQuery).find((t) => t.is_emergency);
+      if (triage) {
+        const reply = triage.emergency_message!;
+        await query(`INSERT INTO messages (id, session_id, role, content) VALUES ($1,$2,'assistant',$3)`, [
+          crypto.randomUUID(), sessionId, reply,
+        ]);
+        send({ type: "message", role: "assistant", content: reply, triage: 4, is_emergency: true });
+        return;
+      }
       const refs = await retrieve(query, doctorId, searchText);
       const lang = LANGS[language] ?? language;
       const sys = `${systemPrompt(doctorId)}\nCurrent consultation language: ${lang}. Respond entirely in ${lang}; use 1-3 short sentences, no markdown or lists.${refs}`;
       const reply = await streamAi(env, [{ role: "system", content: sys }, ...hist], language, (t) => send({ type: "token", token: t }), mine);
       if (mine.aborted) return;
-      const content = reply.trim() || "I'm here. Could you tell me a little more?";
+      const content = validateAiResponse(reply.trim()) || "I'm here. Could you tell me a little more?";
       await query(`INSERT INTO messages (id, session_id, role, content) VALUES ($1,$2,'assistant',$3)`, [
         crypto.randomUUID(),
         sessionId,
