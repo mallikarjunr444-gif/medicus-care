@@ -314,6 +314,11 @@ export function DoctorVideoCall({
           streamedDoctorTextRef.current = ''
           if (triage) setActiveTriage(triage)
           pendingClinicalMetaRef.current = null
+          // No server-generated voice (free hosting): speak with the device's
+          // own voice (e.g. Kannada on Android) and drive the avatar from it.
+          if (!responseAudioStartedRef.current && audioQueueRef.current.length === 0 && !doctorVideoActiveRef.current) {
+            speak(event.content)
+          }
         }
         break
       case 'audio_chunk': {
@@ -420,7 +425,7 @@ export function DoctorVideoCall({
       case 'pong':
         break
     }
-  }, [doctorId, hasSeparateTtsAudio, setSubtitles, pauseVoiceInput, resumeVoiceInput, clearDoctorAudio])
+  }, [doctorId, hasSeparateTtsAudio, setSubtitles, pauseVoiceInput, resumeVoiceInput, clearDoctorAudio, speak])
 
   const doctorBackend = useDoctorBackendSession(handleDoctorBackendEvent)
   const {

@@ -264,3 +264,26 @@ describe("doctor actions", () => {
     expect(ok.booking_id).toMatch(/^APT-DOC-CKM-01-/);
   });
 });
+
+describe("conversations and reports", () => {
+  it("creates, renames, lists, saves a report and deletes", async () => {
+    const t = (await (await call("/api/v1/users/guest", json(null))).json()).access_token as string;
+    const a = await (await call("/api/v1/doctors/dr_ananya/avatar", json(t))).json();
+    const s = await (await call("/api/v1/sessions/create", json(t, { avatar_id: a.id }))).json();
+    const c1 = await call(`/api/v1/conversations/session/${s.id}`, json(t));
+    expect(c1.status).toBe(201);
+    const conv = await c1.json();
+    const rn = await (await call(`/api/v1/conversations/${conv.id}/rename`, json(t, { title: "Headache" }, "PATCH"))).json();
+    expect(rn.title).toBe("Headache");
+    expect((await (await call("/api/v1/conversations/", auth(t))).json()).length).toBe(1);
+    expect((await call(`/api/v1/conversations/${conv.id}/summarize`, json(t))).status).toBe(400);
+    const put = await call(`/api/v1/consultation-reports/${s.id}`, json(t, { triage_level: 2, report: { a: 1 } }, "PUT"));
+    expect(put.status).toBe(200);
+    await call(`/api/v1/consultation-reports/${s.id}`, json(t, { triage_level: 3, report: { a: 2 } }, "PUT"));
+    const got = await (await call(`/api/v1/consultation-reports/${s.id}`, auth(t))).json();
+    expect(got.triage_level).toBe(3);
+    expect((await call(`/api/v1/conversations/${conv.id}`, { method: "DELETE", ...auth(t) })).status).toBe(204);
+    const other = (await (await call("/api/v1/users/guest", json(null))).json()).access_token as string;
+    expect((await call(`/api/v1/consultation-reports/${s.id}`, auth(other))).status).toBe(404);
+  });
+});

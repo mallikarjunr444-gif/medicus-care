@@ -1,5 +1,7 @@
 import { Hono } from "hono/tiny";
 import { doctors } from "./doctors";
+import { conversations } from "./routes/conversations";
+import { consultationReports } from "./routes/consultationReports";
 import { doctorActions } from "./doctorActions";
 import { handleWs } from "./ws";
 import { cors } from "hono/cors";
@@ -82,6 +84,8 @@ export function createApp(makeQuery: (env: Env) => Query, opts: AppOptions = {})
 
   app.use("/api/v1/*", loadUser);
   app.route("/api/v1/doctors", doctors);
+  app.route("/api/v1/conversations", conversations);
+  app.route("/api/v1/consultation-reports", consultationReports);
   app.route("/api/v1/doctor", doctorActions);
   app.route("/api/v1/users", users);
   app.route("/api/v1/sessions", sessions);

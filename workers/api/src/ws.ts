@@ -177,7 +177,6 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
         content,
       ]);
       send({ type: "message", role: "assistant", content });
-      send({ type: "audio_stream_end" });
     } catch (e) {
       console.error("ws_turn_failed", String((e as Error).message).slice(0, 200));
       send({ type: "error", message: "The doctor is busy right now. Please try again in a moment." });
