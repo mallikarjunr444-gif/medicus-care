@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { modelFor, streamAi } from "../src/ws";
+import { modelFor, retrieve, searchTerms, streamAi } from "../src/ws";
 
 const sse = (lines: string[]) =>
   new ReadableStream<Uint8Array>({
@@ -31,5 +31,39 @@ describe("modelFor", () => {
     expect(modelFor({} as any, "kn")).toContain("70b");
     expect(modelFor({} as any, "hi")).toContain("70b");
     expect(modelFor({} as any, "en")).toContain("8b");
+  });
+});
+
+describe("retrieval", () => {
+  it("builds an OR query without stopwords or punctuation", () => {
+    expect(searchTerms("I have a bad headache and fever since the morning!")).toBe("bad | headache | fever | since | morning");
+    expect(searchTerms("ಕನ್ನಡ")).toBe("");
+  });
+  it("formats excerpts, and returns empty on database errors", async () => {
+    const ok = await retrieve(async () => [{ title: "A1C", body: "blood test" }], "dr_arjun", "what is a1c");
+    expect(ok).toContain("[1] A1C: blood test");
+    const bad = await retrieve(async () => { throw new Error("db"); }, "dr_arjun", "fever");
+    expect(bad).toBe("");
+  });
+});
+
+import { PGlite } from "@electric-sql/pglite";
+describe("retrieval against Postgres full-text search", () => {
+  it("ranks the matching chunk and filters by collection", async () => {
+    const db = new PGlite();
+    const ddl = (await import("node:fs")).readFileSync(new URL("../../../scripts/load_knowledge.py", import.meta.url), "utf8");
+    const sql = ddl.match(/DDL = """([\s\S]*?)"""/)![1];
+    await db.exec(sql);
+    await db.query(`INSERT INTO knowledge_chunks (chunk_id, collection, title, content) VALUES
+      ('1','medical','A1C test','A1C is a blood test for diabetes that measures average blood glucose.'),
+      ('2','medical','Migraine','Migraine causes a severe headache with nausea.'),
+      ('3','mental_wellness','Anxiety','Breathing helps with anxiety and stress.')`);
+    const q = async (t: string, p: unknown[] = []) => (await db.query(t, p as any[])).rows as any[];
+    expect(await retrieve(q, "dr_arjun", "my blood sugar test and diabetes")).toContain("A1C test");
+    const m = await retrieve(q, "dr_arjun", "terrible headache");
+    expect(m).toContain("Migraine");
+    expect(m).not.toContain("Anxiety");
+    expect(await retrieve(q, "dr_ananya", "feeling anxiety")).toContain("Anxiety");
+    expect(await retrieve(q, "dr_arjun", "zzzzqqq")).toBe("");
   });
 });

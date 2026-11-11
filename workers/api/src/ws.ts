@@ -5,6 +5,35 @@ import type { Env, Query } from "./env";
 const LANGS: Record<string, string> = { kn: "Kannada (ಕನ್ನಡ script)", en: "English", hi: "Hindi (देवनागरी script)" };
 const MAX_TEXT = 4000;
 
+const STOP = new Set("the and for are but not you your have has had with that this from they them what when where which who whom how why can could would should will was were been being about into than then there here also just very some any more most such only over after before again does did doing its our out off too few own same both each other these those".split(" "));
+
+/** OR-query over the user's words so natural sentences still match. */
+export function searchTerms(text: string): string {
+  const words = (text.toLowerCase().match(/[a-z0-9]{3,}/g) ?? []).filter((w) => !STOP.has(w));
+  return [...new Set(words)].slice(0, 12).join(" | ");
+}
+
+/** Reference excerpts from the knowledge base; never throws (chat works without it). */
+export async function retrieve(query: Query, doctorId: string, text: string): Promise<string> {
+  const q = searchTerms(text);
+  if (!q) return "";
+  try {
+    const rows = await query(
+      `SELECT title, left(content, 700) AS body FROM knowledge_chunks
+       WHERE collection = $1 AND approved AND tsv @@ to_tsquery('english', $2)
+       ORDER BY ts_rank_cd(tsv, to_tsquery('english', $2)) DESC LIMIT 3`,
+      [doctorId === "dr_ananya" ? "mental_wellness" : "medical", q],
+    );
+    if (!rows.length) return "";
+    return (
+      "\nReference excerpts (informational only, may be incomplete or outdated; do not read aloud verbatim, never invent sources):\n" +
+      rows.map((r, i) => `[${i + 1}] ${r.title}: ${r.body}`).join("\n")
+    );
+  } catch {
+    return "";
+  }
+}
+
 type Chat = { role: "system" | "user" | "assistant"; content: string };
 
 function tokenOf(chunk: any): string {
@@ -166,8 +195,22 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
           sessionId,
         ])
       ).reverse() as Chat[];
+      let searchText = text;
+      if (language !== "en" && env.AI) {
+        // Knowledge base is English: get an English search phrase for Kannada/Hindi input.
+        try {
+          const t: any = await env.AI.run(env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct", {
+            messages: [{ role: "user", content: `Translate to English, output only the translation:\n${text}` }],
+            max_tokens: 80,
+          });
+          searchText = String(t?.response ?? text);
+        } catch {
+          /* fall back to original text */
+        }
+      }
+      const refs = await retrieve(query, doctorId, searchText);
       const lang = LANGS[language] ?? language;
-      const sys = `${systemPrompt(doctorId)}\nCurrent consultation language: ${lang}. Respond entirely in ${lang}; use 1-3 short sentences, no markdown or lists.`;
+      const sys = `${systemPrompt(doctorId)}\nCurrent consultation language: ${lang}. Respond entirely in ${lang}; use 1-3 short sentences, no markdown or lists.${refs}`;
       const reply = await streamAi(env, [{ role: "system", content: sys }, ...hist], language, (t) => send({ type: "token", token: t }), mine);
       if (mine.aborted) return;
       const content = reply.trim() || "I'm here. Could you tell me a little more?";
