@@ -144,6 +144,13 @@ describe("users/auth", () => {
     const none = `${btoa('{"alg":"none"}')}.${btoa('{"sub":"py-1","exp":9999999999}')}.`;
     expect((await call("/api/v1/users/me", auth(none))).status).toBe(401);
   });
+  it("rejects expired and wrong-secret tokens", async () => {
+    const { createAccessToken } = await import("../src/auth");
+    const good = await createAccessToken(env, "py-1");
+    expect((await call("/api/v1/users/me", auth(good))).status).toBe(200);
+    expect((await call("/api/v1/users/me", auth(await createAccessToken({ ...env, JWT_SECRET_KEY: "other-secret-other-secret-other-1234" }, "py-1")))).status).toBe(401);
+    expect((await call("/api/v1/users/me", auth(await createAccessToken({ ...env, JWT_EXPIRATION_HOURS: "-1" }, "py-1")))).status).toBe(401);
+  });
   it("PUT /me updates and enforces uniqueness; list is superuser-only", async () => {
     const t = await guest();
     const r = await call("/api/v1/users/me", json(t, { full_name: "Renamed" }, "PUT"));

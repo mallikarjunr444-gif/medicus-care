@@ -41,12 +41,10 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers/api
           environment: production
-          command: deploy --env production
+          command: deploy
           secrets: |
             DATABASE_URL
             JWT_SECRET_KEY
-            SENTRY_DSN
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

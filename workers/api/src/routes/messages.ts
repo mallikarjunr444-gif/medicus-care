@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono } from "hono/tiny";
 import { requireUser } from "../auth";
 import type { AppVars, Env } from "../env";
 import { fail, iso } from "../http";

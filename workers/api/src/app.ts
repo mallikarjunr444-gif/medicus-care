@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono } from "hono/tiny";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { HTTPException } from "hono/http-exception";

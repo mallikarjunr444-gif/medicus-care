@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono } from "hono/tiny";
 import {
   BCRYPT_COST, clearAuthCookie, createAccessToken, requireUser, setAuthCookie,
 } from "../auth";

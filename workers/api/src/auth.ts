@@ -1,4 +1,3 @@
-import { SignJWT, jwtVerify } from "jose";
 import type { Context, MiddlewareHandler } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import type { AppVars, DbUser, Env } from "./env";
@@ -6,28 +5,34 @@ import { fail } from "./http";
 
 type C = Context<{ Bindings: Env; Variables: AppVars }>;
 
-const ALG = "HS256";
-const secretKey = (env: Env) => new TextEncoder().encode(env.JWT_SECRET_KEY);
+const enc = new TextEncoder();
+const b64u = (bytes: Uint8Array) =>
+  btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const b64uDecode = (s: string) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+const hmacKey = (env: Env, usage: "sign" | "verify") =>
+  crypto.subtle.importKey("raw", enc.encode(env.JWT_SECRET_KEY), { name: "HMAC", hash: "SHA-256" }, false, [usage]);
 
 /** Same wire format as the Python API: HS256, `sub` = user id, `exp` required. */
 export async function createAccessToken(env: Env, sub: string): Promise<string> {
   const hours = Number(env.JWT_EXPIRATION_HOURS) || 24;
-  return new SignJWT({})
-    .setProtectedHeader({ alg: ALG })
-    .setSubject(sub)
-    .setExpirationTime(Math.floor(Date.now() / 1000) + hours * 3600)
-    .sign(secretKey(env));
+  const head = b64u(enc.encode(JSON.stringify({ alg: "HS256", typ: "JWT" })));
+  const body = b64u(enc.encode(JSON.stringify({ sub, exp: Math.floor(Date.now() / 1000) + hours * 3600 })));
+  const sig = new Uint8Array(await crypto.subtle.sign("HMAC", await hmacKey(env, "sign"), enc.encode(`${head}.${body}`)));
+  return `${head}.${body}.${b64u(sig)}`;
 }
 
-/** Returns the user id (`sub`) of a valid token, else null. Algorithm is pinned. */
+/** Returns the user id (`sub`) of a valid token, else null. Algorithm is pinned to HS256. */
 export async function subjectFromToken(env: Env, token: string): Promise<string | null> {
-  if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, secretKey(env), {
-      algorithms: [ALG],
-      requiredClaims: ["exp", "sub"],
-    });
-    return typeof payload.sub === "string" ? payload.sub : null;
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const header = JSON.parse(new TextDecoder().decode(b64uDecode(parts[0])));
+    if (header.alg !== "HS256") return null; // rejects alg:none and algorithm confusion
+    const ok = await crypto.subtle.verify("HMAC", await hmacKey(env, "verify"), b64uDecode(parts[2]), enc.encode(`${parts[0]}.${parts[1]}`));
+    if (!ok) return null;
+    const p = JSON.parse(new TextDecoder().decode(b64uDecode(parts[1])));
+    if (typeof p.exp !== "number" || p.exp <= Date.now() / 1000) return null;
+    return typeof p.sub === "string" ? p.sub : null;
   } catch {
     return null;
   }
