@@ -1,4 +1,6 @@
 import { Hono } from "hono/tiny";
+import { doctors } from "./doctors";
+import { handleWs } from "./ws";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { HTTPException } from "hono/http-exception";
@@ -78,6 +80,7 @@ export function createApp(makeQuery: (env: Env) => Query, opts: AppOptions = {})
   });
 
   app.use("/api/v1/*", loadUser);
+  app.route("/api/v1/doctors", doctors);
   app.route("/api/v1/users", users);
   app.route("/api/v1/sessions", sessions);
   app.route("/api/v1/messages", messages);
@@ -98,6 +101,9 @@ export function createApp(makeQuery: (env: Env) => Query, opts: AppOptions = {})
   const route = app.fetch.bind(app);
   app.fetch = (req, env, ctx) => {
     const url = new URL(req.url);
+    // WebSocket upgrades bypass Hono middleware (101 responses have immutable headers).
+    const ws = url.pathname.match(/^\/ws\/session\/([^/]+)\/?$/);
+    if (ws) return handleWs(req, env as Env, makeQuery, decodeURIComponent(ws[1]));
     if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
       url.pathname = url.pathname.replace(/\/+$/, "") || "/";
       req = new Request(url, req);

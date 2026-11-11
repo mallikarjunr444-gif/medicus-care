@@ -12,7 +12,9 @@ export interface Env {
   AUTH_COOKIE_DOMAIN?: string;
   JWT_EXPIRATION_HOURS: string;
   GUEST_ACCOUNTS_ENABLED: string;
+  AI_MODEL?: string;
   // Bindings
+  AI?: { run(model: string, input: unknown): Promise<unknown> };
   RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
 }
 

@@ -234,3 +234,20 @@ describe("errors", () => {
     expect(r.status).toBe(503);
   });
 });
+
+describe("doctor avatars", () => {
+  it("creates a ready avatar per doctor and lets a session start from it", async () => {
+    const g = await (await call("/api/v1/users/guest", json(null))).json();
+    const t = g.access_token as string;
+    const r = await call("/api/v1/doctors/dr_arjun/avatar", json(t));
+    expect(r.status).toBe(200);
+    const a = await r.json();
+    expect(a.name).toBe("Dr. Smit");
+    expect(a.status).toBe("ready");
+    const again = await (await call("/api/v1/doctors/dr_arjun/avatar", json(t))).json();
+    expect(again.id).toBe(a.id);
+    const s = await call("/api/v1/sessions/create", json(t, { avatar_id: a.id }));
+    expect(s.status).toBe(201);
+    expect((await call("/api/v1/doctors/nobody/avatar", json(t))).status).toBe(404);
+  });
+});

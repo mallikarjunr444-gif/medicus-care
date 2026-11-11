@@ -5,6 +5,8 @@
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
+  // Free Workers AI (10k neurons/day) powers the doctor replies.
+  "ai": { "binding": "AI" },
 
   // Non-secret config. Secrets (DATABASE_URL, JWT_SECRET_KEY, SENTRY_DSN) are
   // NEVER put here: set them with `wrangler secret put <NAME>`.
@@ -26,6 +28,7 @@
   "env": {
     "production": {
       "name": "medicare-api-prod",
+      "ai": { "binding": "AI" },
       "vars": {
         "ENVIRONMENT": "production",
         // Exact Firebase Hosting origins only (no wildcards). Add the MediCare site here once it exists.
