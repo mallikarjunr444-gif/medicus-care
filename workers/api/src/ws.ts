@@ -12,15 +12,23 @@ function tokenOf(chunk: any): string {
   return chunk?.choices?.[0]?.delta?.content ?? "";
 }
 
+/** Kannada/Hindi need a larger model; English uses the cheaper one to stretch the free allowance. */
+export function modelFor(env: Env, language: string): string {
+  return language === "kn" || language === "hi"
+    ? env.AI_MODEL_LARGE || "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    : env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct";
+}
+
 /** Streams a Workers AI completion, calling onToken per piece. */
 export async function streamAi(
   env: Env,
   messages: Chat[],
+  language: string,
   onToken: (t: string) => void,
   signal: { aborted: boolean },
 ): Promise<string> {
   if (!env.AI) throw new Error("ai_binding_missing");
-  const out: any = await env.AI.run(env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct", {
+  const out: any = await env.AI.run(modelFor(env, language), {
     messages,
     stream: true,
     max_tokens: 320,
@@ -108,11 +116,14 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
       case "interrupt":
         turn.aborted = true;
         return send({ type: "interrupted", message: "Interrupted" });
-      case "audio":
-        return send({
-          type: "error",
-          message: "Voice input isn't available on the free server yet. Please type your message.",
-        });
+      case "audio": {
+        if (typeof data.audio !== "string" || !data.audio) return send({ type: "error", message: "Missing audio data" });
+        if (data.audio.length > 6_000_000) return send({ type: "error", message: "Audio payload too large" });
+        turn.aborted = true;
+        const mine = (turn = { aborted: false });
+        void transcribeThenRun(data.audio, mine);
+        return;
+      }
       case "text": {
         const text = typeof data.text === "string" ? data.text.trim().slice(0, MAX_TEXT) : "";
         if (!text) return send({ type: "error", message: "Empty message" });
@@ -125,6 +136,20 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
         return;
     }
   });
+
+  async function transcribeThenRun(b64: string, mine: { aborted: boolean }) {
+    try {
+      send({ type: "status", message: "Transcribing audio…", stage: "transcription" });
+      const r: any = await env.AI!.run("@cf/openai/whisper-large-v3-turbo", { audio: b64, language });
+      const text = String(r?.text ?? "").trim();
+      if (!text) return send({ type: "error", message: "Could not transcribe audio" });
+      send({ type: "transcription", text });
+      await run(text, mine);
+    } catch (e) {
+      console.error("ws_stt_failed", String((e as Error).message).slice(0, 200));
+      send({ type: "error", message: "Could not transcribe audio" });
+    }
+  }
 
   async function run(text: string, mine: { aborted: boolean }) {
     while (busy) await new Promise((r) => setTimeout(r, 25));
@@ -143,7 +168,7 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
       ).reverse() as Chat[];
       const lang = LANGS[language] ?? language;
       const sys = `${systemPrompt(doctorId)}\nCurrent consultation language: ${lang}. Respond entirely in ${lang}; use 1-3 short sentences, no markdown or lists.`;
-      const reply = await streamAi(env, [{ role: "system", content: sys }, ...hist], (t) => send({ type: "token", token: t }), mine);
+      const reply = await streamAi(env, [{ role: "system", content: sys }, ...hist], language, (t) => send({ type: "token", token: t }), mine);
       if (mine.aborted) return;
       const content = reply.trim() || "I'm here. Could you tell me a little more?";
       await query(`INSERT INTO messages (id, session_id, role, content) VALUES ($1,$2,'assistant',$3)`, [

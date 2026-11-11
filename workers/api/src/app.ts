@@ -1,5 +1,6 @@
 import { Hono } from "hono/tiny";
 import { doctors } from "./doctors";
+import { doctorActions } from "./doctorActions";
 import { handleWs } from "./ws";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
@@ -81,6 +82,7 @@ export function createApp(makeQuery: (env: Env) => Query, opts: AppOptions = {})
 
   app.use("/api/v1/*", loadUser);
   app.route("/api/v1/doctors", doctors);
+  app.route("/api/v1/doctor", doctorActions);
   app.route("/api/v1/users", users);
   app.route("/api/v1/sessions", sessions);
   app.route("/api/v1/messages", messages);

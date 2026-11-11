@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { streamAi } from "../src/ws";
+import { modelFor, streamAi } from "../src/ws";
 
 const sse = (lines: string[]) =>
   new ReadableStream<Uint8Array>({
@@ -17,11 +17,19 @@ describe("streamAi", () => {
   it("assembles tokens from Workers AI SSE chunks", async () => {
     const env: any = { AI: { run: async () => sse(['data: {"response":"Hel"}', 'data: {"response":"lo"}', "data: [DONE]"]) } };
     const got: string[] = [];
-    const full = await streamAi(env, [{ role: "user", content: "hi" }], (t) => got.push(t), { aborted: false });
+    const full = await streamAi(env, [{ role: "user", content: "hi" }], "en", (t) => got.push(t), { aborted: false });
     expect(full).toBe("Hello");
     expect(got).toEqual(["Hel", "lo"]);
   });
   it("fails clearly without the AI binding", async () => {
-    await expect(streamAi({} as any, [], () => {}, { aborted: false })).rejects.toThrow("ai_binding_missing");
+    await expect(streamAi({} as any, [], "en", () => {}, { aborted: false })).rejects.toThrow("ai_binding_missing");
+  });
+});
+
+describe("modelFor", () => {
+  it("uses the larger model for Kannada and Hindi only", () => {
+    expect(modelFor({} as any, "kn")).toContain("70b");
+    expect(modelFor({} as any, "hi")).toContain("70b");
+    expect(modelFor({} as any, "en")).toContain("8b");
   });
 });

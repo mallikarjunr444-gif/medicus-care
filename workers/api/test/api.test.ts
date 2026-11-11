@@ -251,3 +251,16 @@ describe("doctor avatars", () => {
     expect((await call("/api/v1/doctors/nobody/avatar", json(t))).status).toBe(404);
   });
 });
+
+describe("doctor actions", () => {
+  it("lists specialists, analyses a report and requires confirmation to book", async () => {
+    const l = await (await call("/api/v1/doctor/specialists?specialty=cardio&district=bengaluru")).json();
+    expect(l.count).toBe(1);
+    const r = await (await call("/api/v1/doctor/reports/analyze", json(null, { report_text: "Hb 11 and TSH 6" }))).json();
+    expect(r.parameters_analyzed.map((p: any) => p.parameter)).toEqual(["Hemoglobin (Hb)", "Thyroid Stimulating Hormone (TSH)"]);
+    const bad = await call("/api/v1/doctor/appointments/request", json(null, { specialist_id: "DOC-CKM-01", patient_confirmed: false }));
+    expect(bad.status).toBe(400);
+    const ok = await (await call("/api/v1/doctor/appointments/request", json(null, { specialist_id: "DOC-CKM-01", preferred_date: "2026-12-01", preferred_time_slot: "10:00" }))).json();
+    expect(ok.booking_id).toMatch(/^APT-DOC-CKM-01-/);
+  });
+});

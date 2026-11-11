@@ -13,6 +13,7 @@ export interface Env {
   JWT_EXPIRATION_HOURS: string;
   GUEST_ACCOUNTS_ENABLED: string;
   AI_MODEL?: string;
+  AI_MODEL_LARGE?: string;
   // Bindings
   AI?: { run(model: string, input: unknown): Promise<unknown> };
   RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
