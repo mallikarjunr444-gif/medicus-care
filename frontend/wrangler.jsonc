@@ -1,0 +1,7 @@
+{
+  // MediCare website: static export served by Cloudflare Workers static assets
+  // (free plan; static asset requests are not billed or limited).
+  "name": "medicare-web",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "./out", "not_found_handling": "404-page" }
+}

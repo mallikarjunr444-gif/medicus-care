@@ -1,10 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Static export: the site has no server routes, so it can be hosted on any
+  // static host (Firebase Hosting free plan) with no Node server.
+  output: 'export',
+  trailingSlash: true,
   reactStrictMode: true,
   allowedDevOrigins: ['127.0.0.1', 'localhost'],
   images: {
     dangerouslyAllowSVG: true,
-    unoptimized: process.env.NODE_ENV === 'development',
+    unoptimized: true, // required by static export (no image server)
     remotePatterns: [
       {
         protocol: 'http',
