@@ -407,7 +407,7 @@ export function SiteFooter() {
               <ul className="mt-3 space-y-2">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <a href={link.href} className="rounded text-[12px] hover:text-[#1d1d1f] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30">
+                    <a href={link.href} className="inline-flex min-h-11 items-center rounded text-[12px] hover:text-[#1d1d1f] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30">
                       {link.label}
                     </a>
                   </li>
