@@ -73,8 +73,50 @@ admin.delete("/knowledge/sources/:id", async (c) => {
   return c.json({ deleted: true, chunk_id: c.req.param("id"), collection: rows[0].collection });
 });
 
-admin.get("/knowledge/books", (c) => c.json({ books: [] }));
-admin.post("/knowledge/books/upload", () => fail(503, "Book processing needs the Python/ML service, which isn't available on the free server."));
+// Books: the browser extracts text and sends passages; each passage becomes a searchable chunk.
+admin.get("/knowledge/books", async (c) => {
+  const rows = await c.var.query(
+    `SELECT replace(origin_url, 'book:', '') AS book_id, max(source_name) AS book_name, count(*)::int AS chunk_count
+     FROM knowledge_chunks WHERE category = 'specialist_book' GROUP BY origin_url ORDER BY max(source_name)`,
+  );
+  return c.json({ books: rows.map((r) => ({ ...r, collection: "mental_wellness" })) });
+});
+
+admin.post("/knowledge/books/upload", async (c) => {
+  const b = await readJson(c.req.raw);
+  const name = typeof b.book_name === "string" ? b.book_name.trim().slice(0, 200) : "";
+  const chunks: unknown = b.chunks;
+  if (!name) fail(400, "Book name is required");
+  if (!Array.isArray(chunks) || !chunks.length) fail(400, "No passages supplied");
+  if ((chunks as unknown[]).length > 2000) fail(400, "Too many passages (max 2000 per book)");
+  const passages = (chunks as unknown[]).map((x) => String(x).slice(0, 2000));
+  const bookId = crypto.randomUUID();
+  for (let i = 0; i < passages.length; i += 200) {
+    const batch = passages.slice(i, i + 200);
+    // $1 = book name, $2 = book marker; passages follow as (id, title, text) triples.
+    const params: unknown[] = [name, `book:${bookId}`];
+    const values = batch.map((text, j) => {
+      const n = i + j + 1;
+      params.push(`book-${bookId}-${n}`, `${name} (passage ${n})`, text);
+      const k = params.length;
+      return `($${k - 2}, 'mental_wellness', 'specialist_book', $${k - 1}, $${k}, $1, $2, 'Admin-supplied')`;
+    });
+    await c.var.query(
+      `INSERT INTO knowledge_chunks (chunk_id, collection, category, title, content, source_name, origin_url, license) VALUES ${values.join(",")}`,
+      params,
+    );
+  }
+  return c.json({ book_id: bookId, book_name: name, chunk_count: passages.length }, 201);
+});
+
+admin.delete("/knowledge/books/:id", async (c) => {
+  const rows = await c.var.query(
+    "DELETE FROM knowledge_chunks WHERE category = 'specialist_book' AND origin_url = $1 RETURNING 1",
+    [`book:${c.req.param("id")}`],
+  );
+  if (!rows.length) fail(404, "Book not found");
+  return c.json({ deleted: true, chunk_count: rows.length });
+});
 admin.post("/knowledge/reindex", async (c) => {
   // Full-text search is indexed automatically by Postgres; nothing to rebuild.
   const n = (await c.var.query("SELECT count(*)::int n FROM knowledge_chunks"))[0].n;

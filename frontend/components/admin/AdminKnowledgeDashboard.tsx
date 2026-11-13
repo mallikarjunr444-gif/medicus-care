@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { apiClient } from '@/lib/api'
+import { chunkText, extractBookText, MAX_BOOK_CHUNKS } from '@/lib/extractBook'
 
 const errorMessage = (e: unknown, fallback: string): string =>
   (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail || (e instanceof Error ? e.message : fallback)
@@ -109,6 +110,7 @@ export function AdminKnowledgeDashboard() {
   const [bookName, setBookName] = useState('')
   const [specialistBooks, setSpecialistBooks] = useState<SpecialistBook[]>([])
   const [isProcessingBook, setIsProcessingBook] = useState(false)
+  const [bookProgress, setBookProgress] = useState('')
 
   const fetchSources = async () => {
     setIsLoading(true)
@@ -141,13 +143,15 @@ export function AdminKnowledgeDashboard() {
     event.preventDefault()
     if (!specialistBook) return
     setIsProcessingBook(true)
-    const formData = new FormData()
-    formData.append('file', specialistBook)
-    formData.append('specialist_id', 'dr_ananya')
-    if (bookName.trim()) formData.append('book_name', bookName.trim())
     try {
-      const { data } = await apiClient.post('/api/v1/admin/knowledge/books/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const name = bookName.trim() || specialistBook.name.replace(/\.[^.]+$/, '')
+      const text = await extractBookText(specialistBook, (p, t) => setBookProgress(`Reading page ${p} of ${t}…`))
+      const chunks = chunkText(text)
+      if (!chunks.length) throw new Error('No readable text found in this file')
+      if (chunks.length > MAX_BOOK_CHUNKS) throw new Error(`This book is too large (${chunks.length} passages; the limit is ${MAX_BOOK_CHUNKS}). Upload it in parts.`)
+      setBookProgress('Saving passages…')
+      const { data } = await apiClient.post('/api/v1/admin/knowledge/books/upload', {
+        specialist_id: 'dr_ananya', book_name: name, chunks,
       })
       toast.success(`Processed ${data.book_name} into ${data.chunk_count} Ananya references`)
       setSpecialistBook(null)
@@ -157,6 +161,7 @@ export function AdminKnowledgeDashboard() {
       toast.error(errorMessage(error, 'Book processing failed'))
     } finally {
       setIsProcessingBook(false)
+      setBookProgress('')
     }
   }
 
@@ -168,7 +173,7 @@ export function AdminKnowledgeDashboard() {
       toast.error(errorMessage(e, 'Book deletion failed'))
       return
     }
-    toast.success('Book and references deleted')
+    toast.success('Book and its passages deleted')
     setSpecialistBooks(prev => prev.filter(book => book.book_id !== bookId))
   }
 
@@ -445,7 +450,7 @@ export function AdminKnowledgeDashboard() {
               <div>
                 <p className="text-[10px] uppercase tracking-[0.18em] text-[#8fc9bd] font-semibold">Specialist library</p>
                 <h2 className="text-lg font-bold mt-1">Feed Dr. Ananya a psychology book</h2>
-                <p className="text-xs text-[#b8c8c8] mt-1">PDF pages, chapters, tables, embeddings, and citations stay in the mental_wellness collection.</p>
+                <p className="text-xs text-[#b8c8c8] mt-1">Text is read in your browser (text-based PDFs, TXT or MD) and saved as searchable passages in the mental_wellness collection. Scanned books need OCR and aren't supported yet.</p>
               </div>
               <Brain size={22} className="text-[#8fc9bd] shrink-0" />
             </div>
@@ -460,10 +465,10 @@ export function AdminKnowledgeDashboard() {
                   <input value={bookName} onChange={e => setBookName(e.target.value)} placeholder="Uses the PDF filename when blank" className="w-full rounded-xl border border-[#3b5961] bg-[#18262d] px-3 py-2.5 text-white placeholder:text-[#779096] focus:outline-none focus:border-[#8fc9bd]" />
                 </div>
               </div>
-              <input type="file" accept=".pdf,application/pdf" onChange={e => setSpecialistBook(e.target.files?.[0] || null)} className="w-full rounded-xl border border-[#3b5961] bg-[#18262d] p-2 text-[#b8c8c8] file:mr-3 file:rounded-lg file:border-0 file:bg-[#8fc9bd] file:px-3 file:py-1.5 file:font-semibold file:text-[#101820]" />
+              <input type="file" accept=".pdf,.txt,.md,application/pdf,text/plain" onChange={e => setSpecialistBook(e.target.files?.[0] || null)} className="w-full rounded-xl border border-[#3b5961] bg-[#18262d] p-2 text-[#b8c8c8] file:mr-3 file:rounded-lg file:border-0 file:bg-[#8fc9bd] file:px-3 file:py-1.5 file:font-semibold file:text-[#101820]" />
               <button type="submit" disabled={!specialistBook || isProcessingBook} className="w-full rounded-xl bg-[#8fc9bd] py-3 font-bold text-[#101820] transition-colors hover:bg-[#b0ded4] disabled:opacity-40 flex items-center justify-center gap-2">
                 {isProcessingBook ? <RefreshCw size={15} className="animate-spin" /> : <Upload size={15} />}
-                {isProcessingBook ? 'Extracting and embedding book...' : 'Process into Ananya knowledge'}
+                {isProcessingBook ? bookProgress || 'Processing book…' : 'Process into Ananya knowledge'}
               </button>
             </form>
             {specialistBooks.length > 0 && (

@@ -338,3 +338,24 @@ describe("admin as superuser", () => {
     expect((await call("/api/v1/admin/knowledge/sources/t2", { method: "DELETE", ...auth(t) })).status).toBe(200);
   });
 });
+
+describe("book upload", () => {
+  it("stores passages, lists the book, makes them searchable, and deletes them", async () => {
+    const g = await (await call("/api/v1/users/guest", json(null))).json();
+    const me = await (await call("/api/v1/users/me", auth(g.access_token))).json();
+    await db.query("UPDATE users SET is_superuser = true WHERE id = $1", [me.id]);
+    const t = g.access_token as string;
+    const chunks = Array.from({ length: 250 }, (_, i) => `Passage ${i} about cognitive reframing and gentle breathing exercises for stress.`);
+    const up = await call("/api/v1/admin/knowledge/books/upload", json(t, { book_name: "CBT Basics", chunks }));
+    expect(up.status).toBe(201);
+    const book = await up.json();
+    expect(book.chunk_count).toBe(250);
+    const list = await (await call("/api/v1/admin/knowledge/books", auth(t))).json();
+    expect(list.books).toEqual([{ book_id: book.book_id, book_name: "CBT Basics", chunk_count: 250, collection: "mental_wellness" }]);
+    const hit = await db.query("SELECT 1 FROM knowledge_chunks WHERE collection='mental_wellness' AND tsv @@ to_tsquery('english','reframing')");
+    expect(hit.rows.length).toBe(250);
+    expect((await call("/api/v1/admin/knowledge/books/upload", json(t, { book_name: "x", chunks: [] }))).status).toBe(400);
+    const del = await call(`/api/v1/admin/knowledge/books/${book.book_id}`, { method: "DELETE", ...auth(t) });
+    expect((await del.json()).chunk_count).toBe(250);
+  });
+});
