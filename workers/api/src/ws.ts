@@ -41,8 +41,10 @@ export async function chatAllowed(
   userId: string,
   env: Pick<Env, "AI_USER_HOURLY_CAP" | "AI_DAILY_CAP">,
 ): Promise<"ok" | "user_limit" | "daily_limit"> {
-  const userCap = Number(env.AI_USER_HOURLY_CAP) || 40;
-  const dayCap = Number(env.AI_DAILY_CAP) || 1500;
+  // Unlimited by default; set AI_USER_HOURLY_CAP / AI_DAILY_CAP to a positive number to enable a cap.
+  const userCap = Number(env.AI_USER_HOURLY_CAP) || 0;
+  const dayCap = Number(env.AI_DAILY_CAP) || 0;
+  if (userCap <= 0 && dayCap <= 0) return "ok";
   const [u, d] = await Promise.all([
     query(
       `SELECT count(*)::int AS n FROM messages m JOIN sessions s ON s.id = m.session_id
@@ -51,8 +53,8 @@ export async function chatAllowed(
     ),
     query(`SELECT count(*)::int AS n FROM messages WHERE role = 'assistant' AND created_at > date_trunc('day', now())`),
   ]);
-  if (u[0].n >= userCap) return "user_limit";
-  if (d[0].n >= dayCap) return "daily_limit";
+  if (userCap > 0 && u[0].n >= userCap) return "user_limit";
+  if (dayCap > 0 && d[0].n >= dayCap) return "daily_limit";
   return "ok";
 }
 
@@ -264,7 +266,7 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
       send({ type: "message", role: "assistant", content });
     } catch (e) {
       console.error("ws_turn_failed", String((e as Error).message).slice(0, 200));
-      send({ type: "error", message: "The doctor is busy right now. Please try again in a moment." });
+      send({ type: "error", message: "The free AI service is busy or has used up its daily allowance. Please try again in a little while." });
     } finally {
       busy = false;
     }

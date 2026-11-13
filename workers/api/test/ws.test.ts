@@ -72,9 +72,9 @@ describe("chatAllowed", () => {
   const q = (user: number, day: number) => async (sql: string) => [{ n: sql.includes("role = 'user'") ? user : day }];
   it("allows, then limits per user and globally", async () => {
     const { chatAllowed } = await import("../src/ws");
-    expect(await chatAllowed(q(1, 1), "u", {})).toBe("ok");
-    expect(await chatAllowed(q(40, 1), "u", {})).toBe("user_limit");
-    expect(await chatAllowed(q(1, 1500), "u", {})).toBe("daily_limit");
+    expect(await chatAllowed(q(9999, 9999), "u", {})).toBe("ok"); // unlimited by default
+    expect(await chatAllowed(q(40, 1), "u", { AI_USER_HOURLY_CAP: "40" })).toBe("user_limit");
+    expect(await chatAllowed(q(1, 1500), "u", { AI_DAILY_CAP: "1500" })).toBe("daily_limit");
     expect(await chatAllowed(q(5, 1), "u", { AI_USER_HOURLY_CAP: "5" })).toBe("user_limit");
   });
 });
