@@ -1,0 +1,11 @@
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+/doctor/*
+  Cache-Control: public, max-age=604800
+/landing/*
+  Cache-Control: public, max-age=604800
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(self), microphone=(self), geolocation=()
+  X-Frame-Options: SAMEORIGIN

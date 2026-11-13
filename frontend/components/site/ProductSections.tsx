@@ -35,7 +35,7 @@ export function LocalNav({ onStart }: { onStart: () => void }) {
         <button
           type="button"
           onClick={onStart}
-          className="inline-flex h-7 items-center rounded-full bg-[#0071e3] px-3.5 text-[12px] text-white transition-colors hover:bg-[#0077ed] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30"
+          className="relative inline-flex h-7 items-center rounded-full bg-[#0071e3] px-3.5 before:absolute before:-inset-y-2 before:inset-x-0 before:content-[''] text-[12px] text-white transition-colors hover:bg-[#0077ed] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30"
         >
           Start
         </button>
@@ -144,7 +144,7 @@ export function HighlightsGallery() {
       <div className="mt-8 flex items-center justify-center gap-4">
         <div className="flex items-center gap-2 rounded-full bg-[#e8e8ed] px-3 py-2.5" role="tablist" aria-label="Choose highlight">
           {SLIDES.map((slide, i) => (
-            <button key={slide.title} type="button" role="tab" aria-selected={active === i} aria-label={`Highlight ${i + 1}: ${slide.kicker}`} onClick={() => go(i)} className={`h-2 rounded-full transition-all ${active === i ? 'w-5 bg-[#1d1d1f]' : 'w-2 bg-[#86868b]'}`} />
+            <button key={slide.title} type="button" role="tab" aria-selected={active === i} aria-label={`Highlight ${i + 1}: ${slide.kicker}`} onClick={() => go(i)} className={`relative h-2 rounded-full transition-all before:absolute before:-inset-3 before:content-[''] ${active === i ? 'w-5 bg-[#1d1d1f]' : 'w-2 bg-[#86868b]'}`} />
           ))}
         </div>
         <div className="hidden gap-2 sm:flex">

@@ -332,7 +332,7 @@ export function Faq() {
       <div className="mx-auto max-w-[820px] px-5">
         <h2 className={`${H2} text-center`}>Questions, answered.</h2>
         <div className="mt-8 flex justify-end">
-          <button type="button" onClick={() => setOpen(allOpen ? new Set() : new Set(FAQ.map((_, i) => i)))} className="rounded text-[14px] text-[#0071e3] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30">
+          <button type="button" onClick={() => setOpen(allOpen ? new Set() : new Set(FAQ.map((_, i) => i)))} className="inline-flex min-h-11 items-center rounded px-2 text-[14px] text-[#0071e3] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30">
             {allOpen ? 'Collapse all' : 'Expand all'}
           </button>
         </div>
