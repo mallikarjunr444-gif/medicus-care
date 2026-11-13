@@ -72,22 +72,13 @@ export function modelFor(env: Env, language: string): string {
     : env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct";
 }
 
-/** Streams a Workers AI completion, calling onToken per piece. */
-export async function streamAi(
-  env: Env,
-  messages: Chat[],
-  language: string,
+/** Reads an SSE stream (Workers AI or OpenAI-style) and returns the full text. */
+export async function readSse(
+  stream: ReadableStream<Uint8Array>,
   onToken: (t: string) => void,
   signal: { aborted: boolean },
 ): Promise<string> {
-  if (!env.AI) throw new Error("ai_binding_missing");
-  const out: any = await env.AI.run(modelFor(env, language), {
-    messages,
-    stream: true,
-    max_tokens: 320,
-    temperature: 0.6,
-  });
-  const reader = (out as ReadableStream<Uint8Array>).getReader();
+  const reader = stream.getReader();
   const dec = new TextDecoder();
   let buf = "";
   let full = "";
@@ -115,6 +106,69 @@ export async function streamAi(
   }
   if (signal.aborted) await reader.cancel().catch(() => {});
   return full;
+}
+
+/** Streams a Workers AI completion, calling onToken per piece. */
+async function streamWorkersAi(
+  env: Env,
+  messages: Chat[],
+  language: string,
+  onToken: (t: string) => void,
+  signal: { aborted: boolean },
+): Promise<string> {
+  if (!env.AI) throw new Error("ai_binding_missing");
+  const out: any = await env.AI.run(modelFor(env, language), {
+    messages,
+    stream: true,
+    max_tokens: 320,
+    temperature: 0.6,
+  });
+  return readSse(out as ReadableStream<Uint8Array>, onToken, signal);
+}
+
+/** Any OpenAI-compatible streaming endpoint (Groq, Gemini, OpenRouter…). */
+async function streamExternal(
+  env: Env,
+  messages: Chat[],
+  language: string,
+  onToken: (t: string) => void,
+  signal: { aborted: boolean },
+): Promise<string> {
+  const base = (env.AI_BASE_URL || "https://api.groq.com/openai/v1").replace(/\/$/, "");
+  const model = (language === "kn" || language === "hi" ? env.AI_MODEL_LARGE_EXTERNAL : env.AI_MODEL_EXTERNAL) ||
+    env.AI_MODEL_EXTERNAL || "llama-3.3-70b-versatile";
+  const res = await fetch(`${base}/chat/completions`, {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${env.AI_API_KEY}` },
+    body: JSON.stringify({ model, messages, stream: true, max_tokens: 320, temperature: 0.6 }),
+  });
+  if (!res.ok || !res.body) throw new Error(`external_ai_${res.status}`);
+  return readSse(res.body, onToken, signal);
+}
+
+/** Uses the external provider when configured (much larger free limits), with Workers AI as fallback. */
+export async function streamAi(
+  env: Env,
+  messages: Chat[],
+  language: string,
+  onToken: (t: string) => void,
+  signal: { aborted: boolean },
+): Promise<string> {
+  const order: Array<typeof streamWorkersAi> = [];
+  if (env.AI_API_KEY) order.push(streamExternal);
+  if (env.AI) order.push(streamWorkersAi);
+  if (!order.length) throw new Error("ai_not_configured");
+  let lastErr: unknown;
+  for (const provider of order) {
+    let emitted = false;
+    try {
+      return await provider(env, messages, language, (t) => ((emitted = true), onToken(t)), signal);
+    } catch (e) {
+      lastErr = e;
+      if (emitted) throw e; // never switch providers mid-reply
+    }
+  }
+  throw lastErr;
 }
 
 export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Query, sessionId: string) {

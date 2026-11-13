@@ -21,6 +21,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      AI_API_KEY: ${{ secrets.AI_API_KEY }}
     defaults:
       run:
         working-directory: workers/api
@@ -48,3 +50,18 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      # Optional: a free OpenAI-compatible AI key (e.g. Groq). Only set when the GitHub secret exists.
+      - name: Set optional AI provider key
+        if: ${{ env.AI_API_KEY != '' }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/api
+          wranglerVersion: "4.160.0"
+          environment: production
+          command: versions list
+          secrets: |
+            AI_API_KEY
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}

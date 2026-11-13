@@ -14,6 +14,11 @@ export interface Env {
   GUEST_ACCOUNTS_ENABLED: string;
   AI_MODEL?: string;
   AI_MODEL_LARGE?: string;
+  // Optional OpenAI-compatible provider (Groq/Gemini/OpenRouter free tiers): larger limits than Workers AI.
+  AI_API_KEY?: string;
+  AI_BASE_URL?: string;
+  AI_MODEL_EXTERNAL?: string;
+  AI_MODEL_LARGE_EXTERNAL?: string;
   AI_USER_HOURLY_CAP?: string;
   AI_DAILY_CAP?: string;
   // Bindings

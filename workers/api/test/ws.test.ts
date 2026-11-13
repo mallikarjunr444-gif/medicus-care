@@ -22,7 +22,7 @@ describe("streamAi", () => {
     expect(got).toEqual(["Hel", "lo"]);
   });
   it("fails clearly without the AI binding", async () => {
-    await expect(streamAi({} as any, [], "en", () => {}, { aborted: false })).rejects.toThrow("ai_binding_missing");
+    await expect(streamAi({} as any, [], "en", () => {}, { aborted: false })).rejects.toThrow("ai_not_configured");
   });
 });
 
@@ -76,5 +76,25 @@ describe("chatAllowed", () => {
     expect(await chatAllowed(q(40, 1), "u", { AI_USER_HOURLY_CAP: "40" })).toBe("user_limit");
     expect(await chatAllowed(q(1, 1500), "u", { AI_DAILY_CAP: "1500" })).toBe("daily_limit");
     expect(await chatAllowed(q(5, 1), "u", { AI_USER_HOURLY_CAP: "5" })).toBe("user_limit");
+  });
+});
+
+describe("provider order", () => {
+  const ok = (words: string[]) => new Response(words.map((w) => `data: {"choices":[{"delta":{"content":"${w}"}}]}\n`).join("") + "data: [DONE]\n");
+  it("prefers the external provider, falls back to Workers AI before any token", async () => {
+    const orig = globalThis.fetch;
+    const ai = { run: async () => sse(['data: {"response":"CF"}', "data: [DONE]"]) };
+    try {
+      globalThis.fetch = (async () => ok(["Gro", "q"])) as any;
+      expect(await streamAi({ AI_API_KEY: "k", AI: ai } as any, [], "en", () => {}, { aborted: false })).toBe("Groq");
+      globalThis.fetch = (async () => new Response("rate limited", { status: 429 })) as any;
+      expect(await streamAi({ AI_API_KEY: "k", AI: ai } as any, [], "en", () => {}, { aborted: false })).toBe("CF");
+      await expect(streamAi({ AI_API_KEY: "k" } as any, [], "en", () => {}, { aborted: false })).rejects.toThrow("external_ai_429");
+    } finally {
+      globalThis.fetch = orig;
+    }
+  });
+  it("uses an OpenAI-compatible Workers AI-less setup and errors when nothing is configured", async () => {
+    await expect(streamAi({} as any, [], "en", () => {}, { aborted: false })).rejects.toThrow("ai_not_configured");
   });
 });
