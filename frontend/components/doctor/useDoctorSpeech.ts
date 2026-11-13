@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { mouthChannel, startLipSync, type LipSyncHandle } from '@/lib/visemes'
 import type { ConsultationLanguage, DoctorId, DoctorState } from '@/lib/doctorTypes'
 
 interface UseDoctorSpeechOptions {
@@ -16,6 +17,7 @@ export function useDoctorSpeech({
   onStateChange,
   onSubtitleUpdate,
 }: UseDoctorSpeechOptions) {
+  const lipSyncRef = useRef<LipSyncHandle | null>(null)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [audioLevel, setAudioLevel] = useState(0)
   const [isMuted, setIsMuted] = useState(false)
@@ -125,12 +127,17 @@ export function useDoctorSpeech({
       utterance.volume = isMuted ? 0 : 1
 
       // Viseme frequency modulation
+      // Script-aware mouth frames (works for Kannada, Hindi and English alike).
+      lipSyncRef.current?.stop()
+      const lipSync = startLipSync(text, utterance.rate)
+      lipSyncRef.current = lipSync
+      utterance.onboundary = (e) => lipSync.boundary(e.charIndex)
       animIntervalRef.current = setInterval(() => {
-        const amp = 0.25 + 0.65 * Math.abs(Math.sin(Date.now() / 110) * Math.cos(Date.now() / 240))
-        setAudioLevel(amp)
+        setAudioLevel(Math.max(0.15, Math.min(1, mouthChannel.open)))
       }, 50)
 
       const handleEnd = () => {
+        lipSync.stop()
         setIsSpeaking(false)
         setAudioLevel(0)
         if (animIntervalRef.current) {
@@ -166,6 +173,7 @@ export function useDoctorSpeech({
 
   // Barge-In & Instant Patient Interruption
   const interrupt = useCallback(() => {
+    lipSyncRef.current?.stop()
     if (synthRef.current) {
       synthRef.current.cancel()
     }

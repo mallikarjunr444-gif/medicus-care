@@ -1,5 +1,6 @@
 'use client'
 
+import { mouthChannel } from '@/lib/visemes'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
 import type { DoctorId, DoctorState } from '@/lib/doctorTypes'
 import { DOCTORS } from '@/lib/doctorTypes'
@@ -268,6 +269,10 @@ export function PhotorealisticDigitalHuman({
       if (voice) {
         openTarget = Math.min(1, Math.max(0, voice.level * 1.4 - 0.05))
         wideTarget = 0.97 + voice.bright * 0.1
+      } else if (doctorState === 'speaking' && mouthChannel.active) {
+        // Viseme frames from the spoken text (device voice, any language).
+        openTarget = mouthChannel.open
+        wideTarget = mouthChannel.wide
       } else if (doctorState === 'speaking' && fallbackLevelRef.current > 0) {
         openTarget = Math.min(1, fallbackLevelRef.current * 0.8)
         wideTarget = 1 + (openTarget - 0.4) * 0.1
