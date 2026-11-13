@@ -35,6 +35,27 @@ export async function retrieve(query: Query, doctorId: string, text: string): Pr
   }
 }
 
+/** Protects the free AI allowance: per-user hourly cap plus a global daily cap. */
+export async function chatAllowed(
+  query: Query,
+  userId: string,
+  env: Pick<Env, "AI_USER_HOURLY_CAP" | "AI_DAILY_CAP">,
+): Promise<"ok" | "user_limit" | "daily_limit"> {
+  const userCap = Number(env.AI_USER_HOURLY_CAP) || 40;
+  const dayCap = Number(env.AI_DAILY_CAP) || 1500;
+  const [u, d] = await Promise.all([
+    query(
+      `SELECT count(*)::int AS n FROM messages m JOIN sessions s ON s.id = m.session_id
+       WHERE s.user_id = $1 AND m.role = 'user' AND m.created_at > now() - interval '1 hour'`,
+      [userId],
+    ),
+    query(`SELECT count(*)::int AS n FROM messages WHERE role = 'assistant' AND created_at > date_trunc('day', now())`),
+  ]);
+  if (u[0].n >= userCap) return "user_limit";
+  if (d[0].n >= dayCap) return "daily_limit";
+  return "ok";
+}
+
 type Chat = { role: "system" | "user" | "assistant"; content: string };
 
 function tokenOf(chunk: any): string {
@@ -185,6 +206,16 @@ export async function handleWs(req: Request, env: Env, makeQuery: (e: Env) => Qu
     while (busy) await new Promise((r) => setTimeout(r, 25));
     busy = true;
     try {
+      const gate = await chatAllowed(query, uid!, env);
+      if (gate !== "ok") {
+        return send({
+          type: "error",
+          message:
+            gate === "user_limit"
+              ? "You've reached the hourly message limit. Please try again a little later."
+              : "The free doctor service has reached today's limit. Please try again tomorrow.",
+        });
+      }
       send({ type: "status", message: "Thinking…", stage: "llm" });
       await query(`INSERT INTO messages (id, session_id, role, content) VALUES ($1,$2,'user',$3)`, [
         crypto.randomUUID(),

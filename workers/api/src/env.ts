@@ -14,6 +14,8 @@ export interface Env {
   GUEST_ACCOUNTS_ENABLED: string;
   AI_MODEL?: string;
   AI_MODEL_LARGE?: string;
+  AI_USER_HOURLY_CAP?: string;
+  AI_DAILY_CAP?: string;
   // Bindings
   AI?: { run(model: string, input: unknown): Promise<unknown> };
   RATE_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };

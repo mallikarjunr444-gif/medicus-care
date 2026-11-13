@@ -42,6 +42,12 @@ export function createApp(makeQuery: (env: Env) => Query, opts: AppOptions = {})
   const app = new Hono<{ Bindings: Env; Variables: AppVars }>();
 
   app.use("*", secureHeaders());
+  app.use("*", async (c, next) => {
+    const id = c.req.header("cf-ray") ?? crypto.randomUUID();
+    await next();
+    c.res.headers.set("x-request-id", id);
+    if (c.req.path.startsWith("/api/")) c.res.headers.set("cache-control", "no-store");
+  });
   app.use("*", (c, next) =>
     cors({
       origin: (origin) => (c.env.CORS_ORIGINS.split(",").map((s) => s.trim()).includes(origin) ? origin : null),
